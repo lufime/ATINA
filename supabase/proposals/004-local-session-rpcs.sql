@@ -62,7 +62,7 @@ as $$
   );
 $$;
 
--- Inicia apenas Individual ou Duelo. A fila é criada no servidor e não é escolhida pelo browser.
+-- Inicia Individual, Duelo ou Mix. No Mix, categoria NULL seleciona desafios de todas as modalidades.
 create or replace function public.atina_start_local_game(
   p_game_mode text,
   p_difficulty text,
@@ -80,7 +80,7 @@ declare
   v_session private.atina_local_sessions;
   v_card jsonb;
 begin
-  if p_game_mode is null or p_game_mode not in ('solo', 'duel') then
+  if p_game_mode is null or p_game_mode not in ('solo', 'duel', 'mix') then
     raise exception 'Modo inválido nesta versão.' using errcode = '22023';
   end if;
   if p_difficulty is null or p_difficulty not in ('easy', 'medium', 'hard') then
