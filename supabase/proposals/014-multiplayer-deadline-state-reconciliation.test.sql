@@ -1,4 +1,10 @@
 BEGIN;
+INSERT INTO private.atina_challenges
+(challenge_id,category,emoji,clues,answer,accepted_answers,difficulty,active)
+VALUES (-990014,'__ci_fixture__','🧪',
+ '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
+ 'Resposta de teste 014','["resposta de teste 014"]'::jsonb,'medium',true);
+
 SELECT plan(7);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Host 014',4) AS value;
 CREATE TEMP TABLE _guest AS SELECT public.atina_join_room('Guest 014',(SELECT value->>'code' FROM _host)) AS value;
