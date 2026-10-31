@@ -30,3 +30,9 @@ jobs:
 
       - name: Verify local migration history
         run: supabase migration list --local
+
+      - name: Run the complete pgTAP suite on the clean database
+        run: |
+          mkdir -p supabase/tests
+          cp supabase/proposals/*.test.sql supabase/tests/
+          supabase test db --local
