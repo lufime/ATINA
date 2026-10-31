@@ -22,6 +22,7 @@ SELECT is((SELECT request_count FROM private.atina_rpc_rate_limits
  WHERE rpc_name='atina_create_room'
  AND ip_hash=extensions.digest(convert_to('198.51.100.10','UTF8'),'sha256')),10,'first ten room-creation requests are allowed');
 SELECT throws_ok('SELECT public.atina_pre_request_rate_limit()','PGRST',
+ '{"code" : "ATINA_RATE_LIMIT", "message" : "Demasiados pedidos. Aguarda um minuto e tenta novamente."}',
  'eleventh room-creation request is rejected');
 
 -- Different source IP receives an independent bucket.
@@ -45,12 +46,14 @@ SELECT is((SELECT request_count FROM private.atina_rpc_rate_limits
  WHERE rpc_name='atina_room_state'
  AND ip_hash=extensions.digest(convert_to('203.0.113.20','UTF8'),'sha256')),120,'room-state polling allows 120 requests per minute');
 SELECT throws_ok('SELECT public.atina_pre_request_rate_limit()','PGRST',
+ '{"code" : "ATINA_RATE_LIMIT", "message" : "Demasiados pedidos. Aguarda um minuto e tenta novamente."}',
  '121st room-state request is rejected');
 
 -- Missing IP information fails closed for ATINA RPCs.
 SELECT set_config('request.path','rpc/atina_join_room',true);
 SELECT set_config('request.headers','{}',true);
 SELECT throws_ok('SELECT public.atina_pre_request_rate_limit()','PGRST',
+ '{"code" : "ATINA_RATE_LIMIT_UNAVAILABLE", "message" : "Não foi possível validar a origem do pedido. Tenta novamente."}',
  'missing client IP fails closed');
 
 SELECT ok(NOT has_table_privilege('anon','private.atina_rpc_rate_limits','select'),'anon cannot read rate-limit state');
