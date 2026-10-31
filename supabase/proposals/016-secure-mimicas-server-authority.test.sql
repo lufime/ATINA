@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(12);
+SELECT plan(16);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Mime Host',4) AS value;
 CREATE TEMP TABLE _guest1 AS SELECT public.atina_join_room('Mime Guest 1',(SELECT value->>'code' FROM _host)) AS value;
 CREATE TEMP TABLE _guest2 AS SELECT public.atina_join_room('Mime Guest 2',(SELECT value->>'code' FROM _host)) AS value;
@@ -41,5 +41,20 @@ SELECT is((SELECT (value->>'points_awarded')::integer FROM _resolved),16,'server
 SELECT is((SELECT score FROM public.atina_room_players WHERE id=(SELECT (value->>'player_id')::uuid FROM _host)),16,'team representative receives team points');
 SELECT is((SELECT score FROM public.atina_room_players WHERE id=(SELECT (value->>'player_id')::uuid FROM _guest1)),16,'teammate receives server-awarded points');
 SELECT ok((SELECT (value->>'locked')::boolean FROM _resolved),'server locks resolved mime round');
+SELECT ok(NOT has_table_privilege('anon','private.atina_mime_cards','select'),'anon cannot read private Mímicas cards');
+SELECT ok(NOT has_table_privilege('authenticated','private.atina_mime_rounds','select'),'authenticated cannot read private Mímicas rounds');
+
+CREATE TEMP TABLE _host2 AS SELECT public.atina_create_room('Mime Host 2',2) AS value;
+CREATE TEMP TABLE _guest3 AS SELECT public.atina_join_room('Mime Guest 3',(SELECT value->>'code' FROM _host2)) AS value;
+SELECT public.atina_set_room_ready((SELECT (value->>'room_id')::uuid FROM _guest3),(SELECT value->>'token' FROM _guest3),true);
+SELECT public.atina_start_room((SELECT (value->>'room_id')::uuid FROM _host2),(SELECT value->>'token' FROM _host2));
+SELECT public.atina_start_mime_round((SELECT (value->>'room_id')::uuid FROM _host2),(SELECT value->>'token' FROM _host2),0,(SELECT (value->>'player_id')::uuid FROM _host2),60);
+UPDATE private.atina_mime_rounds SET deadline_at=clock_timestamp()-interval '1 second'
+WHERE room_id=(SELECT (value->>'room_id')::uuid FROM _host2) AND round_number=0;
+CREATE TEMP TABLE _expired AS
+SELECT public.atina_room_state((SELECT (value->>'room_id')::uuid FROM _host2),(SELECT value->>'token' FROM _host2)) AS value;
+SELECT ok((SELECT (value->'game_state'->>'locked')::boolean FROM _expired),'polling closes an expired Mímicas round');
+SELECT is((SELECT outcome FROM private.atina_mime_rounds WHERE room_id=(SELECT (value->>'room_id')::uuid FROM _host2) AND round_number=0),'timeout','server records timeout outcome during polling');
+SELECT ok((SELECT value->'game_state' ? 'answer' FROM _expired),'solution is revealed only after server timeout lock');
 SELECT * FROM finish();
 ROLLBACK;
