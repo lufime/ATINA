@@ -22,15 +22,8 @@ Jogo de desafios em português (pt-PT), pensado para telemóveis.
 - Imagem Misteriosa com revelação progressiva.
 - Ranking online (individual e duelo), com consulta dos 10 melhores resultados.
 
-## Backend e contas de jogador
-O backend usa Supabase. O ranking guarda pontuações e já tem suporte de base de dados para associar resultados a utilizadores autenticados (user_id).
-
-**Estado da autenticação:** o jogo já inclui ecrãs para criar conta, iniciar sessão e pedir recuperação da palavra-passe por email. A base de dados cria o perfil e valida a unicidade do pseudónimo. A confirmação do email e a recuperação dependem das definições de autenticação do projeto Supabase; é necessário permitir o endereço `https://lufime.github.io/ATINA/` nas URLs de redirecionamento autorizadas. As novas pontuações guardadas a partir do jogo ficam associadas ao utilizador autenticado (`user_id`). No modo individual, o pseudónimo da conta é usado automaticamente. No duelo local, cada jogador pode indicar o seu pseudónimo, ficando os dois resultados associados à conta que iniciou a sessão.
-
-A autenticação usa a biblioteca oficial JavaScript do Supabase e email/palavra-passe através do Supabase Auth. A recuperação usa o fluxo de email do Supabase. Os jogadores não precisam de conta GitHub. Até a configuração de redirecionamento e os testes finais estarem concluídos, a recuperação por email pode não funcionar corretamente.
-
-
-A eliminação da conta é processada por uma Supabase Edge Function protegida: valida a sessão do utilizador no servidor e só depois remove o utilizador do Supabase Auth. O perfil associado é eliminado em cascata; as pontuações existentes no ranking podem permanecer, sem associação à conta.
+## Ranking sem email
+O ranking online pode ser usado sem criar conta e sem fornecer email. No fim de cada jogo, basta escolher um pseudónimo (até 20 caracteres) e guardar a pontuação. São enviados para o Supabase apenas o pseudónimo, a pontuação e o modo de jogo. Como não existe conta, não há recuperação de acesso nem garantia de que um pseudónimo pertence sempre à mesma pessoa. O ranking público é recreativo e não deve ser considerado inviolável contra resultados falsos.
 
 ## Publicar com GitHub Pages
 1. Abre **Settings** no repositório.
@@ -43,4 +36,4 @@ O jogo é uma aplicação web estática. O duelo é local, no mesmo dispositivo;
 
 
 ## Termos e privacidade
-O registo pede confirmação de leitura e aceitação. Os textos são simples: o ATINA é um jogo pessoal e gratuito; o pseudónimo, email e pontuações são usados para a conta e o ranking; os dados não são vendidos nem usados para publicidade; a conta pode ser apagada na área «A minha conta». O perfil é eliminado, mas pontuações já publicadas podem permanecer sem ligação à conta. Os dados de conta são processados através do Supabase e o site é alojado no GitHub Pages.
+O ATINA é um jogo pessoal e gratuito. Não é necessário fornecer email nem criar conta para jogar ou guardar pontuações. O ranking guarda o pseudónimo escolhido, a pontuação e o modo de jogo através do Supabase. Os dados não são vendidos nem usados para publicidade. As pontuações enviadas podem permanecer visíveis no ranking.
