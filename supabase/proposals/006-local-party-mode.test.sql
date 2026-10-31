@@ -1,4 +1,13 @@
 begin;
+insert into private.atina_challenges
+(challenge_id,category,emoji,clues,answer,accepted_answers,difficulty,active)
+select -990022 - n,'__party_queue__','🧪',
+       '["pista 1","pista 2","pista 3","pista 4","pista 5"]'::jsonb,
+       'Desafio Party '||n,
+       jsonb_build_array('desafio party '||n),
+       'easy',true
+from generate_series(1,9) n;
+
 select plan(5);
 insert into private.atina_challenges
 (challenge_id,category,emoji,clues,answer,accepted_answers,difficulty,active)
