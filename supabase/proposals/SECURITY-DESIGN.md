@@ -346,3 +346,21 @@ Aplicados apenas em `atina-development` e versionados como migrations:
 - Advisor de performance já não assinala chaves estrangeiras sem índice. Restam apenas avisos INFO de índices ainda não usados num ambiente de desenvolvimento com poucos dados.
 - As RPCs Mímicas preservam os nomes/argumentos chamados pelo cliente atual; a publicação de estado, contudo, só aceita as duas transições Mímicas permitidas. Os outros modos continuam sem publicador genérico, intencionalmente.
 - **Limite de confiança específico de Mímicas:** como o jogo é gestual e não existe submissão textual de uma resposta pelo jogador, o anfitrião continua a ser o árbitro humano e envia a decisão `p_correct`. O servidor ignora os pontos enviados (`p_points`), valida o prazo, calcula os pontos, regista a atribuição e controla o bloqueio. Esta é uma validação server-authoritative da resolução e pontuação, não uma validação semântica automática do gesto.
+
+
+## Reconciliação das migrations 006–008
+
+As três alterações que estavam aplicadas no ambiente de desenvolvimento, mas apenas arquivadas em `proposals`, foram formalizadas e registadas no histórico de migrations do projeto `atina-development`:
+
+- `20261031223442_006_local_party_mode.sql`: regras de modo Party nas sessões locais.
+- `20261031223448_007_multiplayer_room_foundation.sql`: seis tabelas de salas, participantes, ledger de respostas, resultados, propostas e votos, com RLS, privilégios revogados e índices.
+- `20261031223513_008_multiplayer_lobby_rpcs.sql`: sete RPCs token-authenticated para criar/entrar/sair, consultar estado, gerir prontidão/equipas e iniciar sala.
+
+A proposta 008 tinha delimitadores de função sem os terminadores de instrução SQL necessários. O erro foi detetado na aplicação da migration, corrigido na proposta e só depois aplicada com sucesso. A versão formal em `supabase/migrations` corresponde à versão corrigida.
+
+Testes pgTAP executados novamente depois da formalização, todos aprovados:
+- 006 Party: 5/5.
+- 007 fundação multiplayer: 14/14.
+- 008 lobby RPCs: 12/12.
+
+As migrations 006–008 foram aplicadas apenas no projeto de desenvolvimento, não em produção. Os testes são transacionais e revertem os dados de teste. A sequência de migrations fica agora contínua de 001 a 018 no histórico do desenvolvimento.
