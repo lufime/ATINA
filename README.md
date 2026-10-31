@@ -144,3 +144,8 @@ O banco atual contém **750 desafios preenchidos em 15 modalidades**. A meta de 
 ### Validar o banco de desafios
 
 Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer dos avisos editoriais um erro bloqueante. O GitHub Actions executa esta validação automaticamente em cada pull request para `main` e em cada push para `main`.
+
+
+
+### Jogar na televisão
+O ATINA adapta a interface a ecrãs grandes e pode ser jogado num navegador de Smart TV compatível. Em televisões com comando direcional, as setas movem o foco entre os controlos e o botão OK/Enter ativa o elemento selecionado. Também é possível abrir o jogo num computador ou telemóvel e transmitir o ecrã para a televisão. A disponibilidade de navegadores e transmissão depende do modelo da televisão e do dispositivo. Para escrever respostas, o navegador da TV deve apresentar o respetivo teclado no ecrã; em alternativa, usa um telemóvel ou teclado ligado.
