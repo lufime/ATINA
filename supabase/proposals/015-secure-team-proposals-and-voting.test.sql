@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(11);
+SELECT plan(13);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Host Team 01',4) AS value;
 CREATE TEMP TABLE _guest1 AS SELECT public.atina_join_room('Guest Team 1',(SELECT value->>'code' FROM _host)) AS value;
 CREATE TEMP TABLE _guest2 AS SELECT public.atina_join_room('Guest Team 2',(SELECT value->>'code' FROM _host)) AS value;
@@ -34,6 +34,12 @@ SELECT throws_ok(
   (SELECT value->>'proposal_id' FROM _wrong)),
  'P0001','Só os membros da equipa podem votar.','other team cannot vote'
 );
+SELECT throws_ok(
+ format('SELECT public.atina_vote_team_proposal(%L::uuid,%L,%L::uuid,true)',
+  (SELECT value->>'room_id' FROM _host),(SELECT value->>'token' FROM _host),
+  (SELECT value->>'proposal_id' FROM _wrong)),
+ 'P0001','Quem propõe a resposta não pode votar na própria proposta.','proposer cannot vote on own proposal'
+);
 
 SELECT is((SELECT value->>'status' FROM (
  SELECT public.atina_vote_team_proposal(
@@ -61,6 +67,7 @@ SELECT public.atina_vote_team_proposal(
  (SELECT (value->>'proposal_id')::uuid FROM _right),true
 ) AS value;
 SELECT is((SELECT value->>'status' FROM _accepted),'accepted','server accepts correct answer after unanimous vote');
+SELECT is((SELECT resolution_reason FROM public.atina_room_team_proposals WHERE id=(SELECT (value->>'proposal_id')::uuid FROM _right)),'correct_answer','server records correct answer resolution');
 
 SELECT ok((SELECT (value->>'points_per_player')::integer BETWEEN 1 AND 100 FROM _accepted),'server calculates points independently of forged client points');
 SELECT is((SELECT count(*)::integer FROM public.atina_room_answers
