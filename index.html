@@ -100,7 +100,7 @@ $('voice').onclick=()=>{
  recognition.onresult=e=>{$('answer').value=e.results[0][0].transcript;$('feedback').textContent='Ouvi: '+$('answer').value+'. Carrega em Confirmar resposta.';};
  recognition.onerror=()=>{$('feedback').textContent='Não consegui perceber. Tenta novamente ou escreve a resposta.';};
  recognition.onend=()=>{$('voice').disabled=locked;};
- recognition.start();
+ try{recognition.start();}catch(err){$('voice').disabled=locked;$('feedback').textContent='Não foi possível iniciar o microfone. Verifica a permissão do navegador ou escreve a resposta.';}
 };
 $('listenAnswer').onclick=()=>{let g=games[queue[pos]];if('speechSynthesis' in window){window.speechSynthesis.cancel();let fala=new SpeechSynthesisUtterance('A resposta correta é: '+g[3]);fala.lang='pt-PT';window.speechSynthesis.speak(fala);}else{$('feedback').textContent='A leitura em voz alta não está disponível neste navegador.';}};$('pass').onclick=pass;$('continue').onclick=next;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});$('resultHome').onclick=()=>{screen('home');update();};renderCategories();update();
 </script></body></html>
