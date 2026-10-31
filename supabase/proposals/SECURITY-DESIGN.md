@@ -138,3 +138,6 @@ node scripts/generate-private-challenge-seed.mjs /caminho/privado/atina-private-
 ```
 
 Depois de rever o ficheiro, a execução deve ser feita manualmente apenas numa instância Supabase de desenvolvimento. O gerador está na branch, mas **não foi executado nesta sessão**, não foi gerado nem carregado qualquer ficheiro de respostas, e não foi feita qualquer ligação/escrita ao Supabase.
+
+
+O gerador tem também o modo `--check`, que valida a estrutura, o alinhamento com o catálogo público e a classificação dos 753 desafios sem escrever/exportar o SQL secreto. O workflow inclui `node --check` e `node scripts/generate-private-challenge-seed.mjs --check` na branch de segurança. O caminho de saída é validado com resolução de symlinks, exige diretório existente fora do repositório e usa criação exclusiva para evitar sobrescrever ficheiros.
