@@ -249,7 +249,7 @@ body{font-size:17px}
 const SUPABASE_URL='https://qwuxwiurqwfjizkwpmjp.supabase.co';
 const SUPABASE_KEY='sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';
 
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const supabaseClient=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 let atinaUser=null,atinaProfile=null;
 function authMessage(message){$('authStatus').textContent=message;}
 async function refreshAtinaSession(){
@@ -312,7 +312,7 @@ async function updateAtinaPassword(){
  if(error){authMessage(error.message||'Não foi possível alterar a palavra-passe.');return;}
  $('authReset').classList.add('hidden');$('authForms').classList.remove('hidden');$('authNewPassword').value='';authMessage('Palavra-passe alterada com sucesso.');
 }
-supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){$('authForms').classList.add('hidden');$('authReset').classList.remove('hidden');screen('authPage');authMessage('Define a tua nova palavra-passe.');} if(event==='SIGNED_OUT'||event==='SIGNED_IN')refreshAtinaSession();});
+if(supabaseClient){supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){$('authForms').classList.add('hidden');$('authReset').classList.remove('hidden');screen('authPage');authMessage('Define a tua nova palavra-passe.');} if(event==='SIGNED_OUT'||event==='SIGNED_IN')refreshAtinaSession();});}
 
 const games=[
 ['Quem sou eu?','👤',['Em criança, nem todos imaginavam que eu mudaria a forma de entender o universo.','Passei a minha vida a fazer perguntas sobre espaço, tempo e luz.','Uma teoria minha mudou profundamente a Física.','O Nobel da Física de 1921 foi-me atribuído pela explicação do efeito fotoelétrico.','A minha fórmula mais célebre começa por E e termina em c².'],'Albert Einstein',['albert einstein','einstein','professor einstein']],
