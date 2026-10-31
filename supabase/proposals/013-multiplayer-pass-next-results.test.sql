@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(9);
+SELECT plan(10);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Host 013',4) AS value;
 CREATE TEMP TABLE _guest AS SELECT public.atina_join_room('Guest 013',(SELECT value->>'code' FROM _host)) AS value;
 SELECT public.atina_set_room_ready((SELECT (value->>'room_id')::uuid FROM _guest),(SELECT value->>'token' FROM _guest),true);
