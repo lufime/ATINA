@@ -12,8 +12,8 @@
  *
  * A fonte é index.html; o catálogo público é usado para validar IDs e pistas.
  */
-import { readFileSync, writeFileSync, chmodSync } from 'node:fs';
-import { resolve, relative, isAbsolute, dirname } from 'node:path';
+import { readFileSync, writeFileSync, chmodSync, realpathSync } from 'node:fs';
+import { resolve, relative, isAbsolute, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -25,10 +25,12 @@ if (!checkOnly) {
     console.error('Indica um caminho absoluto fora do repositório para o SQL privado.');
     process.exit(2);
   }
-  outputPath = resolve(outputArg);
-  const rel = relative(repoRoot, outputPath);
+  const realRepoRoot = realpathSync(repoRoot);
+  const realOutputParent = realpathSync(dirname(resolve(outputArg)));
+  outputPath = resolve(realOutputParent, basename(outputArg));
+  const rel = relative(realRepoRoot, outputPath);
   if (rel === '' || (!rel.startsWith('..') && !isAbsolute(rel))) {
-    console.error('Por segurança, o ficheiro SQL privado tem de ficar fora do repositório.');
+    console.error('Por segurança, o ficheiro SQL privado tem de ficar fora do repositório (incluindo caminhos com symlinks).');
     process.exit(2);
   }
 }
