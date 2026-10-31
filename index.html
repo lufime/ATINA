@@ -12952,7 +12952,7 @@ function mimeAdvance(correct,reason='Palavra passada'){
  mimeStop();mimeRaceStop();const answer=mimeDeck[mimePos][0];
  if(correct){const points=mimePoints[mimeClue];const timedBonus=Number($('timerMode')?.value||0)>0?Math.floor(mimeSeconds/10):0;mimeScores[mimeTeam]+=points+timedBonus;if(mimeScores[mimeTeam]>=250){mimeRaceFinish(mimeTeam);return;}$('mimeFeedback').textContent='🎉 Certo! +'+points+(timedBonus?' + '+timedBonus+' bónus de rapidez':'')+' pontos para a Equipa '+(mimeTeam+1)+'. Resposta: '+answer+'.';}
  else{$('mimeFeedback').textContent=(reason==='Tempo esgotado'?'⏰ Tempo esgotado! ':'Passaram! ')+'A resposta era: '+answer+'. Sem alteração da pontuação.';}
- mimeTeam=1-mimeTeam;mimePos++;if(mimePos>=mimeDeck.length){mimeDeck=shuffle(mimeCards);mimePos=0;}$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;$('mimeNext').textContent=mimePos>=mimeDeck.length?'Ver resultado':'Próxima ronda →';$('mimeNext').dataset.restart='0';
+ mimeTeam=1-mimeTeam;mimePos++;if(mimePos>=mimeDeck.length){mimeDeck=shuffle(mimeCards);mimePos=0;mimeSeconds=0;}$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;$('mimeNext').textContent=mimePos>=mimeDeck.length?'Ver resultado':'Próxima ronda →';$('mimeNext').dataset.restart='0';
 }
 $('startMimicas').onclick=mimeStartGame;
 $('mimicaBack').onclick=()=>{mimeStop();screen('home');};
