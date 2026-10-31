@@ -1,6 +1,7 @@
 begin;
-select plan(8);
+select plan(9);
 select ok(private.atina_normalize_answer('  Coração de Leão!  ') = 'coracao de leao', 'normaliza acentos, pontuação e espaços');
+select ok(private.atina_normalize_answer('Ångström') = 'angstrom', 'remove diacríticos Unicode fora do português');
 select ok(private.atina_answer_matches('Coração de Leão', 'coracao de leao'), 'aceita resposta sem acentos');
 select ok(private.atina_answer_matches('Lisboa', 'Lisboa'), 'aceita correspondência exata');
 select ok(private.atina_answer_matches('elefante', 'elefanti'), 'aceita uma diferença numa palavra longa');
