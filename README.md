@@ -8,7 +8,7 @@ Jogo de desafios em português (pt-PT), pensado para telemóveis.
 - Indicador verde no cabeçalho quando existe sessão iniciada, com pseudónimo ou email da conta.
 - Menu inicial reorganizado para telemóveis: modo de jogo, modalidades em destaque, temporizador e atalhos de conta/ranking em secções separadas.
 - Corrigido erro de JavaScript que impedia a apresentação das 15 modalidades no menu inicial.
-- 15 modalidades e 175 desafios únicos (expansão da base em curso, com meta de 50 por modalidade).
+- 15 modalidades e 190 desafios únicos (expansão da base em curso, com meta de 50 por modalidade).
 - Cinco pistas progressivas por desafio (seis na modalidade Imagem Misteriosa); a última pista dá uma orientação adicional sem revelar diretamente a resposta.
 - As pistas reveladas permanecem visíveis.
 - Resposta errada: menos 10 pontos; é possível tentar novamente.
