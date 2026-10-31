@@ -37,3 +37,7 @@ O jogo é uma aplicação web estática. O duelo é local, no mesmo dispositivo;
 
 ## Termos e privacidade
 O ATINA é um jogo pessoal e gratuito. Não é necessário fornecer email nem criar conta para jogar ou guardar pontuações. O ranking guarda o pseudónimo escolhido, a pontuação e o modo de jogo através do Supabase. Os dados não são vendidos nem usados para publicidade. As pontuações enviadas podem permanecer visíveis no ranking.
+
+
+## Nota sobre o menu
+O menu inicial apresenta as modalidades de jogo e o ranking sem exigir conta ou email.
