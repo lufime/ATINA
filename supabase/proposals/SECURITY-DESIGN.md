@@ -157,3 +157,20 @@ A RPC de início de sessão aceita agora `mix`. Quando o cliente pede Mix sem ca
 Foi acrescentada uma asserção pgTAP para confirmar que o servidor inicia uma sessão Mix sem filtro de categoria. O teste está escrito, mas **não foi executado** porque não existe uma base Supabase de desenvolvimento autorizada e sem custos.
 
 **Party/Equipas continua por implementar:** antes de codificar a regra, é necessário mapear fielmente o número de equipas/jogadores, alternância, limite de rondas e duplicação de pontos na ronda final, sem inferir regras a partir do nome do modo.
+
+
+### Incremento — deadlines uniformes nas RPCs locais (2026-10-31)
+
+Foi corrigida a validação temporal de `atina_local_game_state`, `atina_local_reveal_clue` e `atina_local_pass_challenge`:
+
+- Todas obtêm o lock da sessão antes de capturar `clock_timestamp()`.
+- A consulta de estado fecha uma ronda expirada e aplica a penalização de timeout.
+- Revelar uma pista depois do prazo deixa de devolver apenas um erro: fecha a ronda, aplica a penalização e devolve o estado final.
+- Passar depois do prazo também regista timeout e penalização; passar dentro do prazo mantém o resultado `pass`.
+- A atualização do estado usa a mesma hora capturada após o lock.
+
+A alteração foi aplicada apenas em `atina-development` e documentada em `005-local-session-deadline-consistency.sql`. O teste transacional pgTAP `005-local-session-deadline-consistency.test.sql` contém seis asserções para os casos de timeout e para confirmar que as três RPCs mantêm `SECURITY DEFINER` com `search_path` vazio.
+
+**Estado da verificação:** a execução de teste terminou com a asserção final `ok 6`; o runner MCP apresenta apenas a última linha de pgTAP no resultado. A operação anterior que usou pistas com três elementos falhou a constraint e foi revertida; a execução seguinte usou cinco pistas e concluiu sem erro. A migration/proposta e o teste foram adicionados à branch isolada.
+
+**Risco ainda por resolver:** as seis RPCs públicas continuam deliberadamente executáveis por `anon` e `authenticated`, protegidas pelo token bearer aleatório de 256 bits. O Advisor continua a assinalar os dois avisos de SECURITY DEFINER. Antes de produção é necessário rever a exposição pública, introduzir rate limiting/limites de criação e chamadas por sessão e executar testes de concorrência. Os avisos RLS sem policies nas duas tabelas do schema privado são esperados com os grants revogados; devem continuar sob monitorização.
