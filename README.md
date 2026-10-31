@@ -143,4 +143,4 @@ O banco atual contém **190 desafios preenchidos em 15 modalidades**. A meta é 
 
 ### Validar o banco de desafios
 
-Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer das respostas repetidas um erro bloqueante.
+Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer dos avisos editoriais um erro bloqueante. O GitHub Actions executa esta validação automaticamente em cada pull request para `main` e em cada push para `main`.
