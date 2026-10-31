@@ -124,3 +124,17 @@ A proposta continua isolada na branch. Nenhuma migration foi executada no projet
 Foi confirmado no frontend original que a pontuação base é 10/15/20 pontos para Fácil/Médio/Difícil. A RPC usa esses valores. O bónus de rapidez foi ajustado para reproduzir a ordem de arredondamento do cliente: primeiro arredondar os segundos restantes para cima e depois dividir por 10 com arredondamento para baixo. A penalização por resposta errada/timeout continua a ser -10; uma resposta errada repõe a sequência, mas permite nova tentativa; acerto fecha a ronda. O passe não altera pontos e fecha a ronda.
 
 Os testes pgTAP de 004 passaram de 8 para 12 asserções propostas, incluindo rejeição de submissão repetida e timeout autoritativo (penalização e revelação da solução). **Não foram executados** e não demonstram ainda equivalência completa da corrida, da duração entre desafios, do ranking ou dos modos Mix/Party.
+
+
+## Gerador local da carga privada dos desafios
+
+Foi acrescentado `scripts/generate-private-challenge-seed.mjs`. O script lê o `index.html` original localmente, extrai o array `games`, preserva os índices originais (incluindo os 49 espaços vazios), reproduz a classificação de dificuldade de `challengeDifficultyScore`/`classifyChallenge` e valida categoria, emoji, pistas e imagem contra `public-challenges.json`.
+
+O script gera um SQL com os 753 registos secretos (resposta e alternativas) **apenas num caminho absoluto escolhido fora do repositório**, com permissões de ficheiro `0600` e criação exclusiva para não substituir um ficheiro existente. O SQL inclui a coluna `difficulty` e um `INSERT ... ON CONFLICT` idempotente. O ficheiro gerado nunca deve ser adicionado ao Git nem enviado para o chat.
+
+Uso local:
+```sh
+node scripts/generate-private-challenge-seed.mjs /caminho/privado/atina-private-seed.sql
+```
+
+Depois de rever o ficheiro, a execução deve ser feita manualmente apenas numa instância Supabase de desenvolvimento. O gerador está na branch, mas **não foi executado nesta sessão**, não foi gerado nem carregado qualquer ficheiro de respostas, e não foi feita qualquer ligação/escrita ao Supabase.
