@@ -1,5 +1,5 @@
 begin;
-select plan(9);
+select plan(12);
 
 insert into private.atina_challenges (
   challenge_id, category, emoji, clues, answer, accepted_answers, difficulty, active
@@ -65,6 +65,33 @@ select throws_ok(
   'Sessão inválida ou expirada.',
   'um token incorreto não obtém estado da sessão'
 ) from _atina_test_session;
+
+create temporary table _atina_timeout_session as
+select
+  (r->>'token') as token,
+  ((r->'state')->>'session_id')::uuid as session_id
+from (select public.atina_start_local_game(
+  'solo', 'easy', '__pgTAP_session_fixture__', 60
+) as r) started;
+
+update private.atina_local_sessions
+set deadline_at = clock_timestamp() - interval '1 second'
+where id = (select session_id from _atina_timeout_session);
+
+select ok(
+  (public.atina_local_game_state(session_id, token)->>'round_locked') = 'true',
+  'o servidor fecha automaticamente uma ronda cujo prazo expirou'
+) from _atina_timeout_session;
+
+select ok(
+  (public.atina_local_game_state(session_id, token)->'scores'->>0)::integer = -10,
+  'o timeout aplica a penalização no servidor'
+) from _atina_timeout_session;
+
+select ok(
+  (public.atina_local_game_state(session_id, token)#>>'{challenge,answer}') = 'Coração de Leão',
+  'a solução é revelada depois do timeout ser confirmado'
+) from _atina_timeout_session;
 
 select * from finish();
 rollback;
