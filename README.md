@@ -91,3 +91,7 @@ Quando o anfitrião termina o último desafio, fecha a sala através de uma oper
 
 ### Multiplayer em rede — até seis equipas
 O anfitrião pode distribuir automaticamente os participantes por até seis equipas (A a F). O número de equipas é ajustado ao total de jogadores, mantendo, sempre que possível, pelo menos dois jogadores por equipa: 2–5 jogadores formam 2 equipas; 6–7 formam 3; 8–9 formam 4; 10–11 formam 5; 12 formam 6. Também é possível atribuir manualmente cada participante a qualquer uma das seis equipas antes do início da partida. A votação de respostas é aplicada aos colegas da respetiva equipa.
+
+
+### Multiplayer — classificação das equipas em direto
+Durante os desafios, o painel da sala apresenta duas tabelas atualizadas com os dados recebidos do Supabase: classificação por equipas, calculada pela soma dos pontos dos seus membros, e classificação individual. A ordenação das equipas é atualizada à medida que as pontuações dos jogadores são sincronizadas.
