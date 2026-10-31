@@ -15,8 +15,8 @@ as $$
       'áàâãäéèêëíìîïóòôõöúùûüçñýÿ',
       'aaaaaeeeeiiiiooooouuuucnyy'
     ),
-    '[^a-z0-9 ]+', ' ', 'g'
-  ));
+    '[^a-z0-9 ]+', '', 'g'
+  ), '\\s+', ' ', 'g'));
 $$;
 
 create or replace function private.atina_levenshtein_bounded(p_left text, p_right text)
