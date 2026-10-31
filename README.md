@@ -41,3 +41,5 @@ O ATINA é um jogo pessoal e gratuito. Não é necessário fornecer email nem cr
 
 ## Nota sobre o menu
 O menu inicial apresenta as modalidades de jogo e o ranking sem exigir conta ou email.
+
+Correção adicional: removidas referências residuais à antiga interface de autenticação, para o menu funcionar sem contas.
