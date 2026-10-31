@@ -114,6 +114,9 @@ for (let id = 0; id < games.length; id++) {
   if (pub.category !== g[0] || pub.emoji !== g[1] || JSON.stringify(pub.clues) !== JSON.stringify(g[2])) {
     throw new Error(`Os campos públicos do desafio ${id} não coincidem com a fonte original.`);
   }
+  if ((pub.image_url || null) !== (g[5] || null)) {
+    throw new Error(`A imagem pública do desafio ${id} não coincide com a fonte original.`);
+  }
   if (typeof g[3] !== 'string' || !g[3].trim() || !g[4].length) {
     throw new Error(`Resposta ou alternativas em falta no desafio ${id}.`);
   }
