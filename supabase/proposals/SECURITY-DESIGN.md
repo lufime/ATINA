@@ -84,3 +84,11 @@ As RPCs atuais de sala devem convergir para as mesmas regras de validação e po
 - Só depois de testes completos, rever e autorizar separadamente qualquer migração/deploy em produção.
 
 **Estado:** decisão de arquitetura registada; ainda não implementada no frontend nem no Supabase. A migration SQL existente continua a ser apenas uma proposta e não foi aplicada.
+
+## Incremento de implementação — comparador de respostas
+
+Foi acrescentada a proposta `003-server-answer-matching.sql`, com normalização de texto em português e correspondência fuzzy por palavra, alinhada com os limites de distância da função JavaScript atual. O helper que consulta `private.atina_challenges` é interno e tem `EXECUTE` revogado para `public`, `anon` e `authenticated`; não existe uma RPC pública que permita enumerar respostas por tentativa.
+
+Os testes propostos estão em `003-server-answer-matching.test.sql` e cobrem acentos/pontuação, correspondência exata, tolerância a pequenos erros em palavras longas, palavras curtas e contagem de palavras.
+
+**Limite deste incremento:** são propostas SQL ainda não executadas. A tabela privada precisa de dados e os helpers ainda têm de ser chamados pelas RPCs autoritativas das sessões locais e salas multiplayer. O frontend continua sem alteração nesta fase.
