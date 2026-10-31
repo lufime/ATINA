@@ -150,7 +150,8 @@ body{font-size:17px}
  #game .clue.hidden-clue{font-size:14px!important}
 }
 
-#onlineSave{margin:18px 0;padding:14px;border:1px solid #365777;border-radius:16px;background:#10243a}#onlineSave h3{margin:4px 0 8px;color:#f3c65e}.online-ranking{margin-top:20px;padding-top:14px;border-top:1px solid #365777}#rankingList{padding-left:28px;line-height:1.8}#rankingList li{padding:3px 0;border-bottom:1px solid #ffffff12}.online-panel .answer{margin:7px 0}\n</style>
+#onlineSave{margin:18px 0;padding:14px;border:1px solid #365777;border-radius:16px;background:#10243a}#onlineSave h3{margin:4px 0 8px;color:#f3c65e}.online-ranking{margin-top:20px;padding-top:14px;border-top:1px solid #365777}#rankingList{padding-left:28px;line-height:1.8}#rankingList li{padding:3px 0;border-bottom:1px solid #ffffff12}.online-panel .answer{margin:7px 0}
+</style>
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><div class="logo">ATINA</div><div class="tag">O desafio é descobrir.</div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
@@ -162,10 +163,12 @@ body{font-size:17px}
 <div id="saveDuel" class="hidden"><label class="section" for="nickP1">Jogador 1</label><input id="nickP1" class="answer" maxlength="20" placeholder="Pseudónimo do Jogador 1"><button class="btn secondary full" id="saveP1Btn">Guardar pontuação do Jogador 1</button><label class="section" for="nickP2">Jogador 2</label><input id="nickP2" class="answer" maxlength="20" placeholder="Pseudónimo do Jogador 2"><button class="btn full" id="saveP2Btn">Guardar pontuação do Jogador 2</button></div>
 <p id="saveStatus" class="feedback" aria-live="polite"></p><div class="online-ranking"><div class="row"><strong>Classificação</strong><select id="rankingMode" class="answer" style="width:auto;margin:0;padding:8px"><option value="solo">Individual</option><option value="duel">Duelo</option></select></div><button class="btn secondary full" id="loadRanking">Ver ranking online</button><ol id="rankingList"></ol></div></div>
 <button class="btn full" id="resultHome">Voltar ao menu</button></section>
-<div class="footer">ATINA · Protótipo 1.0 · As pontuações são guardadas apenas durante esta sessão.</div>
+<div class="footer">ATINA · Pensa. Descobre. Atina. · Ranking online disponível no fim de cada jogo.</div>
 </main>
 <script>
-const SUPABASE_URL='https://qwuxwiurqwfjizkwpmjp.supabase.co';\nconst SUPABASE_KEY='sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';\nconst games=[
+const SUPABASE_URL='https://qwuxwiurqwfjizkwpmjp.supabase.co';
+const SUPABASE_KEY='sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';
+const games=[
 ['Quem sou eu?','👤',['Em criança, nem todos imaginavam que eu mudaria a forma de entender o universo.','Passei a minha vida a fazer perguntas sobre espaço, tempo e luz.','Uma teoria minha mudou profundamente a Física.','O Nobel da Física de 1921 foi-me atribuído pela explicação do efeito fotoelétrico.','A minha fórmula mais célebre começa por E e termina em c².'],'Albert Einstein',['albert einstein','einstein','professor einstein']],
 ['Onde estou?','🌍',['Tenho uma luz muito própria, sobretudo ao fim da tarde.','As minhas ruas guardam séculos de histórias e muitas subidas.','Um grande rio acompanha a minha paisagem.','Alfama, Belém e os elétricos amarelos fazem parte da minha identidade.','Sou a capital portuguesa, conhecida pelas sete colinas e pela luz que se reflete no Tejo.'],'Lisboa',['lisboa','cidade de lisboa','lisbon']],
 ['O que sou?','🔎',['Posso ser pequena, mas consigo guardar grandes segredos.','Muitas vezes vivo presa a um porta-chaves.','Tenho dentes ou recortes que precisam de encaixar no sítio certo.','Quando rodo, uma porta pode abrir-se — ou fechar-se.','Há versões físicas e também versões digitais. O que sou?'],'Chave',['chave','uma chave','a chave']],
