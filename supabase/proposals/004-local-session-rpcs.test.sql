@@ -1,5 +1,5 @@
 begin;
-select plan(12);
+select plan(13);
 
 insert into private.atina_challenges (
   challenge_id, category, emoji, clues, answer, accepted_answers, difficulty, active
@@ -8,6 +8,19 @@ insert into private.atina_challenges (
   '["Pista inicial","Segunda pista","Terceira pista","Quarta pista","Quinta pista"]'::jsonb,
   'Coração de Leão', '["coracao de leao"]'::jsonb, 'easy', true
 );
+
+create temporary table _atina_mix_session as
+select
+  (r->>'token') as token,
+  ((r->'state')->>'session_id')::uuid as session_id
+from (select public.atina_start_local_game(
+  'mix', 'easy', null, 0
+) as r) started;
+
+select ok(
+  (public.atina_local_game_state(session_id, token)->>'mode') = 'mix',
+  'o servidor inicia Mix sem filtro de categoria'
+) from _atina_mix_session;
 
 create temporary table _atina_test_session as
 select
