@@ -8,7 +8,7 @@ Jogo de desafios em português (pt-PT), pensado para telemóveis.
 - Indicador verde no cabeçalho quando existe sessão iniciada, com pseudónimo ou email da conta.
 - Menu inicial reorganizado para telemóveis: modo de jogo, modalidades em destaque, temporizador e atalhos de conta/ranking em secções separadas.
 - Corrigido erro de JavaScript que impedia a apresentação das 15 modalidades no menu inicial.
-- 15 modalidades e 190 desafios únicos (expansão da base em curso, com meta de 50 por modalidade).
+- 15 modalidades e 120 desafios registados no banco atual (8 por modalidade); a meta de expansão é 50 por modalidade, num total de 750 desafios.
 - Cinco pistas progressivas por desafio (seis na modalidade Imagem Misteriosa); a última pista dá uma orientação adicional sem revelar diretamente a resposta.
 - As pistas reveladas permanecem visíveis.
 - Resposta errada: menos 10 pontos; é possível tentar novamente.
@@ -116,3 +116,31 @@ Ao recarregar, o ATINA tenta primeiro recuperar a sessão multiplayer; caso não
 ### Correção do relógio em tempo real (31/10/2026)
 - O contador das partidas online passa a garantir a atualização contínua do relógio no ecrã, incluindo logo no arranque da partida e após a receção de novos estados.
 - A contagem é recalculada a partir do prazo absoluto (`Date.now()`), evitando depender da quantidade de intervalos executados pelo navegador.
+
+
+## Banco de desafios e meta de expansão
+
+O banco atual contém **120 desafios em 15 modalidades** (8 por modalidade). A meta do projeto é chegar a **750 desafios**, com 50 em cada modalidade. Faltam, portanto, 630 desafios para atingir essa meta. O progresso é calculado diretamente a partir do array `games` em `index.html`, não a partir de contagens escritas manualmente.
+
+| Modalidade | Atual | Meta |
+|---|---:|---:|
+| Quem sou eu? | 8 | 50 |
+| Onde estou? | 8 | 50 |
+| O que sou? | 8 | 50 |
+| História e mistérios | 8 | 50 |
+| Palavras escondidas | 8 | 50 |
+| Ciência e natureza | 8 | 50 |
+| Cultura geral | 8 | 50 |
+| Imagem misteriosa | 8 | 50 |
+| Lógica e números | 8 | 50 |
+| Desafio surpresa | 8 | 50 |
+| Música e sons | 8 | 50 |
+| Cinema e televisão | 8 | 50 |
+| Desporto | 8 | 50 |
+| Detetive | 8 | 50 |
+| Ilusões e truques mentais | 8 | 50 |
+| **Total** | **120** | **750** |
+
+### Validar o banco de desafios
+
+Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer das respostas repetidas um erro bloqueante.
