@@ -1,0 +1,12 @@
+begin;
+select plan(8);
+select ok(private.atina_normalize_answer('  Coração-de-Leão!  ') = 'coracao de leao', 'normaliza acentos, pontuação e espaços');
+select ok(private.atina_answer_matches('Coração de Leão', 'coracao de leao'), 'aceita resposta sem acentos');
+select ok(private.atina_answer_matches('Lisboa', 'Lisboa'), 'aceita correspondência exata');
+select ok(private.atina_answer_matches('elefante', 'elefanti'), 'aceita uma diferença numa palavra longa');
+select ok(private.atina_answer_matches('gato preto', 'gato prêto'), 'normaliza palavras com acentos');
+select ok(not private.atina_answer_matches('sol', 'sul'), 'não tolera erros em palavras curtas');
+select ok(not private.atina_answer_matches('rio de janeiro', 'rio janeiro'), 'não aceita omissão de palavras');
+select ok(not private.atina_answer_matches('casa azul', 'azul casa extra'), 'não aceita palavras adicionais');
+select * from finish();
+rollback;
