@@ -17,16 +17,20 @@ import { resolve, relative, isAbsolute, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const outputArg = process.argv[2];
-if (!outputArg || !isAbsolute(outputArg)) {
-  console.error('Indica um caminho absoluto fora do repositório para o SQL privado.');
-  process.exit(2);
-}
-const outputPath = resolve(outputArg);
-const rel = relative(repoRoot, outputPath);
-if (rel === '' || (!rel.startsWith('..') && !isAbsolute(rel))) {
-  console.error('Por segurança, o ficheiro SQL privado tem de ficar fora do repositório.');
-  process.exit(2);
+const checkOnly = process.argv[2] === '--check';
+const outputArg = checkOnly ? null : process.argv[2];
+let outputPath = null;
+if (!checkOnly) {
+  if (!outputArg || !isAbsolute(outputArg)) {
+    console.error('Indica um caminho absoluto fora do repositório para o SQL privado.');
+    process.exit(2);
+  }
+  outputPath = resolve(outputArg);
+  const rel = relative(repoRoot, outputPath);
+  if (rel === '' || (!rel.startsWith('..') && !isAbsolute(rel))) {
+    console.error('Por segurança, o ficheiro SQL privado tem de ficar fora do repositório.');
+    process.exit(2);
+  }
 }
 
 const source = readFileSync(resolve(repoRoot, 'index.html'), 'utf8');
@@ -144,7 +148,15 @@ rows.forEach((r, i) => {
 });
 statements.push('on conflict (challenge_id) do update set category=excluded.category, emoji=excluded.emoji, clues=excluded.clues, answer=excluded.answer, accepted_answers=excluded.accepted_answers, image_url=excluded.image_url, difficulty=excluded.difficulty, active=true;');
 statements.push('commit;');
-writeFileSync(outputPath, statements.join('\n') + '\n', { mode: 0o600, flag: 'wx' });
-chmodSync(outputPath, 0o600);
-console.log(`Gerados ${rows.length} registos privados com dificuldade calculada. SQL guardado fora do repositório: ${outputPath}`);
-console.log('Não executar em produção. Rever e aplicar apenas numa instância de desenvolvimento.');
+if (checkOnly) {
+  const counts = rows.reduce((acc, row) => {
+    acc[row.difficulty] = (acc[row.difficulty] || 0) + 1;
+    return acc;
+  }, {});
+  console.log(`Verificação OK: ${rows.length} desafios; easy=${counts.easy || 0}, medium=${counts.medium || 0}, hard=${counts.hard || 0}. Nenhum segredo foi exportado.`);
+} else {
+  writeFileSync(outputPath, statements.join('\n') + '\n', { mode: 0o600, flag: 'wx' });
+  chmodSync(outputPath, 0o600);
+  console.log(`Gerados ${rows.length} registos privados com dificuldade calculada. SQL guardado fora do repositório: ${outputPath}`);
+  console.log('Não executar em produção. Rever e aplicar apenas numa instância de desenvolvimento.');
+}
