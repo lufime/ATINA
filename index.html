@@ -323,6 +323,31 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #mimicaGame .mime-picture-clue img{width:clamp(48px,13vw,88px);height:clamp(48px,13vw,88px);object-fit:contain;filter:drop-shadow(0 4px 8px #0005)}
 #mimicaGame #mimeClueProgress{font-weight:750;color:#f3c65e}
 #mimicaGame #mimeReveal{min-height:48px}
+
+/* Apresentação horizontal para TV, monitor e telemóveis rodados */
+@media (orientation:landscape) and (min-width:520px){
+ body{min-height:100dvh}
+ .wrap{width:min(100%,1280px);max-width:1280px;padding:12px 22px 20px}
+ .brand{padding:12px 20px}
+ .brand .logo{font-size:34px;margin:2px 0}
+ .brand .stats{margin-top:8px;padding-top:7px}
+ #home{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.5fr);gap:14px;align-items:start}
+ #home>.sound-control{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+ #home .settings-block{grid-column:1;grid-row:2}
+ #home .play-block{grid-column:1;grid-row:3}
+ #home .categories-block{grid-column:2;grid-row:2 / span 2}
+ #home .account-block,#home .network-block,#home .home-duel-note{grid-column:1/-1}
+ #home .modes{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #home .tile{min-height:78px!important}
+ #game>.card{max-width:1120px;margin:0 auto;padding:14px 22px!important}
+ #game .visual{height:min(34vh,260px)!important}
+ #mimicaGame .card{max-width:1100px;display:grid;grid-template-columns:1fr 1fr;column-gap:22px;align-items:center}
+ #mimicaGame .card>*{min-width:0}
+ #mimicaGame #mimePictureClue{grid-column:2;grid-row:3 / span 3;min-height:220px!important}
+ #mimicaGame #mimeReveal{grid-column:1}
+ #mimicaGame .actions{grid-column:1}
+ #mimicaGame #mimeFeedback,#mimicaGame .row:has(#mimeScore1),#mimicaGame #mimeNext{grid-column:1/-1}
+}
 </style>
 </head>
 <body><main class="wrap">
@@ -12625,7 +12650,7 @@ function closeScreenShareHelp(){$('screenShareHelp').classList.add('hidden');}
 $('shareMonitorHome').addEventListener('click',openScreenShareHelp);
 $('shareMonitorGame').addEventListener('click',openScreenShareHelp);
 $('closeScreenShare').addEventListener('click',closeScreenShareHelp);
-$('fullscreenAtina').addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();}else{await document.exitFullscreen();}}catch(e){$('screenShareTitle').textContent='O modo de ecrã inteiro não está disponível neste navegador.';}});
+$('fullscreenAtina').addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();try{if(screen.orientation?.lock)await screen.orientation.lock('landscape');}catch(orientationError){$('screenShareTitle').textContent='Ecrã inteiro ativado. Se o ecrã continuar vertical, ativa a rotação automática no telemóvel e roda-o para horizontal.';}}else{await document.exitFullscreen();try{screen.orientation?.unlock?.();}catch(e){}}}catch(e){$('screenShareTitle').textContent='Não foi possível ativar o ecrã inteiro. Ativa a rotação automática no dispositivo e roda-o para horizontal.';}});
 $('soundToggle').addEventListener('click',()=>{unlockTimerAudio();atinaSoundEnabled=!atinaSoundEnabled;try{localStorage.setItem('atinaSoundEnabled',String(atinaSoundEnabled));}catch(e){}syncSoundToggle();if(atinaSoundEnabled)playAtinaSound('correct');});syncSoundToggle();$('submit').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkSubmitAnswer();}},true);$('answer').addEventListener('keydown',e=>{if(networkGameActive&&e.key==='Enter'){e.preventDefault();networkSubmitAnswer();}},true);$('nextClue').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkHostReveal();}},true);$('pass').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkHostPass();}},true);$('continue').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkHostNext();}},true);async function networkRestoreSession(){let saved;try{saved=JSON.parse(localStorage.getItem('atinaNetworkRoom')||'null');}catch(e){localStorage.removeItem('atinaNetworkRoom');return;}if(!saved?.room_id||!saved?.token)return;networkRoom=saved;networkMessage('networkStatus','A recuperar a tua sala…');try{await networkRefreshRoom();if(!networkLobbyData){throw new Error('Sala indisponível.');}screen(networkLobbyData.status==='playing'||networkLobbyData.status==='completed'?'game':'networkLobby');if(networkPollHandle)clearInterval(networkPollHandle);networkPollHandle=setInterval(networkRefreshRoom,3000);networkMessage('networkStatus','Ligação à sala recuperada.');}catch(e){networkRoom=null;networkGameActive=false;networkMessage('networkStatus','Não foi possível recuperar a sala: '+(e.message||'sessão inválida')+'. Podes voltar a entrar com o código.');localStorage.removeItem('atinaNetworkRoom');}}
 $('createNetworkRoom').onclick=networkCreateRoom;$('joinNetworkRoom').onclick=networkJoinRoom;$('leaveNetworkRoom').onclick=networkLeaveRoom;$('networkReady').onclick=()=>networkSetReady(!networkLobbyData?.ready);$('networkAutoTeams').onclick=networkAutoTeams;$('networkStartGame').onclick=networkStartGame;
 
