@@ -337,3 +337,12 @@ Aplicados apenas em `atina-development` e versionados como migrations:
 
 
 - Incremento 018: adicionados índices de cobertura às duas chaves estrangeiras de `private.atina_mime_rounds`, após alerta do Advisor. Os 2 testes de índices passaram.
+
+
+**Revisão complementar do incremento 018:**
+
+- O ficheiro legado `supabase/migrations/20261031204614_atina_multiplayer_mimicas.sql` nunca foi aplicado e foi removido da pasta de migrations, porque confiava em `p_correct`/`p_points` e usava a comparação antiga do token. Foi preservado em `supabase/proposals/legacy-unapplied-insecure-mimicas-migration.sql`, claramente marcado como arquivo histórico e proibido de aplicar.
+- Advisor de segurança após Mímicas: 11 INFO `rls_enabled_no_policy` (esperado com grants diretos revogados) e 25 WARN de funções `SECURITY DEFINER` executáveis por `anon` e 25 por `authenticated`. Os WARN exigem mitigação de abuso/rate limiting e revisão antes de produção.
+- Advisor de performance já não assinala chaves estrangeiras sem índice. Restam apenas avisos INFO de índices ainda não usados num ambiente de desenvolvimento com poucos dados.
+- As RPCs Mímicas preservam os nomes/argumentos chamados pelo cliente atual; a publicação de estado, contudo, só aceita as duas transições Mímicas permitidas. Os outros modos continuam sem publicador genérico, intencionalmente.
+- **Limite de confiança específico de Mímicas:** como o jogo é gestual e não existe submissão textual de uma resposta pelo jogador, o anfitrião continua a ser o árbitro humano e envia a decisão `p_correct`. O servidor não aceita os pontos enviados (`p_points)), valida o prazo, calcula os pontos, regista a atribuição e controla o bloqueio. Esta é uma validação server-authoritative da resolução e pontuação, não uma validação semântica automática do gesto.
