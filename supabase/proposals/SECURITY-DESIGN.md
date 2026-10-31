@@ -352,9 +352,9 @@ Aplicados apenas em `atina-development` e versionados como migrations:
 
 As três alterações que estavam aplicadas no ambiente de desenvolvimento, mas apenas arquivadas em `proposals`, foram formalizadas e registadas no histórico de migrations do projeto `atina-development`:
 
-- `20261031223442_006_local_party_mode.sql`: regras de modo Party nas sessões locais.
-- `20261031223448_007_multiplayer_room_foundation.sql`: seis tabelas de salas, participantes, ledger de respostas, resultados, propostas e votos, com RLS, privilégios revogados e índices.
-- `20261031223513_008_multiplayer_lobby_rpcs.sql`: sete RPCs token-authenticated para criar/entrar/sair, consultar estado, gerir prontidão/equipas e iniciar sala.
+- `20261031220701_006_local_party_mode.sql`: regras de modo Party nas sessões locais.
+- `20261031220702_007_multiplayer_room_foundation.sql`: seis tabelas de salas, participantes, ledger de respostas, resultados, propostas e votos, com RLS, privilégios revogados e índices.
+- `20261031220703_008_multiplayer_lobby_rpcs.sql`: sete RPCs token-authenticated para criar/entrar/sair, consultar estado, gerir prontidão/equipas e iniciar sala.
 
 A proposta 008 tinha delimitadores de função sem os terminadores de instrução SQL necessários. O erro foi detetado na aplicação da migration, corrigido na proposta e só depois aplicada com sucesso. A versão formal em `supabase/migrations` corresponde à versão corrigida.
 
@@ -363,4 +363,4 @@ Testes pgTAP executados novamente depois da formalização, todos aprovados:
 - 007 fundação multiplayer: 14/14.
 - 008 lobby RPCs: 12/12.
 
-As migrations 006–008 foram aplicadas apenas no projeto de desenvolvimento, não em produção. Os testes são transacionais e revertem os dados de teste. A sequência de migrations fica agora contínua de 001 a 018 no histórico do desenvolvimento.
+As migrations 006–008 foram aplicadas apenas no projeto de desenvolvimento, não em produção. Os testes são transacionais e revertem os dados de teste. Para manter a ordem de dependências num replay limpo, os três registos de histórico criados durante a formalização foram reordenados no ledger do projeto de desenvolvimento para as versões 20261031220701–20261031220703, entre 005 e 009. Os nomes/versões do ledger foram confirmados contra os ficheiros; a sequência fica contínua de 001 a 018. Esta operação alterou apenas metadados de histórico no projeto de desenvolvimento, não executou novamente DDL nem tocou em produção.
