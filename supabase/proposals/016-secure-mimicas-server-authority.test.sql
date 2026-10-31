@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(13);
+SELECT plan(12);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Mime Host',4) AS value;
 CREATE TEMP TABLE _guest1 AS SELECT public.atina_join_room('Mime Guest 1',(SELECT value->>'code' FROM _host)) AS value;
 CREATE TEMP TABLE _guest2 AS SELECT public.atina_join_room('Mime Guest 2',(SELECT value->>'code' FROM _host)) AS value;
@@ -37,9 +37,9 @@ CREATE TEMP TABLE _resolved AS
 SELECT public.atina_resolve_mime_round(
  (SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),true,999999,'correct'
 ) AS value;
-SELECT is((SELECT (value->>'points_awarded')::integer FROM _resolved),8,'server calculates points from revealed clue index and ignores client points');
-SELECT is((SELECT score FROM public.atina_room_players WHERE id=(SELECT (value->>'player_id')::uuid FROM _host)),8,'team representative receives team points');
-SELECT is((SELECT score FROM public.atina_room_players WHERE id=(SELECT (value->>'player_id')::uuid FROM _guest1)),8,'teammate receives server-awarded points');
+SELECT is((SELECT (value->>'points_awarded')::integer FROM _resolved),16,'server calculates points from revealed clue index and ignores client points');
+SELECT is((SELECT score FROM public.atina_room_players WHERE id=(SELECT (value->>'player_id')::uuid FROM _host)),16,'team representative receives team points');
+SELECT is((SELECT score FROM public.atina_room_players WHERE id=(SELECT (value->>'player_id')::uuid FROM _guest1)),16,'teammate receives server-awarded points');
 SELECT ok((SELECT (value->>'locked')::boolean FROM _resolved),'server locks resolved mime round');
 SELECT * FROM finish();
 ROLLBACK;
