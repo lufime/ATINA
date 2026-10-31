@@ -190,3 +190,16 @@ A alteração está em `006-local-party-mode.sql` e o teste transacional em `006
 
 
 **Correção complementar Party:** a primeira versão reutilizava a alternância de Duelo sem incluir explicitamente Party, o que mantinha a Equipa 1 ativa. Foi corrigida `atina_local_next_challenge` para alternar entre as duas equipas em ambos os modos. O teste foi ampliado para cinco asserções e confirmou a mudança para a Equipa 2 após avançar da primeira ronda. A proposta 006 e o teste foram atualizados antes de considerar este incremento concluído.
+
+
+### Auditoria de Multiplayer e Mímicas — bloqueio de ambiente (2026-10-31)
+
+A revisão do código do cliente confirmou que o protocolo atual chama as RPCs `atina_submit_room_answer`, `atina_vote_team_proposal`, `atina_submit_team_proposal`, `atina_start_room`, `atina_start_mime_round`, `atina_resolve_mime_round`, `atina_get_mime_secret`, `atina_finish_mime_room`, `atina_request_timeout`, `atina_set_room_ready` e `atina_set_room_team`.
+
+A migration existente `supabase/migrations/20261031204614_atina_multiplayer_mimicas.sql` não cria a fundação das salas; pressupõe que já existam `public.atina_rooms`, `public.atina_room_players`, `public.atina_room_answers` e `public.atina_room_results`. A migration de Mímicas atual permite ao anfitrião enviar `p_correct` e `p_points` para `atina_resolve_mime_round`; limita o intervalo de pontos, mas não calcula a pontuação com base na dificuldade/índice de pista e no prazo do servidor. Também depende de `game_state.deadline`, que o protocolo cliente pode publicar/alterar, pelo que não constitui um relógio autoritativo.
+
+**Bloqueio confirmado no projeto de desenvolvimento:** o schema `public` de `atina-development` não contém as tabelas `atina_rooms`, `atina_room_players`, `atina_room_answers` ou `atina_room_results`, nem as RPCs de salas acima listadas. Só estão instaladas as seis RPCs locais. A migration de Mímicas, portanto, não pode ser aplicada nem testada isoladamente nesse projeto. Não foi consultada nem alterada a base de dados de produção para contornar esta ausência.
+
+**Decisão técnica para a próxima fase:** antes de reescrever as RPCs de salas, é necessário reconstruir e versionar a fundação multiplayer no ambiente de desenvolvimento (tabelas, constraints, índices, RLS/grants e RPCs de lobby), confirmar o contrato de cada chamada do cliente e só depois criar estado privado autoritativo para cada ronda. O estado privado deve guardar deadline como `timestamptz` gerado pelo servidor; o anfitrião só poderá comunicar o resultado observado (acerto/passe), nunca pontos nem prazo. As respostas dos desafios também terão de ser comparadas no servidor, sem aceitar `p_correct`/ `p_points` do cliente.
+
+Até essa fundação existir, não é seguro fazer alterações isoladas às funções de Mímicas ou declarar Multiplayer/Mímicas protegidos. Nenhuma migration multiplayer foi aplicada no projeto de desenvolvimento nesta fase.
