@@ -363,7 +363,7 @@ Testes pgTAP executados novamente depois da formalização, todos aprovados:
 - 007 fundação multiplayer: 14/14.
 - 008 lobby RPCs: 12/12.
 
-As migrations 006–008 foram aplicadas apenas no projeto de desenvolvimento, não em produção. Os testes são transacionais e revertem os dados de teste. Para manter a ordem de dependências num replay limpo, os três registos de histórico criados durante a formalização foram reordenados no ledger do projeto de desenvolvimento para as versões 20261031220701–20261031220703, entre 005 e 009. Os nomes/versões do ledger foram confirmados contra os ficheiros; a sequência fica contínua de 001 a 018. Esta operação alterou apenas metadados de histórico no projeto de desenvolvimento, não executou novamente DDL nem tocou em produção.
+As migrations 006–008 foram aplicadas apenas no projeto de desenvolvimento, não em produção. Os testes são transacionais e revertem os dados de teste. Para manter a ordem de dependências num replay limpo, os três registos de histórico criados durante a formalização foram reordenados no ledger do projeto de desenvolvimento para as versões 20261031220701–20261031220703, entre 005 e 009. Os nomes/versões do ledger foram confirmados contra os ficheiros. Esta operação alterou apenas metadados de histórico no projeto de desenvolvimento, não executou novamente DDL nem tocou em produção.
 
 
 ## Incremento 019 — rate limiting das RPCs ATINA
@@ -383,4 +383,12 @@ Aplicado apenas em `atina-development` e formalizado na migration `2026103122382
 **Limites e operação:** a limitação é por IP e por endpoint, pelo que utilizadores atrás do mesmo NAT partilham a quota. É uma primeira camada contra abuso automatizado, não substitui WAF/mitigação DDoS nem quotas por conta. O hook `db_pre_request` aplica-se ao Data API/PostgREST, não a Realtime, Storage ou outros produtos Supabase. A integração foi testada com contexto de pedido simulado em pgTAP e com a configuração do role confirmada; não foi feito um teste HTTP externo ponta a ponta nesta sessão. A função de pre-request acrescenta um aviso ao Advisor por ser uma função `SECURITY DEFINER` deliberadamente executável pelos roles que chamam o Data API.
 
 
-**Nota de reprodutibilidade do repositório (verificação de 31-10-2026):** o ledger do projeto de desenvolvimento contém 19 entradas, de 001 a 019. No entanto, a pasta `supabase/migrations` contém atualmente 14 ficheiros: 006–019. As definições SQL de 001–005 continuam em `supabase/proposals` e ainda não foram copiadas para a pasta formal de migrations. Portanto, o histórico remoto de desenvolvimento está completo, mas um replay limpo apenas a partir do repositório ainda não está demonstrado. Antes de declarar o repositório totalmente reproduzível, é necessário formalizar 001–005 com as versões e instruções efetivamente registadas no ledger, verificando-as contra as propostas.
+## Formalização das migrations iniciais e reconciliação do deadline
+
+Verificação de 31-10-2026: a pasta `supabase/migrations` contém agora 20 ficheiros versionados e o ledger de `atina-development` contém 20 entradas correspondentes.
+
+- `20261031220653` a `20261031220659`: migrations 001–004. Os ficheiros formais foram copiados das instruções SQL guardadas no próprio ledger `supabase_migrations.schema_migrations`, que coincidem com as propostas 001–004.
+- `20261031220700_005_enable_pgtap_for_development_tests.sql`: formaliza a instrução histórica `CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions`, confirmada no ledger e no estado da base de dados.
+- `20261031221036_local_session_deadline_consistency.sql`: formaliza o patch de deadline das três RPCs locais. O patch já estava aplicado no desenvolvimento (as definições atuais coincidem com a proposta) e os testes 005 passaram 6/6. Como o patch não tinha entrada própria no ledger, foi acrescentada uma entrada de histórico com a versão cronológica 20261031221036, posterior às migrations 006–008 e anterior à 009. Esta reconciliação foi apenas de metadados; não voltou a executar DDL.
+
+Testes reexecutados após a formalização: comparador de respostas 003 (9/9), RPCs locais 004 (13/13) e consistência de deadline (6/6). As migrations 001–005 e o patch de deadline estão agora representados por ficheiros versionados. A correspondência entre os 20 ficheiros e as 20 entradas do ledger foi confirmada. Isto fecha a lacuna de formalização do histórico existente; ainda não equivale a um ensaio integral de replay numa base de dados nova.
