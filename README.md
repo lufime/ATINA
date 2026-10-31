@@ -95,3 +95,7 @@ O anfitrião pode distribuir automaticamente os participantes por até seis equi
 
 ### Multiplayer — classificação das equipas em direto
 Durante os desafios, o painel da sala apresenta duas tabelas atualizadas com os dados recebidos do Supabase: classificação por equipas, calculada pela soma dos pontos dos seus membros, e classificação individual. A ordenação das equipas é atualizada à medida que as pontuações dos jogadores são sincronizadas.
+
+
+### Multiplayer — recuperar a partida após atualizar a página
+A sessão da sala (identificador e token de acesso) fica guardada localmente no navegador. Ao atualizar ou reabrir a página no mesmo telemóvel/navegador, o ATINA tenta recuperar a sala e volta ao lobby ou ao desafio que está atualmente sincronizado no Supabase. A partida não é criada de novo nem regressa ao primeiro desafio. Se a sessão tiver expirado ou a sala já não existir, é apresentada uma mensagem e será necessário entrar novamente com o código.
