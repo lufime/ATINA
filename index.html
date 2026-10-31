@@ -187,10 +187,15 @@ body{font-size:17px}
  #home .tile{min-height:105px!important}
 }
 
+
+/* Clear signed-in status in the game header */
+.account-indicator{display:inline-flex;align-items:center;gap:8px;width:max-content;max-width:100%;margin-top:12px;padding:7px 11px;border:1px solid #39896c;border-radius:999px;background:#123c35;color:#a9f0c9;font-size:12px;font-weight:750;line-height:1.3;overflow-wrap:anywhere;box-shadow:0 0 14px #39a87920}
+.account-dot{display:inline-grid;place-items:center;width:19px;height:19px;flex:0 0 19px;border-radius:50%;background:#2d946d;color:#fff;font-size:13px;font-weight:900}
+
 </style>
 </head>
 <body><main class="wrap">
-<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><div class="logo">ATINA</div><div class="tag">O desafio é descobrir.</div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
+<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><div class="logo">ATINA</div><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
 <section id="home"><div class="home-block"><div class="section">1 · Escolhe como jogar</div><div class="actions"><button class="btn full" id="solo">Jogar sozinho</button><button class="btn secondary full" id="duel">Duelo · 2 jogadores</button></div></div><div class="home-block categories-block"><div class="section">2 · Escolhe uma modalidade</div><p class="muted small home-hint">Ou toca em «Jogar sozinho» para receber desafios de todas as modalidades.</p><div class="modes" id="categories"></div></div><div class="home-block settings-block"><div class="section">3 · Tempo por desafio</div><select id="timerMode" class="answer" style="font-size:16px;margin-top:0"><option value="60">⏱️ 60 segundos</option><option value="90">⏱️ 90 segundos</option><option value="0">Sem limite de tempo</option></select></div><div class="home-block account-block"><div class="section">A tua conta e classificação</div><div class="home-tools"><button class="btn secondary" id="openRanking">🏆 Ranking online</button><button class="btn secondary" id="openAuth">👤 A minha conta</button></div><p class="muted small" id="authSummary" aria-live="polite">Joga sem conta ou entra para usar o teu perfil.</p></div><p class="muted small home-duel-note">No Duelo, os jogadores jogam à vez no mesmo telemóvel. Cada erro desconta 10 pontos. Podes tentar novamente ou carregar em PASSO.</p></section>
 <section id="authPage" class="card hidden"><h2>👤 Conta ATINA</h2><p class="muted small">Cria uma conta com email e palavra-passe. O teu pseudónimo será único.</p>
 <div id="authForms">
@@ -222,8 +227,12 @@ async function refreshAtinaSession(){
  const {data}=await supabaseClient.auth.getSession();atinaUser=data.session?.user||null;
  atinaProfile=null;
  if(atinaUser){const {data:profile}=await supabaseClient.from('atina_profiles').select('nickname').eq('user_id',atinaUser.id).maybeSingle();atinaProfile=profile||null;}
- $('authSummary').textContent=atinaUser?(atinaProfile?.nickname||atinaUser.email)+' · sessão iniciada':'Joga sem conta ou entra para usar o teu perfil.';
- $('openAuth').textContent=atinaUser?'👤 A minha conta':'👤 Conta de jogador';
+ const signedIn=!!atinaUser;
+ $('authSummary').textContent=signedIn?(atinaProfile?.nickname||atinaUser.email)+' · sessão iniciada':'Joga sem conta ou entra para usar o teu perfil.';
+ $('openAuth').textContent=signedIn?'👤 A minha conta':'👤 Conta de jogador';
+ $('accountIndicator').classList.toggle('hidden',!signedIn);
+ $('accountIndicatorText').textContent=signedIn?'Sessão iniciada · '+(atinaProfile?.nickname||atinaUser.email):'';
+
 }
 async function createAtinaAccount(){
  const nickname=$('authNickname').value.trim(),email=$('authEmail').value.trim(),password=$('authPassword').value;
