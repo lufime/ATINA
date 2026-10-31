@@ -18,3 +18,5 @@ jobs:
           node-version: 20
       - name: Validar estrutura, respostas e duplicações
         run: node scripts/validate-challenges.mjs --strict
+      - name: Validar catálogo público sem respostas secretas
+        run: node scripts/validate-public-challenges.mjs
