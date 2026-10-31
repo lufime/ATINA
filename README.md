@@ -8,7 +8,7 @@ Jogo de desafios em português (pt-PT), pensado para telemóveis.
 - Indicador verde no cabeçalho quando existe sessão iniciada, com pseudónimo ou email da conta.
 - Menu inicial reorganizado para telemóveis: modo de jogo, modalidades em destaque, temporizador e atalhos de conta/ranking em secções separadas.
 - Corrigido erro de JavaScript que impedia a apresentação das 15 modalidades no menu inicial.
-- 15 modalidades e 190 desafios preenchidos, sem respostas principais repetidas dentro da mesma modalidade; a meta de expansão é 50 por modalidade, num total de 750 desafios.
+- 15 modalidades e 222 desafios preenchidos, sem respostas principais repetidas dentro da mesma modalidade; a meta de expansão é 50 por modalidade, num total de 750 desafios.
 - Cinco pistas progressivas por desafio (seis na modalidade Imagem Misteriosa); a última pista dá uma orientação adicional sem revelar diretamente a resposta.
 - As pistas reveladas permanecem visíveis.
 - Resposta errada: menos 10 pontos; é possível tentar novamente.
@@ -120,7 +120,7 @@ Ao recarregar, o ATINA tenta primeiro recuperar a sessão multiplayer; caso não
 
 ## Banco de desafios e meta de expansão
 
-O banco atual contém **190 desafios preenchidos em 15 modalidades**. A meta é chegar a **750 desafios**, com 50 em cada modalidade. Faltam **560 desafios** para atingir essa meta. As contagens são calculadas a partir do array `games` em `index.html`, e o menu atualiza automaticamente o número de desafios por modalidade.
+O banco atual contém **190 desafios preenchidos em 15 modalidades**. A meta é chegar a **750 desafios**, com 50 em cada modalidade. Faltam **528 desafios** para atingir essa meta. As contagens são calculadas a partir do array `games` em `index.html`, e o menu atualiza automaticamente o número de desafios por modalidade.
 
 | Modalidade | Atual | Meta |
 |---|---:|---:|
@@ -131,7 +131,7 @@ O banco atual contém **190 desafios preenchidos em 15 modalidades**. A meta é 
 | Palavras escondidas | 12 | 50 |
 | Ciência e natureza | 12 | 50 |
 | Cultura geral | 12 | 50 |
-| Imagem misteriosa | 18 | 50 |
+| Imagem misteriosa | 50 | 50 |
 | Lógica e números | 14 | 50 |
 | Desafio surpresa | 13 | 50 |
 | Música e sons | 12 | 50 |
@@ -139,7 +139,7 @@ O banco atual contém **190 desafios preenchidos em 15 modalidades**. A meta é 
 | Desporto | 12 | 50 |
 | Ilusões e truques mentais | 12 | 50 |
 | Detetive | 14 | 50 |
-| **Total** | **190** | **750** |
+| **Total** | **222** | **750** |
 
 ### Validar o banco de desafios
 
