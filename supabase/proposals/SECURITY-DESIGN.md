@@ -318,3 +318,19 @@ Aplicado apenas em `atina-development`:
 - Testes pgTAP: 13 asserções passaram, incluindo tentativa de falsificar `p_correct=true` e `p_points=9999`, voto de outra equipa, voto do proponente, rejeição de resposta errada após unanimidade, penalização por membro, aceitação de resposta correta, cálculo independente de pontos e ledger individual por membro.
 
 **Limites:** a interface atual ainda envia os campos antigos de correção/pontos, que o servidor ignora corretamente; deverá ser simplificada quando o frontend for integrado. A visualização da proposta continua limitada à equipa via `atina_room_state`. Ainda faltam regras completas de timeout/pausa para orçamentos de equipa, e Mímicas continuam por implementar de forma segura.
+
+
+## Incrementos 016–017 — Mímicas com segredo e relógio autoritativos
+
+Aplicados apenas em `atina-development` e versionados como migrations:
+
+- `private.atina_mime_cards` contém palavras, categorias e cinco pistas visuais por cartão. `private.atina_mime_rounds` guarda cartão, representante, índice de ronda, relógio, prazo, pista revelada, resolução e pontos. Ambas têm RLS e nenhum grant direto a `anon` ou `authenticated`.
+- `atina_start_mime_round` seleciona um cartão ainda não usado na sala e prepara o estado público sem palavra secreta. A ronda só começa quando o anfitrião executa a transição explícita de início; o deadline é calculado pelo relógio do PostgreSQL.
+- `atina_get_mime_secret` só devolve a palavra ao representante dessa ronda.
+- `atina_publish_game_state` deixou de aceitar JSON arbitrário: só permite iniciar o relógio ou avançar exatamente uma pista, sem alterar representante, cartão, pontuação, deadline, resposta ou estado de bloqueio.
+- `atina_resolve_mime_round` ignora `p_points`, calcula pontos por pista e rapidez no servidor, distribui-os à equipa do representante ou aos jogadores que adivinham numa ronda individual, e revela a solução apenas depois de bloquear a ronda. O anfitrião continua a ser o árbitro humano do gesto e envia apenas a decisão de acerto/erro; Mímicas não têm uma resposta textual submetida pelo jogador que o servidor possa comparar automaticamente.
+- `atina_room_state` reconcilia o deadline de Mímicas durante o polling, bloqueia a ronda e revela a solução quando o prazo expira.
+- A ronda inicial só pode começar a partir do estado `pending`; as seguintes exigem que a ronda Mímicas anterior esteja concluída e que o número de ronda corresponda. Isto impede converter uma partida de outro modo em Mímicas a meio do jogo.
+- Testes pgTAP: 18 asserções para segredo, acesso do representante, pistas, pontuação independente do cliente, resolução, timeout por polling e permissões; mais 6 asserções para início explícito do relógio e guardas de transição. Todos passaram.
+
+**Limite de integração:** o frontend não foi alterado. As RPCs agora aceitam a publicação restrita necessária para iniciar relógio/revelar pistas em Mímicas, mas os fluxos dos outros modos continuam deliberadamente sem um publicador genérico de estado. A integração e validação ponta a ponta da interface exigem uma alteração separada do frontend, ainda não autorizada. Rate limiting e mitigação de abuso continuam pendentes antes de produção.
