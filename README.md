@@ -160,3 +160,7 @@ O menu e o ecrã de jogo incluem a opção **Partilhar ecrã / monitor**, com in
 - Mac: usar Duplicação de ecrã (AirPlay).
 
 A opção também permite colocar o ATINA em ecrã inteiro quando o navegador suporta essa funcionalidade. A ligação à TV é iniciada nas definições do próprio dispositivo; uma página web não consegue iniciar diretamente AirPlay ou Chromecast de forma universal. Os nomes dos menus e a compatibilidade variam por equipamento.
+
+
+### Modo Mímicas
+O menu inclui um modo de Mímicas independente dos 750 desafios de perguntas. Em cada ronda, uma palavra ou situação é apresentada para ser representada sem falar nem fazer sons. As duas equipas alternam as rondas, têm um temporizador configurado pelo tempo escolhido no menu (60 ou 90 segundos; sem limite usa 60 segundos neste modo), ganham um ponto quando acertam e podem passar uma palavra. O baralho inclui animais, profissões, ações, personagens, desporto e situações. O modo funciona no mesmo dispositivo, incluindo em ecrãs grandes e com navegação por comando compatível.
