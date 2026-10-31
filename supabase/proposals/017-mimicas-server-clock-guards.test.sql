@@ -9,6 +9,11 @@ CREATE TEMP TABLE _mime AS SELECT public.atina_start_mime_round(
  (SELECT (value->>'player_id')::uuid FROM _host),60) AS value;
 SELECT is((SELECT (value->>'started')::boolean FROM _mime),false,'preparing a round does not start the clock');
 SELECT is((SELECT started_at IS NULL AND deadline_at IS NULL FROM private.atina_mime_rounds WHERE room_id=(SELECT (value->>'room_id')::uuid FROM _host)),true,'private clock remains unset before host action');
+SELECT throws_ok(
+ format('SELECT public.atina_resolve_mime_round(%L::uuid,%L,true,5000,''correct'')',
+ (SELECT value->>'room_id' FROM _host),(SELECT value->>'token' FROM _host)),
+ 'P0001','O cronómetro ainda não foi iniciado.','cannot resolve before the host starts the clock'
+);
 CREATE TEMP TABLE _started AS SELECT public.atina_publish_game_state(
  (SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),
  (SELECT value FROM _mime)||jsonb_build_object('started',true)) AS value;
@@ -18,11 +23,6 @@ SELECT throws_ok(
  format('SELECT public.atina_start_mime_round(%L::uuid,%L,0,%L::uuid,60)',
  (SELECT value->>'room_id' FROM _host),(SELECT value->>'token' FROM _host),(SELECT value->>'player_id' FROM _host)),
  'P0001','A partida não está preparada para iniciar Mímicas.','cannot replace a different game mode with Mímicas'
-);
-SELECT throws_ok(
- format('SELECT public.atina_resolve_mime_round(%L::uuid,%L,true,5000,''correct'')',
- (SELECT value->>'room_id' FROM _host),(SELECT value->>'token' FROM _host)),
- 'P0001','A ronda já terminou.','cannot resolve a round already locked'
 );
 SELECT * FROM finish();
 ROLLBACK;
