@@ -12,7 +12,7 @@
  *
  * A fonte é index.html; o catálogo público é usado para validar IDs e pistas.
  */
-import { readFileSync, writeFileSync, chmodSync, realpathSync } from 'node:fs';
+import { readFileSync, writeFileSync, chmodSync } from 'node:fs';
 import { resolve, relative, isAbsolute, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,7 +40,7 @@ for (let i = arrayStart; i < source.length; i++) {
   const ch = source[i];
   if (quote) {
     if (escaped) escaped = false;
-    else if (ch === '\\\\') escaped = true;
+    else if (ch === '\\') escaped = true;
     else if (ch === quote) quote = null;
     continue;
   }
@@ -55,7 +55,7 @@ if (arrayEnd < 0) throw new Error('Não foi possível delimitar o array games.')
 const games = JSON.parse(source.slice(arrayStart, arrayEnd + 1));
 const publicById = new Map(publicCatalog.challenges.map(c => [c.id, c]));
 const norm = s => String(s ?? '').toLocaleLowerCase('pt-PT').normalize('NFD')
-  .replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9 ]/g, '').trim();
+  .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, '').trim();
 
 function difficultyScore(index) {
   const g = games[index], clues = (g?.[2] || []).map(x => String(x));
@@ -63,10 +63,10 @@ function difficultyScore(index) {
   const all = clues.join(' ').toLocaleLowerCase('pt-PT');
   const early = clues.slice(0, 2).join(' ').toLocaleLowerCase('pt-PT');
   const familiar = new Set(['agua','paz','chave','lisboa','portugal','sol','lua','arvore','fogo','gelo','coracao','amor','amizade','livro','telefone','computador','bicicleta','futebol','guitarra','pizza','casa','cao','gato','elefante','oceano','montanha','rio','flor','mae','pai','escola','medico','professor','bombeiro','cozinheiro','policia','aviao','comboio','carro','relogio','dinheiro','musica','cinema','teatro','bola','arco iris','chuva','neve']);
-  const specialist = /\\b(nobel|quântico|relatividade|fotossíntese|mitocôndria|constituição|dinastia|teorema|parlamento|revolução|império|átomo|equação|arqueológ|geológ|astronóm|biológ|matemátic|literári|mitológ|termodinâm|metabol|sintaxe|jurisprud|isótop|fotão|algoritm|proporção|inércia|soberania|feudal|renascimento|barroco)\\w*/i.test(all);
-  const inference = /\\b(ao contrário|apesar de|no entanto|deduz|conclui|contradição|inconsist|sequência|padrão|hipótese|vestígio|prova|testemunh|álibi|registo|evidência|não pode|apenas um|exatamente|qual é a lógica)\\w*/i.test(all);
-  const abstract = /\\b(liberdade|democracia|justiça|consciência|identidade|paradoxo|metáfora|ética|existência|memória|relatividade|infinito|probabilidade)\\w*/i.test(all);
-  const directEarly = /\\b(chamo-me|sou a capital|sou o país|sou um animal|sou uma cidade|o meu nome é|fui inventad[oa] por|nasci em|localizo-me em)\\b/i.test(early);
+  const specialist = /\b(nobel|quântico|relatividade|fotossíntese|mitocôndria|constituição|dinastia|teorema|parlamento|revolução|império|átomo|equação|arqueológ|geológ|astronóm|biológ|matemátic|literári|mitológ|termodinâm|metabol|sintaxe|jurisprud|isótop|fotão|algoritm|proporção|inércia|soberania|feudal|renascimento|barroco)\w*/i.test(all);
+  const inference = /\b(ao contrário|apesar de|no entanto|deduz|conclui|contradição|inconsist|sequência|padrão|hipótese|vestígio|prova|testemunh|álibi|registo|evidência|não pode|apenas um|exatamente|qual é a lógica)\w*/i.test(all);
+  const abstract = /\b(liberdade|democracia|justiça|consciência|identidade|paradoxo|metáfora|ética|existência|memória|relatividade|infinito|probabilidade)\w*/i.test(all);
+  const directEarly = /\b(chamo-me|sou a capital|sou o país|sou um animal|sou uma cidade|o meu nome é|fui inventad[oa] por|nasci em|localizo-me em)\b/i.test(early);
   const longEarly = clues.slice(0, 2).filter(x => x.length > 110).length;
   let score = 0;
   if (familiar.has(answer)) score -= 3;
@@ -141,7 +141,7 @@ rows.forEach((r, i) => {
 });
 statements.push('on conflict (challenge_id) do update set category=excluded.category, emoji=excluded.emoji, clues=excluded.clues, answer=excluded.answer, accepted_answers=excluded.accepted_answers, image_url=excluded.image_url, difficulty=excluded.difficulty, active=true;');
 statements.push('commit;');
-writeFileSync(outputPath, statements.join('\\n') + '\\n', { mode: 0o600, flag: 'wx' });
+writeFileSync(outputPath, statements.join('\n') + '\n', { mode: 0o600, flag: 'wx' });
 chmodSync(outputPath, 0o600);
 console.log(`Gerados ${rows.length} registos privados com dificuldade calculada. SQL guardado fora do repositório: ${outputPath}`);
 console.log('Não executar em produção. Rever e aplicar apenas numa instância de desenvolvimento.');
