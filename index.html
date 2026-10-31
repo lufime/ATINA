@@ -12697,12 +12697,12 @@ function mimeShowNext(){
   $('mimeWord').textContent='JOGO TERMINADO!';$('mimePictureClue').innerHTML='🏆';$('mimeClueProgress').textContent='Resultado final';$('mimeCategory').textContent='';$('mimeFeedback').textContent='Equipa '+(mimeScores[0]===mimeScores[1]?'— empate':(mimeScores[0]>mimeScores[1]?'1':'2')+' venceu')+' · '+mimeScores[0]+'–'+mimeScores[1]+' pontos.';$('mimeNext').textContent='🔄 Jogar novamente';$('mimeNext').dataset.restart='1';$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;return;
  }
  const card=mimeDeck[mimePos];mimeClue=0;
- $('mimeWord').textContent='REPRESENTA A MÍMICA';$('mimeCategory').textContent='Categoria: '+card[1]+' · não falar nem fazer sons';$('mimeFeedback').textContent='Observa a imagem e representa a ideia por mímica. A equipa tenta adivinhar!';mimeSeconds=Number($('timerMode')?.value||60);if(!mimeSeconds)mimeSeconds=60;
- $('mimeTimer').textContent=String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');
+ $('mimeWord').textContent='REPRESENTA A MÍMICA';$('mimeCategory').textContent='Categoria: '+card[1]+' · não falar nem fazer sons';$('mimeFeedback').textContent='Observa a imagem e representa a ideia por mímica. A equipa tenta adivinhar!';mimeSeconds=Number($('timerMode')?.value??60);if(!Number.isFinite(mimeSeconds))mimeSeconds=60;
+ $('mimeTimer').textContent=mimeSeconds===0?'∞':String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');
  $('mimeNext').textContent='▶ Começar ronda';$('mimeNext').dataset.restart='0';$('mimeCorrect').disabled=false;$('mimeSkip').disabled=false;mimeDrawScores();mimeRenderClue();
 }
 function mimeStartGame(){mimeStop();mimeDeck=shuffle(mimeCards);mimePos=0;mimeTeam=0;mimeScores=[0,0];screen('mimicaGame');mimeShowNext();}
-function mimeStartClock(){if(mimeRunning||mimePos>=mimeDeck.length)return;mimeRunning=true;$('mimeFeedback').textContent='⏱️ O tempo está a contar!';mimeInterval=setInterval(()=>{mimeSeconds=Math.max(0,mimeSeconds-1);$('mimeTimer').textContent=String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');if(mimeSeconds===0){mimeStop();mimeAdvance(false,'Tempo esgotado');}},1000);}
+function mimeStartClock(){if(mimeRunning||mimePos>=mimeDeck.length)return;mimeRunning=true;if(mimeSeconds===0){$('mimeTimer').textContent='∞';$('mimeFeedback').textContent='⏱️ Ronda sem limite de tempo!';return;}$('mimeFeedback').textContent='⏱️ O tempo está a contar!';mimeInterval=setInterval(()=>{mimeSeconds=Math.max(0,mimeSeconds-1);$('mimeTimer').textContent=String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');if(mimeSeconds===0){mimeStop();mimeAdvance(false,'Tempo esgotado');}},1000);}
 function mimeRevealClue(){if(mimePos>=mimeDeck.length||mimeClue>=4)return;mimeClue++;mimeRenderClue();$('mimeFeedback').textContent='Nova imagem! A equipa pode continuar a tentar adivinhar.';}
 function mimeAdvance(correct,reason='Palavra passada'){
  mimeStop();const answer=mimeDeck[mimePos][0];
