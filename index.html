@@ -627,7 +627,7 @@ async function networkMimeReveal(){
 }
 async function networkMimeResolveRound(correct,reason){
  if(!networkGameHost||!networkGameState||networkGameState.mode!=='mimicas'||networkGameState.locked)return;
- const st=networkGameState;
+ const st=networkGameState;st._resolving=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;
  const remaining=st.deadline?Math.max(0,Math.ceil((st.deadline-Date.now())/1000)):0;
  const base=mimePoints[Math.min(4,Number(st.clue_index)||0)];
  const points=correct?base+(st.duration_seconds?Math.floor(remaining/10):0):0;
