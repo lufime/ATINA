@@ -174,3 +174,16 @@ A alteração foi aplicada apenas em `atina-development` e documentada em `005-l
 **Estado da verificação:** a execução de teste terminou com a asserção final `ok 6`; o runner MCP apresenta apenas a última linha de pgTAP no resultado. A operação anterior que usou pistas com três elementos falhou a constraint e foi revertida; a execução seguinte usou cinco pistas e concluiu sem erro. A migration/proposta e o teste foram adicionados à branch isolada.
 
 **Risco ainda por resolver:** as seis RPCs públicas continuam deliberadamente executáveis por `anon` e `authenticated`, protegidas pelo token bearer aleatório de 256 bits. O Advisor continua a assinalar os dois avisos de SECURITY DEFINER. Antes de produção é necessário rever a exposição pública, introduzir rate limiting/limites de criação e chamadas por sessão e executar testes de concorrência. Os avisos RLS sem policies nas duas tabelas do schema privado são esperados com os grants revogados; devem continuar sob monitorização.
+
+
+### Incremento — modo Party nas sessões locais (2026-10-31)
+
+Foi acrescentado suporte inicial do modo Party nas RPCs locais, mantendo as regras observadas no cliente:
+- A fila é aleatória e limitada a 10 desafios (ou menos se o filtro só tiver menos desafios).
+- A equipa/jogador alterna entre os dois índices a cada ronda, através da lógica comum de `atina_local_next_challenge`.
+- Na última ronda, os pontos totais calculados (base, rapidez, sequência e carta especial) são duplicados antes de serem somados.
+- O estado final identifica `party_final_round_bonus` para a interface.
+
+A alteração está em `006-local-party-mode.sql` e o teste transacional em `006-local-party-mode.test.sql`. Foi aplicada apenas em `atina-development`. Quatro asserções pgTAP passaram: limite de 10 desafios, início Party, duplicação da pontuação na última ronda e sinalização do bónus no estado. A chamada do runner apresenta a última asserção como `ok 4`.
+
+**Limite:** este suporte cobre o Party local, não o multiplayer por salas nem Mímicas. O frontend continua sem alterações e ainda valida localmente; não ligar estes modos à UI até completar o contrato e os testes.
