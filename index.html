@@ -12645,7 +12645,7 @@ function mimeStartGame(){
 }
 function mimeStartClock(){
  if(mimeRunning||mimePos>=mimeDeck.length)return;
- mimeRunning=true;$('mimeFeedback').textContent='⏱️ O tempo está a contar!';mimeInterval=setInterval(()=>{mimeSeconds=Math.max(0,mimeSeconds-1);$('mimeTimer').textContent=String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');if(mimeSeconds===0){mimeStop();$('mimeFeedback').textContent='⏰ Tempo! A palavra era '+mimeDeck[mimePos][0]+'.';$('mimeNext').textContent='Próxima ronda →';}},1000);
+ mimeRunning=true;$('mimeFeedback').textContent='⏱️ O tempo está a contar!';mimeInterval=setInterval(()=>{mimeSeconds=Math.max(0,mimeSeconds-1);$('mimeTimer').textContent=String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');if(mimeSeconds===0){const expired=mimeDeck[mimePos][0];mimeStop();mimeAdvance(false);$('mimeFeedback').textContent='⏰ Tempo esgotado! A palavra era '+expired+'.';$('mimeNext').textContent=mimePos>=mimeDeck.length?'Ver resultado':'Próxima ronda →';}},1000);
 }
 function mimeAdvance(correct){
  mimeStop();if(correct){mimeScores[mimeTeam]++;$('mimeFeedback').textContent='🎉 Ponto para a Equipa '+(mimeTeam+1)+'!';}else{$('mimeFeedback').textContent='Palavra passada: '+mimeDeck[mimePos][0]+'.';}
