@@ -208,7 +208,7 @@ as $$
 declare
   v_session private.atina_local_sessions;
   v_correct boolean;
-  v_now timestamptz := clock_timestamp();
+  v_now timestamptz;
   v_base integer;
   v_speed integer := 0;
   v_streak integer;
@@ -225,7 +225,13 @@ begin
   where id=p_session_id
     and token_hash=extensions.digest(convert_to(p_token,'UTF8'),'sha256')
   for update;
-  if not found or v_session.expires_at <= v_now then
+  if not found then
+    raise exception 'Sessão inválida ou expirada.' using errcode='28000';
+  end if;
+  -- Obter a hora depois do FOR UPDATE: evita aceitar uma resposta com deadline
+  -- já expirado enquanto a chamada aguardava pelo lock da sessão.
+  v_now := clock_timestamp();
+  if v_session.expires_at <= v_now then
     raise exception 'Sessão inválida ou expirada.' using errcode='28000';
   end if;
   if v_session.status <> 'active' or v_session.round_locked then
@@ -340,13 +346,18 @@ declare
   v_queue integer[];
   v_next_position integer;
   v_card jsonb;
-  v_now timestamptz := clock_timestamp();
+  v_now timestamptz;
 begin
   select * into v_session from private.atina_local_sessions
   where id=p_session_id
     and token_hash=extensions.digest(convert_to(p_token,'UTF8'),'sha256')
   for update;
-  if not found or v_session.expires_at <= v_now then
+  if not found then
+    raise exception 'Sessão inválida ou expirada.' using errcode='28000';
+  end if;
+  -- A hora é capturada depois do lock para não prolongar artificialmente a sessão.
+  v_now := clock_timestamp();
+  if v_session.expires_at <= v_now then
     raise exception 'Sessão inválida ou expirada.' using errcode='28000';
   end if;
   if v_session.status <> 'active' or not v_session.round_locked then
