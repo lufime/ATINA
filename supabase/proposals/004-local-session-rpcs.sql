@@ -258,7 +258,8 @@ begin
 
   v_base := case v_session.difficulty when 'easy' then 10 when 'hard' then 20 else 15 end;
   if v_session.deadline_at is not null then
-    v_speed := greatest(0, floor(extract(epoch from (v_session.deadline_at-v_now))/10)::integer);
+    -- O frontend original aplica ceil() aos segundos restantes antes de floor(segundos/10).
+    v_speed := greatest(0, floor(ceil(extract(epoch from (v_session.deadline_at-v_now)))/10)::integer);
   end if;
   v_streak := v_session.streaks[v_session.current_player]+1;
   if v_streak >= 2 then v_streak_bonus := least(15,(v_streak-1)*5); end if;
