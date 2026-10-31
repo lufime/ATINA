@@ -43,4 +43,4 @@ O jogo é uma aplicação web estática. O duelo é local, no mesmo dispositivo;
 
 
 ## Termos e privacidade
-O registo apresenta duas confirmações obrigatórias: aceitação dos Termos de Utilização e leitura da Política de Privacidade. Os textos explicam, em linguagem simples, que o ATINA é um projeto pessoal e recreativo, que dados são usados para contas e ranking, os serviços técnicos envolvidos e como apagar a conta. As confirmações e respetivas versões são enviadas nos metadados do registo Supabase; esses metadados não constituem prova inviolável de aceitação. Não é publicado um email pessoal de contacto. A informação é uma descrição inicial do projeto e não garante, por si só, conformidade legal.
+O registo pede confirmação de leitura e aceitação. Os textos são simples: o ATINA é um jogo pessoal e gratuito; o pseudónimo, email e pontuações são usados para a conta e o ranking; os dados não são vendidos nem usados para publicidade; a conta pode ser apagada na área «A minha conta». O perfil é eliminado, mas pontuações já publicadas podem permanecer sem ligação à conta. Os dados de conta são processados através do Supabase e o site é alojado no GitHub Pages.
