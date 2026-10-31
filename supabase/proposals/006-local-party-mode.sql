@@ -125,3 +125,55 @@ begin
   return private.atina_local_public_state(v_session);
 end;
 $$;
+
+
+-- Party alterna as duas equipas, tal como Duelo.
+create or replace function public.atina_local_next_challenge(p_session_id uuid,p_token text)
+returns jsonb language plpgsql security definer set search_path = ''
+as $$
+declare
+  v_session private.atina_local_sessions;
+  v_queue integer[];
+  v_next_position integer;
+  v_card jsonb;
+  v_now timestamptz;
+begin
+  select * into v_session from private.atina_local_sessions
+  where id=p_session_id and token_hash=extensions.digest(convert_to(p_token,'UTF8'),'sha256')
+  for update;
+  if not found then raise exception 'Sessão inválida ou expirada.' using errcode='28000'; end if;
+  v_now:=clock_timestamp();
+  if v_session.expires_at<=v_now then raise exception 'Sessão inválida ou expirada.' using errcode='28000'; end if;
+  if v_session.status<>'active' or not v_session.round_locked then
+    raise exception 'Fecha a ronda antes de avançar.' using errcode='55000';
+  end if;
+  v_next_position:=v_session.position+1;
+  if v_next_position>cardinality(v_session.challenge_queue) then
+    select array_agg(q.challenge_id order by random()) into v_queue
+    from unnest(v_session.challenge_queue) as q(challenge_id);
+    v_next_position:=1;
+  else
+    v_queue:=v_session.challenge_queue;
+  end if;
+  if v_session.game_mode in ('duel','party') then
+    v_session.current_player:=3-v_session.current_player;
+  else
+    v_session.current_player:=1;
+  end if;
+  v_card:=null;
+  if mod(v_next_position-1,3)=2 then
+    v_card:=case floor(random()*3)::integer
+      when 0 then jsonb_build_object('name','PONTOS A DOBRAR','icon','💎','multiplier',2,'bonus',0)
+      when 1 then jsonb_build_object('name','BÓNUS SURPRESA','icon','🎁','multiplier',1,'bonus',15)
+      else jsonb_build_object('name','PASSE VIP','icon','🃏','multiplier',1,'bonus',10)
+    end;
+  end if;
+  update private.atina_local_sessions set challenge_queue=v_queue,position=v_next_position,
+    current_player=v_session.current_player,revealed_clues=1,round_locked=false,
+    deadline_at=case when timed_mode_seconds=0 then null
+      else v_now+make_interval(secs=>timed_mode_seconds) end,
+    special_card=v_card,last_result='{}'::jsonb,updated_at=v_now
+    where id=v_session.id returning * into v_session;
+  return private.atina_local_public_state(v_session);
+end;
+$$;
