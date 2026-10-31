@@ -542,7 +542,7 @@ $('voice').onclick=()=>{
  const recognition=new SpeechRecognition();
  recognition.lang='pt-PT';recognition.interimResults=false;recognition.maxAlternatives=1;
  $('voice').disabled=true;$('feedback').textContent='Estou a ouvir… Diz a tua resposta.';
- recognition.onresult=e=>{$('answer').value=e.results[0][0].transcript;$('feedback').textContent='Ouvi: '+$('answer').value+'. Carrega em Confirmar resposta.';};
+ recognition.onresult=e=>{const heard=e.results[0][0].transcript.trim();$('answer').value=heard;saveLocalProgress();$('feedback').textContent='Ouvi: '+heard+'. A confirmar…';submit();};
  recognition.onerror=()=>{$('feedback').textContent='Não consegui perceber. Tenta novamente ou escreve a resposta.';};
  recognition.onend=()=>{$('voice').disabled=locked;};
  try{recognition.start();}catch(err){$('voice').disabled=locked;$('feedback').textContent='Não foi possível iniciar o microfone. Verifica a permissão do navegador ou escreve a resposta.';}
