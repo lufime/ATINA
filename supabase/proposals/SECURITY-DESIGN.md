@@ -278,7 +278,7 @@ Aplicado apenas em `atina-development`:
 
 **Limites:** ainda não há RPC segura de avanço da fila nem finalização de resultados. A expiração é verificada durante submissão e revelação; falta sincronizar a transição de timeout no polling de estado. Propostas/votos de equipa e Mímicas continuam por implementar de forma segura. O frontend não foi alterado e ainda usa os RPCs/protocolo antigos; esta implementação backend ainda não é integrada nem utilizável na interface atual.
 
-**Advisor:** permanecem 16 avisos por grupo (`anon` e `authenticated`) de SECURITY DEFINER executáveis, com autenticação bearer por token aleatório. Rate limiting, proteção contra tentativas automatizadas e testes de concorrência continuam obrigatórios antes de produção. Não foi criado qualquer acesso direto às tabelas privadas.
+**Advisor:** passam a 20 avisos por grupo (`anon` e `authenticated`) de SECURITY DEFINER executáveis, com autenticação bearer por token aleatório. Rate limiting, proteção contra tentativas automatizadas e testes de concorrência continuam obrigatórios antes de produção. Não foi criado qualquer acesso direto às tabelas privadas.
 
 
 ## Incremento 013 — passar, avançar e concluir a partida multiplayer
