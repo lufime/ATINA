@@ -12,14 +12,11 @@ set search_path = ''
 as $$
   select trim(regexp_replace(
     regexp_replace(
-      translate(lower(p_value),
-        'áàâãäéèêëíìîïóòôõöúùûüçñýÿ',
-        'aaaaaeeeeiiiiooooouuuucnyy'
-      ),
-      '[^a-z0-9 ]+', '', 'g'
+      normalize(lower(p_value), NFD),
+      '[̀-ͯ]', '', 'g'
     ),
-    '\s+', ' ', 'g'
-  ));
+    '[^a-z0-9 ]+', '', 'g'
+  ), '[[:space:]]+', ' ', 'g'));
 $$;
 create or replace function private.atina_levenshtein_bounded(p_left text, p_right text)
 returns integer
