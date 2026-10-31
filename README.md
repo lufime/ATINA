@@ -111,3 +111,8 @@ O menu foi reorganizado por ordem de utilização: tempo por desafio, modo de jo
 
 ### Recuperação após atualizar a página
 Ao recarregar, o ATINA tenta primeiro recuperar a sessão multiplayer; caso não exista, recupera o progresso local do desafio individual/duelo. Se não houver jogo em curso, restaura o último ecrã visitado. A resposta em edição também é guardada localmente.
+
+
+### Correção do relógio em tempo real (31/10/2026)
+- O contador das partidas online passa a garantir a atualização contínua do relógio no ecrã, incluindo logo no arranque da partida e após a receção de novos estados.
+- A contagem é recalculada a partir do prazo absoluto (`Date.now()`), evitando depender da quantidade de intervalos executados pelo navegador.
