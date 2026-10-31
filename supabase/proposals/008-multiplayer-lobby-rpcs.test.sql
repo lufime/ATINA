@@ -1,0 +1,18 @@
+begin;
+select plan(12);
+create temporary table _room_test as select public.atina_create_room('Host Test',4) as host;
+create temporary table _guest_test as select public.atina_join_room('Guest Test',(select host->>'code' from _room_test)) as guest;
+select is((select host->>'code' from _room_test) ~ '^[A-F0-9]{6}$',true,'create returns six-character room code');
+select ok((select host ? 'token' and host ? 'room_id' and host ? 'player_id' from _room_test),'create returns bearer token and identifiers');
+select is((select guest->>'room_id' from _guest_test),(select host->>'room_id' from _room_test),'join returns same room id');
+select ok((select guest ? 'token' and guest ? 'player_id' from _guest_test),'join returns participant credentials');
+select is((public.atina_set_room_team((select (host->>'room_id')::uuid from _room_test),(select host->>'token' from _room_test),(select (guest->>'player_id')::uuid from _guest_test),'Equipa A')->>'team'),'Equipa A','host can assign team');
+select is((public.atina_set_room_ready((select (guest->>'room_id')::uuid from _guest_test),(select guest->>'token' from _guest_test),true)->>'ready')::boolean,true,'guest can mark ready');
+select is((select jsonb_array_length(public.atina_room_state((host->>'room_id')::uuid,host->>'token')->'players') from _room_test),2,'room state returns both participants');
+select is((select public.atina_room_state((guest->>'room_id')::uuid,guest->>'token')->>'team' from _guest_test),'Equipa A','room state returns assigned team');
+select throws_ok(format('select public.atina_room_state(%L::uuid,%L)',(select host->>'room_id' from _room_test),'wrong-token'),'P0001','Sessão da sala inválida.','invalid token cannot read room');
+select is((public.atina_start_room((select (host->>'room_id')::uuid from _room_test),(select host->>'token' from _room_test))->>'status'),'playing','host starts room after all ready');
+select throws_ok(format('select public.atina_set_room_team(%L::uuid,%L,%L::uuid,%L)',(select guest->>'room_id' from _guest_test),(select guest->>'token' from _guest_test),(select guest->>'player_id' from _guest_test),'Equipa B'),'P0001','Só o anfitrião pode atribuir equipas.','guest cannot assign teams');
+select is((public.atina_leave_room((select (guest->>'room_id')::uuid from _guest_test),(select guest->>'token' from _guest_test))->>'left')::boolean,true,'participant can leave room');
+select * from finish();
+rollback;
