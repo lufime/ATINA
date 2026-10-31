@@ -12955,13 +12955,13 @@ function mimeAdvance(correct,reason='Palavra passada'){
  mimeTeam=1-mimeTeam;mimePos++;if(mimePos>=mimeDeck.length){mimeDeck=shuffle(mimeCards);mimePos=0;mimeSeconds=0;}$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;$('mimeNext').textContent=mimePos>=mimeDeck.length?'Ver resultado':'Próxima ronda →';$('mimeNext').dataset.restart='0';
 }
 $('startMimicas').onclick=mimeStartGame;
-$('mimicaBack').onclick=()=>{mimeStop();screen('home');};
+$('mimicaBack').onclick=()=>{mimeStop();mimeRaceStop();screen('home');};
 $('mimeCorrect').onclick=()=>{if(mimeRunning)mimeAdvance(true);else $('mimeFeedback').textContent='Começa a ronda antes de validar um ponto.';};
 $('mimeSkip').onclick=()=>{if(mimeRunning)mimeAdvance(false,'Palavra passada');};
 $('mimeReveal').onclick=mimeRevealClue;
 $('mimeNext').onclick=()=>{if($('mimeNext').dataset.restart==='1'){mimeStartGame();return;}if(mimeRunning)return;if(mimePos>=mimeDeck.length){mimeShowNext();return;}if(mimePos>0||mimeSeconds===0)mimeShowNext();mimeStartClock();};
 $('categories').addEventListener('click',e=>{let b=e.target.closest('[data-category]');if(b)start('solo',b.dataset.category);});
-$('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>start('duel');$('party').onclick=()=>{start('party');$('player').textContent='🎉 Vez da Equipa 1';$('feedback').textContent='Modo Festa: duas equipas alternam. A última ronda vale pontos a dobrar!';};$('back').onclick=()=>{stopTimer();screen('home');};$('nextClue').onclick=reveal;$('submit').onclick=submit;
+$('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>start('duel');$('party').onclick=()=>{start('party');$('player').textContent='🎉 Vez da Equipa 1';$('feedback').textContent='Modo Festa: duas equipas alternam. A última ronda vale pontos a dobrar!';};$('back').onclick=()=>{stopTimer();raceStop();screen('home');};$('nextClue').onclick=reveal;$('submit').onclick=submit;
 $('voice').onclick=()=>{
  if(locked)return;
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
