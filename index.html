@@ -1158,7 +1158,9 @@ const games=[
   ["Detetive","🧊",["O congelador descongelou","A ficha elétrica foi retirada","Vítor disse que desligou apenas a luz","A ficha estava atrás de uma caixa que ele moveu","Vítor desligou o congelador"],"Vítor",["Vítor"]],
   ["Detetive","🎟️",["Um convite foi usado por pessoa não autorizada","A lista de convidados estava atualizada","Lara tinha acesso à lista e à impressora","O convite falso tinha um logótipo antigo","Lara criou o convite"],"Lara",["Lara"]],
   ["Detetive","🪴",["Uma planta rara foi retirada do vaso","Havia terra junto à porta","Jorge negou ter entrado na estufa","As solas dos seus sapatos tinham a mesma terra","Jorge retirou a planta"],"Jorge",["Jorge"]],
-  ["Detetive","🔔",["O sino tocou fora de horas","O mecanismo só podia ser acionado pelo corredor","Eva Maria disse que estava no pátio","A campainha do seu casaco ficou presa no mecanismo","Eva Maria acionou o sino"],"Eva Maria",["Eva Maria"]]
+  ["Detetive","🔔",["O sino tocou fora de horas","O mecanismo só podia ser acionado pelo corredor","Eva Maria disse que estava no pátio","A campainha do seu casaco ficou presa no mecanismo","Eva Maria acionou o sino"],"Eva Maria",["Eva Maria"]],
+  ["Desporto","🏹",["Modalidade de precisão|O atleta lança projéteis com um arco|O alvo tem círculos concêntricos|A pontuação depende da proximidade ao centro|Sou o tiro com arco"],"Tiro com arco",["Tiro com arco","arco e flecha"]],
+  ["Detetive","🕵️",["O livro de registos foi alterado|A tinta usada só existia no gabinete do diretor|Alexandre afirmou que não entrou no gabinete|A sua assinatura aparece no registo de acesso|Alexandre alterou o livro"],"Alexandre",["Alexandre"]]
 ];
 const $=id=>document.getElementById(id);let mode='solo',scores=[0,0],player=0,queue=[],pos=0,revealed=0,locked=false,answeredCount=0,timedMode=60,timeLeft=60,timerInterval=null,timerDeadline=0,lastTimerBeepAt=0,timePenaltyApplied=false,autoNextTimeout=null;
 const norm=s=>s.toLocaleLowerCase('pt-PT').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,'').trim();
