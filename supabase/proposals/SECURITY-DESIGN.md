@@ -334,3 +334,6 @@ Aplicados apenas em `atina-development` e versionados como migrations:
 - Testes pgTAP: 18 asserções para segredo, acesso do representante, pistas, pontuação independente do cliente, resolução, timeout por polling e permissões; mais 6 asserções para início explícito do relógio e guardas de transição. Todos passaram.
 
 **Limite de integração:** o frontend não foi alterado. As RPCs agora aceitam a publicação restrita necessária para iniciar relógio/revelar pistas em Mímicas, mas os fluxos dos outros modos continuam deliberadamente sem um publicador genérico de estado. A integração e validação ponta a ponta da interface exigem uma alteração separada do frontend, ainda não autorizada. Rate limiting e mitigação de abuso continuam pendentes antes de produção.
+
+
+- Incremento 018: adicionados índices de cobertura às duas chaves estrangeiras de `private.atina_mime_rounds`, após alerta do Advisor. Os 2 testes de índices passaram.
