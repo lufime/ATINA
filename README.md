@@ -103,3 +103,7 @@ A sessão da sala (identificador e token de acesso) fica guardada localmente no 
 
 ### Retoma automática de qualquer desafio
 O progresso dos modos individual e duelo local é guardado no navegador e recuperado ao atualizar a página, incluindo desafio atual, pistas reveladas, pontuação, jogador da vez, resposta escrita e tempo restante. Nas salas multiplayer, a recuperação continua a usar o estado sincronizado da sala. Começar um novo jogo substitui o progresso local anterior.
+
+
+### Organização do menu inicial
+O menu foi reorganizado por ordem de utilização: tempo por desafio, modo de jogo, modalidades, classificação e jogo em rede. Os blocos têm hierarquia visual e espaçamento consistentes, com grelha adaptável a telemóveis e ecrãs maiores.
