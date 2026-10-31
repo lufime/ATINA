@@ -246,3 +246,19 @@ As RPCs são executáveis por `anon` e `authenticated` com token bearer, pelo qu
 
 
 **Advisor após as RPCs de lobby:** o Advisor reporta 13 funções SECURITY DEFINER executáveis por anon/authenticated: as sete RPCs de lobby agora adicionadas e as seis RPCs locais já existentes. Isto é esperado pelo modelo atual de token bearer, mas mantém exposição pública e exige mitigação de abuso/rate limiting antes de produção. O Advisor também reporta oito tabelas com RLS sem policies: as seis tabelas de sala e as duas tabelas privadas locais; os grants diretos permanecem revogados. O advisor de performance já não reporta FKs sem índice de cobertura nas tabelas de sala; restam apenas avisos de índices não utilizados, incluindo um índice do ledger que ainda será usado pelas RPCs de submissão.
+
+
+## Incremento 009 — fila multiplayer privada e estado público sanitizado
+
+Aplicado apenas em `atina-development` através da migration `009_multiplayer_server_queue`. A proposta SQL e os testes estão versionados em `009-multiplayer-server-queue.sql` e `009-multiplayer-server-queue.test.sql`.
+
+- Criada `private.atina_room_game_state`, com RLS ativo e sem permissões diretas para `anon`/`authenticated`. Guarda a fila completa de IDs, posição, dificuldade, categoria, duração, pistas reveladas, deadline e estado de bloqueio/conclusão.
+- Criada a RPC `atina_start_room_challenges(p_room_id,p_token,p_difficulty,p_duration_seconds,p_category)`. Só o anfitrião autenticado pelo token da sala pode inicializar os desafios; os parâmetros são validados e a fila é escolhida aleatoriamente pelo servidor a partir de `private.atina_challenges`.
+- O deadline é calculado com `clock_timestamp()` no servidor. Duração 0 representa tempo ilimitado.
+- O estado público inicial inclui apenas o ID e os metadados do desafio atual, a primeira pista, a duração, o deadline e o tamanho da fila. Não inclui a fila completa, `answer` nem `accepted_answers`.
+- Testes pgTAP cobrem inicialização por anfitrião, seleção da fila, estado público sem fila/segredos, primeira pista, deadline do servidor, armazenamento privado e rejeição de convidado/dificuldade inválida. A última asserção terminou com `ok 10`.
+- Verificação de privilégios confirmou que `anon` e `authenticated` não têm SELECT na tabela privada e que `anon` não tem USAGE no schema `private`.
+
+**Limites desta etapa:** o frontend continua inalterado e ainda não chama esta RPC; a antiga função `atina_start_room` continua a iniciar apenas o lobby em modo `pending`. Ainda faltam RPCs de revelar pista, submeter texto e validar resposta, passar desafio, avançar a fila e finalizar resultados. Não considerar o modo multiplayer pronto nem compatível com cliente até essas transições estarem implementadas e o frontend ser migrado para o contrato seguro.
+
+**Advisor após 009:** o Advisor reporta nove tabelas com RLS sem policies (INFO), incluindo a nova tabela privada; os privilégios diretos permanecem revogados. Reporta 14 funções SECURITY DEFINER executáveis por `anon` e por `authenticated` (WARN), incluindo a nova RPC. A autenticação por token bearer é deliberada nesta fase, mas rate limiting e mitigação de abuso continuam obrigatórios antes de produção. Os dois avisos de índices não utilizados permanecem os mesmos; nenhum novo aviso de performance foi introduzido.
