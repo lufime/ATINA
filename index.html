@@ -12649,7 +12649,8 @@ async function activateLandscapePresentation(){if(!document.fullscreenElement)aw
 async function openScreenShareHelp(){const panel=$('screenShareHelp');panel.classList.remove('hidden');try{await activateLandscapePresentation();$('screenShareTitle').textContent='📺 ATINA pronto para partilhar na TV';}catch(e){$('screenShareTitle').textContent='📺 Para mostrar na TV';}panel.scrollIntoView({behavior:'smooth',block:'center'});$('closeScreenShare').focus();}
 function closeScreenShareHelp(){$('screenShareHelp').classList.add('hidden');}
 $('shareMonitorHome').addEventListener('click',openScreenShareHelp);
-$('mimeFullscreen').addEventListener('click',()=>{if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});}else{mimeRequestFullscreen();}});\n$('mimeShare').addEventListener('click',openScreenShareHelp);
+$('mimeFullscreen').addEventListener('click',()=>{if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});}else{mimeRequestFullscreen();}});
+$('mimeShare').addEventListener('click',openScreenShareHelp);
 $('shareMonitorGame').addEventListener('click',openScreenShareHelp);
 $('closeScreenShare').addEventListener('click',closeScreenShareHelp);
 $('fullscreenAtina').addEventListener('click',async()=>{try{if(!document.fullscreenElement){await activateLandscapePresentation();$('screenShareTitle').textContent='📺 ATINA pronto para partilhar na TV';}else{await document.exitFullscreen();try{screen.orientation?.unlock?.();}catch(e){}}}catch(e){$('screenShareTitle').textContent='Não foi possível bloquear a orientação neste dispositivo. O ATINA adapta-se automaticamente quando o Android roda o ecrã.';}});
