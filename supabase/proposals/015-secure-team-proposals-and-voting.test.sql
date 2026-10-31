@@ -22,7 +22,7 @@ SELECT public.atina_set_room_team(
 SELECT public.atina_set_room_ready((SELECT (value->>'room_id')::uuid FROM _guest1),(SELECT value->>'token' FROM _guest1),true);
 SELECT public.atina_set_room_ready((SELECT (value->>'room_id')::uuid FROM _guest2),(SELECT value->>'token' FROM _guest2),true);
 SELECT public.atina_start_room((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host));
-SELECT public.atina_start_room_challenges((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),'medium',60,NULL);
+SELECT public.atina_start_room_challenges((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),'medium',60,'__ci_fixture__');
 
 UPDATE public.atina_room_players SET score=100
 WHERE id IN ((SELECT (value->>'player_id')::uuid FROM _host),(SELECT (value->>'player_id')::uuid FROM _guest1));
