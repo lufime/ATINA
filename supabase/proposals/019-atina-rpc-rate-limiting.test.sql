@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(10);
+SELECT plan(12);
 
 SELECT set_config('request.method','POST',true);
 SELECT set_config('request.headers','{"x-forwarded-for":"198.51.100.10"}',true);
