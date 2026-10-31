@@ -117,3 +117,10 @@ Foi também acrescentado um conjunto inicial de testes pgTAP em `004-local-sessi
 - Mix, Party, Mímicas e os modos de sala multiplayer continuam fora deste incremento.
 
 A proposta continua isolada na branch. Nenhuma migration foi executada no projeto Supabase ligado e nenhuma alteração foi feita em produção.
+
+
+### Revisão de equivalência de pontuação (004)
+
+Foi confirmado no frontend original que a pontuação base é 10/15/20 pontos para Fácil/Médio/Difícil. A RPC usa esses valores. O bónus de rapidez foi ajustado para reproduzir a ordem de arredondamento do cliente: primeiro arredondar os segundos restantes para cima e depois dividir por 10 com arredondamento para baixo. A penalização por resposta errada/timeout continua a ser -10; uma resposta errada repõe a sequência, mas permite nova tentativa; acerto fecha a ronda. O passe não altera pontos e fecha a ronda.
+
+Os testes pgTAP de 004 passaram de 8 para 12 asserções propostas, incluindo rejeição de submissão repetida e timeout autoritativo (penalização e revelação da solução). **Não foram executados** e não demonstram ainda equivalência completa da corrida, da duração entre desafios, do ranking ou dos modos Mix/Party.
