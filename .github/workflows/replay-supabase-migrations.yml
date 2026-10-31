@@ -1,0 +1,32 @@
+name: Replay Supabase migrations
+
+on:
+  push:
+    branches: [security/server-side-validation]
+  pull_request:
+    branches: [main]
+
+jobs:
+  replay-migrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Initialize disposable local Supabase configuration
+        run: supabase init --force
+
+      - name: Start disposable local Supabase stack
+        run: supabase start
+
+      - name: Replay every migration from an empty database
+        run: supabase db reset --local --no-seed
+
+      - name: Verify local migration history
+        run: supabase migration list --local
