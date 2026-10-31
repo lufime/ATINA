@@ -1,16 +1,16 @@
 BEGIN;
 INSERT INTO private.atina_challenges
 (challenge_id,category,emoji,clues,answer,accepted_answers,difficulty,active)
-VALUES (-990013,'__ci_fixture__','🧪',
- '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
- 'Resposta de teste 013','["resposta de teste 013"]'::jsonb,'medium',true);
+VALUES
+ (-990013,'__ci_fixture__','🧪','["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,'Resposta de teste 013','["resposta de teste 013"]'::jsonb,'medium',true),
+ (-991013,'__ci_fixture__','🧪','["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,'Segunda resposta de teste 013','["segunda resposta de teste 013"]'::jsonb,'medium',true);
 
 SELECT plan(10);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Host 013',4) AS value;
 CREATE TEMP TABLE _guest AS SELECT public.atina_join_room('Guest 013',(SELECT value->>'code' FROM _host)) AS value;
 SELECT public.atina_set_room_ready((SELECT (value->>'room_id')::uuid FROM _guest),(SELECT value->>'token' FROM _guest),true);
 SELECT public.atina_start_room((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host));
-SELECT public.atina_start_room_challenges((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),'medium',60,NULL);
+SELECT public.atina_start_room_challenges((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),'medium',60,'__ci_fixture__');
 
 CREATE TEMP TABLE _pass AS
 SELECT public.atina_pass_room_challenge((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host)) AS value;
