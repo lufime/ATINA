@@ -258,12 +258,6 @@ async function refreshAtinaSession(){
  if(atinaUser){const {data:profile}=await supabaseClient.from('atina_profiles').select('nickname').eq('user_id',atinaUser.id).maybeSingle();atinaProfile=profile||null;}
  const signedIn=!!atinaUser;
  $('authSummary').textContent=signedIn?(atinaProfile?.nickname||atinaUser.email)+' · sessão iniciada':'Joga sem conta ou entra para usar o teu perfil.';
- $('openAuth').textContent=signedIn?'👤 A minha conta':'👤 Conta de jogador';
- $('accountIndicator').classList.toggle('hidden',!signedIn);
- $('accountIndicatorText').textContent=signedIn?'Sessão iniciada · '+(atinaProfile?.nickname||atinaUser.email):'';
- $('homeLoginBadge').classList.toggle('hidden',!signedIn);
- $('deleteAccountArea').classList.toggle('hidden',!signedIn);
- $('homeLoginText').textContent=signedIn?'✓ Sessão iniciada como '+(atinaProfile?.nickname||atinaUser.email):'';
 
 }
 async function createAtinaAccount(){
