@@ -12973,7 +12973,7 @@ function answerMatches(expected,actual){
  return true;
 }
 const isImageChallenge=index=>games[index]?.[0]==='Imagem misteriosa';
-function classifyChallenge(index){
+function challengeDifficultyScore(index){
  const g=games[index],clues=(g?.[2]||[]).map(x=>String(x));
  const answer=norm(g?.[3]||'');
  const category=String(g?.[0]||'');
@@ -12999,8 +12999,10 @@ function classifyChallenge(index){
  if(clues.length<5)score+=.5;
  const calibration={'Onde estou?':1.5,'O que sou?':1.5,'Palavras escondidas':1.5,'Música e sons':1.5,'Ilusões e truques mentais':-2.5,'Detetive':-2};
  score+=calibration[category]||0;
- return score<=0?'easy':score<=3?'medium':'hard';
+ return score;
 }
+const challengeDifficultyByIndex=(()=>{const groups=new Map();games.forEach((g,i)=>{if(!g)return;const list=groups.get(g[0])||[];list.push(i);groups.set(g[0],list);});const result={};groups.forEach(indices=>{indices.sort((a,b)=>challengeDifficultyScore(a)-challengeDifficultyScore(b)||a-b);const n=indices.length;indices.forEach((index,rank)=>{const percentile=(rank+.5)/n;result[index]=percentile<.30?'easy':percentile<.75?'medium':'hard';});});return result;})();
+function classifyChallenge(index){return challengeDifficultyByIndex[index]||'medium';}
 function difficultyLabel(level){return level==='easy'?'Fácil':level==='hard'?'Difícil':'Médio';}
 function stopTimer(){if(timerInterval!==null){clearInterval(timerInterval);timerInterval=null;}timerDeadline=0;if(autoNextTimeout!==null){clearTimeout(autoNextTimeout);autoNextTimeout=null;}}
 function drawTimer(){if(!$('timerDisplay'))return;if(!timedMode){$('timerDisplay').textContent='Sem limite';$('timerDisplay').classList.remove('urgent');return;}let m=Math.floor(timeLeft/60),sec=timeLeft%60;$('timerDisplay').textContent=String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');$('timerDisplay').classList.toggle('urgent',timeLeft<=10);}
