@@ -1,5 +1,5 @@
 begin;
-select plan(4);
+select plan(5);
 insert into private.atina_challenges
 (challenge_id,category,emoji,clues,answer,accepted_answers,difficulty,active)
 values (-990021,'__party_final__','🎉','["a","b","c","d","e"]'::jsonb,'Teste Festa','["teste festa"]'::jsonb,'easy',true);
@@ -17,5 +17,7 @@ select ok((select (public.atina_local_submit_answer(sid,token,'teste festa')->'l
  'a última ronda Party duplica os pontos calculados');
 select ok((select (public.atina_local_game_state(sid,token)->'last_result'->>'party_final_round_bonus')='true' from _party_final),
  'estado identifica o bónus da ronda final');
+select ok((select (public.atina_local_next_challenge(sid,token)->>'current_player')='2' from _party_final),
+ 'Party alterna a equipa ativa entre rondas');
 select * from finish();
 rollback;
