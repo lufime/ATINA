@@ -141,3 +141,10 @@ Depois de rever o ficheiro, a execução deve ser feita manualmente apenas numa 
 
 
 O gerador tem também o modo `--check`, que valida a estrutura, o alinhamento com o catálogo público e a classificação dos 753 desafios sem escrever/exportar o SQL secreto. O workflow inclui `node --check` e `node scripts/generate-private-challenge-seed.mjs --check` na branch de segurança. O caminho de saída é validado com resolução de symlinks, exige diretório existente fora do repositório e usa criação exclusiva para evitar sobrescrever ficheiros.
+
+
+### Revisão adicional das RPCs locais
+
+Na revisão estática da proposta 004 foi corrigido um problema de deadline sob contenção: `clock_timestamp()` era capturado na entrada das funções de submissão/avanço, antes de obterem o `FOR UPDATE`. Se uma chamada aguardasse pelo lock, poderia usar uma hora desatualizada e aceitar uma resposta após o prazo, ou prolongar ligeiramente a sessão seguinte. Agora a hora é capturada imediatamente depois de o lock da sessão ser obtido e antes de validar expiração/deadline.
+
+Esta correção é apenas uma revisão estática do SQL. Não foi executada em PostgreSQL e não substitui testes concorrentes numa base de desenvolvimento. O âmbito continua limitado a `solo` e `duel`; Mix, Party/Equipas e Mímicas ainda não estão implementados nesta proposta.
