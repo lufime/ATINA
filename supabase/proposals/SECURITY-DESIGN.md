@@ -203,3 +203,21 @@ A migration existente `supabase/migrations/20261031204614_atina_multiplayer_mimi
 **Decisão técnica para a próxima fase:** antes de reescrever as RPCs de salas, é necessário reconstruir e versionar a fundação multiplayer no ambiente de desenvolvimento (tabelas, constraints, índices, RLS/grants e RPCs de lobby), confirmar o contrato de cada chamada do cliente e só depois criar estado privado autoritativo para cada ronda. O estado privado deve guardar deadline como `timestamptz` gerado pelo servidor; o anfitrião só poderá comunicar o resultado observado (acerto/passe), nunca pontos nem prazo. As respostas dos desafios também terão de ser comparadas no servidor, sem aceitar `p_correct`/ `p_points` do cliente.
 
 Até essa fundação existir, não é seguro fazer alterações isoladas às funções de Mímicas ou declarar Multiplayer/Mímicas protegidos. Nenhuma migration multiplayer foi aplicada no projeto de desenvolvimento nesta fase.
+
+
+### Incremento — fundação de dados das salas multiplayer (2026-10-31)
+
+Foi reconstruído o primeiro nível do esquema de salas a partir das chamadas e dos campos efetivamente consumidos pelo cliente existente. A proposta `007-multiplayer-room-foundation.sql` define:
+- `atina_rooms`: código de seis caracteres, limite de participantes, estado, versão e timestamps;
+- `atina_room_players`: participantes, anfitrião, prontidão, equipa, pontuação e hash do token bearer;
+- `atina_room_answers`: ledger de tentativas e pontos;
+- `atina_room_results`: resultados finais;
+- `atina_room_team_proposals` e `atina_room_team_votes`: propostas e votos de equipa.
+
+Todas as tabelas têm RLS ativo e acesso direto revogado para `public`, `anon` e `authenticated`. Foram acrescentados índices e chaves estrangeiras para manter os registos associados à sala e ao participante. A proposta e o teste estão versionados na branch isolada.
+
+**Aplicação e verificação:** o DDL foi aplicado diretamente apenas em `atina-development` para permitir iteração, sem criar ainda uma entrada de migration. O teste pgTAP executado no mesmo projeto terminou em `ok 14`: seis tabelas presentes, RLS nas seis tabelas e ausência de SELECT direto para anon/authenticated nas tabelas verificadas. O teste foi transacional e revertido; o DDL permanece instalado.
+
+**Limites importantes:** esta etapa cria apenas o esquema de dados. Ainda não implementa as RPCs de criação/entrada/estado/saída de sala, prontidão, equipas, pausas, propostas ou pontuação. A migration antiga de Mímicas continua sem ser aplicada, e as funções que aceitam estado arbitrário, `p_correct` ou `p_points` não foram expostas nem ativadas. A compatibilidade completa das constraints com todos os fluxos do cliente ainda tem de ser validada através das RPCs e testes de integração.
+
+Nenhuma alteração foi feita à produção, frontend, branch principal, deploy, merge ou PR.
