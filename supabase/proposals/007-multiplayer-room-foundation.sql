@@ -115,3 +115,11 @@ comment on table public.atina_room_team_proposals is
   'Team answer proposals; correctness and points must be calculated server-side.';
 comment on table public.atina_room_team_votes is
   'One vote per participant and proposal.';
+
+-- Cover the player-side foreign keys flagged by the Supabase performance advisor.
+create index if not exists atina_room_answers_room_player_idx
+  on public.atina_room_answers(room_id,player_id);
+create index if not exists atina_room_team_proposals_room_proposer_idx
+  on public.atina_room_team_proposals(room_id,proposer_id);
+create index if not exists atina_room_team_votes_player_idx
+  on public.atina_room_team_votes(player_id);
