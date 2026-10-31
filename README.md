@@ -107,3 +107,7 @@ O progresso dos modos individual e duelo local é guardado no navegador e recupe
 
 ### Organização do menu inicial
 O menu foi reorganizado por ordem de utilização: tempo por desafio, modo de jogo, modalidades, classificação e jogo em rede. Os blocos têm hierarquia visual e espaçamento consistentes, com grelha adaptável a telemóveis e ecrãs maiores.
+
+
+### Recuperação após atualizar a página
+Ao recarregar, o ATINA tenta primeiro recuperar a sessão multiplayer; caso não exista, recupera o progresso local do desafio individual/duelo. Se não houver jogo em curso, restaura o último ecrã visitado. A resposta em edição também é guardada localmente.
