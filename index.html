@@ -12599,13 +12599,29 @@ const norm=s=>s.toLocaleLowerCase('pt-PT').normalize('NFD').replace(/[\u0300-\u0
 const isImageChallenge=index=>games[index]?.[1]==='🖼️';
 function classifyChallenge(index){
  const g=games[index],clues=(g?.[2]||[]).map(x=>String(x));
- const text=clues.join(' ').toLocaleLowerCase('pt-PT');
- const avg=clues.length?clues.reduce((n,x)=>n+x.length,0)/clues.length:0;
- const longClues=clues.filter(x=>x.length>=105).length;
- const specialist=(text.match(/\b(nobel|quântico|relatividade|fotossíntese|mitocôndria|constituição|dinastia|teorema|filosofia|metáfora|parlamento|revolução|império|átomo|equação|arqueológ|geológico|astronóm|biológ|matemátic|literári|mitológ)\w*/g)||[]).length;
- const direct=(text.match(/\b(capital|capital de|sou a|sou o|chamo-me|fica em|localiza-se|instrumento|profissão|animal|país|cidade)\b/g)||[]).length;
- const score=avg*.55+longClues*3+specialist*5-direct*2+(clues.length<5?4:0);
- return score<48?'easy':score<76?'medium':'hard';
+ const answer=norm(g?.[3]||'');
+ const category=String(g?.[0]||'');
+ const all=clues.join(' ').toLocaleLowerCase('pt-PT');
+ const early=clues.slice(0,2).join(' ').toLocaleLowerCase('pt-PT');
+ const familiar=new Set(['agua','paz','chave','lisboa','portugal','sol','lua','arvore','fogo','gelo','coracao','amor','amizade','livro','telefone','computador','bicicleta','futebol','guitarra','pizza','casa','cao','gato','elefante','oceano','montanha','rio','flor','mae','pai','escola','medico','professor','bombeiro','cozinheiro','policia','aviao','comboio','carro','relogio','dinheiro','musica','cinema','teatro','bola','arco iris','chuva','neve']);
+ const specialist=/\b(nobel|quântico|relatividade|fotossíntese|mitocôndria|constituição|dinastia|teorema|parlamento|revolução|império|átomo|equação|arqueológ|geológ|astronóm|biológ|matemátic|literári|mitológ|termodinâm|metabol|sintaxe|jurisprud|isótop|fotão|algoritm|proporção|inércia|soberania|feudal|renascimento|barroco)\w*/i.test(all);
+ const inference=/\b(ao contrário|apesar de|no entanto|deduz|conclui|contradição|inconsist|sequência|padrão|hipótese|vestígio|prova|testemunh|álibi|registo|evidência|não pode|apenas um|exatamente|qual é a lógica)\w*/i.test(all);
+ const abstract=/\b(liberdade|democracia|justiça|consciência|identidade|paradoxo|metáfora|ética|existência|memória|relatividade|infinito|probabilidade)\w*/i.test(all);
+ const directEarly=/\b(chamo-me|sou a capital|sou o país|sou um animal|sou uma cidade|o meu nome é|fui inventad[oa] por|nasci em|localizo-me em)\b/i.test(early);
+ const longEarly=clues.slice(0,2).filter(x=>x.length>110).length;
+ let score=0;
+ if(familiar.has(answer))score-=3;
+ else if(answer.split(' ').length>=2||answer.length>=16)score+=1.5;
+ if(specialist)score+=2.5;
+ if(inference)score+=2.5;
+ if(abstract)score+=1.5;
+ if(directEarly)score-=2.5;
+ score+=longEarly*.7;
+ if(category==='Lógica e números'||category==='Ilusões e truques mentais')score+=2;
+ if(category==='Detetive')score+=1.5;
+ if(category==='Imagem misteriosa')score+=1;
+ if(clues.length<5)score+=.5;
+ return score<=0?'easy':score<=3?'medium':'hard';
 }
 function difficultyLabel(level){return level==='easy'?'Fácil':level==='hard'?'Difícil':'Médio';}
 function stopTimer(){if(timerInterval!==null){clearInterval(timerInterval);timerInterval=null;}timerDeadline=0;if(autoNextTimeout!==null){clearTimeout(autoNextTimeout);autoNextTimeout=null;}}
