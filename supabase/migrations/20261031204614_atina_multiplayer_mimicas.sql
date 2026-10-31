@@ -17,6 +17,8 @@ create table if not exists private.atina_mime_secrets (
 );
 alter table private.atina_mime_cards enable row level security;
 alter table private.atina_mime_secrets enable row level security;
+create index if not exists atina_mime_secrets_card_id_idx on private.atina_mime_secrets(card_id);
+create index if not exists atina_mime_secrets_representative_id_idx on private.atina_mime_secrets(representative_id);
 revoke all on schema private from public,anon,authenticated;
 revoke all on all tables in schema private from public,anon,authenticated;
 insert into private.atina_mime_cards(word,category,clues) values
