@@ -151,11 +151,47 @@ body{font-size:17px}
 }
 
 #onlineSave{margin:18px 0;padding:14px;border:1px solid #365777;border-radius:16px;background:#10243a}#onlineSave h3{margin:4px 0 8px;color:#f3c65e}.online-ranking{margin-top:20px;padding-top:14px;border-top:1px solid #365777}#rankingList{padding-left:28px;line-height:1.8}#rankingList li{padding:3px 0;border-bottom:1px solid #ffffff12}.online-panel .answer{margin:7px 0}
+
+/* Home screen reorganization: clearer play-first hierarchy */
+#home{display:flex;flex-direction:column;gap:18px}
+#home .home-block{margin:0}
+#home .section{margin:0 0 10px!important;font-size:17px!important;letter-spacing:.01em}
+#home .home-hint{margin:-3px 0 12px!important;font-size:13px!important;line-height:1.45}
+#home .actions{gap:10px}
+#home .actions .btn{min-height:58px;border-radius:15px;font-size:15px!important}
+#home .categories-block{padding:16px 13px 14px;border:1px solid #294968;border-radius:19px;background:linear-gradient(145deg,#10253b,#0c1d30)}
+#home .modes{gap:10px}
+#home .tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;min-height:94px!important;padding:12px 12px!important;border:1px solid #34516e;border-radius:14px;background:linear-gradient(145deg,#172d46,#102238);transition:transform .15s,border-color .15s,background .15s}
+#home .tile:active{transform:scale(.98);border-color:#d3ad68}
+#home .tile span{font-size:24px!important;line-height:1.2!important}
+#home .tile b{font-size:14px!important;line-height:1.25!important;margin-top:3px!important}
+#home .tile small{font-size:11px!important;line-height:1.3!important;color:#aebed0}
+#home .settings-block{padding:0 2px}
+#home #timerMode{margin:0!important;min-height:54px;border-radius:14px}
+#home .account-block{padding:14px;border:1px solid #294968;border-radius:17px;background:#10243a}
+#home .home-tools{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#home .home-tools .btn{min-height:50px;padding:10px 8px;font-size:13px!important}
+#home #authSummary{margin:10px 2px 0!important;font-size:12px!important;overflow-wrap:anywhere}
+#home .home-duel-note{margin:0!important;padding:0 3px;font-size:12px!important;line-height:1.5}
+#home .brand{margin-bottom:2px}
+@media(max-width:360px){
+ #home{gap:15px}
+ #home .tile{min-height:88px!important;padding:10px!important}
+ #home .tile b{font-size:12px!important}
+ #home .tile small{font-size:10px!important}
+ #home .home-tools .btn{font-size:12px!important}
+}
+@media(min-width:600px){
+ #home .modes{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #home .categories-block{padding:20px}
+ #home .tile{min-height:105px!important}
+}
+
 </style>
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><div class="logo">ATINA</div><div class="tag">O desafio é descobrir.</div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
-<section id="home"><div class="section">Escolhe o modo de jogo</div><div class="actions"><button class="btn full" id="solo">Jogar sozinho</button><button class="btn secondary full" id="duel">Duelo · 2 jogadores</button></div><div class="section">Tempo por desafio</div><select id="timerMode" class="answer" style="font-size:16px;margin-top:0"><option value="60">⏱️ 60 segundos</option><option value="90">⏱️ 90 segundos</option><option value="0">Sem limite de tempo</option></select><button class="btn secondary full" id="openRanking" style="margin-top:12px">🏆 Ranking online</button><button class="btn secondary full" id="openAuth" style="margin-top:9px">👤 Conta de jogador</button><p class="muted small" id="authSummary" aria-live="polite">Joga sem conta ou entra para usar o teu perfil.</p><div class="section">15 modalidades</div><div class="modes" id="categories"></div><p class="muted small">No Duelo, os jogadores jogam à vez no mesmo telemóvel. Cada erro desconta 10 pontos. Podes tentar novamente ou carregar em PASSO.</p></section>
+<section id="home"><div class="home-block"><div class="section">1 · Escolhe como jogar</div><div class="actions"><button class="btn full" id="solo">Jogar sozinho</button><button class="btn secondary full" id="duel">Duelo · 2 jogadores</button></div></div><div class="home-block categories-block"><div class="section">2 · Escolhe uma modalidade</div><p class="muted small home-hint">Ou toca em «Jogar sozinho» para receber desafios de todas as modalidades.</p><div class="modes" id="categories"></div></div><div class="home-block settings-block"><div class="section">3 · Tempo por desafio</div><select id="timerMode" class="answer" style="font-size:16px;margin-top:0"><option value="60">⏱️ 60 segundos</option><option value="90">⏱️ 90 segundos</option><option value="0">Sem limite de tempo</option></select></div><div class="home-block account-block"><div class="section">A tua conta e classificação</div><div class="home-tools"><button class="btn secondary" id="openRanking">🏆 Ranking online</button><button class="btn secondary" id="openAuth">👤 A minha conta</button></div><p class="muted small" id="authSummary" aria-live="polite">Joga sem conta ou entra para usar o teu perfil.</p></div><p class="muted small home-duel-note">No Duelo, os jogadores jogam à vez no mesmo telemóvel. Cada erro desconta 10 pontos. Podes tentar novamente ou carregar em PASSO.</p></section>
 <section id="authPage" class="card hidden"><h2>👤 Conta ATINA</h2><p class="muted small">Cria uma conta com email e palavra-passe. O teu pseudónimo será único.</p>
 <div id="authForms">
 <label class="section" for="authNickname">Pseudónimo (1–20 caracteres)</label><input id="authNickname" class="answer" maxlength="20" autocomplete="nickname" placeholder="O teu pseudónimo">
