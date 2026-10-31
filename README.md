@@ -3,6 +3,7 @@
 Jogo de desafios em português (pt-PT), pensado para telemóveis.
 
 ## Funcionalidades atuais
+- Indicador verde no cabeçalho quando existe sessão iniciada, com pseudónimo ou email da conta.
 - Menu inicial reorganizado para telemóveis: modo de jogo, modalidades em destaque, temporizador e atalhos de conta/ranking em secções separadas.
 - Corrigido erro de JavaScript que impedia a apresentação das 15 modalidades no menu inicial.
 - 15 modalidades e mais de 70 desafios.
