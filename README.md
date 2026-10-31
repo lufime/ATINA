@@ -3,6 +3,7 @@
 Jogo de desafios em português (pt-PT), pensado para telemóveis.
 
 ## Funcionalidades atuais
+- Corrigido erro de JavaScript que impedia a apresentação das 15 modalidades no menu inicial.
 - 15 modalidades e mais de 70 desafios.
 - Cinco pistas progressivas por desafio (seis na modalidade Imagem Misteriosa).
 - As pistas reveladas permanecem visíveis.
