@@ -38,6 +38,8 @@ const seenAnswers = new Map();
 let imageCount = 0;
 
 games.forEach((challenge, index) => {
+  // O catálogo mantém posições históricas vazias (null) para preservar IDs.
+  if (challenge === null || challenge === undefined) return;
   const label = `Desafio #${index + 1}`;
   if (!Array.isArray(challenge) || challenge.length < 5) {
     errors.push(`${label}: estrutura incompleta.`);
@@ -80,16 +82,17 @@ games.forEach((challenge, index) => {
     }
   }
 
+  // Nomes de suspeitos repetem-se intencionalmente em casos distintos de Detetive.
   const key = `${category}|${normalize(answer)}`;
-  if (answer && seenAnswers.has(key)) {
+  if (category !== 'Detetive' && answer && seenAnswers.has(key)) {
     warnings.push(`Resposta repetida em "${category}": "${answer}" (desafios #${seenAnswers.get(key)} e #${index + 1}).`);
-  } else if (answer) {
+  } else if (category !== 'Detetive' && answer) {
     seenAnswers.set(key, index + 1);
   }
 });
 
 const categories = [...counts.entries()].sort(([a], [b]) => a.localeCompare(b, 'pt-PT'));
-const total = games.length;
+const total = games.filter(Array.isArray).length;
 const targetPerCategory = 50;
 const target = categories.length * targetPerCategory;
 const percent = target ? Math.round((total / target) * 100) : 0;
