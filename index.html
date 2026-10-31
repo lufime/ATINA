@@ -198,6 +198,12 @@ body{font-size:17px}
 #home .home-login-badge.hidden{display:none!important}
 #home .home-login-dot{display:grid;place-items:center;flex:0 0 23px;width:23px;height:23px;border-radius:50%;background:#2d946d;color:#fff;font-size:15px}
 
+
+/* Account deletion controls */
+.delete-account-area{margin:18px 0 12px;padding:14px;border:1px solid #805052;border-radius:15px;background:linear-gradient(145deg,#291e29,#201b27)}
+.delete-account-area h3{margin:0 0 7px;color:#ffb6ad;font-size:16px}
+.delete-account-area .btn{margin-top:6px}
+
 </style>
 </head>
 <body><main class="wrap">
@@ -211,6 +217,7 @@ body{font-size:17px}
 <div class="actions"><button class="btn full" id="authSignup">Criar conta</button><button class="btn secondary full" id="authLogin">Entrar</button></div>
 <button class="btn secondary full" id="authForgot" style="margin-top:9px">Esqueci-me da palavra-passe</button></div>
 <div id="authReset" class="hidden"><label class="section" for="authNewPassword">Nova palavra-passe</label><input id="authNewPassword" class="answer" type="password" autocomplete="new-password" placeholder="Nova palavra-passe"><button class="btn full" id="authUpdatePassword">Guardar nova palavra-passe</button></div>
+<div id="deleteAccountArea" class="delete-account-area hidden"><h3>Apagar conta</h3><p class="muted small">Esta ação é permanente. O perfil e os dados da conta serão eliminados. As pontuações já publicadas no ranking poderão continuar visíveis, sem ligação à conta.</p><button class="btn danger full" id="deleteAccountBtn">Apagar definitivamente a minha conta</button></div>
 <p id="authStatus" class="feedback" aria-live="polite"></p><button class="btn secondary full" id="authBack">Voltar ao menu</button></section>
 <section id="game" class="hidden"><button class="btn secondary" id="back">← Menu</button><div class="card" style="margin-top:12px"><div class="row"><span class="pill" id="category"></span><span class="pill" id="level"></span></div><h2 id="player" style="font-size:18px;margin:17px 0 5px"></h2><h1 id="question" style="font-size:23px;margin:5px 0">Descobre a resposta</h1><div id="visualWrap" class="hidden"><div class="visual"><img id="mysteryImage" alt="Imagem misteriosa"><div class="veil" id="veil"></div><div class="tile-mask" id="tileMask"></div><span class="visual-label" id="revealLabel">Puzzle quase todo escondido</span></div></div><div class="row" style="margin:12px 0"><strong>⏱️ Tempo</strong><span class="pill timer-display" id="timerDisplay" aria-live="off" style="display:inline-flex;align-items:center;justify-content:center;font-size:clamp(46px,14vw,60px)!important;line-height:1!important;min-width:190px;min-height:88px;padding:12px 22px;font-weight:900">01:00</span></div><div class="row"><strong>As pistas</strong><span class="muted small" id="clueProgress">0 de 5 reveladas</span></div><div class="clues" id="clues"></div><button class="btn secondary full" id="nextClue">Revelar próxima pista</button><label for="answer" class="section" style="display:block">A tua resposta</label><input id="answer" class="answer" type="text" autocomplete="off" autocapitalize="sentences" enterkeyhint="send" placeholder="Escreve ou dita a tua resposta"><button class="btn secondary full" id="voice" style="margin-bottom:9px">🎙️ Responder por voz</button><button class="btn full" id="submit">Confirmar resposta</button><div class="feedback" id="feedback" aria-live="polite"></div><button class="btn secondary full hidden" id="listenAnswer" style="margin-bottom:10px">🔊 OUVIR RESPOSTA</button><div class="actions"><button class="btn danger" id="pass">PASSO →</button><button class="btn full hidden" id="continue">CONTINUAR →</button></div></div><p class="footer" id="scoreboard"></p></section>
 <section id="result" class="card hidden"><h2>Resultado</h2><p id="resultText"></p>
@@ -239,6 +246,7 @@ async function refreshAtinaSession(){
  $('accountIndicator').classList.toggle('hidden',!signedIn);
  $('accountIndicatorText').textContent=signedIn?'Sessão iniciada · '+(atinaProfile?.nickname||atinaUser.email):'';
  $('homeLoginBadge').classList.toggle('hidden',!signedIn);
+ $('deleteAccountArea').classList.toggle('hidden',!signedIn);
  $('homeLoginText').textContent=signedIn?'✓ Sessão iniciada como '+(atinaProfile?.nickname||atinaUser.email):'';
 
 }
@@ -267,6 +275,25 @@ async function sendAtinaRecovery(){
  authMessage('A enviar email de recuperação…');
  const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
  authMessage(error?(error.message||'Não foi possível enviar o email.'):'Se existir uma conta para esse email, receberás uma ligação para definir uma nova palavra-passe.');
+}
+async function deleteAtinaAccount(){
+ if(!atinaUser){authMessage('Inicia sessão para apagar a tua conta.');return;}
+ const confirmed=window.confirm('Queres mesmo apagar definitivamente a tua conta ATINA? Esta ação não pode ser anulada.');
+ if(!confirmed)return;
+ const typed=window.prompt('Para confirmar, escreve APAGAR (em maiúsculas):');
+ if(typed!=='APAGAR'){authMessage('Eliminação cancelada.');return;}
+ const btn=$('deleteAccountBtn');btn.disabled=true;btn.textContent='A apagar a conta…';authMessage('A processar o pedido…');
+ try{
+  const {error}=await supabaseClient.functions.invoke('delete-atina-account',{body:{}});
+  if(error)throw error;
+  await supabaseClient.auth.signOut({scope:'local'});
+  atinaUser=null;atinaProfile=null;
+  await refreshAtinaSession();
+  $('deleteAccountArea').classList.add('hidden');
+  authMessage('A tua conta foi apagada. As pontuações antigas podem continuar no ranking sem ligação à conta.');
+  screen('home');
+ }catch(e){authMessage(e.message||'Não foi possível apagar a conta. Tenta novamente.');}
+ finally{btn.disabled=false;btn.textContent='Apagar definitivamente a minha conta';}
 }
 async function updateAtinaPassword(){
  const password=$('authNewPassword').value;if(password.length<8){authMessage('A nova palavra-passe deve ter pelo menos 8 caracteres.');return;}
@@ -407,7 +434,7 @@ $('voice').onclick=()=>{
  try{recognition.start();}catch(err){$('voice').disabled=locked;$('feedback').textContent='Não foi possível iniciar o microfone. Verifica a permissão do navegador ou escreve a resposta.';}
 };
 $('listenAnswer').onclick=()=>{let g=games[queue[pos]];if('speechSynthesis' in window){window.speechSynthesis.cancel();let fala=new SpeechSynthesisUtterance('A resposta correta é: '+g[3]);fala.lang='pt-PT';window.speechSynthesis.speak(fala);}else{$('feedback').textContent='A leitura em voz alta não está disponível neste navegador.';}};$('pass').onclick=pass;$('continue').onclick=next;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});$('openRanking').onclick=()=>{screen('rankingPage');loadMenuRanking();};
-$('openAuth').onclick=()=>{screen('authPage');authMessage('');};$('authBack').onclick=()=>screen('home');$('authSignup').onclick=createAtinaAccount;$('authLogin').onclick=loginAtina;$('authForgot').onclick=sendAtinaRecovery;$('authUpdatePassword').onclick=updateAtinaPassword;refreshAtinaSession();
+$('openAuth').onclick=()=>{screen('authPage');authMessage('');};$('authBack').onclick=()=>screen('home');$('authSignup').onclick=createAtinaAccount;$('authLogin').onclick=loginAtina;$('authForgot').onclick=sendAtinaRecovery;$('authUpdatePassword').onclick=updateAtinaPassword;$('deleteAccountBtn').onclick=deleteAtinaAccount;refreshAtinaSession();
  $('refreshMenuRanking').onclick=loadMenuRanking;$('menuRankingMode').onchange=loadMenuRanking;$('rankingBack').onclick=()=>screen('home');
 $('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo','saveSoloBtn');$('saveP1Btn').onclick=()=>saveOnlineScore($('nickP1').value,scores[0],'duel','saveP1Btn');$('saveP2Btn').onclick=()=>saveOnlineScore($('nickP2').value,scores[1],'duel','saveP2Btn');$('loadRanking').onclick=loadOnlineRanking;$('rankingMode').onchange=loadOnlineRanking;$('resultHome').onclick=()=>{screen('home');update();};renderCategories();update();
 </script></body></html>
