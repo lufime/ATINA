@@ -87,3 +87,7 @@ No fim da sequência de desafios, todos os telemóveis passam para o ecrã de re
 
 ### Multiplayer em rede — ranking persistente
 Quando o anfitrião termina o último desafio, fecha a sala através de uma operação protegida no Supabase. Os resultados individuais de todos os participantes são guardados na tabela de histórico da sala, com pseudónimo, equipa, pontuação e data. O ecrã final apresenta a classificação da sala. O histórico não está exposto para consulta pública nesta fase; apenas a função protegida do servidor pode inserir ou atualizar resultados, e a operação de fecho é idempotente para evitar duplicados. A validação das respostas continua a ser feita no cliente, pelo que o sistema não constitui uma solução anti-batota robusta.
+
+
+### Multiplayer em rede — até seis equipas
+O anfitrião pode distribuir automaticamente os participantes por até seis equipas (A a F). O número de equipas é ajustado ao total de jogadores, mantendo, sempre que possível, pelo menos dois jogadores por equipa: 2–5 jogadores formam 2 equipas; 6–7 formam 3; 8–9 formam 4; 10–11 formam 5; 12 formam 6. Também é possível atribuir manualmente cada participante a qualquer uma das seis equipas antes do início da partida. A votação de respostas é aplicada aos colegas da respetiva equipa.
