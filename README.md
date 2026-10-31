@@ -22,7 +22,7 @@ O backend usa Supabase. O ranking guarda pontuações e já tem suporte de base 
 
 **Estado da autenticação:** o jogo já inclui ecrãs para criar conta, iniciar sessão e pedir recuperação da palavra-passe por email. A base de dados cria o perfil e valida a unicidade do pseudónimo. A confirmação do email e a recuperação dependem das definições de autenticação do projeto Supabase; é necessário permitir o endereço `https://lufime.github.io/ATINA/` nas URLs de redirecionamento autorizadas. A associação automática das pontuações à conta ainda não está concluída.
 
-A autenticação usa email e palavra-passe através do Supabase Auth. A recuperação usa o fluxo de email do Supabase. Os jogadores não precisam de conta GitHub. Até a configuração de redirecionamento e os testes finais estarem concluídos, a recuperação por email pode não funcionar corretamente.
+A autenticação usa a biblioteca oficial JavaScript do Supabase e email/palavra-passe através do Supabase Auth. A recuperação usa o fluxo de email do Supabase. Os jogadores não precisam de conta GitHub. Até a configuração de redirecionamento e os testes finais estarem concluídos, a recuperação por email pode não funcionar corretamente.
 
 ## Publicar com GitHub Pages
 1. Abre **Settings** no repositório.
