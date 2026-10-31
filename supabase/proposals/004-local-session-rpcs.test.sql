@@ -52,8 +52,10 @@ select ok(
   'a pontuação correta é calculada no servidor após a penalização anterior'
 ) from _atina_test_session;
 
-select ok(
-  (public.atina_local_game_state(session_id, 'token-incorreto')->>'status') is null,
+select throws_ok(
+  format('select public.atina_local_game_state(%L::uuid, %L)', session_id, 'token-incorreto'),
+  '28000',
+  'Sessão inválida ou expirada.',
   'um token incorreto não obtém estado da sessão'
 ) from _atina_test_session;
 
