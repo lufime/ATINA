@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION public.atina_create_room(p_nickname text, p_max_playe
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 declare
  v_room public.atina_rooms%rowtype; v_player public.atina_room_players%rowtype;
  v_token text; v_code text; v_attempt integer:=0;
@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION public.atina_join_room(p_nickname text, p_code text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 declare
  v_room public.atina_rooms%rowtype; v_player public.atina_room_players%rowtype;
  v_token text;
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION public.atina_leave_room(p_room_id uuid, p_token text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 declare v_player public.atina_room_players%rowtype; v_count integer;
 begin
  select * into v_player from public.atina_room_players
@@ -88,7 +88,7 @@ CREATE OR REPLACE FUNCTION public.atina_room_state(p_room_id uuid, p_token text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 declare v_me public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 declare v_players jsonb; v_team_proposal jsonb; v_team text;
 begin
@@ -138,7 +138,7 @@ CREATE OR REPLACE FUNCTION public.atina_set_room_ready(p_room_id uuid, p_token t
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 declare v_player public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 begin
  if p_ready is null then raise exception 'Estado de prontidão inválido.'; end if;
@@ -158,7 +158,7 @@ CREATE OR REPLACE FUNCTION public.atina_set_room_team(p_room_id uuid, p_token te
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 declare v_host public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 begin
  select * into v_host from public.atina_room_players
@@ -183,7 +183,7 @@ CREATE OR REPLACE FUNCTION public.atina_start_room(p_room_id uuid, p_token text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$;
+AS $function$
 declare v_host public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 declare v_count integer; v_unready integer;
 begin
