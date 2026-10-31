@@ -62,7 +62,7 @@ games.forEach((challenge, index) => {
     const answerText = normalize(answer);
     clues.forEach((clue, clueIndex) => {
       const clueText = normalize(clue);
-      const explicitReveal = /^(sou|somos|a resposta e|a resposta correta e|o seu nome e|a palavra e|chamo me|chama se)\\b/.test(clueText)
+      const explicitReveal = /^(sou|somos|a resposta e|a resposta correta e|o seu nome e|a palavra e|chamo me|chama se)\b/.test(clueText)
         && answerText.length > 2 && clueText.includes(answerText);
       const fillerReveal = /pista adicional sobre/.test(clueText);
       if (explicitReveal || fillerReveal) {
