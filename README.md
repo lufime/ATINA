@@ -67,3 +67,7 @@ A sala inclui agora confirmação de prontidão, distribuição automática por 
 
 ### Multiplayer em rede — preparação da sincronização
 Foi acrescentado ao backend um estado partilhado da partida, com versão sequencial, que só o anfitrião pode publicar e que os participantes da sala podem consultar com a respetiva sessão. A leitura e publicação foram testadas com dois jogadores. A interface ainda não usa este estado para sincronizar visualmente desafios, pistas ou cronómetro; essa integração continua pendente.
+
+
+### Multiplayer em rede — terceira fase (sincronização inicial)
+Depois de o anfitrião iniciar, os telemóveis recebem o mesmo desafio, a mesma sequência de pistas e a mesma contagem decrescente, com o anfitrião a controlar a revelação das pistas e a passagem ao desafio seguinte. Nesta fase inicial, as respostas e a pontuação competitiva ainda não estão sincronizadas; o painel dos restantes jogadores é de acompanhamento. A conclusão da lógica de respostas, pontuação por jogador/equipa e ranking multiplayer fica para a fase seguinte.
