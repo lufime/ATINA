@@ -1,0 +1,20 @@
+name: Validar banco de desafios
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-challenges:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter o repositório
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validar estrutura, respostas e duplicações
+        run: node scripts/validate-challenges.mjs --strict

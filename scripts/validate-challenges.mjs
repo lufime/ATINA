@@ -78,11 +78,12 @@ const categories = [...counts.entries()].sort(([a], [b]) => a.localeCompare(b, '
 const total = games.length;
 const targetPerCategory = 50;
 const target = categories.length * targetPerCategory;
+const percent = target ? Math.round((total / target) * 100) : 0;
 const duplicates = warnings.filter((warning) => warning.startsWith('Resposta repetida')).length;
 
 console.log('ATINA — auditoria do banco de desafios');
 console.log(`Total: ${total} desafios · ${categories.length} modalidades · ${imageCount} desafios com imagem`);
-console.log(`Meta: ${target} desafios (${targetPerCategory} por modalidade) · faltam ${Math.max(0, target - total)}`);
+console.log(`Meta: ${target} desafios (${targetPerCategory} por modalidade) · faltam ${Math.max(0, target - total)} · ${percent}% concluído`);
 for (const [category, count] of categories) {
   console.log(`- ${category}: ${count}/${targetPerCategory}`);
 }

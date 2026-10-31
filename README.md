@@ -8,7 +8,7 @@ Jogo de desafios em português (pt-PT), pensado para telemóveis.
 - Indicador verde no cabeçalho quando existe sessão iniciada, com pseudónimo ou email da conta.
 - Menu inicial reorganizado para telemóveis: modo de jogo, modalidades em destaque, temporizador e atalhos de conta/ranking em secções separadas.
 - Corrigido erro de JavaScript que impedia a apresentação das 15 modalidades no menu inicial.
-- 15 modalidades e 120 desafios registados no banco atual (8 por modalidade); a meta de expansão é 50 por modalidade, num total de 750 desafios.
+- 15 modalidades e 750 desafios preenchidos, sem respostas principais repetidas dentro da mesma modalidade; todas as modalidades atingiram a meta de 50 desafios.
 - Cinco pistas progressivas por desafio (seis na modalidade Imagem Misteriosa); a última pista dá uma orientação adicional sem revelar diretamente a resposta.
 - As pistas reveladas permanecem visíveis.
 - Resposta errada: menos 10 pontos; é possível tentar novamente.
@@ -120,27 +120,27 @@ Ao recarregar, o ATINA tenta primeiro recuperar a sessão multiplayer; caso não
 
 ## Banco de desafios e meta de expansão
 
-O banco atual contém **120 desafios em 15 modalidades** (8 por modalidade). A meta do projeto é chegar a **750 desafios**, com 50 em cada modalidade. Faltam, portanto, 630 desafios para atingir essa meta. O progresso é calculado diretamente a partir do array `games` em `index.html`, não a partir de contagens escritas manualmente.
+O banco atual contém **750 desafios preenchidos em 15 modalidades**. A meta de **750 desafios** foi atingida, com 50 em cada modalidade. Faltam **0 desafios** para atingir essa meta. As contagens são calculadas a partir do array `games` em `index.html`, e o menu atualiza automaticamente o número de desafios por modalidade.
 
 | Modalidade | Atual | Meta |
 |---|---:|---:|
-| Quem sou eu? | 8 | 50 |
-| Onde estou? | 8 | 50 |
-| O que sou? | 8 | 50 |
-| História e mistérios | 8 | 50 |
-| Palavras escondidas | 8 | 50 |
-| Ciência e natureza | 8 | 50 |
-| Cultura geral | 8 | 50 |
-| Imagem misteriosa | 8 | 50 |
-| Lógica e números | 8 | 50 |
-| Desafio surpresa | 8 | 50 |
-| Música e sons | 8 | 50 |
-| Cinema e televisão | 8 | 50 |
-| Desporto | 8 | 50 |
-| Detetive | 8 | 50 |
-| Ilusões e truques mentais | 8 | 50 |
-| **Total** | **120** | **750** |
+| Quem sou eu? | 50 | 50 |
+| Onde estou? | 50 | 50 |
+| O que sou? | 50 | 50 |
+| História e mistérios | 50 | 50 |
+| Palavras escondidas | 50 | 50 |
+| Ciência e natureza | 50 | 50 |
+| Cultura geral | 50 | 50 |
+| Imagem misteriosa | 50 | 50 |
+| Lógica e números | 50 | 50 |
+| Desafio surpresa | 50 | 50 |
+| Música e sons | 50 | 50 |
+| Cinema e televisão | 50 | 50 |
+| Desporto | 50 | 50 |
+| Ilusões e truques mentais | 50 | 50 |
+| Detetive | 50 | 50 |
+| **Total** | **750** | **750** |
 
 ### Validar o banco de desafios
 
-Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer das respostas repetidas um erro bloqueante.
+Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer dos avisos editoriais um erro bloqueante. O GitHub Actions executa esta validação automaticamente em cada pull request para `main` e em cada push para `main`.
