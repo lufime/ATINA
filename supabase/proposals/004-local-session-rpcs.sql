@@ -80,10 +80,10 @@ declare
   v_session private.atina_local_sessions;
   v_card jsonb;
 begin
-  if p_game_mode not in ('solo', 'duel') then
+  if p_game_mode is null or p_game_mode not in ('solo', 'duel') then
     raise exception 'Modo inválido nesta versão.' using errcode = '22023';
   end if;
-  if p_difficulty not in ('easy', 'medium', 'hard') then
+  if p_difficulty is null or p_difficulty not in ('easy', 'medium', 'hard') then
     raise exception 'Dificuldade inválida.' using errcode = '22023';
   end if;
   if p_timed_mode_seconds is null or p_timed_mode_seconds not between 0 and 3600 then
@@ -105,13 +105,7 @@ begin
   end if;
 
   v_token := encode(extensions.gen_random_bytes(32), 'hex');
-  v_card := case when cardinality(v_queue) >= 3 then
-    case floor(random() * 3)::integer
-      when 0 then jsonb_build_object('name','PONTOS A DOBRAR','icon','💎','multiplier',2,'bonus',0)
-      when 1 then jsonb_build_object('name','BÓNUS SURPRESA','icon','🎁','multiplier',1,'bonus',15)
-      else jsonb_build_object('name','PASSE VIP','icon','🃏','multiplier',1,'bonus',10)
-    end
-  else null end;
+  v_card := null; -- O primeiro desafio não recebe carta especial (compatível com pos % 3 = 2 no cliente).
 
   insert into private.atina_local_sessions (
     token_hash, game_mode, difficulty, category, timed_mode_seconds,
@@ -311,6 +305,17 @@ begin
   end if;
   if v_session.status <> 'active' or v_session.round_locked then
     raise exception 'A ronda já foi fechada.' using errcode='55000';
+  end if;
+  if v_session.deadline_at is not null and v_session.deadline_at <= clock_timestamp() then
+    v_session.scores[v_session.current_player] := v_session.scores[v_session.current_player]-10;
+    v_session.streaks[v_session.current_player] := 0;
+    v_session.round_locked := true;
+    v_session.answered_count := v_session.answered_count+1;
+    v_session.last_result := jsonb_build_object('outcome','timeout','penalty',10);
+    update private.atina_local_sessions set scores=v_session.scores, streaks=v_session.streaks,
+      round_locked=true, answered_count=v_session.answered_count, last_result=v_session.last_result,
+      updated_at=clock_timestamp() where id=v_session.id returning * into v_session;
+    return private.atina_local_public_state(v_session);
   end if;
   v_session.streaks[v_session.current_player] := 0;
   v_session.round_locked := true;
