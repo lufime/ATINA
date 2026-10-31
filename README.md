@@ -83,3 +83,7 @@ Nas partidas por equipas, o primeiro jogador que submete uma resposta apresenta 
 
 ### Multiplayer em rede — resultados finais
 No fim da sequência de desafios, todos os telemóveis passam para o ecrã de resultados da sala. O ecrã apresenta a classificação individual e, quando existem equipas, a soma dos pontos por equipa. A classificação usa as pontuações registadas na sala; não cria ainda uma entrada no ranking público persistente.
+
+
+### Multiplayer em rede — ranking persistente
+Quando o anfitrião termina o último desafio, fecha a sala através de uma operação protegida no Supabase. Os resultados individuais de todos os participantes são guardados uma única vez no ranking multiplayer, com pseudónimo, equipa, pontuação e data. O ecrã final apresenta a classificação da sala. A tabela do ranking permite consulta pública, mas apenas a função do servidor pode inserir resultados; a operação de fecho é idempotente para evitar duplicados. A validação das respostas continua a ser feita no cliente, pelo que o sistema não constitui uma solução anti-batota robusta.
