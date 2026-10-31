@@ -3,6 +3,7 @@
 Jogo de desafios em português (pt-PT), pensado para telemóveis.
 
 ## Funcionalidades atuais
+- Apagamento definitivo da conta disponível na área autenticada, com confirmação explícita e execução segura no servidor.
 - Indicador visual verde no menu e no cabeçalho quando existe uma sessão iniciada, identificando o pseudónimo ou email da conta.
 - Indicador verde no cabeçalho quando existe sessão iniciada, com pseudónimo ou email da conta.
 - Menu inicial reorganizado para telemóveis: modo de jogo, modalidades em destaque, temporizador e atalhos de conta/ranking em secções separadas.
@@ -27,6 +28,9 @@ O backend usa Supabase. O ranking guarda pontuações e já tem suporte de base 
 **Estado da autenticação:** o jogo já inclui ecrãs para criar conta, iniciar sessão e pedir recuperação da palavra-passe por email. A base de dados cria o perfil e valida a unicidade do pseudónimo. A confirmação do email e a recuperação dependem das definições de autenticação do projeto Supabase; é necessário permitir o endereço `https://lufime.github.io/ATINA/` nas URLs de redirecionamento autorizadas. As novas pontuações guardadas a partir do jogo ficam associadas ao utilizador autenticado (`user_id`). No modo individual, o pseudónimo da conta é usado automaticamente. No duelo local, cada jogador pode indicar o seu pseudónimo, ficando os dois resultados associados à conta que iniciou a sessão.
 
 A autenticação usa a biblioteca oficial JavaScript do Supabase e email/palavra-passe através do Supabase Auth. A recuperação usa o fluxo de email do Supabase. Os jogadores não precisam de conta GitHub. Até a configuração de redirecionamento e os testes finais estarem concluídos, a recuperação por email pode não funcionar corretamente.
+
+
+A eliminação da conta é processada por uma Supabase Edge Function protegida: valida a sessão do utilizador no servidor e só depois remove o utilizador do Supabase Auth. O perfil associado é eliminado em cascata; as pontuações existentes no ranking podem permanecer, sem associação à conta.
 
 ## Publicar com GitHub Pages
 1. Abre **Settings** no repositório.
