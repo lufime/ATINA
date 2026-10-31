@@ -1,5 +1,5 @@
 begin;
-select plan(8);
+select plan(9);
 
 insert into private.atina_challenges (
   challenge_id, category, emoji, clues, answer, accepted_answers, difficulty, active
@@ -50,6 +50,13 @@ select ok(
 select ok(
   (public.atina_local_game_state(session_id, token)->'scores'->>0)::integer = 0,
   'a pontuação correta é calculada no servidor após a penalização anterior'
+) from _atina_test_session;
+
+select throws_ok(
+  format('select public.atina_local_submit_answer(%L::uuid, %L, %L)', session_id, token, 'coracao de leao'),
+  '55000',
+  'A ronda já foi fechada.',
+  'uma submissão repetida não atribui pontos novamente'
 ) from _atina_test_session;
 
 select throws_ok(
