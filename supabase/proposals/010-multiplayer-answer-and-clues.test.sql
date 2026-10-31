@@ -2,6 +2,12 @@ BEGIN;
 SELECT plan(14);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Host 010',4) AS value;
 CREATE TEMP TABLE _guest AS SELECT public.atina_join_room('Guest 010',(SELECT value->>'code' FROM _host)) AS value;
+SELECT public.atina_set_room_team(
+  (SELECT (value->>'room_id')::uuid FROM _host),
+  (SELECT value->>'token' FROM _host),
+  (SELECT (value->>'player_id')::uuid FROM _guest),
+  'Equipa de teste'
+);
 SELECT public.atina_set_room_ready((SELECT (value->>'room_id')::uuid FROM _guest),(SELECT value->>'token' FROM _guest),true);
 SELECT public.atina_start_room((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host));
 SELECT public.atina_start_room_challenges((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),'medium',60,NULL);
@@ -44,12 +50,6 @@ SELECT throws_ok(
   format('SELECT public.atina_reveal_room_clue(%L::uuid,%L)',
     (SELECT value->>'room_id' FROM _host),(SELECT value->>'token' FROM _guest)),
   'P0001','Só o anfitrião pode revelar pistas.','guest cannot reveal clues'
-);
-SELECT public.atina_set_room_team(
-  (SELECT (value->>'room_id')::uuid FROM _host),
-  (SELECT value->>'token' FROM _host),
-  (SELECT (value->>'player_id')::uuid FROM _guest),
-  'Equipa de teste'
 );
 SELECT throws_ok(
   format('SELECT public.atina_submit_room_answer(%L::uuid,%L,%L)',
