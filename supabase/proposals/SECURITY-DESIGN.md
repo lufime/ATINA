@@ -148,3 +148,12 @@ O gerador tem também o modo `--check`, que valida a estrutura, o alinhamento co
 Na revisão estática da proposta 004 foi corrigido um problema de deadline sob contenção: `clock_timestamp()` era capturado na entrada das funções de submissão/avanço, antes de obterem o `FOR UPDATE`. Se uma chamada aguardasse pelo lock, poderia usar uma hora desatualizada e aceitar uma resposta após o prazo, ou prolongar ligeiramente a sessão seguinte. Agora a hora é capturada imediatamente depois de o lock da sessão ser obtido e antes de validar expiração/deadline.
 
 Esta correção é apenas uma revisão estática do SQL. Não foi executada em PostgreSQL e não substitui testes concorrentes numa base de desenvolvimento. O âmbito continua limitado a `solo` e `duel`; Mix, Party/Equipas e Mímicas ainda não estão implementados nesta proposta.
+
+
+### Incremento — suporte inicial de Mix no servidor
+
+A RPC de início de sessão aceita agora `mix`. Quando o cliente pede Mix sem categoria, a fila é gerada aleatoriamente a partir de todos os desafios ativos da dificuldade escolhida. O estado e as respostas continuam a ser controlados pelas mesmas RPCs autoritativas de Individual.
+
+Foi acrescentada uma asserção pgTAP para confirmar que o servidor inicia uma sessão Mix sem filtro de categoria. O teste está escrito, mas **não foi executado** porque não existe uma base Supabase de desenvolvimento autorizada e sem custos.
+
+**Party/Equipas continua por implementar:** antes de codificar a regra, é necessário mapear fielmente o número de equipas/jogadores, alternância, limite de rondas e duplicação de pontos na ronda final, sem inferir regras a partir do nome do modo.
