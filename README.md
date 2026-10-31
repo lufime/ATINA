@@ -164,3 +164,7 @@ A opção também permite colocar o ATINA em ecrã inteiro quando o navegador su
 
 ### Modo Mímicas
 O menu inclui um modo de Mímicas independente dos 750 desafios de perguntas. Em cada ronda, uma palavra ou situação é apresentada para ser representada sem falar nem fazer sons. As duas equipas alternam as rondas, têm um temporizador configurado pelo tempo escolhido no menu (60 ou 90 segundos; sem limite usa 60 segundos neste modo), ganham um ponto quando acertam e podem passar uma palavra. O baralho inclui animais, profissões, ações, personagens, desporto e situações. O modo funciona no mesmo dispositivo, incluindo em ecrãs grandes e com navegação por comando compatível.
+
+
+### Multiplayer em rede — Mímicas
+O modo Mímicas pode ser iniciado numa sala online, mantendo todos os participantes nos seus próprios telemóveis. O representante roda automaticamente por todos os jogadores, incluindo o anfitrião. Apenas o telemóvel do representante recebe a palavra secreta através de uma função protegida no Supabase; os restantes veem a categoria, as pistas visuais partilhadas e o cronómetro sincronizado. O anfitrião controla o início da ronda, a revelação das pistas, a validação do acerto ou passagem e a ronda seguinte. A pontuação é atribuída à equipa do representante quando existem equipas; sem equipas, é registada individualmente para os restantes jogadores. O modo usa as 48 cartas de Mímicas e guarda os resultados finais no histórico da sala.
