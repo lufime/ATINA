@@ -221,3 +221,6 @@ Todas as tabelas têm RLS ativo e acesso direto revogado para `public`, `anon` e
 **Limites importantes:** esta etapa cria apenas o esquema de dados. Ainda não implementa as RPCs de criação/entrada/estado/saída de sala, prontidão, equipas, pausas, propostas ou pontuação. A migration antiga de Mímicas continua sem ser aplicada, e as funções que aceitam estado arbitrário, `p_correct` ou `p_points` não foram expostas nem ativadas. A compatibilidade completa das constraints com todos os fluxos do cliente ainda tem de ser validada através das RPCs e testes de integração.
 
 Nenhuma alteração foi feita à produção, frontend, branch principal, deploy, merge ou PR.
+
+
+**Revisão dos advisors após a criação do esquema:** o advisor de performance identificou três FKs sem índice de cobertura. Foram adicionados índices em `(room_id, player_id)`, `(room_id, proposer_id)` e `player_id`, tanto no DDL versionado como no projeto de desenvolvimento. O advisor de segurança assinala RLS ativo sem policies nas seis tabelas novas; é intencional nesta fase, porque o acesso direto está revogado e o acesso futuro será exclusivamente através de RPCs token-authenticated. Não se devem criar policies genéricas para contornar estes avisos. Os avisos SECURITY DEFINER existentes dizem respeito às seis RPCs locais já instaladas, não a novas RPCs multiplayer (ainda não criadas).
