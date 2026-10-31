@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION public.atina_create_room(p_nickname text, p_max_playe
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 declare
  v_room public.atina_rooms%rowtype; v_player public.atina_room_players%rowtype;
  v_token text; v_code text; v_attempt integer:=0;
@@ -29,7 +29,7 @@ begin
  returning * into v_player;
  return jsonb_build_object('room_id',v_room.id,'token',v_token,'code',v_room.code,'player_id',v_player.id);
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.atina_join_room(p_nickname text, p_code text)
@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION public.atina_join_room(p_nickname text, p_code text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 declare
  v_room public.atina_rooms%rowtype; v_player public.atina_room_players%rowtype;
  v_token text;
@@ -53,7 +53,7 @@ begin
  returning * into v_player;
  return jsonb_build_object('room_id',v_room.id,'token',v_token,'code',v_room.code,'player_id',v_player.id);
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.atina_leave_room(p_room_id uuid, p_token text)
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION public.atina_leave_room(p_room_id uuid, p_token text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 declare v_player public.atina_room_players%rowtype; v_count integer;
 begin
  select * into v_player from public.atina_room_players
@@ -80,7 +80,7 @@ begin
  end if;
  return jsonb_build_object('left',true);
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.atina_room_state(p_room_id uuid, p_token text)
@@ -88,7 +88,7 @@ CREATE OR REPLACE FUNCTION public.atina_room_state(p_room_id uuid, p_token text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 declare v_me public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 declare v_players jsonb; v_team_proposal jsonb; v_team text;
 begin
@@ -130,7 +130,7 @@ begin
   )
  );
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.atina_set_room_ready(p_room_id uuid, p_token text, p_ready boolean)
@@ -138,7 +138,7 @@ CREATE OR REPLACE FUNCTION public.atina_set_room_ready(p_room_id uuid, p_token t
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 declare v_player public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 begin
  if p_ready is null then raise exception 'Estado de prontidão inválido.'; end if;
@@ -150,7 +150,7 @@ begin
  update public.atina_room_players set ready=p_ready,last_seen_at=clock_timestamp() where id=v_player.id;
  return jsonb_build_object('ready',p_ready);
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.atina_set_room_team(p_room_id uuid, p_token text, p_player_id uuid, p_team text)
@@ -158,7 +158,7 @@ CREATE OR REPLACE FUNCTION public.atina_set_room_team(p_room_id uuid, p_token te
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 declare v_host public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 begin
  select * into v_host from public.atina_room_players
@@ -175,7 +175,7 @@ begin
  if not found then raise exception 'Jogador não encontrado nesta sala.'; end if;
  return jsonb_build_object('player_id',p_player_id,'team',nullif(btrim(coalesce(p_team,'')),''));
 end;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.atina_start_room(p_room_id uuid, p_token text)
@@ -183,7 +183,7 @@ CREATE OR REPLACE FUNCTION public.atina_start_room(p_room_id uuid, p_token text)
  LANGUAGE plpgsql
  SECURITY DEFINER
  SET search_path TO ''
-AS $function$
+AS $function$;
 declare v_host public.atina_room_players%rowtype; v_room public.atina_rooms%rowtype;
 declare v_count integer; v_unready integer;
 begin
@@ -201,7 +201,7 @@ begin
  where id=p_room_id;
  return jsonb_build_object('status','playing','players',v_count);
 end;
-$function$
+$function$;
 
 
 revoke all on function public.atina_create_room(text,integer) from public;
