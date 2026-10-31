@@ -364,3 +364,20 @@ Testes pgTAP executados novamente depois da formalização, todos aprovados:
 - 008 lobby RPCs: 12/12.
 
 As migrations 006–008 foram aplicadas apenas no projeto de desenvolvimento, não em produção. Os testes são transacionais e revertem os dados de teste. Para manter a ordem de dependências num replay limpo, os três registos de histórico criados durante a formalização foram reordenados no ledger do projeto de desenvolvimento para as versões 20261031220701–20261031220703, entre 005 e 009. Os nomes/versões do ledger foram confirmados contra os ficheiros; a sequência fica contínua de 001 a 018. Esta operação alterou apenas metadados de histórico no projeto de desenvolvimento, não executou novamente DDL nem tocou em produção.
+
+
+## Incremento 019 — rate limiting das RPCs ATINA
+
+Aplicado apenas em `atina-development` e formalizado na migration `20261031223828_019_atina_rpc_rate_limiting.sql`.
+
+- Configurado `pgrst.db_pre_request` no role `authenticator`, com reload da configuração PostgREST. O hook só atua em pedidos POST/PUT/PATCH/DELETE para caminhos `/rpc/atina_*`; não interfere noutras rotas do projeto.
+- Limites por IP de origem e por RPC, em janelas de um minuto:
+  - criar sala, entrar em sala e obter segredo de Mímicas: 10 pedidos/minuto;
+  - polling de estado de sala e sessão local: 120 pedidos/minuto, compatível com o polling atual de 3 segundos;
+  - restantes RPCs ATINA: 30 pedidos/minuto.
+- Os IPs são normalizados e guardados apenas como SHA-256, não em texto simples. O contador usa UPSERT atómico para concorrência e devolve HTTP 429 com `Retry-After: 60` quando o limite é excedido.
+- Se o gateway não fornecer um `X-Forwarded-For` válido, os pedidos ATINA falham fechados com HTTP 503, em vez de ficarem sem limitação.
+- A tabela de contadores é privada, tem RLS e não concede SELECT a `anon` nem `authenticated`. A limpeza de contadores antigos é oportunista e mantém apenas uma linha por combinação IP/RPC.
+- Testes pgTAP: 12/12 aprovados, cobrindo exclusão de rotas não ATINA, limites de criação e polling, isolamento entre IPs, falha fechada sem IP, permissões privadas e configuração do hook.
+
+**Limites e operação:** a limitação é por IP e por endpoint, pelo que utilizadores atrás do mesmo NAT partilham a quota. É uma primeira camada contra abuso automatizado, não substitui WAF/mitigação DDoS nem quotas por conta. O hook `db_pre_request` aplica-se ao Data API/PostgREST, não a Realtime, Storage ou outros produtos Supabase. A integração foi testada com contexto de pedido simulado em pgTAP e com a configuração do role confirmada; não foi feito um teste HTTP externo ponta a ponta nesta sessão. A função de pre-request acrescenta um aviso ao Advisor por ser uma função `SECURITY DEFINER` deliberadamente executável pelos roles que chamam o Data API.
