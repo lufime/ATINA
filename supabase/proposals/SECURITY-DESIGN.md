@@ -92,3 +92,28 @@ Foi acrescentada a proposta `003-server-answer-matching.sql`, com normalização
 Os testes propostos estão em `003-server-answer-matching.test.sql` e cobrem acentos/pontuação, correspondência exata, tolerância a pequenos erros em palavras longas, palavras curtas e contagem de palavras.
 
 **Limite deste incremento:** são propostas SQL ainda não executadas. A tabela privada precisa de dados e os helpers ainda têm de ser chamados pelas RPCs autoritativas das sessões locais e salas multiplayer. O frontend continua sem alteração nesta fase.
+
+## Incremento — sessões autoritativas para Individual e Duelo
+
+Foi acrescentada a proposta `004-local-session-rpcs.sql` para os modos **Individual** e **Duelo**. O servidor cria a fila aleatória, gera um token bearer de 256 bits (guarda apenas SHA-256), mantém a ronda/pistas/pontuações e expõe apenas o desafio público. As RPCs recebem o texto da resposta, nunca um booleano de correção ou pontos.
+
+Operações propostas:
+- `atina_start_local_game`: cria sessão e fila no servidor.
+- `atina_local_game_state`: recupera o estado; se o deadline expirou, fecha a ronda e aplica a penalização.
+- `atina_local_reveal_clue`: revela uma pista por chamada.
+- `atina_local_submit_answer`: compara com o segredo privado e calcula penalização/pontos/rapidez/sequência/carta especial; fecha a ronda em caso de acerto.
+- `atina_local_pass_challenge`: fecha a ronda e revela a solução apenas depois de passar; um passe depois do deadline conta como timeout.
+- `atina_local_next_challenge`: alterna o jogador no Duelo e avança/volta a baralhar a fila.
+
+Foi também acrescentado um conjunto inicial de testes pgTAP em `004-local-session-rpcs.test.sql`, com um desafio temporário isolado. Estes testes **não foram executados**.
+
+### Limites e pré-requisitos ainda por resolver
+
+- A coluna privada `difficulty` tem de ser preenchida para os 753 desafios com a classificação exatamente equivalente a `classifyChallenge` do frontend. Sem essa carga, a RPC não encontra desafios e não deve ser ativada.
+- A migração da pontuação base, bónus de rapidez, sequência, cartas especiais, penalização, meta de 250 e alternância do Duelo está proposta; precisa de execução de testes comparativos contra o comportamento atual.
+- O tempo de corrida acumulado, o ranking e a apresentação de resultados ainda não foram migrados para autoridade do servidor.
+- Não há ainda rate limiting por token nem limite de tentativas por ronda; definir estes controlos antes de disponibilizar publicamente.
+- O frontend ainda usa o array `games` com respostas e não chama estas RPCs. Esta proposta, isoladamente, **não protege partidas reais**.
+- Mix, Party, Mímicas e os modos de sala multiplayer continuam fora deste incremento.
+
+A proposta continua isolada na branch. Nenhuma migration foi executada no projeto Supabase ligado e nenhuma alteração foi feita em produção.
