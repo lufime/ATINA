@@ -83,13 +83,13 @@ begin
  select * into v_host from public.atina_room_players
  where room_id=p_room_id and token_hash=encode(extensions.digest(coalesce(p_token,''),'sha256'),'hex');
  if not found or not v_host.is_host then raise exception 'Só o anfitrião pode preparar uma ronda de Mímicas.'; end if;
- if p_duration_seconds not in (0,60,90) then raise exception 'Duração inválida.'; end if;
+ if p_duration_seconds is null or p_duration_seconds not in (0,60,90) then raise exception 'Duração inválida.'; end if;
  select * into v_room from public.atina_rooms where id=p_room_id for update;
  if not found or v_room.status<>'playing' then raise exception 'A sala não está ativa.'; end if;
  select * into v_rep from public.atina_room_players where id=p_representative_id and room_id=p_room_id;
  if not found then raise exception 'Representante inválido.'; end if;
  select count(*) into v_total from private.atina_mime_cards;
- if p_round_number<0 or p_round_number>=v_total then raise exception 'Não existem mais rondas.'; end if;
+ if p_round_number is null or p_round_number<0 or p_round_number>=v_total then raise exception 'Não existem mais rondas.'; end if;
  if p_round_number=0 then
   if coalesce(v_room.game_state->>'mode','')='mimicas' then raise exception 'A partida de Mímicas já começou.'; end if;
  else
@@ -156,7 +156,7 @@ begin
   and (v_state->>'deadline')::bigint<floor(extract(epoch from clock_timestamp())*1000)::bigint then
   raise exception 'O tempo desta ronda terminou.';
  end if;
- if p_points<0 or p_points>60 then raise exception 'Pontuação inválida.'; end if;
+ if p_points is null or p_points<0 or p_points>60 then raise exception 'Pontuação inválida.'; end if;
  v_round:=(v_state->>'round')::integer; v_rep:=(v_state->>'representative_id')::uuid;
  v_team:=nullif(v_state->>'team_label','');
  select word into v_word from private.atina_mime_secrets where room_id=p_room_id and round_number=v_round;
