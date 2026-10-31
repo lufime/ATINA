@@ -204,7 +204,7 @@ body{font-size:17px}
 .delete-account-area h3{margin:0 0 7px;color:#ffb6ad;font-size:16px}
 .delete-account-area .btn{margin-top:6px}
 
-</style>
+.consent-box{margin:14px 0;padding:12px;border:1px solid #365777;border-radius:13px;background:#0d1d30}.consent-row{display:flex;align-items:flex-start;gap:10px;margin:9px 0;font-size:13px;line-height:1.45}.consent-row input{width:19px;height:19px;flex:0 0 19px;margin:0;accent-color:#d3ad68}.consent-row a,.legal-doc a{color:#f3c65e;text-decoration:underline}.legal-doc{margin:9px 0;padding:11px 12px;border:1px solid #365777;border-radius:12px;background:#10243a}.legal-doc summary{cursor:pointer;font-weight:700;color:#f3c65e}.legal-copy{font-size:13px;line-height:1.55;color:#d6deea}.legal-copy p{margin:10px 0}</style>
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><div class="logo">ATINA</div><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
@@ -214,6 +214,24 @@ body{font-size:17px}
 <label class="section" for="authNickname">Pseudónimo (1–20 caracteres)</label><input id="authNickname" class="answer" maxlength="20" autocomplete="nickname" placeholder="O teu pseudónimo">
 <label class="section" for="authEmail">Email</label><input id="authEmail" class="answer" type="email" autocomplete="email" placeholder="nome@email.com">
 <label class="section" for="authPassword">Palavra-passe</label><input id="authPassword" class="answer" type="password" autocomplete="current-password" placeholder="Palavra-passe">
+<div class="consent-box">
+<label class="consent-row"><input id="acceptTerms" type="checkbox"><span>Li e aceito os <a href="#termsText">Termos de Utilização</a>. (Obrigatório)</span></label>
+<label class="consent-row"><input id="acceptPrivacy" type="checkbox"><span>Li a <a href="#privacyText">Política de Privacidade e Proteção de Dados</a>. (Obrigatório)</span></label>
+</div>
+<details class="legal-doc"><summary id="termsText">Termos de Utilização</summary><div class="legal-copy">
+<p>Ao criar uma conta ou utilizar o ATINA, comprometes-te a usar o jogo de forma lícita e respeitosa. Não deves tentar perturbar o serviço, explorar falhas ou publicar conteúdos ofensivos através de pseudónimos.</p>
+<p>O ATINA é disponibilizado tal como está. Podem ocorrer interrupções, alterações ou indisponibilidade. As pontuações do ranking destinam-se a fins lúdicos e podem ser moderadas ou removidas em caso de abuso ou erro.</p>
+<p>Podes deixar de utilizar o serviço a qualquer momento e solicitar a eliminação da tua conta através da opção disponível na área de conta. A eliminação da conta não garante a remoção de pontuações já publicadas no ranking, que podem permanecer sem associação à conta.</p>
+<p>Ao selecionar a caixa de aceitação e criar a conta, confirmas que leste e aceitas estes termos.</p>
+</div></details>
+<details class="legal-doc"><summary id="privacyText">Política de Privacidade e Proteção de Dados</summary><div class="legal-copy">
+<p>O ATINA utiliza o pseudónimo, endereço de email, identificador da conta e pontuações para criar e gerir a conta, permitir o início de sessão e apresentar o ranking.</p>
+<p>Os dados de conta e autenticação são processados através do Supabase. O jogo é publicado através do GitHub Pages. Estes fornecedores prestam serviços técnicos necessários ao funcionamento do ATINA.</p>
+<p>Os dados são conservados enquanto a conta estiver ativa ou pelo período necessário ao funcionamento do ranking e ao cumprimento de obrigações legais. Quando a conta é eliminada, o perfil é apagado; as pontuações podem permanecer no ranking sem ligação à conta.</p>
+<p>Podes pedir acesso, correção ou apagamento dos teus dados através das funcionalidades disponíveis na área «A minha conta» do ATINA. Não é publicado um endereço de email de contacto nesta versão.</p>
+<p>São utilizadas apenas as informações necessárias às funcionalidades descritas. Não vendas nem partilhes dados pessoais para publicidade.</p>
+<p>Esta política deve ser revista quando forem acrescentadas novas funcionalidades ou serviços. A utilização do ATINA implica o tratamento dos dados descrito acima; a caixa de confirmação regista que leste esta informação.</p>
+</div></details>
 <div class="actions"><button class="btn full" id="authSignup">Criar conta</button><button class="btn secondary full" id="authLogin">Entrar</button></div>
 <button class="btn secondary full" id="authForgot" style="margin-top:9px">Esqueci-me da palavra-passe</button></div>
 <div id="authReset" class="hidden"><label class="section" for="authNewPassword">Nova palavra-passe</label><input id="authNewPassword" class="answer" type="password" autocomplete="new-password" placeholder="Nova palavra-passe"><button class="btn full" id="authUpdatePassword">Guardar nova palavra-passe</button></div>
@@ -254,8 +272,9 @@ async function createAtinaAccount(){
  const nickname=$('authNickname').value.trim(),email=$('authEmail').value.trim(),password=$('authPassword').value;
  if(!nickname||nickname.length>20){authMessage('Escolhe um pseudónimo entre 1 e 20 caracteres.');return;}
  if(!email||!password){authMessage('Preenche o email e a palavra-passe.');return;}
+ if(!$('acceptTerms').checked||!$('acceptPrivacy').checked){authMessage('Para criar conta, tens de aceitar os Termos de Utilização e confirmar a leitura da Política de Privacidade.');return;}
  $('authSignup').disabled=true;authMessage('A criar conta…');
- try{const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{nickname},emailRedirectTo:location.origin+location.pathname}});
+ try{const acceptedAt=new Date().toISOString();const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{nickname,terms_accepted_at:acceptedAt,terms_version:'1.0',privacy_acknowledged_at:acceptedAt,privacy_version:'1.0'},emailRedirectTo:location.origin+location.pathname}});
  if(error)throw error;
  if(data.session){await refreshAtinaSession();authMessage('Conta criada e sessão iniciada!');}
  else authMessage('Conta criada. Confirma o email que te enviámos antes de iniciares sessão.');
