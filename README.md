@@ -144,3 +144,19 @@ O banco atual contém **750 desafios preenchidos em 15 modalidades**. A meta de 
 ### Validar o banco de desafios
 
 Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer dos avisos editoriais um erro bloqueante. O GitHub Actions executa esta validação automaticamente em cada pull request para `main` e em cada push para `main`.
+
+
+
+### Jogar na televisão
+O ATINA adapta a interface a ecrãs grandes e pode ser jogado num navegador de Smart TV compatível. Em televisões com comando direcional, as setas movem o foco entre os controlos e o botão OK/Enter ativa o elemento selecionado. Também é possível abrir o jogo num computador ou telemóvel e transmitir o ecrã para a televisão. A disponibilidade de navegadores e transmissão depende do modelo da televisão e do dispositivo. Para escrever respostas, o navegador da TV deve apresentar o respetivo teclado no ecrã; em alternativa, usa um telemóvel ou teclado ligado.
+
+
+### Partilhar ecrã com uma TV ou monitor
+O menu e o ecrã de jogo incluem a opção **Partilhar ecrã / monitor**, com instruções para:
+- Chromecast / Google TV: transmitir o separador ou o ecrã através do Google Chrome.
+- iPhone / iPad: usar Duplicar ecrã (AirPlay).
+- Android: usar Transmitir, Partilhar ecrã ou Smart View.
+- Windows: usar Windows + K para um ecrã sem fios, ou HDMI.
+- Mac: usar Duplicação de ecrã (AirPlay).
+
+A opção também permite colocar o ATINA em ecrã inteiro quando o navegador suporta essa funcionalidade. A ligação à TV é iniciada nas definições do próprio dispositivo; uma página web não consegue iniciar diretamente AirPlay ou Chromecast de forma universal. Os nomes dos menus e a compatibilidade variam por equipamento.
