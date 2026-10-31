@@ -304,3 +304,17 @@ Aplicado apenas em `atina-development`:
 - Testes pgTAP: 7 asserções passaram, incluindo expiração forçada, bloqueio privado, revelação da solução após timeout, persistência do status da sala e rejeição de token inválido.
 
 A transição de timeout não aplica penalização de pontos no modo multiplayer atual, alinhada com a lógica observada no relógio multiplayer existente. A conclusão da sala continua a ser feita pela RPC de avanço quando o anfitrião fecha a última ronda.
+
+
+## Incremento 015 — propostas e votação de equipas com validação autoritativa
+
+Aplicado apenas em `atina-development`:
+
+- `atina_submit_team_proposal` recebe texto da resposta, sala, token e índice de desafio. Para compatibilidade transitória com o cliente antigo, ainda aceita `p_correct` e `p_points`, mas **ignora integralmente ambos**; a verdade e a pontuação são sempre calculadas no servidor.
+- A proposta só pode ser criada por participante de uma equipa, para a posição atual da fila privada e enquanto o deadline estiver válido. Só pode existir uma proposta pendente por equipa/desafio. Equipas com menos de dois membros não podem iniciar votação.
+- `atina_vote_team_proposal` só aceita votos de membros da equipa, exclui o proponente e impede voto repetido pela chave primária do ledger. Um voto negativo rejeita a proposta por desacordo; não penaliza a equipa.
+- Quando todos os restantes membros votam a favor, o servidor valida o texto contra a resposta e respostas aceites privadas. Se estiver correto, calcula base e bónus de rapidez e atribui os mesmos pontos a cada membro da equipa. Se estiver incorreto, rejeita a proposta e aplica a penalização de 10 pontos a cada membro.
+- Cada resolução fica registada em `atina_room_team_proposals.resolution_reason`; as tentativas também são escritas no ledger `atina_room_answers`, uma linha por membro, permitindo bloquear pontuação duplicada e auditar o resultado.
+- Testes pgTAP: 13 asserções passaram, incluindo tentativa de falsificar `p_correct=true` e `p_points=9999`, voto de outra equipa, voto do proponente, rejeição de resposta errada após unanimidade, penalização por membro, aceitação de resposta correta, cálculo independente de pontos e ledger individual por membro.
+
+**Limites:** a interface atual ainda envia os campos antigos de correção/pontos, que o servidor ignora corretamente; deverá ser simplificada quando o frontend for integrado. A visualização da proposta continua limitada à equipa via `atina_room_state`. Ainda faltam regras completas de timeout/pausa para orçamentos de equipa, e Mímicas continuam por implementar de forma segura.
