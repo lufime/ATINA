@@ -224,3 +224,22 @@ Nenhuma alteração foi feita à produção, frontend, branch principal, deploy,
 
 
 **Revisão dos advisors após a criação do esquema:** o advisor de performance identificou três FKs sem índice de cobertura. Foram adicionados índices em `(room_id, player_id)`, `(room_id, proposer_id)` e `player_id`, tanto no DDL versionado como no projeto de desenvolvimento. O advisor de segurança assinala RLS ativo sem policies nas seis tabelas novas; é intencional nesta fase, porque o acesso direto está revogado e o acesso futuro será exclusivamente através de RPCs token-authenticated. Não se devem criar policies genéricas para contornar estes avisos. Os avisos SECURITY DEFINER existentes dizem respeito às seis RPCs locais já instaladas, não a novas RPCs multiplayer (ainda não criadas).
+
+
+### Incremento — RPCs de lobby multiplayer (2026-10-31)
+
+Foi implementado e aplicado apenas em `atina-development` o primeiro conjunto de sete RPCs do lobby:
+- `atina_create_room` e `atina_join_room`: validam pseudónimo/limites, geram código e token bearer aleatório de 256 bits; apenas o hash SHA-256 do token é guardado.
+- `atina_set_room_ready`: cada participante controla a sua prontidão enquanto a sala aguarda.
+- `atina_set_room_team`: apenas o anfitrião atribui ou remove equipas no lobby.
+- `atina_start_room`: apenas o anfitrião inicia, com pelo menos dois jogadores e todos prontos.
+- `atina_room_state`: valida o token e devolve participantes, estado, pontuações e dados da equipa.
+- `atina_leave_room`: remove o participante e transfere o anfitrião para o participante mais antigo quando necessário.
+
+As funções usam `SECURITY DEFINER`, `search_path = ''` e referências qualificadas; o acesso às tabelas permanece revogado. O cliente recebe o token uma única vez na criação/entrada e usa-o nas chamadas seguintes.
+
+**Testes:** 12 asserções pgTAP passaram no projeto de desenvolvimento, cobrindo criação, entrada, credenciais, código, atribuição de equipa, prontidão, estado do lobby, rejeição de token inválido, arranque e restrição de permissões do anfitrião, e saída. O teste correu numa transação revertida. A proposta SQL e o teste estão versionados em `008-multiplayer-lobby-rpcs.sql` e `008-multiplayer-lobby-rpcs.test.sql`.
+
+**Limitações deliberadas:** ainda não existem RPCs seguras para publicar o estado de jogo, submeter respostas, votar em propostas, gerir pausas ou finalizar partidas. `atina_publish_game_state` não foi implementada: não aceitaremos um JSON arbitrário do anfitrião, porque isso permitiria manipular fila, pistas, pontuação e deadline. O início do lobby coloca a sala em estado `playing` com modo `pending`; a integração de jogo só deve ocorrer quando o servidor gerar e controlar a fila e o estado privado. O protocolo atual do frontend ainda não é compatível com este contrato seguro e não foi alterado.
+
+As RPCs são executáveis por `anon` e `authenticated` com token bearer, pelo que os avisos SECURITY DEFINER do Advisor continuam a ser relevantes. Antes de produção são necessários rate limiting, proteção contra abuso na criação/junção, testes de concorrência e revisão independente da superfície pública.
