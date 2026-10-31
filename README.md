@@ -79,3 +79,7 @@ Cada participante pode agora submeter respostas no seu próprio telemóvel. As r
 
 ### Multiplayer em rede — votação por equipa
 Nas partidas por equipas, o primeiro jogador que submete uma resposta apresenta uma proposta à sua equipa. O próprio proponente não vota; todos os restantes colegas têm de escolher «Concordo» ou «Não concordo». A proposta só é aceite quando todos concordam e a resposta está correta. Um voto de discordância rejeita a proposta e permite à equipa tentar novamente. Quando aceite, os pontos são atribuídos aos jogadores dessa equipa. Se a equipa tiver apenas um elemento, não existe votação adicional. A votação e os respetivos votos são guardados no Supabase e consultados pelos telemóveis da sala. A validação da resposta continua a ser feita no cliente, pelo que não existe proteção anti-batota robusta.
+
+
+### Multiplayer em rede — resultados finais
+No fim da sequência de desafios, todos os telemóveis passam para o ecrã de resultados da sala. O ecrã apresenta a classificação individual e, quando existem equipas, a soma dos pontos por equipa. A classificação usa as pontuações registadas na sala; não cria ainda uma entrada no ranking público persistente.
