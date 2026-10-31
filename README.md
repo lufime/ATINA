@@ -55,3 +55,7 @@ As 15 modalidades são agora apresentadas diretamente no HTML inicial, para cont
 
 ### Ordem do menu
 O menu inicial está organizado pela sequência: 1) Tempo por desafio, 2) Escolhe como jogar, 3) Escolhe uma modalidade.
+
+
+### Multiplayer em rede — primeira fase
+Foi criada a base de salas online para 1 a 12 jogadores, com código de entrada, pseudónimos e lista de participantes atualizada automaticamente. Cada participante usa o seu próprio telemóvel. Esta primeira fase ainda não inicia partidas nem inclui equipas; essas funções serão desenvolvidas na fase seguinte.
