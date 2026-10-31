@@ -279,3 +279,16 @@ Aplicado apenas em `atina-development`:
 **Limites:** ainda não há RPC segura de avanço da fila nem finalização de resultados. A expiração é verificada durante submissão e revelação; falta sincronizar a transição de timeout no polling de estado. Propostas/votos de equipa e Mímicas continuam por implementar de forma segura. O frontend não foi alterado e ainda usa os RPCs/protocolo antigos; esta implementação backend ainda não é integrada nem utilizável na interface atual.
 
 **Advisor:** permanecem 16 avisos por grupo (`anon` e `authenticated`) de SECURITY DEFINER executáveis, com autenticação bearer por token aleatório. Rate limiting, proteção contra tentativas automatizadas e testes de concorrência continuam obrigatórios antes de produção. Não foi criado qualquer acesso direto às tabelas privadas.
+
+
+## Incremento 013 — passar, avançar e concluir a partida multiplayer
+
+Aplicado apenas em `atina-development`:
+
+- `atina_pass_room_challenge(p_room_id,p_token)`: só o anfitrião pode passar; fecha a ronda e revela a solução apenas depois de a ronda estar bloqueada. Se o deadline já expirou, identifica o resultado como timeout.
+- `atina_next_room_challenge(p_room_id,p_token)`: só o anfitrião pode avançar. O servidor incrementa a posição da fila privada, repõe a primeira pista e cria o deadline seguinte; o cliente não escolhe o próximo desafio nem publica estado.
+- Ao terminar a fila, a função marca a sessão e a sala como concluídas e preenche `public.atina_room_results` com os resultados calculados a partir das pontuações guardadas nos participantes.
+- O helper de estado público só inclui a solução quando `round_locked=true`; durante uma ronda ativa não a expõe.
+- Testes pgTAP: 10 asserções passaram, incluindo solução apenas após bloqueio, avanço de posição, primeira pista do novo desafio, rejeição de avanço por convidado e persistência de resultados finais para todos os participantes.
+
+**Limites:** o anfitrião ainda pode avançar uma ronda ativa sem a passar; não há penalização automática por skip. O estado de timeout é aplicado quando uma RPC de ronda é chamada; ainda falta reconciliar deadlines no polling de estado. O fluxo seguro de propostas/votos de equipa e Mímicas não está concluído. O frontend continua sem integração e não foi alterado.
