@@ -120,7 +120,7 @@ Ao recarregar, o ATINA tenta primeiro recuperar a sessão multiplayer; caso não
 
 ## Banco de desafios e meta de expansão
 
-O banco atual contém **449 desafios preenchidos em 15 modalidades**. A meta é chegar a **750 desafios**, com 50 em cada modalidade. Faltam **263 desafios** para atingir essa meta. As contagens são calculadas a partir do array `games` em `index.html`, e o menu atualiza automaticamente o número de desafios por modalidade.
+O banco atual contém **487 desafios preenchidos em 15 modalidades**. A meta é chegar a **750 desafios**, com 50 em cada modalidade. Faltam **263 desafios** para atingir essa meta. As contagens são calculadas a partir do array `games` em `index.html`, e o menu atualiza automaticamente o número de desafios por modalidade.
 
 | Modalidade | Atual | Meta |
 |---|---:|---:|
