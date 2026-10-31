@@ -63,3 +63,7 @@ Foi criada a base de salas online para 1 a 12 jogadores, com código de entrada,
 
 ### Multiplayer em rede — segunda fase
 A sala inclui agora confirmação de prontidão, distribuição automática por duas equipas e atribuição manual de equipa pelo anfitrião. O anfitrião pode iniciar a sala quando houver pelo menos dois jogadores e todos estiverem prontos. O início ainda não sincroniza as perguntas, pistas ou cronómetro; essa é a fase seguinte.
+
+
+### Multiplayer em rede — preparação da sincronização
+Foi acrescentado ao backend um estado partilhado da partida, com versão sequencial, que só o anfitrião pode publicar e que os participantes da sala podem consultar com a respetiva sessão. A leitura e publicação foram testadas com dois jogadores. A interface ainda não usa este estado para sincronizar visualmente desafios, pistas ou cronómetro; essa integração continua pendente.
