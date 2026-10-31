@@ -33,7 +33,7 @@ CREATE TEMP TABLE _wrong AS
 SELECT public.atina_submit_room_answer((SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),'resposta deliberadamente errada') AS value;
 SELECT is((SELECT value->>'status' FROM _wrong),'wrong','server rejects wrong answer text');
 SELECT is((SELECT (value->>'penalty')::integer FROM _wrong),10,'wrong answer penalty calculated server-side');
-SELECT ok((SELECT value->'state' IS NOT NULL AND NOT coalesce((value->'state') ? 'answer',false) FROM _wrong),'answer is not returned in public state');
+SELECT ok((SELECT value->'state' IS NOT NULL AND value->'state'->>'answer' IS NULL FROM _wrong),'answer is not disclosed in public state before the round is locked');
 
 CREATE TEMP TABLE _right AS
 SELECT public.atina_submit_room_answer(
