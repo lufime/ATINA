@@ -187,3 +187,6 @@ Foi acrescentado suporte inicial do modo Party nas RPCs locais, mantendo as regr
 A alteração está em `006-local-party-mode.sql` e o teste transacional em `006-local-party-mode.test.sql`. Foi aplicada apenas em `atina-development`. Quatro asserções pgTAP passaram: limite de 10 desafios, início Party, duplicação da pontuação na última ronda e sinalização do bónus no estado. A chamada do runner apresenta a última asserção como `ok 4`.
 
 **Limite:** este suporte cobre o Party local, não o multiplayer por salas nem Mímicas. O frontend continua sem alterações e ainda valida localmente; não ligar estes modos à UI até completar o contrato e os testes.
+
+
+**Correção complementar Party:** a primeira versão reutilizava a alternância de Duelo sem incluir explicitamente Party, o que mantinha a Equipa 1 ativa. Foi corrigida `atina_local_next_challenge` para alternar entre as duas equipas em ambos os modos. O teste foi ampliado para cinco asserções e confirmou a mudança para a Equipa 2 após avançar da primeira ronda. A proposta 006 e o teste foram atualizados antes de considerar este incremento concluído.
