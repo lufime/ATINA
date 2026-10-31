@@ -75,3 +75,7 @@ Depois de o anfitrião iniciar, os telemóveis recebem o mesmo desafio, a mesma 
 
 ### Multiplayer em rede — quarta fase (respostas e pontuação individual)
 Cada participante pode agora submeter respostas no seu próprio telemóvel. As respostas corretas e erradas são registadas na sala, com pontuação individual e classificação atualizada. A validação da resposta é feita no cliente com a lista de respostas do jogo; por isso, esta versão é recreativa e ainda não tem proteção anti-batota robusta. A pontuação por equipas e o ranking final persistente ficam para a fase seguinte.
+
+
+### Multiplayer em rede — votação por equipa
+Nas partidas por equipas, o primeiro jogador que submete uma resposta apresenta uma proposta à sua equipa. O próprio proponente não vota; todos os restantes colegas têm de escolher «Concordo» ou «Não concordo». A proposta só é aceite quando todos concordam e a resposta está correta. Um voto de discordância rejeita a proposta e permite à equipa tentar novamente. Quando aceite, os pontos são atribuídos aos jogadores dessa equipa. Se a equipa tiver apenas um elemento, não existe votação adicional. A votação e os respetivos votos são guardados no Supabase e consultados pelos telemóveis da sala. A validação da resposta continua a ser feita no cliente, pelo que não existe proteção anti-batota robusta.
