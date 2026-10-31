@@ -51,3 +51,7 @@ O menu e as modalidades do jogo não dependem do carregamento da biblioteca exte
 
 ### Menu de modalidades
 As 15 modalidades são agora apresentadas diretamente no HTML inicial, para continuarem visíveis mesmo que um serviço externo ou uma falha de JavaScript impeça a renderização dinâmica. A seleção continua a ser feita pelos botões de cada modalidade.
+
+
+### Ordem do menu
+O menu inicial está organizado pela sequência: 1) Tempo por desafio, 2) Escolhe como jogar, 3) Escolhe uma modalidade.
