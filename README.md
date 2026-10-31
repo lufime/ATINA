@@ -47,3 +47,7 @@ Correção adicional: removidas referências residuais à antiga interface de au
 
 ### Robustez do arranque
 O menu e as modalidades do jogo não dependem do carregamento da biblioteca externa de autenticação. Se esse serviço ou a respetiva CDN estiver indisponível, o jogo continua a arrancar; as funcionalidades de conta ficam indisponíveis, mas o modo individual, o duelo e o ranking por pseudónimo mantêm-se separados.
+
+
+### Menu de modalidades
+As 15 modalidades são agora apresentadas diretamente no HTML inicial, para continuarem visíveis mesmo que um serviço externo ou uma falha de JavaScript impeça a renderização dinâmica. A seleção continua a ser feita pelos botões de cada modalidade.
