@@ -170,7 +170,7 @@ BEGIN
     FROM private.atina_challenges c
     WHERE c.challenge_id=v_game.challenge_queue[v_game.position] AND c.active;
     IF v_game.deadline_at IS NOT NULL THEN
-      v_speed:=greatest(0,floor(extract(epoch FROM (v_game.deadline_at-v_now))/10)::integer);
+      v_speed:=greatest(0,floor(ceil(extract(epoch FROM (v_game.deadline_at-v_now)))/10)::integer);
     END IF;
     v_points:=v_base+CASE WHEN v_game.timed_mode_seconds>0 THEN v_speed ELSE 0 END;
     UPDATE public.atina_room_players
