@@ -32,7 +32,7 @@ O ranking online pode ser usado sem criar conta e sem fornecer email. No fim de 
 4. Seleciona a branch main e a pasta / (root).
 5. Guarda e aguarda a publicação.
 
-O jogo é uma aplicação web estática. O duelo é local, no mesmo dispositivo; não existem ainda salas remotas nem torneios online.
+O jogo é uma aplicação web estática. O duelo local continua disponível no mesmo dispositivo. O multiplayer remoto está a ser desenvolvido por fases.
 
 
 ## Termos e privacidade
@@ -59,3 +59,7 @@ O menu inicial está organizado pela sequência: 1) Tempo por desafio, 2) Escolh
 
 ### Multiplayer em rede — primeira fase
 Foi criada a base de salas online para 1 a 12 jogadores, com código de entrada, pseudónimos e lista de participantes atualizada automaticamente. Cada participante usa o seu próprio telemóvel. Esta primeira fase ainda não inicia partidas nem inclui equipas; essas funções serão desenvolvidas na fase seguinte.
+
+
+### Multiplayer em rede — segunda fase
+A sala inclui agora confirmação de prontidão, distribuição automática por duas equipas e atribuição manual de equipa pelo anfitrião. O anfitrião pode iniciar a sala quando houver pelo menos dois jogadores e todos estiverem prontos. O início ainda não sincroniza as perguntas, pistas ou cronómetro; essa é a fase seguinte.
