@@ -17,14 +17,18 @@ Jogo de desafios em português (pt-PT), pensado para telemóveis.
 - Imagem Misteriosa com revelação progressiva.
 - Ranking online (individual e duelo), com consulta dos 10 melhores resultados.
 
-## Ranking online
-O ranking atual usa Supabase e permite guardar pontuações associadas a um pseudónimo. Nesta versão, ainda não existe autenticação individual: o registo com palavra-passe e recuperação de conta através de código está planeado, mas ainda não foi implementado.
+## Backend e contas de jogador
+O backend usa Supabase. O ranking guarda pontuações e já tem suporte de base de dados para associar resultados a utilizadores autenticados (user_id).
+
+**Estado da autenticação:** a estrutura de perfis e a ligação entre pontuações e utilizadores foram preparadas na base de dados. Os ecrãs de registo, início de sessão, recuperação de palavra-passe por email e associação automática das pontuações à conta ainda estão em desenvolvimento; não devem ser considerados disponíveis no jogo até serem integrados e testados.
+
+A autenticação planeada usa email e palavra-passe através do Supabase Auth. A recuperação será feita pelo fluxo de email do Supabase. Os jogadores não precisam de conta GitHub.
 
 ## Publicar com GitHub Pages
 1. Abre **Settings** no repositório.
 2. Entra em **Pages**.
 3. Em **Build and deployment**, escolhe **Deploy from a branch**.
-4. Seleciona a branch `main` e a pasta `/ (root)`.
+4. Seleciona a branch main e a pasta / (root).
 5. Guarda e aguarda a publicação.
 
 O jogo é uma aplicação web estática. O duelo é local, no mesmo dispositivo; não existem ainda salas remotas nem torneios online.
