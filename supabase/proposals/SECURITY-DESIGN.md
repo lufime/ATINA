@@ -262,3 +262,20 @@ Aplicado apenas em `atina-development` através da migration `009_multiplayer_se
 **Limites desta etapa:** o frontend continua inalterado e ainda não chama esta RPC; a antiga função `atina_start_room` continua a iniciar apenas o lobby em modo `pending`. Ainda faltam RPCs de revelar pista, submeter texto e validar resposta, passar desafio, avançar a fila e finalizar resultados. Não considerar o modo multiplayer pronto nem compatível com cliente até essas transições estarem implementadas e o frontend ser migrado para o contrato seguro.
 
 **Advisor após 009:** o Advisor reporta nove tabelas com RLS sem policies (INFO), incluindo a nova tabela privada; os privilégios diretos permanecem revogados. Reporta 14 funções SECURITY DEFINER executáveis por `anon` e por `authenticated` (WARN), incluindo a nova RPC. A autenticação por token bearer é deliberada nesta fase, mas rate limiting e mitigação de abuso continuam obrigatórios antes de produção. Os dois avisos de índices não utilizados permanecem os mesmos; nenhum novo aviso de performance foi introduzido.
+
+
+## Incremento 010–012 — validação multiplayer e revelação de pistas
+
+Aplicado apenas em `atina-development`:
+
+- `010_multiplayer_answer_and_clues`: cria o helper interno `private.atina_room_public_state(uuid)`, que projeta o desafio atual com apenas as pistas já reveladas e sem resposta/fila. Cria `atina_reveal_room_clue(p_room_id,p_token)`, exclusiva do anfitrião, e `atina_submit_room_answer(p_room_id,p_token,p_answer)`.
+- A submissão recebe exclusivamente texto (máximo 300 caracteres). O servidor valida contra `private.atina_challenges` através de `private.atina_challenge_answer_matches`; nunca aceita `p_correct) ou `p_points` do cliente. O servidor calcula pontos conforme o número de pistas reveladas e bónus de rapidez, e aplica penalização de 10 pontos por resposta errada, sem permitir score negativo.
+- Cada jogador só pode pontuar uma vez por desafio. Tentativas erradas podem ser repetidas, mantendo a regra observada no cliente; tentativas corretas repetidas devolvem `already_correct` sem atribuir pontos novamente.
+- O cálculo de rapidez replica o arredondamento do cliente original (`ceil` dos segundos restantes antes de dividir por 10), corrigido em `011_multiplayer_speed_bonus_rounding`.
+- Jogadores atribuídos a uma equipa são bloqueados na RPC individual, até existir o fluxo seguro de propostas e votação. Esta barreira foi aplicada em `012_block_team_individual_submission`, para impedir que jogadores de equipa contornem o mecanismo de consenso.
+- A tabela privada mantém RLS e privilégios diretos revogados. Verificação confirmou: `anon` e `authenticated` não conseguem SELECT na tabela privada; `anon` não pode executar o helper privado; as RPCs públicas de submissão e revelação são executáveis com token bearer.
+- Testes pgTAP: 14 asserções passaram, incluindo estado público sem resposta, uma pista inicial, revelação exclusiva do anfitrião, resposta errada e penalização, resposta correta e pontos calculados pelo servidor, bloqueio de pontuação duplicada e bloqueio de submissão individual por jogador de equipa.
+
+**Limites:** ainda não há RPC segura de avanço da fila nem finalização de resultados. A expiração é verificada durante submissão e revelação; falta sincronizar a transição de timeout no polling de estado. Propostas/votos de equipa e Mímicas continuam por implementar de forma segura. O frontend não foi alterado e ainda usa os RPCs/protocolo antigos; esta implementação backend ainda não é integrada nem utilizável na interface atual.
+
+**Advisor:** permanecem os avisos de SECURITY DEFINER expostas a `anon`/`authenticated`, com autenticação bearer por token aleatório. Rate limiting, proteção contra tentativas automatizadas e testes de concorrência continuam obrigatórios antes de produção. Não foi criado qualquer acesso direto às tabelas privadas.
