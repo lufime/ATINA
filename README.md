@@ -20,9 +20,9 @@ Jogo de desafios em português (pt-PT), pensado para telemóveis.
 ## Backend e contas de jogador
 O backend usa Supabase. O ranking guarda pontuações e já tem suporte de base de dados para associar resultados a utilizadores autenticados (user_id).
 
-**Estado da autenticação:** a estrutura de perfis e a ligação entre pontuações e utilizadores foram preparadas na base de dados. Os ecrãs de registo, início de sessão, recuperação de palavra-passe por email e associação automática das pontuações à conta ainda estão em desenvolvimento; não devem ser considerados disponíveis no jogo até serem integrados e testados.
+**Estado da autenticação:** o jogo já inclui ecrãs para criar conta, iniciar sessão e pedir recuperação da palavra-passe por email. A base de dados cria o perfil e valida a unicidade do pseudónimo. A confirmação do email e a recuperação dependem das definições de autenticação do projeto Supabase; é necessário permitir o endereço `https://lufime.github.io/ATINA/` nas URLs de redirecionamento autorizadas. A associação automática das pontuações à conta ainda não está concluída.
 
-A autenticação planeada usa email e palavra-passe através do Supabase Auth. A recuperação será feita pelo fluxo de email do Supabase. Os jogadores não precisam de conta GitHub.
+A autenticação usa email e palavra-passe através do Supabase Auth. A recuperação usa o fluxo de email do Supabase. Os jogadores não precisam de conta GitHub. Até a configuração de redirecionamento e os testes finais estarem concluídos, a recuperação por email pode não funcionar corretamente.
 
 ## Publicar com GitHub Pages
 1. Abre **Settings** no repositório.
