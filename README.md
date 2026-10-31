@@ -40,3 +40,7 @@ A eliminação da conta é processada por uma Supabase Edge Function protegida: 
 5. Guarda e aguarda a publicação.
 
 O jogo é uma aplicação web estática. O duelo é local, no mesmo dispositivo; não existem ainda salas remotas nem torneios online.
+
+
+## Termos e privacidade
+O registo apresenta duas confirmações obrigatórias: aceitação dos Termos de Utilização e confirmação de leitura da Política de Privacidade e Proteção de Dados. A versão e a data/hora de cada confirmação são enviadas nos metadados do registo de autenticação. Os documentos estão disponíveis no próprio ecrã de criação de conta. Esta versão não publica um endereço de email de contacto.
