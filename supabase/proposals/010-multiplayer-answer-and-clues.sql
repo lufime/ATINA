@@ -128,6 +128,9 @@ BEGIN
     AND token_hash=extensions.digest(coalesce(p_token,''),'sha256')
   FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'Sessão da sala inválida.'; END IF;
+  IF v_player.team_label IS NOT NULL THEN
+    RAISE EXCEPTION 'As respostas de equipa exigem o fluxo seguro de propostas e votação.';
+  END IF;
 
   SELECT * INTO v_room FROM public.atina_rooms WHERE id=p_room_id FOR UPDATE;
   IF NOT FOUND OR v_room.status<>'playing' THEN RAISE EXCEPTION 'A partida não está ativa.'; END IF;
