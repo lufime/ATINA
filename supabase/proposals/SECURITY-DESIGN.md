@@ -292,3 +292,15 @@ Aplicado apenas em `atina-development`:
 - Testes pgTAP: 10 asserções passaram, incluindo solução apenas após bloqueio, avanço de posição, primeira pista do novo desafio, rejeição de avanço por convidado e persistência de resultados finais para todos os participantes.
 
 **Limites:** o anfitrião ainda pode avançar uma ronda ativa sem a passar; não há penalização automática por skip. O estado de timeout é aplicado quando uma RPC de ronda é chamada; ainda falta reconciliar deadlines no polling de estado. O fluxo seguro de propostas/votos de equipa e Mímicas não está concluído. O frontend continua sem integração e não foi alterado.
+
+
+## Incremento 014 — reconciliação de deadlines no polling
+
+Aplicado apenas em `atina-development`:
+
+- A RPC `atina_room_state` passou a bloquear as linhas relevantes antes de consultar o relógio do servidor.
+- Se a ronda estiver ativa e o deadline tiver expirado, a própria leitura do estado fecha a ronda na tabela privada, gera estado público com solução revelada apenas após o bloqueio e incrementa a versão do estado da sala.
+- O cliente já não precisa de publicar um estado de timeout; a leitura periódica torna-se suficiente para reconciliar o prazo no servidor.
+- Testes pgTAP: 7 asserções passaram, incluindo expiração forçada, bloqueio privado, revelação da solução após timeout, persistência do status da sala e rejeição de token inválido.
+
+A transição de timeout não aplica penalização de pontos no modo multiplayer atual, alinhada com a lógica observada no relógio multiplayer existente. A conclusão da sala continua a ser feita pela RPC de avanço quando o anfitrião fecha a última ronda.
