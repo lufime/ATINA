@@ -595,10 +595,6 @@ async function networkRenderMimeState(){
  $('mimeNext').disabled=!networkGameHost;
  $('mimeNext').textContent=!st.started?'▶ Começar ronda':st.locked?(Number(st.round)+1>=Number(st.total_rounds)?'🏁 Terminar partida':'Próxima ronda →'):'Ronda em curso';
  $('mimeNext').dataset.restart='0';
- $('mimeCorrect').classList.toggle('hidden',!networkGameHost);
- $('mimeSkip').classList.toggle('hidden',!networkGameHost);
- $('mimeReveal').classList.toggle('hidden',!networkGameHost);
- $('mimeNext').classList.toggle('hidden',!networkGameHost);
  $('mimeTimer').textContent=st.started?(st.deadline?String(Math.floor(Math.max(0,Math.ceil((st.deadline-Date.now())/1000))/60)).padStart(2,'0')+':'+String(Math.max(0,Math.ceil((st.deadline-Date.now())/1000))%60).padStart(2,'0'):'∞'):(st.duration_seconds===0?'∞':String(Math.floor(st.duration_seconds/60)).padStart(2,'0')+':'+String(st.duration_seconds%60).padStart(2,'0'));
  networkRenderMimeScores();
  if(isRep&&networkMimeSecretRound!==st.round){
