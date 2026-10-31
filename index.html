@@ -551,5 +551,5 @@ $('listenAnswer').onclick=()=>{let g=games[queue[pos]];if('speechSynthesis' in w
 // Autenticação desativada: o ranking funciona apenas com pseudónimo.
  $('refreshMenuRanking').onclick=loadMenuRanking;$('menuRankingMode').onchange=loadMenuRanking;$('rankingBack').onclick=()=>screen('home');
 $('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo','saveSoloBtn');$('saveP1Btn').onclick=()=>saveOnlineScore($('nickP1').value,scores[0],'duel','saveP1Btn');$('saveP2Btn').onclick=()=>saveOnlineScore($('nickP2').value,scores[1],'duel','saveP2Btn');$('loadRanking').onclick=loadOnlineRanking;$('rankingMode').onchange=loadOnlineRanking;$('resultHome').onclick=()=>{screen('home');update();};update();
-networkRestoreSession().then(()=>{if(!networkRoom)restoreLocalProgress();});
+networkRestoreSession().then(()=>{if(!networkRoom){const restored=restoreLocalProgress();if(!restored)restoreLastScreen();}});
 </script></body></html>
