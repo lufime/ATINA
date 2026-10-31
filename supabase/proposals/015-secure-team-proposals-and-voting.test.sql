@@ -3,6 +3,9 @@ SELECT plan(11);
 CREATE TEMP TABLE _host AS SELECT public.atina_create_room('Host Team 01',4) AS value;
 CREATE TEMP TABLE _guest1 AS SELECT public.atina_join_room('Guest Team 1',(SELECT value->>'code' FROM _host)) AS value;
 CREATE TEMP TABLE _guest2 AS SELECT public.atina_join_room('Guest Team 2',(SELECT value->>'code' FROM _host)) AS value;
+SELECT public.atina_set_room_team(
+ (SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),
+ (SELECT (value->>'player_id')::uuid FROM _guest1),'Azuis');
 
 SELECT public.atina_set_room_team(
  (SELECT (value->>'room_id')::uuid FROM _host),(SELECT value->>'token' FROM _host),
