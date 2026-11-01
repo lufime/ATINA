@@ -1106,7 +1106,7 @@ ALTER TABLE public.atina_v2_room_team_proposals
   ADD COLUMN IF NOT EXISTS resolution_reason text
   CHECK (resolution_reason IS NULL OR resolution_reason IN ('disagreement','incorrect_answer','correct_answer','timeout'));
 
-CREATE UNIQUE INDEX IF NOT EXISTS atina_room_team_one_pending_proposal_idx
+CREATE UNIQUE INDEX IF NOT EXISTS atina_v2_atina_room_team_one_pending_proposal_idx
   ON public.atina_v2_room_team_proposals(room_id,challenge_index,team_label)
   WHERE status='pending';
 
