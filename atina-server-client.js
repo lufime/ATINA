@@ -390,6 +390,7 @@ networkSubmitAnswer = async function() {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token, p_answer: answer
       });
       atinaNetworkFeedback = result.status === 'correct' ? '✓ Resposta certa! +' + Number(result.points || 0) + ' pontos atribuídos pelo servidor.' : result.status === 'wrong' ? 'Resposta errada: −10 pontos. Tenta novamente.' : result.status === 'already_correct' ? 'Esta resposta já foi contabilizada.' : result.status === 'locked' ? 'A ronda já terminou.' : 'Resposta recebida pelo servidor.';
+      if (result.status === 'correct' || result.status === 'already_correct') networkAnsweredThisChallenge = true;
       if (result.status === 'correct') playAtinaSound('correct');
       else if (result.status === 'wrong') playAtinaSound('wrong');
       $('answer').value = '';
