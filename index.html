@@ -1006,7 +1006,7 @@ async function atinaWikidataSolutionImage(answer){
    const page=Object.values(commonsData.query?.pages||{})[0];
    const candidate={title:page?.title,...(page?.imageinfo?.[0]||{})};
    const license=String(candidate.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
-   if(candidate.thumburl&&/^https:\/\//i.test(candidate.thumburl)&&(/public domain/.test(license)||/\\bcc0\\b/.test(license)))return candidate;
+   if(candidate.thumburl&&/^https:\/\//i.test(candidate.thumburl)&&(/public domain/.test(license)||/cc0/.test(license)))return candidate;
   }
  }
  return null;
