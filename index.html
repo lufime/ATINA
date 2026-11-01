@@ -959,33 +959,39 @@ window.addEventListener('focus',refreshVisibleClock);
 const atinaSolutionImageCache=new Map();
 async function atinaShowSolutionImage(answer,category,targetId){
  const target=$(targetId);if(!target)return;
- const key=String(answer||'').trim()+'|'+String(category||'').trim();
+ const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
+ const key=cleanAnswer+'|'+cleanCategory;
  if(target.dataset.solutionKey===key&&!target.classList.contains('hidden'))return;
- target.dataset.solutionKey=key;
- target.replaceChildren();target.classList.add('hidden');
- if(!answer)return;
+ target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
+ if(!cleanAnswer)return;
  const heading=document.createElement('strong');heading.textContent='📷 A solução em imagem (domínio público / CC0)';
  const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem ilustrativa…';
  target.append(heading,status);target.classList.remove('hidden');
  try{
   let item=atinaSolutionImageCache.get(key);
   if(item===undefined){
-   const query=[answer,category].filter(Boolean).join(' ');
-   const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent('filetype:bitmap '+query)+'&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1000&format=json&origin=*';
-   const response=await fetch(url,{headers:{Accept:'application/json'}});
-   if(!response.ok)throw new Error('Pesquisa indisponível');
-   const data=await response.json();
-   const pages=Object.values(data.query?.pages||{});
-   item=pages.map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).find(x=>{const license=String(x.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim();return x.thumburl&&/^https:\/\//i.test(x.thumburl)&&/^(public domain|cc0(?:\s|$))/i.test(license);})||null;
+   const queries=[cleanAnswer,cleanAnswer+' '+cleanCategory].filter((q,i,a)=>q&&a.indexOf(q)===i);
+   item=null;
+   for(const query of queries){
+    const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1000&format=json&origin=*';
+    const response=await fetch(url,{headers:{Accept:'application/json'}});
+    if(!response.ok)throw new Error('Pesquisa indisponível');
+    const data=await response.json();
+    const pages=Object.values(data.query?.pages||{});
+    item=pages.map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).find(x=>{
+     const license=String(x.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
+     return x.thumburl&&/^https:\/\//i.test(x.thumburl)&&(/public domain/.test(license)||/\bcc0\b/.test(license));
+    })||null;
+    if(item)break;
+   }
    atinaSolutionImageCache.set(key,item);
   }
   if(target.dataset.solutionKey!==key)return;
   if(!item){status.textContent='Não foi encontrada uma imagem em domínio público ou CC0 para esta solução.';return;}
-  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa: '+answer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:10px;background:#091827';
+  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:10px;background:#091827';
   image.onerror=()=>{image.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
-  const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Confirmar domínio público / CC0 no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
-  status.textContent='Solução: '+answer;
-  target.append(image,link);
+  const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Confirmar licença no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
+  status.textContent='Solução: '+cleanAnswer;target.append(image,link);
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
