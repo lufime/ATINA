@@ -88,7 +88,9 @@ for (const token of frontendRequired) {
     throw new Error('Integração cliente incompleta: ' + token);
   }
 }
-if (/atina_progress_claim_local'[\\s\\S]{0,700}?p_(?:xp|points)\\s*:/.test(client)) {
+const claimCall = client.match(/atinaServerRpc\('atina_progress_claim_local',\s*\{([\s\S]*?)\}\s*\)/);
+if (!claimCall) throw new Error('Chamada cliente da RPC de atribuição não encontrada.');
+if (/p_(?:xp|points)\s*:/i.test(claimCall[1])) {
   throw new Error('O cliente não pode enviar XP ou pontos à RPC de atribuição.');
 }
 for (const id of [
