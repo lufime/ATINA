@@ -612,7 +612,7 @@ async function networkRenderMimeState(){
  networkRenderMimeScores();
  if(isRep&&networkMimeSecretRound!==st.round){
   networkMimeSecretRound=st.round;networkMimeSecret='';
-  try{const secret=await networkCall('atina_v2_get_mime_secret',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});if(networkGameState?.mode==='mimicas'&&networkGameState.round===st.round&&networkLobbyData?.player_id===st.representative_id){networkMimeSecret=secret.word||'';$('mimeWord').textContent=networkGameState.locked?(networkGameState.answer||networkMimeSecret):Date.now()>=(Number(st.draw_until)||0)?'🎭 '+networkMimeSecret:'🎭 A sortear…';}}
+  try{const secret=await networkCall('atina_v2_get_mime_secret',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});if(networkGameState?.mode==='mimicas'&&networkGameState.round===st.round&&networkLobbyData?.player_id===st.representative_id){networkMimeSecret=secret.word||'';if(networkGameState.locked)$('mimeWord').textContent=networkGameState.answer||networkMimeSecret;else if(Date.now()>=(Number(st.draw_until)||0))mimeRevealWord('🎭 '+networkMimeSecret);else $('mimeWord').textContent='🎭 A sortear…';}}
   catch(e){$('mimeWord').textContent='Não foi possível carregar a palavra. Contacta o anfitrião.';}
  }
 }
