@@ -19,6 +19,7 @@ function atinaServerMessage(message) {
   const gameVisible = $('game') && !$('game').classList.contains('hidden');
   if (gameVisible) {
     $('feedback').textContent = message;
+  if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage'); else $('solutionImage')?.classList.add('hidden');
     return;
   }
   const target = $('networkStatus') || $('networkLobbyStatus');
