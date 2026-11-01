@@ -132,39 +132,24 @@ create table "private"."atina_challenges" (
   PRIMARY KEY ("challenge_id")
 );
 
--- Recreate the existing foreign-key graph after all tables exist.
+-- Recreate the complete foreign-key graph after all tables exist.
 alter table "public"."ranking" add constraint "ranking_user_id_fkey" foreign key ("user_id") references "auth"."users" ("id");
 alter table "public"."atina_profiles" add constraint "atina_profiles_user_id_fkey" foreign key ("user_id") references "auth"."users" ("id");
-alter table "public"."atina_rooms" add constraint "atina_team_proposals_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_rooms" add constraint "atina_mime_secrets_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_rooms" add constraint "atina_room_timeout_budgets_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_rooms" add constraint "atina_room_results_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_rooms" add constraint "atina_room_players_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_rooms" add constraint "atina_room_answers_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_rooms" add constraint "atina_multiplayer_ranking_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_room_players" add constraint "atina_room_answers_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_players" add constraint "atina_room_players_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_room_players" add constraint "atina_team_proposals_proposer_id_fkey" foreign key ("proposer_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_players" add constraint "atina_team_votes_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_players" add constraint "atina_multiplayer_ranking_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_players" add constraint "atina_room_results_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_players" add constraint "atina_mime_secrets_representative_id_fkey" foreign key ("representative_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_answers" add constraint "atina_room_answers_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_answers" add constraint "atina_room_answers_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_team_proposals" add constraint "atina_team_votes_proposal_id_fkey" foreign key ("proposal_id") references "public"."atina_team_proposals" ("id");
 alter table "public"."atina_team_proposals" add constraint "atina_team_proposals_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
+alter table "private"."atina_mime_secrets" add constraint "atina_mime_secrets_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
+alter table "public"."atina_room_timeout_budgets" add constraint "atina_room_timeout_budgets_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
+alter table "public"."atina_room_results" add constraint "atina_room_results_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
+alter table "public"."atina_room_players" add constraint "atina_room_players_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
+alter table "public"."atina_room_answers" add constraint "atina_room_answers_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
+alter table "public"."atina_multiplayer_ranking" add constraint "atina_multiplayer_ranking_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
+alter table "public"."atina_room_answers" add constraint "atina_room_answers_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
 alter table "public"."atina_team_proposals" add constraint "atina_team_proposals_proposer_id_fkey" foreign key ("proposer_id") references "public"."atina_room_players" ("id");
 alter table "public"."atina_team_votes" add constraint "atina_team_votes_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_team_votes" add constraint "atina_team_votes_proposal_id_fkey" foreign key ("proposal_id") references "public"."atina_team_proposals" ("id");
 alter table "public"."atina_multiplayer_ranking" add constraint "atina_multiplayer_ranking_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_multiplayer_ranking" add constraint "atina_multiplayer_ranking_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "public"."atina_room_results" add constraint "atina_room_results_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
 alter table "public"."atina_room_results" add constraint "atina_room_results_player_id_fkey" foreign key ("player_id") references "public"."atina_room_players" ("id");
-alter table "public"."atina_room_timeout_budgets" add constraint "atina_room_timeout_budgets_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "private"."atina_mime_cards" add constraint "atina_mime_secrets_card_id_fkey" foreign key ("card_id") references "private"."atina_mime_cards" ("id");
-alter table "private"."atina_mime_secrets" add constraint "atina_mime_secrets_room_id_fkey" foreign key ("room_id") references "public"."atina_rooms" ("id");
-alter table "private"."atina_mime_secrets" add constraint "atina_mime_secrets_card_id_fkey" foreign key ("card_id") references "private"."atina_mime_cards" ("id");
 alter table "private"."atina_mime_secrets" add constraint "atina_mime_secrets_representative_id_fkey" foreign key ("representative_id") references "public"."atina_room_players" ("id");
+alter table "public"."atina_team_votes" add constraint "atina_team_votes_proposal_id_fkey" foreign key ("proposal_id") references "public"."atina_team_proposals" ("id");
+alter table "private"."atina_mime_secrets" add constraint "atina_mime_secrets_card_id_fkey" foreign key ("card_id") references "private"."atina_mime_cards" ("id");
 
 -- Match the live project's RLS posture (no direct client table access in this fixture).
 alter table "public"."ranking" enable row level security;
@@ -194,7 +179,6 @@ revoke all on "private"."atina_mime_secrets" from public, anon, authenticated;
 alter table "private"."atina_challenges" enable row level security;
 revoke all on "private"."atina_challenges" from public, anon, authenticated;
 
--- Private synthetic fixture data.
 insert into private.atina_challenges
 (challenge_id,category,emoji,clues,answer,accepted_answers,image_url,active,difficulty)
 values (1,'fixture','🧪','["pista 1","pista 2","pista 3","pista 4","pista 5"]','teste','["teste"]',null,true,'easy');
@@ -217,8 +201,6 @@ from generate_series(1,4) n;
 
 insert into public.ranking(nickname,mode,score) values ('Fixture','solo',0);
 
--- Legacy RPC sentinels preserve the exact names and identity signatures used by
--- the live client; the v2 migrations must not replace these contracts.
 create or replace function public.atina_room_state(p_room_id uuid,p_token text)
 returns jsonb language sql security definer set search_path=''
 as $$ select jsonb_build_object('legacy_contract',true); $$;
