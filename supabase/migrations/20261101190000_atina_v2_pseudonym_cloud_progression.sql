@@ -77,6 +77,15 @@ begin
     set nickname = excluded.nickname, updated_at = now()
   returning * into v_player;
 
+  if v_player.daily_date <> timezone('utc', now())::date then
+    update private.atina_v2_players
+    set daily_date = timezone('utc', now())::date,
+        daily_count = 0,
+        updated_at = now()
+    where id = v_player.id
+    returning * into v_player;
+  end if;
+
   return jsonb_build_object(
     'player_id', v_player.id,
     'nickname', v_player.nickname,
