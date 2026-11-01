@@ -64,10 +64,10 @@ if (!html.includes('function submit(){throw new Error')) errors.push('O envio lo
 if (!html.includes('async function networkSubmitAnswer(){throw new Error')) errors.push('O envio multiplayer legado ainda permite validação no cliente.');
 if (!html.includes('<script src="./atina-server-client.js"></script>')) errors.push('O cliente server-authoritative não está incluído.');
 if (!/^\s+- supabase$/m.test(pagesConfig) || !/^\s+- scripts$/m.test(pagesConfig)) errors.push('Pastas privadas/de ferramentas não estão excluídas da publicação GitHub Pages.');
-if (!client.includes("'atina_local_submit_answer'")) errors.push('A RPC local de validação do servidor não está ligada.');
-if (!client.includes("'atina_submit_room_answer'")) errors.push('A RPC multiplayer de validação do servidor não está ligada.');
-if (!client.includes("'atina_submit_team_proposal'")) errors.push('A proposta de equipa segura não está ligada.');
-if (!client.includes("'atina_resolve_mime_round'")) errors.push('A resolução de Mímicas no servidor não está ligada.');
+if (!client.includes("'atina_v2_local_submit_answer'")) errors.push('A RPC local de validação do servidor não está ligada.');
+if (!client.includes("'atina_v2_submit_room_answer'")) errors.push('A RPC multiplayer de validação do servidor não está ligada.');
+if (!client.includes("'atina_v2_submit_team_proposal'")) errors.push('A proposta de equipa segura não está ligada.');
+if (!client.includes("'atina_v2_resolve_mime_round'")) errors.push('A resolução de Mímicas no servidor não está ligada.');
 
 if (errors.length) {
   console.error(errors.join('\n'));
