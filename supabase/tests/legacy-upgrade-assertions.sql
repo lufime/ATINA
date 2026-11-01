@@ -9,6 +9,11 @@ begin
   if exists(select 1 from information_schema.columns where table_schema='public' and table_name='atina_room_players' and column_name='ready') then raise exception 'Legacy room player table was rewritten'; end if;
   if to_regprocedure('public.atina_room_state(uuid,text)') is null then raise exception 'Legacy room_state RPC missing'; end if;
   if to_regprocedure('public.atina_create_room(text,integer)') is null then raise exception 'Legacy create_room RPC missing'; end if;
+  if to_regprocedure('public.atina_join_room(text,text)') is null then raise exception 'Legacy join_room RPC missing'; end if;
+  if to_regprocedure('public.atina_start_mime_round(uuid,text,integer,uuid,integer)') is null then raise exception 'Legacy start_mime_round RPC missing'; end if;
+  if not exists(select 1 from pg_constraint where conname='atina_mime_secrets_card_id_fkey') then raise exception 'Legacy MIME card FK missing'; end if;
+  if not (select relrowsecurity from pg_class where oid='public.atina_rooms'::regclass) then raise exception 'Legacy room RLS disabled'; end if;
+  if not (select relrowsecurity from pg_class where oid='private.atina_mime_cards'::regclass) then raise exception 'Legacy MIME card RLS disabled'; end if;
   if to_regclass('public.atina_v2_rooms') is null or to_regclass('public.atina_v2_room_players') is null then raise exception 'V2 multiplayer tables missing'; end if;
   if to_regclass('private.atina_v2_local_sessions') is null or to_regclass('private.atina_v2_mime_rounds') is null then raise exception 'V2 private tables missing'; end if;
   if to_regclass('private.atina_v2_mime_cards') is not null then raise exception 'A duplicate MIME card table was created'; end if;
