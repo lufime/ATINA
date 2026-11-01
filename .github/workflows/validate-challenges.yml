@@ -28,3 +28,5 @@ jobs:
         run: node scripts/validate-mimicas-animation.mjs
       - name: Validar animações globais no início e entre desafios
         run: node scripts/validate-global-challenge-animation.mjs
+      - name: Validar missão diária e progressão do jogador
+        run: node scripts/validate-daily-progression.mjs
