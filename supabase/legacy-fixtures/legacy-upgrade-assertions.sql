@@ -53,7 +53,7 @@ end
 $$;
 
 -- Local Mímicas RPC returns exactly one card and never requires direct table access.
-do $
+do $mime_test$
 declare
   v_card jsonb;
 begin
@@ -67,7 +67,7 @@ begin
     raise exception 'Local Mímicas returned an excluded card';
   end if;
 end
-$;
+$mime_test$;
 
 -- Exercise v2 multiplayer room creation and the server-authoritative Mímicas
 -- secret path without changing any of the legacy fixture's rooms or cards.
