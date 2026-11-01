@@ -5,8 +5,8 @@ on:
     branches: [main]
     paths:
       - 'supabase/migrations/**'
-      - 'supabase/tests/fixtures/**'
-      - 'supabase/tests/legacy-upgrade-assertions.sql'
+      - 'supabase/legacy-fixtures/**'
+      - 'supabase/legacy-fixtures/legacy-upgrade-assertions.sql'
       - '.github/workflows/test-legacy-schema-upgrade.yml'
   workflow_dispatch:
 
@@ -35,11 +35,11 @@ jobs:
           supabase start
       - name: Create synthetic legacy atina-ranking schema
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/fixtures/atina-ranking-legacy.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
       - name: Apply only the compatibility v2 migrations
         run: |
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101120000_atina_ranking_v2_local_sessions.sql
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101130000_atina_ranking_v2_multiplayer_mimicas.sql
       - name: Assert legacy data and contracts remain intact
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/legacy-upgrade-assertions.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
