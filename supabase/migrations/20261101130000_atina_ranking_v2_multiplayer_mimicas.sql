@@ -1361,7 +1361,7 @@ GRANT EXECUTE ON FUNCTION public.atina_v2_vote_team_proposal(uuid,text,uuid,bool
 CREATE TABLE IF NOT EXISTS private.atina_v2_mime_rounds (
   room_id uuid NOT NULL REFERENCES public.atina_v2_rooms(id) ON DELETE CASCADE,
   round_number integer NOT NULL CHECK(round_number>=0),
-  card_id bigint NOT NULL REFERENCES private.atina_v2_mime_cards(id),
+  card_id bigint NOT NULL REFERENCES private.atina_mime_cards(id),
   representative_id uuid NOT NULL REFERENCES public.atina_v2_room_players(id),
   started_at timestamptz,
   deadline_at timestamptz,
@@ -1377,7 +1377,7 @@ CREATE TABLE IF NOT EXISTS private.atina_v2_mime_rounds (
     REFERENCES public.atina_v2_room_players(room_id,id) ON DELETE CASCADE
 );
 ALTER TABLE private.atina_v2_mime_rounds ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON private.atina_v2_mime_cards,private.atina_v2_mime_rounds FROM public,anon,authenticated;
+REVOKE ALL ON private.atina_mime_cards,private.atina_v2_mime_rounds FROM public,anon,authenticated;
 CREATE INDEX IF NOT EXISTS atina_v2_mime_rounds_representative_idx
   ON private.atina_v2_mime_rounds(representative_id);
 CREATE OR REPLACE FUNCTION public.atina_v2_start_mime_round(
@@ -1388,7 +1388,7 @@ DECLARE
  v_host public.atina_v2_room_players%rowtype;
  v_room public.atina_v2_rooms%rowtype;
  v_rep public.atina_v2_room_players%rowtype;
- v_card private.atina_v2_mime_cards%rowtype;
+ v_card private.atina_mime_cards%rowtype;
  v_prev private.atina_v2_mime_rounds%rowtype;
  v_now timestamptz;
  v_deadline timestamptz;
@@ -1403,7 +1403,7 @@ BEGIN
  IF p_duration_seconds IS NULL OR p_duration_seconds NOT IN (0,60,90) THEN RAISE EXCEPTION 'Duração inválida.'; END IF;
  SELECT * INTO v_rep FROM public.atina_v2_room_players WHERE id=p_representative_id AND room_id=p_room_id;
  IF NOT FOUND THEN RAISE EXCEPTION 'Representante inválido.'; END IF;
- SELECT count(*) INTO v_total FROM private.atina_v2_mime_cards;
+ SELECT count(*) INTO v_total FROM private.atina_mime_cards;
  IF p_round_number IS NULL OR p_round_number<0 OR p_round_number>=v_total THEN RAISE EXCEPTION 'Não existem mais rondas.'; END IF;
  IF p_round_number=0 THEN
   IF EXISTS(SELECT 1 FROM private.atina_v2_mime_rounds WHERE room_id=p_room_id) THEN
@@ -1414,7 +1414,7 @@ BEGIN
   WHERE room_id=p_room_id AND round_number=p_round_number-1 FOR UPDATE;
   IF NOT FOUND OR NOT v_prev.locked THEN RAISE EXCEPTION 'A ronda anterior ainda não terminou.'; END IF;
  END IF;
- SELECT * INTO v_card FROM private.atina_v2_mime_cards c
+ SELECT * INTO v_card FROM private.atina_mime_cards c
  WHERE NOT EXISTS(SELECT 1 FROM private.atina_v2_mime_rounds r WHERE r.room_id=p_room_id AND r.card_id=c.id)
  ORDER BY random() LIMIT 1;
  IF NOT FOUND THEN RAISE EXCEPTION 'Não existem mais cartões inéditos nesta partida.'; END IF;
@@ -1450,7 +1450,7 @@ BEGIN
  IF NOT FOUND OR v_round.representative_id<>v_player.id THEN
   RAISE EXCEPTION 'Só o representante desta ronda pode ver a palavra secreta.';
  END IF;
- SELECT word INTO v_word FROM private.atina_v2_mime_cards WHERE id=v_round.card_id;
+ SELECT word INTO v_word FROM private.atina_mime_cards WHERE id=v_round.card_id;
  RETURN jsonb_build_object('word',v_word);
 END;
 $function$;
@@ -1500,7 +1500,7 @@ BEGIN
   v_state:=jsonb_set(v_state,'{clue_index}',to_jsonb(v_round.clue_index),true);
   v_state:=jsonb_set(v_state,'{clues}',(
     SELECT jsonb_agg(c.clues->i ORDER BY i)
-    FROM private.atina_v2_mime_cards c
+    FROM private.atina_mime_cards c
     CROSS JOIN generate_series(0,v_round.clue_index) i
     WHERE c.id=v_round.card_id
   ),true);
@@ -1521,7 +1521,7 @@ DECLARE
  v_host public.atina_v2_room_players%rowtype;
  v_room public.atina_v2_rooms%rowtype;
  v_round private.atina_v2_mime_rounds%rowtype;
- v_card private.atina_v2_mime_cards%rowtype;
+ v_card private.atina_mime_cards%rowtype;
  v_now timestamptz;
  v_correct boolean;
  v_reason text;
@@ -1548,7 +1548,7 @@ BEGIN
  END IF;
  IF v_correct AND v_reason<>'correct' THEN RAISE EXCEPTION 'Resultado inválido.'; END IF;
  IF v_reason='correct' AND NOT v_correct THEN RAISE EXCEPTION 'Resultado inválido.'; END IF;
- SELECT * INTO v_card FROM private.atina_v2_mime_cards WHERE id=v_round.card_id;
+ SELECT * INTO v_card FROM private.atina_mime_cards WHERE id=v_round.card_id;
  v_rep:=v_round.representative_id;
  SELECT team_label INTO v_team FROM public.atina_v2_room_players WHERE id=v_rep AND room_id=p_room_id;
  IF v_correct THEN
@@ -1606,7 +1606,7 @@ BEGIN
  WHERE room_id=p_room_id ORDER BY round_number DESC LIMIT 1 FOR UPDATE;
  IF v_room.status<>'playing' OR coalesce(v_room.game_state->>'mode','')<>'mimicas'
   OR NOT FOUND OR NOT v_round.locked
-  OR v_round.round_number<(SELECT count(*) FROM private.atina_v2_mime_cards)-1 THEN
+  OR v_round.round_number<(SELECT count(*) FROM private.atina_mime_cards)-1 THEN
   RAISE EXCEPTION 'A partida ainda não terminou.';
  END IF;
  INSERT INTO public.atina_v2_room_results(room_id,player_id,nickname,team_label,score)
@@ -1635,13 +1635,29 @@ DECLARE
  v_team text;
  v_now timestamptz;
  v_state jsonb;
- v_card private.atina_v2_mime_cards%rowtype;
+ v_card private.atina_mime_cards%rowtype;
+ v_pause jsonb;
+ v_player_used integer := 0;
+ v_team_used integer := 0;
 BEGIN
  SELECT * INTO v_me FROM public.atina_v2_room_players
  WHERE room_id=p_room_id AND token_hash=extensions.digest(coalesce(p_token,''),'sha256') FOR UPDATE;
  IF NOT FOUND THEN RAISE EXCEPTION 'Sessão da sala inválida.'; END IF;
  SELECT * INTO v_room FROM public.atina_v2_rooms WHERE id=p_room_id FOR UPDATE;
  IF NOT FOUND THEN RAISE EXCEPTION 'Sala não encontrada.'; END IF;
+ v_pause := v_room.game_state->'pause';
+ IF v_pause IS NOT NULL AND (v_pause->>'ends_at')::timestamptz <= clock_timestamp() THEN
+  v_now := clock_timestamp();
+  v_state := jsonb_set(
+    jsonb_set(v_room.game_state-'pause','{deadline}',
+      to_jsonb(CASE WHEN coalesce((v_pause->>'remaining_seconds')::integer,0)>0
+        THEN floor(extract(epoch FROM v_now)*1000)::bigint
+             + coalesce((v_pause->>'remaining_seconds')::integer,0)*1000
+        ELSE 0 END),true),
+    '{revision}',to_jsonb(coalesce((v_room.game_state->>'revision')::integer,0)+1),true);
+  UPDATE public.atina_v2_rooms SET game_state=v_state,state_version=state_version+1,updated_at=v_now
+   WHERE id=p_room_id RETURNING * INTO v_room;
+ END IF;
  SELECT * INTO v_game FROM private.atina_v2_room_game_state WHERE room_id=p_room_id FOR UPDATE;
  IF FOUND AND v_game.status='active' AND NOT v_game.round_locked
     AND v_game.deadline_at IS NOT NULL AND v_game.deadline_at<=clock_timestamp() THEN
@@ -1656,7 +1672,7 @@ BEGIN
   IF FOUND AND NOT v_mime.locked AND v_mime.deadline_at IS NOT NULL AND v_mime.deadline_at<=v_now THEN
    UPDATE private.atina_v2_mime_rounds SET locked=true,outcome='timeout',updated_at=v_now
    WHERE room_id=p_room_id AND round_number=v_mime.round_number;
-   SELECT * INTO v_card FROM private.atina_v2_mime_cards WHERE id=v_mime.card_id;
+   SELECT * INTO v_card FROM private.atina_mime_cards WHERE id=v_mime.card_id;
    v_state:=v_room.game_state||jsonb_build_object(
     'locked',true,'deadline',0,'answer',v_card.word,'correct',false,
     'points_awarded',0,'feedback','Tempo esgotado.',
@@ -1677,10 +1693,17 @@ BEGIN
   WHERE pr.room_id=p_room_id AND pr.team_label=v_team AND pr.challenge_index=coalesce((v_room.game_state->>'pos')::integer,-1)
   ORDER BY pr.created_at DESC LIMIT 1;
  END IF;
+ SELECT coalesce(used_seconds,0) INTO v_player_used
+ FROM private.atina_v2_room_timeout_budgets
+ WHERE room_id=p_room_id AND scope='player' AND scope_key=v_me.id::text;
+ SELECT coalesce(used_seconds,0) INTO v_team_used
+ FROM private.atina_v2_room_timeout_budgets
+ WHERE room_id=p_room_id AND scope='team' AND scope_key=v_team;
  RETURN jsonb_build_object('room_id',v_room.id,'code',v_room.code,'status',v_room.status,'max_players',v_room.max_players,
   'is_host',v_me.is_host,'player_id',v_me.id,'ready',v_me.ready,'team',v_team,'my_score',v_me.score,'players',v_players,
   'game_state',v_room.game_state,'team_proposal',v_team_proposal,
-  'timeouts',jsonb_build_object('player_remaining_seconds',v_me.player_timeout_seconds,'team_remaining_seconds',CASE WHEN v_team IS NULL THEN 0 ELSE 3600 END));
+  'timeouts',jsonb_build_object('player_remaining_seconds',greatest(0,3600-coalesce(v_player_used,0)),
+   'team_remaining_seconds',CASE WHEN v_team IS NULL THEN 0 ELSE greatest(0,3600-coalesce(v_team_used,0)) END));
 END;
 $function$;
 
@@ -1708,7 +1731,7 @@ DECLARE
  v_host public.atina_v2_room_players%rowtype;
  v_room public.atina_v2_rooms%rowtype;
  v_rep public.atina_v2_room_players%rowtype;
- v_card private.atina_v2_mime_cards%rowtype;
+ v_card private.atina_mime_cards%rowtype;
  v_prev private.atina_v2_mime_rounds%rowtype;
  v_now timestamptz;
  v_state jsonb;
@@ -1722,7 +1745,7 @@ BEGIN
  IF p_duration_seconds IS NULL OR p_duration_seconds NOT IN (0,60,90) THEN RAISE EXCEPTION 'Duração inválida.'; END IF;
  SELECT * INTO v_rep FROM public.atina_v2_room_players WHERE id=p_representative_id AND room_id=p_room_id;
  IF NOT FOUND THEN RAISE EXCEPTION 'Representante inválido.'; END IF;
- SELECT count(*) INTO v_total FROM private.atina_v2_mime_cards;
+ SELECT count(*) INTO v_total FROM private.atina_mime_cards;
  IF p_round_number IS NULL OR p_round_number<0 OR p_round_number>=v_total THEN RAISE EXCEPTION 'Não existem mais rondas.'; END IF;
  IF p_round_number=0 THEN
   IF coalesce(v_room.game_state->>'mode','')<>'pending'
@@ -1739,7 +1762,7 @@ BEGIN
    RAISE EXCEPTION 'A ronda anterior ainda não terminou.';
   END IF;
  END IF;
- SELECT * INTO v_card FROM private.atina_v2_mime_cards c
+ SELECT * INTO v_card FROM private.atina_mime_cards c
  WHERE NOT EXISTS(SELECT 1 FROM private.atina_v2_mime_rounds r WHERE r.room_id=p_room_id AND r.card_id=c.id)
  ORDER BY random() LIMIT 1;
  IF NOT FOUND THEN RAISE EXCEPTION 'Não existem mais cartões inéditos nesta partida.'; END IF;
@@ -1802,7 +1825,7 @@ BEGIN
   v_state:=jsonb_set(v_state,'{clue_index}',to_jsonb(v_round.clue_index),true);
   v_state:=jsonb_set(v_state,'{clues}',(
     SELECT jsonb_agg(c.clues->i ORDER BY i)
-    FROM private.atina_v2_mime_cards c
+    FROM private.atina_mime_cards c
     CROSS JOIN generate_series(0,v_round.clue_index) i
     WHERE c.id=v_round.card_id
   ),true);
@@ -1823,7 +1846,7 @@ DECLARE
  v_host public.atina_v2_room_players%rowtype;
  v_room public.atina_v2_rooms%rowtype;
  v_round private.atina_v2_mime_rounds%rowtype;
- v_card private.atina_v2_mime_cards%rowtype;
+ v_card private.atina_mime_cards%rowtype;
  v_now timestamptz;
  v_correct boolean;
  v_reason text;
@@ -1851,7 +1874,7 @@ BEGIN
  END IF;
  IF v_correct AND v_reason<>'correct' THEN RAISE EXCEPTION 'Resultado inválido.'; END IF;
  IF v_reason='correct' AND NOT v_correct THEN RAISE EXCEPTION 'Resultado inválido.'; END IF;
- SELECT * INTO v_card FROM private.atina_v2_mime_cards WHERE id=v_round.card_id;
+ SELECT * INTO v_card FROM private.atina_mime_cards WHERE id=v_round.card_id;
  v_rep:=v_round.representative_id;
  SELECT team_label INTO v_team FROM public.atina_v2_room_players WHERE id=v_rep AND room_id=p_room_id;
  IF v_correct THEN
@@ -1896,3 +1919,76 @@ CREATE INDEX IF NOT EXISTS atina_v2_mime_rounds_room_representative_idx
   ON private.atina_v2_mime_rounds(room_id,representative_id);
 CREATE INDEX IF NOT EXISTS atina_v2_mime_rounds_card_id_idx
   ON private.atina_v2_mime_rounds(card_id);
+
+
+-- Independent timeout budget for v2 rooms; legacy budgets remain untouched.
+CREATE TABLE private.atina_v2_room_timeout_budgets (
+ room_id uuid NOT NULL REFERENCES public.atina_v2_rooms(id) ON DELETE CASCADE,
+ scope text NOT NULL CHECK(scope IN ('player','team')),
+ scope_key text NOT NULL,
+ used_seconds integer NOT NULL DEFAULT 0 CHECK(used_seconds BETWEEN 0 AND 3600),
+ updated_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+ PRIMARY KEY(room_id,scope,scope_key)
+);
+ALTER TABLE private.atina_v2_room_timeout_budgets ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON private.atina_v2_room_timeout_budgets FROM public,anon,authenticated;
+
+CREATE OR REPLACE FUNCTION public.atina_v2_request_timeout(
+ p_room_id uuid,p_token text,p_scope text
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=''
+AS $function$
+DECLARE
+ v_player public.atina_v2_room_players%rowtype;
+ v_room public.atina_v2_rooms%rowtype;
+ v_scope_key text;
+ v_used integer;
+ v_deadline bigint;
+ v_remaining integer := 0;
+ v_now timestamptz := clock_timestamp();
+ v_pause jsonb;
+ v_state jsonb;
+BEGIN
+ IF p_scope NOT IN ('player','team') THEN RAISE EXCEPTION 'Tipo de pausa inválido.'; END IF;
+ SELECT * INTO v_player FROM public.atina_v2_room_players
+ WHERE room_id=p_room_id AND token_hash=extensions.digest(coalesce(p_token,''),'sha256') FOR UPDATE;
+ IF NOT FOUND THEN RAISE EXCEPTION 'Sessão da sala inválida.'; END IF;
+ IF p_scope='team' AND v_player.team_label IS NULL THEN
+  RAISE EXCEPTION 'Só jogadores integrados numa equipa podem usar a pausa da equipa.';
+ END IF;
+ v_scope_key:=CASE WHEN p_scope='player' THEN v_player.id::text ELSE v_player.team_label END;
+ SELECT * INTO v_room FROM public.atina_v2_rooms WHERE id=p_room_id FOR UPDATE;
+ IF NOT FOUND OR v_room.status<>'playing' THEN RAISE EXCEPTION 'A partida não está ativa.'; END IF;
+ v_pause:=v_room.game_state->'pause';
+ IF v_pause IS NOT NULL AND (v_pause->>'ends_at')::timestamptz>v_now THEN
+  RAISE EXCEPTION 'Já existe uma pausa global ativa.';
+ ELSIF v_pause IS NOT NULL THEN
+  v_remaining:=greatest(0,coalesce((v_pause->>'remaining_seconds')::integer,0));
+  v_state:=jsonb_set(jsonb_set(v_room.game_state-'pause','{deadline}',
+   to_jsonb(CASE WHEN v_remaining>0 THEN floor(extract(epoch FROM v_now)*1000)::bigint+v_remaining*1000 ELSE 0 END),true),
+   '{revision}',to_jsonb(coalesce((v_room.game_state->>'revision')::integer,0)+1),true);
+  UPDATE public.atina_v2_rooms SET game_state=v_state,state_version=state_version+1 WHERE id=p_room_id RETURNING * INTO v_room;
+ END IF;
+ v_deadline:=nullif(v_room.game_state->>'deadline','')::bigint;
+ IF v_deadline IS NOT NULL AND v_deadline>0 THEN
+  v_remaining:=greatest(0,ceil((v_deadline-floor(extract(epoch FROM v_now)*1000))/1000.0)::integer);
+  IF v_remaining=0 THEN RAISE EXCEPTION 'O tempo deste desafio já terminou.'; END IF;
+ ELSE v_remaining:=0;
+ END IF;
+ INSERT INTO private.atina_v2_room_timeout_budgets(room_id,scope,scope_key)
+ VALUES(p_room_id,p_scope,v_scope_key) ON CONFLICT(room_id,scope,scope_key) DO NOTHING;
+ SELECT used_seconds INTO v_used FROM private.atina_v2_room_timeout_budgets
+ WHERE room_id=p_room_id AND scope=p_scope AND scope_key=v_scope_key FOR UPDATE;
+ IF v_used+900>3600 THEN RAISE EXCEPTION 'Já esgotaste o tempo de pausa disponível neste âmbito.'; END IF;
+ UPDATE private.atina_v2_room_timeout_budgets SET used_seconds=used_seconds+900,updated_at=v_now
+ WHERE room_id=p_room_id AND scope=p_scope AND scope_key=v_scope_key;
+ v_pause:=jsonb_build_object('scope',p_scope,'requester',v_player.nickname,'requester_id',v_player.id,
+  'started_at',v_now,'ends_at',v_now+interval '15 minutes','duration_seconds',900,'remaining_seconds',v_remaining);
+ v_state:=jsonb_set(jsonb_set(jsonb_set(v_room.game_state,'{deadline}','0'::jsonb,true),
+  '{pause}',v_pause,true),'{revision}',to_jsonb(coalesce((v_room.game_state->>'revision')::integer,0)+1),true);
+ UPDATE public.atina_v2_rooms SET game_state=v_state,state_version=state_version+1 WHERE id=p_room_id;
+ RETURN jsonb_build_object('paused',true,'pause',v_pause,'remaining_seconds',3600-(v_used+900));
+END;
+$function$;
+REVOKE ALL ON FUNCTION public.atina_v2_request_timeout(uuid,text,text) FROM public;
+GRANT EXECUTE ON FUNCTION public.atina_v2_request_timeout(uuid,text,text) TO anon,authenticated;
+
