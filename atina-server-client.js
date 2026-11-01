@@ -137,7 +137,7 @@ async function atinaServerRefresh() {
   if (!atinaServerSession || atinaServerBusy) return;
   atinaServerBusy = true;
   try {
-    const state = await atinaServerRpc('atina_local_game_state', {
+    const state = await atinaServerRpc('atina_v2_local_game_state', {
       p_session_id: atinaServerSession.session_id,
       p_token: atinaServerSession.token
     });
@@ -153,7 +153,7 @@ async function atinaServerStart(gameMode, category = null) {
   try {
     const duration = Number($('timerMode')?.value ?? 60);
     const difficulty = $('difficultyMode')?.value || 'medium';
-    const response = await atinaServerRpc('atina_start_local_game', {
+    const response = await atinaServerRpc('atina_v2_start_local_game', {
       p_game_mode: gameMode,
       p_difficulty: difficulty,
       p_category: category,
@@ -178,7 +178,7 @@ submit = async function() {
   if (!answer) { atinaServerMessage('Escreve primeiro a tua resposta.'); $('answer').focus(); return; }
   atinaServerBusy = true;
   try {
-    const state = await atinaServerRpc('atina_local_submit_answer', {
+    const state = await atinaServerRpc('atina_v2_local_submit_answer', {
       p_session_id: atinaServerSession.session_id,
       p_token: atinaServerSession.token,
       p_answer: answer
@@ -193,7 +193,7 @@ reveal = async function() {
   if (!atinaServerState || locked || atinaServerBusy) return;
   atinaServerBusy = true;
   try {
-    const state = await atinaServerRpc('atina_local_reveal_clue', {
+    const state = await atinaServerRpc('atina_v2_local_reveal_clue', {
       p_session_id: atinaServerSession.session_id, p_token: atinaServerSession.token
     });
     playAtinaSound('clue');
@@ -205,7 +205,7 @@ pass = async function() {
   if (!atinaServerState || locked || atinaServerBusy) return;
   atinaServerBusy = true;
   try {
-    const state = await atinaServerRpc('atina_local_pass_challenge', {
+    const state = await atinaServerRpc('atina_v2_local_pass_challenge', {
       p_session_id: atinaServerSession.session_id, p_token: atinaServerSession.token
     });
     playAtinaSound('pass');
@@ -217,7 +217,7 @@ next = async function() {
   if (!atinaServerState || !locked || atinaServerBusy) return;
   atinaServerBusy = true;
   try {
-    const state = await atinaServerRpc('atina_local_next_challenge', {
+    const state = await atinaServerRpc('atina_v2_local_next_challenge', {
       p_session_id: atinaServerSession.session_id, p_token: atinaServerSession.token
     });
     atinaServerApplyState(state);
@@ -280,7 +280,7 @@ async function atinaServerRestoreSession() {
   if (!saved?.session_id || !saved?.token) return false;
   atinaServerSession = saved;
   try {
-    const state = await atinaServerRpc('atina_local_game_state', { p_session_id: saved.session_id, p_token: saved.token });
+    const state = await atinaServerRpc('atina_v2_local_game_state', { p_session_id: saved.session_id, p_token: saved.token });
     screen('game');
     atinaServerApplyState(state);
     return true;
