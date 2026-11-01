@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync, realpathSync } from 'node:fs';
-import { resolve, relative, isAbsolute } from 'node:path';
+import { resolve, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
@@ -12,8 +12,7 @@ if (!sourceArg || !isAbsolute(sourceArg)) {
 }
 const realRoot = realpathSync(root);
 const sourcePath = realpathSync(sourceArg);
-const sourceRel = relative(realRoot, sourcePath);
-if (sourceRel === '' || (!sourceRel.startsWith('..') && !isAbsolute(sourceRel))) {
+if (sourcePath === realRoot || sourcePath.startsWith(realRoot + sep)) {
   console.error('Por segurança, a fonte privada tem de ficar fora do repositório (incluindo caminhos com symlinks).');
   process.exit(2);
 }
