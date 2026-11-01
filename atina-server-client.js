@@ -19,7 +19,6 @@ function atinaServerMessage(message) {
   const gameVisible = $('game') && !$('game').classList.contains('hidden');
   if (gameVisible) {
     $('feedback').textContent = message;
-  if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage'); else $('solutionImage')?.classList.add('hidden');
     return;
   }
   const target = $('networkStatus') || $('networkLobbyStatus');
@@ -121,6 +120,8 @@ function atinaServerApplyState(state, announce = false) {
   else if (locked) message = challenge.answer ? 'Resposta: ' + challenge.answer : 'Ronda terminada.';
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
+  if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage');
+  else $('solutionImage')?.classList.add('hidden');
   if (clearAnswer) $('answer').value = '';
   $('feedback').classList.remove('is-correct', 'is-wrong', 'is-info');
   $('feedback').classList.add(result.outcome === 'correct' ? 'is-correct' : result.outcome === 'wrong' || result.outcome === 'timeout' ? 'is-wrong' : 'is-info');
