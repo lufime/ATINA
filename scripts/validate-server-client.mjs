@@ -4,8 +4,8 @@ import vm from 'node:vm';
 const html = readFileSync('index.html', 'utf8');
 const client = readFileSync('atina-server-client.js', 'utf8');
 const pagesConfig = readFileSync('_config.yml', 'utf8');
-const localCompatibility = readFileSync('supabase/migrations/20261101120000_atina_ranking_v2_local_sessions.sql', 'utf8');
-const multiplayerCompatibility = readFileSync('supabase/migrations/20261101130000_atina_ranking_v2_multiplayer_mimicas.sql', 'utf8');
+const localCompatibility = readFileSync('supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql', 'utf8');
+const multiplayerCompatibility = readFileSync('supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql', 'utf8');
 const errors = [];
 
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
