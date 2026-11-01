@@ -1,0 +1,35 @@
+name: Testar progressão pseudónima no browser
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'atina-server-client.js'
+      - 'scripts/test-cloud-progression-browser.mjs'
+      - '.github/workflows/test-cloud-progression-browser.yml'
+  push:
+    branches: [feat/pseudonym-xp-supabase-foundation]
+    paths:
+      - 'index.html'
+      - 'atina-server-client.js'
+      - 'scripts/test-cloud-progression-browser.mjs'
+      - '.github/workflows/test-cloud-progression-browser.yml'
+
+jobs:
+  browser-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar Playwright
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Executar testes reais em Chromium
+        run: node scripts/test-cloud-progression-browser.mjs
