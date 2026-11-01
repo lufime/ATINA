@@ -5,7 +5,7 @@
 
 create schema if not exists private;
 
-create table private.atina_challenges (
+create table if not exists private.atina_challenges (
   challenge_id integer primary key,
   category text not null,
   emoji text not null,
