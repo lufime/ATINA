@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Gera uma carga SQL PRIVADA a partir do index.html original.
+ * Gera uma carga SQL PRIVADA a partir de uma cópia privada do index.html original.
  *
  * IMPORTANTE:
  * - O ficheiro de saída contém respostas e alternativas. Nunca o adicionar ao Git.
@@ -8,9 +8,10 @@
  * - A carga destina-se apenas a uma base Supabase de desenvolvimento.
  *
  * Uso:
- *   node scripts/generate-private-challenge-seed.mjs /caminho/absoluto/atina-private-seed.sql
+ *   ATINA_PRIVATE_SOURCE=/caminho/fora/do/repo/index-original.html node scripts/generate-private-challenge-seed.mjs /caminho/absoluto/atina-private-seed.sql
+ *   ATINA_PRIVATE_SOURCE=/caminho/fora/do/repo/index-original.html node scripts/generate-private-challenge-seed.mjs --check
  *
- * A fonte é index.html; o catálogo público é usado para validar IDs e pistas.
+ * A fonte privada é fornecida por ATINA_PRIVATE_SOURCE e nunca é guardada no repositório.
  */
 import { readFileSync, writeFileSync, chmodSync, realpathSync } from 'node:fs';
 import { resolve, relative, isAbsolute, dirname, basename } from 'node:path';
@@ -35,7 +36,19 @@ if (!checkOnly) {
   }
 }
 
-const source = readFileSync(resolve(repoRoot, 'index.html'), 'utf8');
+const sourceArg = process.env.ATINA_PRIVATE_SOURCE;
+if (!sourceArg || !isAbsolute(sourceArg)) {
+  console.error('Define ATINA_PRIVATE_SOURCE com o caminho absoluto para uma cópia privada do index.html original, guardada fora do repositório.');
+  process.exit(2);
+}
+const realRepoRoot = realpathSync(repoRoot);
+const sourcePath = realpathSync(sourceArg);
+const sourceRel = relative(realRepoRoot, sourcePath);
+if (sourceRel === '' || (!sourceRel.startsWith('..') && !isAbsolute(sourceRel))) {
+  console.error('Por segurança, a fonte privada também tem de ficar fora do repositório (incluindo caminhos com symlinks).');
+  process.exit(2);
+}
+const source = readFileSync(sourcePath, 'utf8');
 const publicCatalog = JSON.parse(readFileSync(resolve(repoRoot, 'supabase/proposals/public-challenges.json'), 'utf8'));
 const marker = 'const games=[';
 const markerAt = source.indexOf(marker);
