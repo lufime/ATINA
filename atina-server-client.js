@@ -13,10 +13,12 @@ function atinaCloudSyncCorrect(state) {
   const key = state.session_id + ':' + state.position;
   if (atinaCloudAwardAttempts.has(key)) return;
   atinaCloudAwardAttempts.add(key);
+  const continueButton = $('continue');
+  if (continueButton) continueButton.disabled = true;
   window.atinaCloudProgression?.recordCorrect(state, atinaServerSession).catch(error => {
     atinaCloudAwardAttempts.delete(key);
     atinaServerMessage(error.message || 'Não foi possível sincronizar o XP.');
-  });
+  }).finally(() => { if (continueButton) continueButton.disabled = false; });
 }
 
 async function atinaServerRpc(name, args) {
