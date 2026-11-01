@@ -233,6 +233,16 @@ stopTimer = function() {
   atinaServerTimer = null;
 };
 startTimer = function() { atinaServerStartTimers(); };
+$('listenAnswer').onclick = () => {
+  const answer = atinaServerState?.challenge?.answer || networkGameState?.answer;
+  if (!answer) return;
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const speech = new SpeechSynthesisUtterance('A resposta correta é: ' + answer);
+    speech.lang = 'pt-PT';
+    window.speechSynthesis.speak(speech);
+  } else atinaServerMessage('A leitura em voz alta não está disponível neste navegador.');
+};
 $('back').onclick = () => {
   if (networkRoom) { networkLeaveRoom(); return; }
   atinaServerStopTimers();
