@@ -20,5 +20,7 @@ jobs:
         run: node scripts/validate-public-challenges.mjs
       - name: Verificar sintaxe do gerador privado
         run: node --check scripts/generate-private-challenge-seed.mjs
+      - name: Verificar sintaxe do validador privado
+        run: node --check scripts/validate-challenges.mjs
       - name: Validar cliente server-authoritative e ausência de segredos
         run: node scripts/validate-server-client.mjs
