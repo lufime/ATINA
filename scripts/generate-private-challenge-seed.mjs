@@ -14,10 +14,12 @@
  * A fonte privada é fornecida por ATINA_PRIVATE_SOURCE e nunca é guardada no repositório.
  */
 import { readFileSync, writeFileSync, chmodSync, realpathSync } from 'node:fs';
-import { resolve, relative, isAbsolute, dirname, basename } from 'node:path';
+import { resolve, isAbsolute, dirname, basename, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const realRepoRoot = realpathSync(repoRoot);
+const isInsideRepo = candidate => candidate === realRepoRoot || candidate.startsWith(realRepoRoot + sep);
 const checkOnly = process.argv[2] === '--check';
 const outputArg = checkOnly ? null : process.argv[2];
 let outputPath = null;
@@ -26,11 +28,9 @@ if (!checkOnly) {
     console.error('Indica um caminho absoluto fora do repositório para o SQL privado.');
     process.exit(2);
   }
-  const realRepoRoot = realpathSync(repoRoot);
   const realOutputParent = realpathSync(dirname(resolve(outputArg)));
   outputPath = resolve(realOutputParent, basename(outputArg));
-  const rel = relative(realRepoRoot, outputPath);
-  if (rel === '' || (!rel.startsWith('..') && !isAbsolute(rel))) {
+  if (isInsideRepo(outputPath)) {
     console.error('Por segurança, o ficheiro SQL privado tem de ficar fora do repositório (incluindo caminhos com symlinks).');
     process.exit(2);
   }
@@ -41,10 +41,8 @@ if (!sourceArg || !isAbsolute(sourceArg)) {
   console.error('Define ATINA_PRIVATE_SOURCE com o caminho absoluto para uma cópia privada do index.html original, guardada fora do repositório.');
   process.exit(2);
 }
-const realRepoRoot = realpathSync(repoRoot);
 const sourcePath = realpathSync(sourceArg);
-const sourceRel = relative(realRepoRoot, sourcePath);
-if (sourceRel === '' || (!sourceRel.startsWith('..') && !isAbsolute(sourceRel))) {
+if (isInsideRepo(sourcePath)) {
   console.error('Por segurança, a fonte privada também tem de ficar fora do repositório (incluindo caminhos com symlinks).');
   process.exit(2);
 }
