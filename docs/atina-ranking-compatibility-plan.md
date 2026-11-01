@@ -30,6 +30,24 @@ As funções de sala atualmente instaladas consultam e escrevem as colunas legad
 5. A migração `019_atina_rpc_rate_limiting` configura `pgrst.db_pre_request` ao nível do role `authenticator`. É uma alteração global do comportamento PostgREST e não deve ser incluída numa migração de compatibilidade sem revisão específica.
 6. **Há também um bloqueio na ordem de migrações.** As migrações `001–019` estão numa única sequência versionada em `supabase/migrations`. Não basta acrescentar uma migração `020` compatível: o CLI tentaria executar primeiro as versões pendentes `007–019`, onde surgem os conflitos. Não se deve contornar isto marcando versões como aplicadas (`migration repair`) sem provar que o respetivo SQL já foi aplicado de forma equivalente.
 
+## Fonte privada dos 753 desafios — localizada
+
+A procura read-only encontrou a fonte de dados completa no projeto Supabase existente **`atina-development`** (`qvvlqrgbtjujsejvenld`), tabela `private.atina_challenges`.
+
+Validação efetuada por consulta agregada e comparação dos campos públicos com `supabase/proposals/public-challenges.json` na branch `main`:
+
+- 753 registos e 753 IDs únicos.
+- 753 respostas principais não vazias.
+- 753 listas `accepted_answers` não vazias.
+- 753 dificuldades válidas (`easy`, `medium`, `hard`).
+- 753 registos ativos.
+- 15 categorias e 3 níveis de dificuldade.
+- Zero diferenças em ID, categoria, emoji, pistas ou URL de imagem face ao catálogo público.
+
+Também foram encontradas branches GitHub antigas com arrays `games` de 750 desafios completos, mas são versões incompletas face ao catálogo atual de 753. A branch `main` já não contém respostas no HTML. Por isso, a tabela privada de `atina-development` é a fonte mais completa encontrada.
+
+**Limite:** a comparação confirma que os campos públicos coincidem e que as respostas/alternativas existem; não prova por si só a proveniência editorial original de cada resposta. Nenhum registo privado foi copiado para `atina-ranking`. A exportação/transferência para outro projeto é uma operação separada, a realizar apenas após confirmação explícita.
+
 ## Estratégia proposta
 
 ### A. Preservar o multiplayer legado
