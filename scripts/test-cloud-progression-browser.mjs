@@ -111,6 +111,7 @@ try {
     });
   });
   await page.getByText(/\+10 XP confirmado pelo servidor/).waitFor();
+  await page.evaluate(() => atinaServerStopTimers());
   assert.equal(await page.locator('#atinaCloudXp').textContent(), '10 XP');
 
   const calls = await page.evaluate(() => window.__mockRpcCalls);
