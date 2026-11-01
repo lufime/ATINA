@@ -614,15 +614,7 @@ async function networkMimeReveal(){
  networkGameState.clue_index++;networkGameState.revision=(networkGameState.revision||0)+1;
  try{await networkPublishGameState();await networkRefreshRoom();}catch(e){networkMessage('mimeFeedback',e.message||'Não foi possível revelar a pista.');}
 }
-async function networkMimeResolveRound(correct,reason){
- if(!networkGameHost||!networkGameState||networkGameState.mode!=='mimicas'||networkGameState.locked)return;
- const st=networkGameState;st._resolving=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;
- const remaining=st.deadline?Math.max(0,Math.ceil((st.deadline-Date.now())/1000)):0;
- const base=mimePoints[Math.min(4,Number(st.clue_index)||0)];
- const points=correct?base+(st.duration_seconds?Math.floor(remaining/10):0):0;
- try{await networkCall('atina_resolve_mime_round',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_correct:!!correct,p_points:points,p_reason:reason|| (correct?'correct':'pass')});await networkRefreshRoom();}
- catch(e){st._resolving=false;networkMessage('mimeFeedback',e.message||'Não foi possível registar o resultado da ronda.');}
-}
+async function networkMimeResolveRound(){throw new Error('A pontuação de Mímicas é calculada pelo servidor.');}
 async function networkMimeNext(){
  if(!networkGameHost||!networkGameState||networkGameState.mode!=='mimicas')return;
  const st=networkGameState;
