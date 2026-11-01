@@ -17,7 +17,7 @@ As pistas também não são enviadas antecipadamente: o browser recebe apenas as
 
 As 753 respostas principais e as respetivas alternativas foram removidas do cliente. O catálogo mantém os 802 slots históricos, incluindo 49 posições vazias, para não alterar os IDs. A classificação de dificuldade por índice é pré-calculada e não contém respostas.
 
-O array local de cartões de Mímicas está vazio. Palavras, cartões e pistas de Mímicas são mantidos no schema privado do Supabase. A palavra secreta só é devolvida por `atina_get_mime_secret` ao representante da ronda.
+O array local de cartões de Mímicas está vazio. Palavras, cartões e pistas de Mímicas são mantidos no schema privado do Supabase. Os scripts de validação/seed que necessitam das respostas originais recebem a fonte através de `ATINA_PRIVATE_SOURCE`, apontando para uma cópia guardada fora do repositório; o HTML publicado não é usado como fonte privada. A palavra secreta só é devolvida por `atina_get_mime_secret` ao representante da ronda.
 
 ## Modos de desafios
 
