@@ -347,10 +347,10 @@ networkReceiveState = function(st) {
 networkStartGame = async function() {
   if (!networkRoom || !networkLobbyData?.is_host) return;
   try {
-    await networkCall('atina_start_room', { p_room_id: networkRoom.room_id, p_token: networkRoom.token });
+    await networkCall('atina_v2_start_room', { p_room_id: networkRoom.room_id, p_token: networkRoom.token });
     const duration = Number($('timerMode')?.value ?? 60);
     const difficulty = $('difficultyMode')?.value || 'medium';
-    await networkCall('atina_start_room_challenges', {
+    await networkCall('atina_v2_start_room_challenges', {
       p_room_id: networkRoom.room_id, p_token: networkRoom.token,
       p_difficulty: difficulty, p_duration_seconds: Number.isFinite(duration) ? duration : 60,
       p_category: null
@@ -418,14 +418,14 @@ networkSubmitAnswer = async function() {
   if (!answer) { $('feedback').textContent = 'Escreve primeiro a tua resposta.'; return; }
   try {
     if (networkLobbyData?.team) {
-      await networkCall('atina_submit_team_proposal', {
+      await networkCall('atina_v2_submit_team_proposal', {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token,
         p_challenge: networkGameState.pos, p_answer: answer
       });
       networkAnsweredThisChallenge = true;
       $('answer').value = '';
     } else {
-      const result = await networkCall('atina_submit_room_answer', {
+      const result = await networkCall('atina_v2_submit_room_answer', {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token, p_answer: answer
       });
       atinaNetworkFeedback = result.status === 'correct' ? '✓ Resposta certa! +' + Number(result.points || 0) + ' pontos atribuídos pelo servidor.' : result.status === 'wrong' ? 'Resposta errada: −10 pontos. Tenta novamente.' : result.status === 'already_correct' ? 'Esta resposta já foi contabilizada.' : result.status === 'locked' ? 'A ronda já terminou.' : 'Resposta recebida pelo servidor.';
@@ -439,17 +439,17 @@ networkSubmitAnswer = async function() {
 };
 networkHostReveal = async function() {
   if (!networkGameHost || !networkGameState || networkGameState.locked) return;
-  try { await networkCall('atina_reveal_room_clue', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
+  try { await networkCall('atina_v2_reveal_room_clue', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível revelar a pista.'); }
 };
 networkHostPass = async function() {
   if (!networkGameHost || !networkGameState || networkGameState.locked) return;
-  try { await networkCall('atina_pass_room_challenge', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
+  try { await networkCall('atina_v2_pass_room_challenge', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível passar o desafio.'); }
 };
 networkHostNext = async function() {
   if (!networkGameHost || !networkGameState || !networkGameState.locked) return;
-  try { await networkCall('atina_next_room_challenge', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
+  try { await networkCall('atina_v2_next_room_challenge', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível avançar o desafio.'); }
 };
 networkMimeResolveRound = async function(correct, reason) {
@@ -457,7 +457,7 @@ networkMimeResolveRound = async function(correct, reason) {
   $('mimeCorrect').disabled = true;
   $('mimeSkip').disabled = true;
   try {
-    await networkCall('atina_resolve_mime_round', {
+    await networkCall('atina_v2_resolve_mime_round', {
       p_room_id: networkRoom.room_id, p_token: networkRoom.token,
       p_correct: !!correct, p_points: 0, p_reason: reason || (correct ? 'correct' : 'pass')
     });
