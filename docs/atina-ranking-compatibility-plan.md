@@ -114,7 +114,7 @@ Foi preparada na branch desta PR uma primeira camada aditiva para os modos locai
 - As seis RPCs locais têm nomes próprios `atina_v2_*`. As RPCs antigas de salas não são substituídas nem redefinidas por esta migração.
 - O cliente local em `atina-server-client.js` foi atualizado para chamar as RPCs v2.
 - Foram incorporadas as regras mais recentes do modo Party (limite de 10 desafios, alternância de equipas e bónus da última ronda).
-- A migração inclui pré-condições para exigir o catálogo privado com dificuldade e exatamente 753 desafios ativos, e recusa criar a tabela v2 se ela já existir.
+- A migração verifica a existência do catálogo privado e da coluna `difficulty`, e recusa criar a tabela v2 se ela já existir. Não exige que o seed privado esteja presente durante um replay limpo; os 753 registos são dados privados e não são incluídos no GitHub.
 
 **Limite importante:** isto é código preparado na branch, não uma migração aplicada. Não foi executado contra PostgreSQL nem contra `atina-ranking`; a verificação feita até agora foi apenas estática (nomes das RPCs e correspondência das chamadas no cliente). A migração ainda depende de uma estratégia de baseline/histórico que impeça o CLI de tentar aplicar primeiro as migrações antigas incompatíveis.
 
@@ -136,7 +136,7 @@ Foi preparada uma segunda migração candidata: `20261101130000_atina_ranking_v2
 - Cria RPCs novas com prefixo `atina_v2_*`; o cliente em `index.html` e `atina-server-client.js` foi atualizado para chamar esses contratos.
 - A camada de Mímicas referencia a tabela já existente `private.atina_mime_cards`; não recria nem volta a inserir as 48 cartas. As rondas e os segredos são tratados na estrutura v2.
 - O pedido de pausa passou a usar `atina_v2_request_timeout` e uma tabela privada de budgets v2, separada dos budgets legados.
-- A migração inclui pré-condições para exigir as 753 perguntas e as 48 cartas existentes, e para recusar colisões com tabelas v2 já criadas.
+- A migração verifica a existência do catálogo de desafios, das 48 cartas Mímicas e das tabelas legadas necessárias, e recusa colisões com tabelas v2 já criadas. Não exige o seed privado de desafios no replay limpo.
 - Não redefine nem elimina as RPCs antigas nem altera as tabelas de salas legadas.
 
 **Verificação efetuada:** inspeção estática confirmou que os RPCs chamados pelo cliente têm definições correspondentes na migração, que os nomes de RPC antigos deixaram de ser chamados pelo cliente atualizado e que não existe seed de cartas Mímicas na migração. A migração mantém referências às tabelas antigas apenas nas pré-condições que confirmam a sua existência e na tabela de cartas partilhada.
