@@ -21,7 +21,7 @@ Verificação read-only após aplicação:
 - `private.atina_challenges`: 753 linhas.
 - Tabelas v2 criadas: sessões locais, salas/jogadores/respostas/resultados/propostas/votos v2, estado privado de jogo, rondas Mímicas e budgets de pausa v2.
 
-As RPCs legadas continuam presentes com as assinaturas antigas. Nenhuma tabela ou RPC legada foi renomeada, eliminada ou substituída pelas migrações v2. Os 753 desafios foram copiados previamente de `atina-development`; a assinatura agregada dos dez campos foi comparada e coincidiu com a origem. O projeto `atina-development` não foi alterado.
+As RPCs legadas continuam presentes com as assinaturas antigas. Nenhuma tabela ou RPC legada foi renomeada, eliminada ou substituída pelas migrações v2. As quatro salas antigas estão todas em `waiting`, com um jogador cada, e foram deixadas intactas; não foram copiadas para as tabelas v2. Clientes antigos continuam a ter as RPCs legadas, mas o cliente atualizado trabalha com salas v2 e não lista essas salas antigas. Os 753 desafios foram copiados previamente de `atina-development`; a assinatura agregada dos dez campos foi comparada e coincidiu com a origem. O projeto `atina-development` não foi alterado.
 
 ## Segurança verificada após aplicação
 
