@@ -106,14 +106,19 @@ begin
   if private.atina_v2_answer_matches('A letra «o»', 'letra a') then
     raise exception 'Answer matcher regression: a different single letter must be rejected.';
   end if;
-  if not private.atina_v2_challenge_answer_matches(728, 'todos os mes') then
-    raise exception 'Answer matcher regression: the curated singular typo for challenge 728 must be accepted.';
-  end if;
-  if private.atina_v2_challenge_answer_matches(765, 'letra a') then
-    raise exception 'Answer matcher regression: wrong letter for challenge 765 must be rejected.';
-  end if;
-  if not private.atina_v2_challenge_answer_matches(765, 'letra o') then
-    raise exception 'Answer matcher regression: correct letter for challenge 765 must be accepted.';
+  -- Challenge rows are intentionally seeded out-of-band and are absent from a
+  -- clean source-only migration replay. Keep these data-specific assertions when
+  -- the production catalogue is present; never fail an empty disposable database.
+  if exists (select 1 from private.atina_challenges where challenge_id in (728, 765)) then
+    if not private.atina_v2_challenge_answer_matches(728, 'todos os mes') then
+      raise exception 'Answer matcher regression: the curated singular typo for challenge 728 must be accepted.';
+    end if;
+    if private.atina_v2_challenge_answer_matches(765, 'letra a') then
+      raise exception 'Answer matcher regression: wrong letter for challenge 765 must be rejected.';
+    end if;
+    if not private.atina_v2_challenge_answer_matches(765, 'letra o') then
+      raise exception 'Answer matcher regression: correct letter for challenge 765 must be accepted.';
+    end if;
   end if;
   if private.atina_v2_answer_matches('Rio de Janeiro', 'Rio') then
     raise exception 'Answer matcher regression: missing content words must remain incorrect.';
