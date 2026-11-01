@@ -847,7 +847,6 @@ function refreshVisibleClock(){if(document.hidden){if(raceStartedAt)raceStop();i
 document.addEventListener('visibilitychange',refreshVisibleClock);
 window.addEventListener('pageshow',refreshVisibleClock);
 window.addEventListener('focus',refreshVisibleClock);
-restoreLastScreen();
 
 // Navegação por setas e OK em comandos de Smart TV.
 (function enableTvRemoteNavigation(){
