@@ -81,3 +81,31 @@ begin
   if coalesce(v_secret->>'word','') = '' then raise exception 'Mímicas representative did not receive the secret'; end if;
 end
 $$;
+
+-- The legacy RPC bodies/signatures are represented by stable sentinels. Confirm
+-- the v2 install did not replace the old endpoints with a different contract.
+do $$
+declare
+  v_room_id uuid;
+  v_result jsonb;
+begin
+  select id into v_room_id from public.atina_rooms order by code limit 1;
+  v_result := public.atina_room_state(v_room_id,'legacy-token');
+  if coalesce((v_result->>'legacy_contract')::boolean,false) is not true then
+    raise exception 'Legacy atina_room_state contract changed';
+  end if;
+  v_result := public.atina_create_room('Legacy',4);
+  if coalesce((v_result->>'legacy_contract')::boolean,false) is not true then
+    raise exception 'Legacy atina_create_room contract changed';
+  end if;
+  v_result := public.atina_join_room('OLD001','Legacy');
+  if coalesce((v_result->>'legacy_contract')::boolean,false) is not true then
+    raise exception 'Legacy atina_join_room contract changed';
+  end if;
+  v_result := public.atina_start_mime_round(v_room_id,'legacy-token',0,
+    (select id from public.atina_room_players where room_id=v_room_id limit 1),0);
+  if coalesce((v_result->>'legacy_contract')::boolean,false) is not true then
+    raise exception 'Legacy atina_start_mime_round contract changed';
+  end if;
+end
+$$;
