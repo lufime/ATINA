@@ -9,15 +9,19 @@ const sql = readFileSync(
 const required = [
   'create table if not exists private.atina_players',
   'create table if not exists private.atina_xp_events',
+  'create table if not exists private.atina_xp_session_owners',
   'device_token_hash bytea not null unique',
   'alter table private.atina_players enable row level security',
   'alter table private.atina_xp_events enable row level security',
+  'alter table private.atina_xp_session_owners enable row level security',
   'security definer',
   "set search_path = ''",
   'private.atina_v2_local_sessions',
   "extensions.digest(convert_to(p_session_token, 'UTF8'), 'sha256')",
-  "v_session.last_result ->> 'outcome' <> 'correct'",
-  'constraint atina_xp_events_once_per_challenge',
+  "v_session.last_result ->> 'outcome' is distinct from 'correct'",
+  'v_session.round_locked',
+  'v_session.expires_at <= clock_timestamp()',
+  'on conflict (session_id) do nothing',
   'on conflict (player_id, session_id, challenge_position) do nothing',
   'grant execute on function public.atina_progress_register(text, text) to anon',
   'grant execute on function public.atina_progress_claim_local(text, uuid, text, integer) to anon',
@@ -57,7 +61,9 @@ const functionNames = [
   'atina_progress_leaderboard'
 ];
 for (const name of functionNames) {
-  const occurrences = sql.match(new RegExp('create or replace function public\\.' + name + '\\b', 'gi')) ?? [];
+  const occurrences = sql.match(
+    new RegExp('create or replace function public\\.' + name + '\\b', 'gi')
+  ) ?? [];
   if (occurrences.length !== 1) {
     throw new Error('Esperada exatamente uma definição para ' + name + '.');
   }
@@ -65,5 +71,6 @@ for (const name of functionNames) {
 
 console.log(
   'Proposta validada estaticamente: pseudónimo sem Auth, tokens em hash, RLS, ' +
-  'XP confirmado pelo servidor, idempotência, RPCs restritas e sem revogação global do schema.'
+  'XP confirmado pelo servidor, associação de sessão a perfil, idempotência, ' +
+  'RPCs restritas e sem revogação global do schema.'
 );
