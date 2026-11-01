@@ -11,7 +11,7 @@ new vm.Script(html.slice(scriptStart, scriptEnd), { filename: 'index.html inline
 const body = (name, async = false) => {
   const start = html.indexOf(`${async ? 'async ' : ''}function ${name}(`);
   if (start < 0) throw new Error(`Função em falta: ${name}`);
-  const candidates = [html.indexOf('\\nfunction ', start + 1), html.indexOf('\\nasync function ', start + 1)].filter((n) => n >= 0);
+  const candidates = [html.indexOf('\nfunction ', start + 1), html.indexOf('\nasync function ', start + 1)].filter((n) => n >= 0);
   return html.slice(start, candidates.length ? Math.min(...candidates) : html.length);
 };
 
