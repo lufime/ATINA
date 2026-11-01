@@ -17,3 +17,62 @@ begin
   if not has_function_privilege('anon','public.atina_v2_create_room(text,integer)','EXECUTE') then raise exception 'anon cannot execute v2 room RPC'; end if;
 end
 $$;
+
+
+-- Exercise the local Party contract: capped queue, final-round double points,
+-- and alternating teams. The fixture contains one synthetic challenge, so it is
+-- necessarily the final round.
+do $$
+declare
+  v_started jsonb;
+  v_result jsonb;
+  v_next jsonb;
+  v_session_id uuid;
+  v_token text;
+begin
+  v_started := public.atina_v2_start_local_game('party','easy',null,0);
+  v_session_id := (v_started->'state'->>'session_id')::uuid;
+  v_token := v_started->>'token';
+  if v_session_id is null or v_token is null then raise exception 'Party session did not start'; end if;
+  if (v_started->'state'->>'queue_size')::integer > 10 then raise exception 'Party queue exceeds ten challenges'; end if;
+  v_result := public.atina_v2_local_submit_answer(v_session_id,v_token,'teste');
+  if coalesce((v_result->'last_result'->>'party_final_round_bonus')::boolean,false) is not true then
+    raise exception 'Party final-round bonus was not recorded';
+  end if;
+  if (v_result->'last_result'->>'points')::integer <> 20 then
+    raise exception 'Party final-round score should double the 10-point base';
+  end if;
+  v_next := public.atina_v2_local_next_challenge(v_session_id,v_token);
+  if (v_next->>'current_player')::integer <> 2 then raise exception 'Party did not alternate to team two'; end if;
+end
+$$;
+
+-- Exercise v2 multiplayer room creation and the server-authoritative Mímicas
+-- secret path without changing any of the legacy fixture's rooms or cards.
+do $$
+declare
+  v_host jsonb;
+  v_guest jsonb;
+  v_state jsonb;
+  v_secret jsonb;
+  v_room_id uuid;
+  v_host_token text;
+  v_guest_token text;
+  v_guest_id uuid;
+begin
+  v_host := public.atina_v2_create_room('Anfitrião',4);
+  v_room_id := (v_host->>'room_id')::uuid;
+  v_host_token := v_host->>'token';
+  v_guest := public.atina_v2_join_room('Convidado',v_host->>'code');
+  v_guest_token := v_guest->>'token';
+  v_guest_id := (v_guest->>'player_id')::uuid;
+  perform public.atina_v2_set_room_ready(v_room_id,v_guest_token,true);
+  perform public.atina_v2_start_room(v_room_id,v_host_token);
+  v_state := public.atina_v2_start_mime_round(v_room_id,v_host_token,0,v_guest_id,0);
+  if v_state->>'mode' <> 'mimicas' or v_state ? 'answer' then
+    raise exception 'Mímicas public state exposed an invalid payload';
+  end if;
+  v_secret := public.atina_v2_get_mime_secret(v_room_id,v_guest_token);
+  if coalesce(v_secret->>'word','') = '' then raise exception 'Mímicas representative did not receive the secret'; end if;
+end
+$$;
