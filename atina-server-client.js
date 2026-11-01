@@ -8,6 +8,16 @@ let atinaServerBusy = false;
 let atinaServerLastResult = '{}';
 let atinaNetworkChallengeKey = '';
 let atinaNetworkFeedback = '';
+const atinaCloudAwardAttempts = new Set();
+function atinaCloudSyncCorrect(state) {
+  const key = state.session_id + ':' + state.position;
+  if (atinaCloudAwardAttempts.has(key)) return;
+  atinaCloudAwardAttempts.add(key);
+  window.atinaCloudProgression?.recordCorrect(state, atinaServerSession).catch(error => {
+    atinaCloudAwardAttempts.delete(key);
+    atinaServerMessage(error.message || 'Não foi possível sincronizar o XP.');
+  });
+}
 
 async function atinaServerRpc(name, args) {
   if (!supabaseClient) throw new Error('É necessária uma ligação à Internet para jogar. Atualiza a página e tenta novamente.');
@@ -122,7 +132,7 @@ function atinaServerApplyState(state, announce = false) {
   $('feedback').textContent = message;
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
   if (locked && state.last_result?.outcome === 'correct') {
-    window.atinaCloudProgression?.recordCorrect(state, atinaServerSession).catch(error => atinaServerMessage(error.message || 'Não foi possível sincronizar o XP.'));
+    atinaCloudSyncCorrect(state);
   }
   if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage');
   else $('solutionImage')?.classList.add('hidden');
