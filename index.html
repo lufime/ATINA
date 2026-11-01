@@ -964,14 +964,18 @@ function atinaSolutionImageMatch(answer,category,item){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
  const answerTokens=atinaSolutionImageText(answer).split(/\s+/).filter(token=>token.length>1&&!stop.has(token));
  const categoryTokens=atinaSolutionImageText(category).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
- if(!answerTokens.length)return null;
+ // Uma única palavra (ex.: "Hanói") pode aparecer na descrição de qualquer foto
+ // tirada nessa cidade. Sem contexto suficiente, é mais seguro não mostrar imagem.
+ if(answerTokens.length<2)return null;
  const title=atinaSolutionImageText(item.title);
- const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
- const text=title+' '+description;
- const words=new Set(text.split(/\s+/));
- const matched=answerTokens.filter(token=>words.has(token));
+ const titleWords=new Set(title.split(/\s+/));
+ const matched=answerTokens.filter(token=>titleWords.has(token));
  const answerCoverage=matched.length/answerTokens.length;
- if(answerCoverage<(answerTokens.length===1?1:0.5))return null;
+ // Exigir todos os termos da resposta no próprio nome do ficheiro evita aceitar
+ // fotografias apenas porque a descrição menciona a resposta incidentalmente.
+ if(answerCoverage<1)return null;
+ const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
+ const words=new Set((title+' '+description).split(/\s+/));
  const categoryCoverage=categoryTokens.length?categoryTokens.filter(token=>words.has(token)).length/categoryTokens.length:0;
  return {answerCoverage,categoryCoverage};
 }
