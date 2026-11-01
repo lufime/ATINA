@@ -31,16 +31,27 @@ create table if not exists private.atina_xp_events (
     unique (player_id, session_id, challenge_position)
 );
 
+-- A local game session is attributed to one pseudonymous profile only.
+-- This prevents a second device identity from claiming the same session's XP.
+create table if not exists private.atina_xp_session_owners (
+  session_id uuid primary key,
+  player_id uuid not null references private.atina_players(id) on delete cascade,
+  created_at timestamptz not null default clock_timestamp()
+);
+
 create index if not exists atina_players_leaderboard_idx
   on private.atina_players (total_xp desc, total_challenges desc, created_at asc);
 
 alter table private.atina_players enable row level security;
 alter table private.atina_xp_events enable row level security;
+alter table private.atina_xp_session_owners enable row level security;
 
--- Restringir apenas estas tabelas. Não revogar USAGE do schema private:
--- isso seria uma alteração global e poderia afetar outras funções do ATINA.
-revoke all on table private.atina_players, private.atina_xp_events
-  from public, anon, authenticated;
+-- Restrict only these tables. Do not revoke USAGE on schema private globally.
+revoke all on table
+  private.atina_players,
+  private.atina_xp_events,
+  private.atina_xp_session_owners
+from public, anon, authenticated;
 
 create or replace function public.atina_progress_register(
   p_nickname text,
@@ -104,6 +115,7 @@ as $$
 declare
   v_player private.atina_players;
   v_session private.atina_v2_local_sessions;
+  v_owner private.atina_xp_session_owners;
   v_inserted bigint;
   v_today date := current_date;
   v_daily_count integer;
@@ -120,7 +132,7 @@ begin
       using errcode = '22023';
   end if;
 
-  -- Lock the player first so simultaneous claims for the same player serialize.
+  -- Serialize simultaneous claims for the same pseudonymous player.
   select *
     into v_player
     from private.atina_players
@@ -133,7 +145,7 @@ begin
       using errcode = '28000';
   end if;
 
-  -- Lock the session row while checking its authoritative final round state.
+  -- Lock the session while checking its authoritative final-round state.
   select *
     into v_session
     from private.atina_v2_local_sessions
@@ -145,10 +157,26 @@ begin
   if not found
      or v_session.position <> p_position
      or not v_session.round_locked
-     or v_session.last_result ->> 'outcome' <> 'correct'
+     or v_session.last_result ->> 'outcome' is distinct from 'correct'
      or v_session.expires_at <= clock_timestamp() then
     raise exception 'O servidor ainda não confirmou este desafio como concluído.'
       using errcode = '55000';
+  end if;
+
+  -- Bind the whole local session to the first pseudonymous profile that claims it.
+  insert into private.atina_xp_session_owners (session_id, player_id)
+  values (p_session_id, v_player.id)
+  on conflict (session_id) do nothing;
+
+  select *
+    into v_owner
+    from private.atina_xp_session_owners
+   where session_id = p_session_id
+   for update;
+
+  if v_owner.player_id <> v_player.id then
+    raise exception 'Esta sessão já está associada a outro perfil.'
+      using errcode = '42501';
   end if;
 
   insert into private.atina_xp_events (
@@ -228,7 +256,7 @@ as $$
   limit least(greatest(coalesce(p_limit, 50), 1), 100);
 $$;
 
--- SECURITY DEFINER functions must not be executable by PUBLIC or authenticated.
+-- SECURITY DEFINER functions are not executable by PUBLIC or authenticated.
 revoke all on function public.atina_progress_register(text, text)
   from public, authenticated;
 revoke all on function public.atina_progress_claim_local(text, uuid, text, integer)
@@ -244,5 +272,7 @@ comment on table private.atina_players is
   'Progressão ATINA por pseudónimo e token aleatório de dispositivo; sem conta Supabase Auth.';
 comment on table private.atina_xp_events is
   'Eventos de XP idempotentes, apenas para rondas corretas confirmadas pelo servidor.';
+comment on table private.atina_xp_session_owners is
+  'Associa cada sessão local a um único perfil pseudónimo para impedir claims cruzados.';
 comment on function public.atina_progress_claim_local(text, uuid, text, integer) is
-  'Atribui 10 XP apenas após confirmar no servidor uma ronda correta, fechada e não expirada.';
+  'Atribui 10 XP apenas após confirmar uma ronda correta, fechada e não expirada.';
