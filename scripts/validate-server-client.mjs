@@ -67,6 +67,7 @@ if (!html.includes('function networkRenderMimeScores(){')) errors.push('A render
 if (!client.includes('O botão local de Mímicas é gerido pelo próprio modo local')) errors.push('O cliente server-authoritative voltou a substituir o botão de Mímicas local.');
 if (!localMimeCompatibility.toLowerCase().includes('function public.atina_v2_local_mime_card(')) errors.push('RPC de cartas Mímicas locais em falta.');
 if (!html.includes('async function networkMimeResolveRound(correct,reason)')) errors.push('A resolução de rondas Mímicas multiplayer não está implementada no cliente.');
+if (!/await networkRefreshRoom\(\);\s*\/\/ Acertar, passar[\s\S]*?await networkMimeNext\(\);/.test(html)) errors.push('A passagem automática da vez Mímicas online não está ligada após o resultado da ronda.');
 if (!html.includes('function answerMatches(){return false;}')) errors.push('O validador legado de respostas continua ativo.');
 if (!html.includes('function submit(){throw new Error')) errors.push('O envio local legado ainda permite validação no cliente.');
 if (!html.includes('async function networkSubmitAnswer(){throw new Error')) errors.push('O envio multiplayer legado ainda permite validação no cliente.');
