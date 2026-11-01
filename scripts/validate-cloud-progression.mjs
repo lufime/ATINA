@@ -6,6 +6,9 @@ const sql = readFileSync(
   'utf8'
 );
 
+const client = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+
 const required = [
   'create table if not exists private.atina_players',
   'create table if not exists private.atina_xp_events',
@@ -69,8 +72,35 @@ for (const name of functionNames) {
   }
 }
 
+
+const frontendRequired = [
+  "atinaServerRpc('atina_progress_register'",
+  "atinaServerRpc('atina_progress_claim_local'",
+  "atinaServerRpc('atina_progress_leaderboard'",
+  "if (locked && result.outcome === 'correct') atinaProgressClaim(state);",
+  'p_device_token: atinaProgressDeviceToken()',
+  'p_session_id: state.session_id',
+  'p_session_token: atinaServerSession.token',
+  'p_position: Number(state.position)'
+];
+for (const token of frontendRequired) {
+  if (!client.includes(token)) {
+    throw new Error('Integração cliente incompleta: ' + token);
+  }
+}
+if (/atina_progress_claim_local'[\\s\\S]{0,700}?p_(?:xp|points)\\s*:/.test(client)) {
+  throw new Error('O cliente não pode enviar XP ou pontos à RPC de atribuição.');
+}
+for (const id of [
+  'atinaCloudNickname', 'atinaCloudRegister', 'atinaCloudStatus',
+  'atinaCloudXp', 'atinaCloudLeaderboardRefresh', 'atinaCloudLeaderboard'
+]) {
+  if (!html.includes('id="' + id + '"')) {
+    throw new Error('Elemento de interface de progressão em falta: ' + id);
+  }
+}
+
 console.log(
-  'Proposta validada estaticamente: pseudónimo sem Auth, tokens em hash, RLS, ' +
-  'XP confirmado pelo servidor, associação de sessão a perfil, idempotência, ' +
-  'RPCs restritas e sem revogação global do schema.'
+  'Proposta e integração cliente validadas: pseudónimo, token de dispositivo, ' +
+  'XP apenas após resultado correto bloqueado pelo servidor e classificação global.'
 );
