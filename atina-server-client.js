@@ -121,6 +121,9 @@ function atinaServerApplyState(state, announce = false) {
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
+  if (locked && state.last_result?.outcome === 'correct') {
+    window.atinaCloudProgression?.recordCorrect(state, atinaServerSession).catch(error => atinaServerMessage(error.message || 'Não foi possível sincronizar o XP.'));
+  }
   if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage');
   else $('solutionImage')?.classList.add('hidden');
   if (clearAnswer) $('answer').value = '';
@@ -495,6 +498,7 @@ $('continue').onclick = next;
 $('answer').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('answer').disabled) { e.preventDefault(); submit(); } });
 (async function atinaServerBoot() {
   try {
+    await window.atinaCloudProgression?.restore();
     await networkRestoreSession();
     if (!networkRoom) {
       const restored = await atinaServerRestoreSession();
