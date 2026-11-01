@@ -103,7 +103,7 @@ try {
     const sessionId = '00000000-0000-4000-8000-000000000123';
     atinaServerState = { session_id: sessionId, position: 1 };
     atinaServerApplyState({
-      session_id: sessionId, position: 1, round_locked: true, status: 'completed',
+      session_id: sessionId, position: 1, round_locked: true, status: 'active',
       mode: 'solo', scores: [10, 0], current_player: 1, queue_size: 1,
       difficulty: 'easy', last_result: { outcome: 'correct', points: 10 },
       challenge: { category: 'Teste', emoji: '🧪', clues: [], total_clues: 5, answer: 'Resposta' }
