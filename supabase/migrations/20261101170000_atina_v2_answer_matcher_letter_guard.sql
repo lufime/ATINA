@@ -106,14 +106,25 @@ begin
   if private.atina_v2_answer_matches('A letra «o»', 'letra a') then
     raise exception 'Answer matcher regression: a different single letter must be rejected.';
   end if;
-  if not private.atina_v2_challenge_answer_matches(728, 'todos os mes') then
-    raise exception 'Answer matcher regression: the curated singular typo for challenge 728 must be accepted.';
+  -- Private challenge rows are deliberately not committed to the repository.
+  -- Validate challenge-specific behavior when the private fixture is present;
+  -- clean CI databases without that private seed still validate the generic matcher.
+  if exists (select 1 from private.atina_challenges where challenge_id = 728) then
+    if not private.atina_v2_challenge_answer_matches(728, 'todos os mes') then
+      raise exception 'Answer matcher regression: the curated singular typo for challenge 728 must be accepted.';
+    end if;
+  else
+    raise notice 'Skipping challenge 728 assertion: private challenge seed is not installed in this database.';
   end if;
-  if private.atina_v2_challenge_answer_matches(765, 'letra a') then
-    raise exception 'Answer matcher regression: wrong letter for challenge 765 must be rejected.';
-  end if;
-  if not private.atina_v2_challenge_answer_matches(765, 'letra o') then
-    raise exception 'Answer matcher regression: correct letter for challenge 765 must be accepted.';
+  if exists (select 1 from private.atina_challenges where challenge_id = 765) then
+    if private.atina_v2_challenge_answer_matches(765, 'letra a') then
+      raise exception 'Answer matcher regression: wrong letter for challenge 765 must be rejected.';
+    end if;
+    if not private.atina_v2_challenge_answer_matches(765, 'letra o') then
+      raise exception 'Answer matcher regression: correct letter for challenge 765 must be accepted.';
+    end if;
+  else
+    raise notice 'Skipping challenge 765 assertions: private challenge seed is not installed in this database.';
   end if;
   if private.atina_v2_answer_matches('Rio de Janeiro', 'Rio') then
     raise exception 'Answer matcher regression: missing content words must remain incorrect.';
