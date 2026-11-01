@@ -271,6 +271,9 @@ $('startMimicas').onclick = () => {
   atinaServerMessage('Mímicas exige uma sala online: cria ou entra numa sala na secção Multijogador e inicia Mímicas como anfitrião.');
   $('networkLobby').scrollIntoView?.({ behavior: 'smooth', block: 'center' });
 };
+function atinaServerIsInvalidSession(error) {
+  return error?.code === '28000' || /Sessão inválida ou expirada/i.test(error?.message || '');
+}
 async function atinaServerRestoreSession() {
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(ATINA_SERVER_SESSION_KEY) || 'null'); } catch (_) { localStorage.removeItem(ATINA_SERVER_SESSION_KEY); }
@@ -281,9 +284,13 @@ async function atinaServerRestoreSession() {
     screen('game');
     atinaServerApplyState(state);
     return true;
-  } catch (_) {
-    atinaServerSession = null;
-    localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
+  } catch (error) {
+    if (atinaServerIsInvalidSession(error)) {
+      atinaServerSession = null;
+      localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
+    } else {
+      atinaServerMessage('Não foi possível recuperar a partida devido a uma falha de ligação. A sessão foi preservada; verifica a Internet e tenta novamente.');
+    }
     return false;
   }
 }
@@ -313,6 +320,7 @@ networkDrawClock = function() {
 };
 networkReceiveState = function(st) {
   if (!st || (!['challenges', 'mimicas', 'completed'].includes(st.mode))) return;
+  if (networkGameState && Number(st.revision || 0) <= Number(networkLastRevision || 0)) return;
   const previous = networkGameState;
   const changed = !previous || previous.pos !== st.pos || previous.challenge_id !== st.challenge_id || previous.round !== st.round || previous.mode !== st.mode;
   if (changed) { atinaNetworkChallengeKey = [st.mode,st.pos,st.challenge_id,st.round].join(':'); atinaNetworkFeedback = ''; $('answer').value = ''; }
