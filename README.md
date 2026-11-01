@@ -168,3 +168,10 @@ O menu inclui um modo de Mímicas independente dos 750 desafios de perguntas. Em
 
 ### Multiplayer em rede — Mímicas
 O modo Mímicas pode ser iniciado numa sala online, mantendo todos os participantes nos seus próprios telemóveis. O representante roda automaticamente por todos os jogadores, incluindo o anfitrião. Apenas o telemóvel do representante recebe a palavra secreta através de uma função protegida no Supabase; os restantes veem a categoria, as pistas visuais partilhadas e o cronómetro sincronizado. O anfitrião controla o início da ronda, a revelação das pistas, a validação do acerto ou passagem e a ronda seguinte. A pontuação é atribuída à equipa do representante quando existem equipas; sem equipas, é registada individualmente para os restantes jogadores. O modo usa as 48 cartas de Mímicas e guarda os resultados finais no histórico da sala.
+
+
+## Validação server-authoritative — branch de segurança
+
+Na branch `security/server-side-validation`, todos os modos exigem ligação à Internet. O browser já não recebe as respostas nem as alternativas aceites; envia apenas a resposta textual e o servidor valida e calcula a pontuação. Individual, Duelo, Mix e Party usam sessões seguras no Supabase; Multiplayer usa salas, propostas/votos de equipa e Mímicas com segredos privados. Não existe fallback offline.
+
+Esta integração ainda não foi publicada nem integrada em `main`. A validação automatizada e o replay das migrations decorrem em CI; antes de qualquer publicação são necessários testes funcionais num browser real. Ver [SECURITY-DESIGN.md](SECURITY-DESIGN.md) para arquitetura, limites e estado de segurança.
