@@ -30,7 +30,7 @@ As funções de sala atualmente instaladas consultam e escrevem as colunas legad
 5. A migração `019_atina_rpc_rate_limiting` configura `pgrst.db_pre_request` ao nível do role `authenticator`. É uma alteração global do comportamento PostgREST e não deve ser incluída numa migração de compatibilidade sem revisão específica.
 6. **Há também um bloqueio na ordem de migrações.** As migrações `001–019` estão numa única sequência versionada em `supabase/migrations`. Não basta acrescentar uma migração `020` compatível: o CLI tentaria executar primeiro as versões pendentes `007–019`, onde surgem os conflitos. Não se deve contornar isto marcando versões como aplicadas (`migration repair`) sem provar que o respetivo SQL já foi aplicado de forma equivalente.
 
-## Fonte privada dos 753 desafios — localizada
+## Fonte privada dos 753 desafios — transferida e verificada
 
 A procura read-only encontrou a fonte de dados completa no projeto Supabase existente **`atina-development`** (`qvvlqrgbtjujsejvenld`), tabela `private.atina_challenges`.
 
@@ -46,7 +46,7 @@ Validação efetuada por consulta agregada e comparação dos campos públicos c
 
 Também foram encontradas branches GitHub antigas com arrays `games` de 750 desafios completos, mas são versões incompletas face ao catálogo atual de 753. A branch `main` já não contém respostas no HTML. Por isso, a tabela privada de `atina-development` é a fonte mais completa encontrada.
 
-**Limite:** a comparação confirma que os campos públicos coincidem e que as respostas/alternativas existem; não prova por si só a proveniência editorial original de cada resposta. Nenhum registo privado foi copiado para `atina-ranking`. A exportação/transferência para outro projeto é uma operação separada, a realizar apenas após confirmação explícita.
+**Transferência concluída após autorização explícita:** os 753 registos foram copiados para `atina-ranking.private.atina_challenges`. A contagem, os IDs únicos, as respostas, as alternativas, os níveis e uma assinatura MD5 agregada dos dez campos foram comparados entre origem e destino; a assinatura é idêntica. O projeto `atina-development` não foi alterado. A tabela de destino tem RLS ativo e não concede SELECT a `anon` nem a `authenticated`. A comparação confirma consistência entre os dois conjuntos, mas não prova por si só a proveniência editorial original de cada resposta.
 
 ## Estratégia proposta
 
@@ -61,13 +61,13 @@ Também foram encontradas branches GitHub antigas com arrays `games` de 750 desa
 
 ### B. Modos locais
 
-Os objetos `private.atina_challenges` e `private.atina_local_sessions` não existem atualmente no projeto de ranking e podem ser preparados como extensão aditiva, desde que:
+A tabela `private.atina_challenges` já existe no projeto de ranking e contém os 753 registos privados. A tabela `private.atina_local_sessions` e as RPCs de jogo local continuam por integrar. Podem ser preparadas como extensão aditiva, desde que:
 - a migração verifique pré-condições e não altere objetos homónimos inesperados;
 - os helpers privados e RPCs sejam revistos e testados contra o frontend atual;
 - o seed privado dos 753 desafios seja gerado a partir da fonte original, fora do repositório;
 - a migração e o seed sejam validados em ambiente de desenvolvimento antes de qualquer aplicação ao projeto de ranking.
 
-A existência de 753 desafios noutro projeto não autoriza a sua cópia automática para este projeto.
+A cópia foi autorizada e concluída. O SQL privado dos desafios não é guardado no GitHub.
 
 ### C. Mímicas
 
@@ -88,9 +88,18 @@ Manter a migração `019` fora desta integração inicial. Antes de a considerar
 - Testar o percurso de upgrade a partir do histórico real de `atina-ranking`, além do replay limpo usado pelo CI.
 - Só depois preparar uma PR de migração executável. A aplicação ao projeto Supabase e o deploy continuam a exigir autorização separada.
 
+## Atualização após a transferência e próxima fase
+
+- Migração `20261101073917_atina_private_challenges_753.sql` adicionada ao repositório para documentar exatamente o DDL já aplicado no projeto `atina-ranking`.
+- A migração foi registada no histórico remoto como `20261101073917`; a tabela contém 753 registos e a assinatura agregada dos campos coincide com a origem.
+- A aplicação ainda não foi adaptada: o cliente já contém chamadas às RPCs de jogo local, mas essas RPCs e a tabela de sessões ainda não existem em `atina-ranking`.
+- O multiplayer novo também não está integrado. As RPCs existentes em `atina-ranking` usam o esquema legado; as migrações atuais `007–019` não podem ser aplicadas diretamente.
+- **Bloqueio operacional adicional:** no histórico de `atina-ranking`, a migração `20261101073917` aparece depois das migrações antigas e antes de quaisquer migrações futuras. Contudo, as migrações da branch `main` `001–019` continuam pendentes e têm versões anteriores. Antes de executar migrações adicionais com o Supabase CLI, é necessário definir e testar uma estratégia de baseline/upgrade que não marque versões como aplicadas sem equivalência comprovada.
+
 ## Estado desta branch
 
 - Branch criada a partir de `main`.
 - Inventário confirmado por leitura do esquema detalhado do projeto `atina-ranking`; nenhuma tabela, linha, função, configuração PostgREST ou projeto Supabase foi alterado.
-- Nenhuma migração foi aplicada e nenhum deploy foi feito.
+- A migração da tabela privada de desafios foi aplicada no projeto `atina-ranking` com autorização e está agora representada no repositório.
+- Nenhuma outra migração foi aplicada; nenhum deploy foi feito.
 - Este documento regista a análise e a estratégia; não afirma que a compatibilidade já está implementada ou testada.
