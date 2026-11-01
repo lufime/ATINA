@@ -1,3 +1,6 @@
+-- ARCHIVED ONLY: this historical migration was never applied and is intentionally excluded from supabase/migrations.
+-- DO NOT APPLY: it trusts client-provided correctness/points and has an obsolete token-hash comparison.
+
 -- ATINA multiplayer Mímicas: cards are private and secret words are returned only to the assigned representative.
 create schema if not exists private;
 create table if not exists private.atina_mime_cards (

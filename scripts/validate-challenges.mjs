@@ -1,12 +1,25 @@
 #!/usr/bin/env node
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, realpathSync } from 'node:fs';
+import { resolve, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const html = readFileSync(resolve(root, 'index.html'), 'utf8');
-const match = html.match(/const games\s*=\s*(\[[\s\S]*?\]);\s*\nconst \$\s*=/);
+const sourceArg = process.env.ATINA_PRIVATE_SOURCE;
+if (!sourceArg || !isAbsolute(sourceArg)) {
+  console.error('Define ATINA_PRIVATE_SOURCE com o caminho absoluto para uma cópia privada do index.html original, guardada fora do repositório.');
+  process.exit(2);
+}
+const realRoot = realpathSync(root);
+const sourcePath = realpathSync(sourceArg);
+if (sourcePath === realRoot || sourcePath.startsWith(realRoot + sep)) {
+  console.error('Por segurança, a fonte privada tem de ficar fora do repositório (incluindo caminhos com symlinks).');
+  process.exit(2);
+}
+const html = readFileSync(sourcePath, 'utf8');
+// A declaração é seguida por um comentário que preserva os índices originais.
+// Não acoplar a extração à declaração seguinte (que pode mudar sem alterar os dados).
+const match = html.match(/const games\s*=\s*(\[[\s\S]*?\]);\s*\n\/\/ Preserva os índices originais/);
 
 if (!match) {
   console.error('ERRO: não foi possível localizar o array games em index.html.');
@@ -15,7 +28,6 @@ if (!match) {
 
 let games;
 try {
-  // O bloco é um literal de dados do próprio jogo; não executa o restante da página.
   games = vm.runInNewContext(`(${match[1]})`, Object.create(null), { timeout: 1000 });
 } catch (error) {
   console.error('ERRO: o banco de desafios não é um array JavaScript válido.');
@@ -37,6 +49,8 @@ const seenAnswers = new Map();
 let imageCount = 0;
 
 games.forEach((challenge, index) => {
+  // O catálogo mantém posições históricas vazias (null) para preservar IDs.
+  if (challenge === null || challenge === undefined) return;
   const label = `Desafio #${index + 1}`;
   if (!Array.isArray(challenge) || challenge.length < 5) {
     errors.push(`${label}: estrutura incompleta.`);
@@ -79,16 +93,17 @@ games.forEach((challenge, index) => {
     }
   }
 
+  // Nomes de suspeitos repetem-se intencionalmente em casos distintos de Detetive.
   const key = `${category}|${normalize(answer)}`;
-  if (answer && seenAnswers.has(key)) {
+  if (category !== 'Detetive' && answer && seenAnswers.has(key)) {
     warnings.push(`Resposta repetida em "${category}": "${answer}" (desafios #${seenAnswers.get(key)} e #${index + 1}).`);
-  } else if (answer) {
+  } else if (category !== 'Detetive' && answer) {
     seenAnswers.set(key, index + 1);
   }
 });
 
 const categories = [...counts.entries()].sort(([a], [b]) => a.localeCompare(b, 'pt-PT'));
-const total = games.length;
+const total = games.filter(Array.isArray).length;
 const targetPerCategory = 50;
 const target = categories.length * targetPerCategory;
 const percent = target ? Math.round((total / target) * 100) : 0;
@@ -97,9 +112,7 @@ const duplicates = warnings.filter((warning) => warning.startsWith('Resposta rep
 console.log('ATINA — auditoria do banco de desafios');
 console.log(`Total: ${total} desafios · ${categories.length} modalidades · ${imageCount} desafios com imagem`);
 console.log(`Meta: ${target} desafios (${targetPerCategory} por modalidade) · faltam ${Math.max(0, target - total)} · ${percent}% concluído`);
-for (const [category, count] of categories) {
-  console.log(`- ${category}: ${count}/${targetPerCategory}`);
-}
+for (const [category, count] of categories) console.log(`- ${category}: ${count}/${targetPerCategory}`);
 if (duplicates) console.warn(`\nAvisos: ${duplicates} respostas principais repetidas na mesma modalidade.`);
 for (const warning of warnings) console.warn(`AVISO: ${warning}`);
 for (const error of errors) console.error(`ERRO: ${error}`);

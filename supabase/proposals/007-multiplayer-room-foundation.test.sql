@@ -1,0 +1,18 @@
+begin;
+select plan(14);
+select has_table('public','atina_rooms','room table exists');
+select has_table('public','atina_room_players','players table exists');
+select has_table('public','atina_room_answers','answer ledger exists');
+select has_table('public','atina_room_results','results table exists');
+select has_table('public','atina_room_team_proposals','team proposals table exists');
+select has_table('public','atina_room_team_votes','team votes table exists');
+select ok((select relrowsecurity from pg_class where oid='public.atina_rooms'::regclass),'rooms RLS enabled');
+select ok((select relrowsecurity from pg_class where oid='public.atina_room_players'::regclass),'players RLS enabled');
+select ok((select relrowsecurity from pg_class where oid='public.atina_room_answers'::regclass),'answers RLS enabled');
+select ok((select relrowsecurity from pg_class where oid='public.atina_room_results'::regclass),'results RLS enabled');
+select ok((select relrowsecurity from pg_class where oid='public.atina_room_team_proposals'::regclass),'proposals RLS enabled');
+select ok((select relrowsecurity from pg_class where oid='public.atina_room_team_votes'::regclass),'votes RLS enabled');
+select ok(not has_table_privilege('anon','public.atina_rooms','select'),'anon cannot read room table directly');
+select ok(not has_table_privilege('authenticated','public.atina_room_players','select'),'authenticated cannot read players directly');
+select * from finish();
+rollback;

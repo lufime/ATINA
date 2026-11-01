@@ -2,7 +2,7 @@ name: Validar banco de desafios
 
 on:
   push:
-    branches: [main]
+    branches: [main, security/server-side-validation]
   pull_request:
     branches: [main]
 
@@ -16,5 +16,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Validar estrutura, respostas e duplicações
-        run: node scripts/validate-challenges.mjs --strict
+      - name: Validar catálogo público sem respostas secretas
+        run: node scripts/validate-public-challenges.mjs
+      - name: Verificar sintaxe do gerador privado
+        run: node --check scripts/generate-private-challenge-seed.mjs
+      - name: Verificar sintaxe do validador privado
+        run: node --check scripts/validate-challenges.mjs
+      - name: Validar cliente server-authoritative e ausência de segredos
+        run: node scripts/validate-server-client.mjs
