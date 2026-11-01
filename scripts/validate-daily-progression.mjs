@@ -19,5 +19,7 @@ for (const token of ['atinaReadEngagement','atinaRenderDailyMission','atinaRecor
 if (!html.includes("atinaRecordChallengeCompletion('local:'+atinaRunId+':'+pos)")) throw new Error('As rondas locais não são registadas.');
 if (!client.includes("atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position)")) throw new Error('As sessões individuais não registam progresso.');
 if (!client.includes("atinaRecordChallengeCompletion('room:' + (networkRoom?.room_id || 'online') + ':' + st.pos)")) throw new Error('As salas online não registam progresso.');
+if (!/atinaRecordChallengeCompletion\\('mime-local:/.test(html)) throw new Error('As Mímicas locais não registam progresso.');
+if (!html.includes("atinaRecordChallengeCompletion('room-mime:'")) throw new Error('As Mímicas online não registam progresso.');
 if (!html.includes("$('dailyMissionStart').onclick=()=>showHomePage('categories')")) throw new Error('O atalho para a missão diária não funciona.');
 console.log('Progressão diária validada: missão, sequência, contagem, deduplicação e modos local/servidor/online; sintaxe JavaScript válida.');
