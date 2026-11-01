@@ -15,6 +15,134 @@ async function atinaServerRpc(name, args) {
   if (error) throw error;
   return data;
 }
+
+const ATINA_PROGRESS_DEVICE_KEY = 'atinaProgressDeviceTokenV1';
+const ATINA_PROGRESS_NICKNAME_KEY = 'atinaProgressNicknameV1';
+let atinaCloudProfile = null;
+const atinaCloudClaimsInFlight = new Set();
+const atinaCloudClaimsDone = new Set();
+
+function atinaProgressDeviceToken() {
+  let token = localStorage.getItem(ATINA_PROGRESS_DEVICE_KEY) || '';
+  if (/^[0-9a-f]{64}$/.test(token)) return token;
+  if (!window.crypto?.getRandomValues) throw new Error('Este navegador não permite criar um identificador seguro para o dispositivo.');
+  const bytes = new Uint8Array(32);
+  window.crypto.getRandomValues(bytes);
+  token = Array.from(bytes, value => value.toString(16).padStart(2, '0')).join('');
+  localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, token);
+  return token;
+}
+
+function atinaProgressRender(profile) {
+  if (!profile) return;
+  const xp = Math.max(0, Number(profile.xp) || 0);
+  const level = Math.max(1, Number(profile.level) || Math.floor(xp / 250) + 1);
+  const progress = xp % 250;
+  const fill = $('atinaCloudXpFill');
+  if ($('atinaCloudLevel')) $('atinaCloudLevel').textContent = 'Nível ' + level;
+  if ($('atinaCloudXp')) $('atinaCloudXp').textContent = xp + ' XP';
+  if ($('atinaCloudChallenges')) $('atinaCloudChallenges').textContent = (Number(profile.total_challenges) || 0) + ' desafios';
+  if ($('atinaCloudNextLevel')) $('atinaCloudNextLevel').textContent = progress + ' / 250 XP para o próximo nível · faltam ' + (250 - progress) + ' XP';
+  if (fill) fill.style.width = (progress / 250 * 100) + '%';
+  if ($('atinaCloudNickname') && profile.nickname) $('atinaCloudNickname').value = profile.nickname;
+}
+
+async function atinaProgressRegister(nickname, quiet = false) {
+  const clean = String(nickname || '').trim();
+  if (!clean || clean.length > 20) throw new Error('Escolhe um pseudónimo entre 1 e 20 caracteres.');
+  const data = await atinaServerRpc('atina_progress_register', {
+    p_nickname: clean,
+    p_device_token: atinaProgressDeviceToken()
+  });
+  atinaCloudProfile = data;
+  localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, clean);
+  atinaProgressRender(data);
+  if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = quiet
+    ? 'Perfil sincronizado. O progresso está pronto.'
+    : 'Pseudónimo guardado. A progressão está sincronizada.';
+  return data;
+}
+
+async function atinaProgressClaim(state) {
+  if (!state || state.last_result?.outcome !== 'correct' || !state.round_locked || !atinaServerSession) return;
+  const key = state.session_id + ':' + state.position;
+  if (atinaCloudClaimsDone.has(key) || atinaCloudClaimsInFlight.has(key)) return;
+  atinaCloudClaimsInFlight.add(key);
+  try {
+    if (!atinaCloudProfile) {
+      const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
+      if (!savedNickname) {
+        if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Regista um pseudónimo no menu para receber XP na nuvem.';
+        return;
+      }
+      await atinaProgressRegister(savedNickname, true);
+    }
+    const result = await atinaServerRpc('atina_progress_claim_local', {
+      p_device_token: atinaProgressDeviceToken(),
+      p_session_id: state.session_id,
+      p_session_token: atinaServerSession.token,
+      p_position: Number(state.position)
+    });
+    atinaCloudClaimsDone.add(key);
+    atinaCloudProfile = result;
+    atinaProgressRender(result);
+    if ($('atinaCloudStatus')) {
+      $('atinaCloudStatus').textContent = result.awarded
+        ? '✨ +' + (Number(result.challenge_xp) || 10) + ' XP' + (Number(result.daily_bonus) ? ' · bónus diário +' + result.daily_bonus + ' XP' : '') + ' confirmado pelo servidor.'
+        : 'Este desafio já tinha sido contabilizado. XP sincronizado.';
+    }
+  } catch (error) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Não foi possível sincronizar o XP. Será tentado novamente: ' + (error.message || 'falha de ligação');
+  } finally {
+    atinaCloudClaimsInFlight.delete(key);
+  }
+}
+
+async function atinaProgressLoadLeaderboard() {
+  const list = $('atinaCloudLeaderboard');
+  if (!list) return;
+  list.replaceChildren();
+  const loading = document.createElement('li');
+  loading.textContent = 'A carregar classificação…';
+  list.appendChild(loading);
+  try {
+    const rows = await atinaServerRpc('atina_progress_leaderboard', { p_limit: 50 });
+    list.replaceChildren();
+    if (!Array.isArray(rows) || !rows.length) {
+      const empty = document.createElement('li');
+      empty.textContent = 'Ainda não há perfis na classificação global.';
+      list.appendChild(empty);
+      return;
+    }
+    rows.forEach((row, index) => {
+      const item = document.createElement('li');
+      item.textContent = (index + 1) + '. ' + row.nickname + ' — ' + Number(row.xp || 0) + ' XP · nível ' + Number(row.level || 1);
+      list.appendChild(item);
+    });
+  } catch (error) {
+    list.replaceChildren();
+    const item = document.createElement('li');
+    item.textContent = error.message || 'Não foi possível carregar a classificação global.';
+    list.appendChild(item);
+  }
+}
+
+function atinaProgressBoot() {
+  const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
+  if ($('atinaCloudNickname')) $('atinaCloudNickname').value = savedNickname;
+  $('atinaCloudRegister')?.addEventListener('click', async () => {
+    const button = $('atinaCloudRegister');
+    button.disabled = true;
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'A sincronizar pseudónimo…';
+    try { await atinaProgressRegister($('atinaCloudNickname')?.value); }
+    catch (error) { if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = error.message || 'Não foi possível registar o pseudónimo.'; }
+    finally { button.disabled = false; }
+  });
+  $('atinaCloudLeaderboardRefresh')?.addEventListener('click', atinaProgressLoadLeaderboard);
+  if (savedNickname) atinaProgressRegister(savedNickname, true).catch(error => {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Perfil guardado neste dispositivo; sincronização pendente: ' + (error.message || 'falha de ligação');
+  });
+}
 function atinaServerMessage(message) {
   const gameVisible = $('game') && !$('game').classList.contains('hidden');
   if (gameVisible) {
@@ -121,6 +249,7 @@ function atinaServerApplyState(state, announce = false) {
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
+  if (locked && result.outcome === 'correct') atinaProgressClaim(state);
   if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage');
   else $('solutionImage')?.classList.add('hidden');
   if (clearAnswer) $('answer').value = '';
@@ -493,6 +622,7 @@ $('nextClue').onclick = reveal;
 $('pass').onclick = pass;
 $('continue').onclick = next;
 $('answer').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('answer').disabled) { e.preventDefault(); submit(); } });
+atinaProgressBoot();
 (async function atinaServerBoot() {
   try {
     await networkRestoreSession();

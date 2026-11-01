@@ -1,0 +1,108 @@
+#!/usr/bin/env node
+import { readFileSync } from 'node:fs';
+
+const sql = readFileSync(
+  new URL('../supabase/proposals/pseudonym-xp-cloud-progression.sql', import.meta.url),
+  'utf8'
+);
+
+const client = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+
+const required = [
+  'create table if not exists private.atina_players',
+  'create table if not exists private.atina_xp_events',
+  'create table if not exists private.atina_xp_session_owners',
+  'device_token_hash bytea not null unique',
+  'alter table private.atina_players enable row level security',
+  'alter table private.atina_xp_events enable row level security',
+  'alter table private.atina_xp_session_owners enable row level security',
+  'security definer',
+  "set search_path = ''",
+  'private.atina_v2_local_sessions',
+  "extensions.digest(convert_to(p_session_token, 'UTF8'), 'sha256')",
+  "v_session.last_result ->> 'outcome' is distinct from 'correct'",
+  'v_session.round_locked',
+  'v_session.expires_at <= clock_timestamp()',
+  'on conflict (session_id) do nothing',
+  'on conflict (player_id, session_id, challenge_position) do nothing',
+  'grant execute on function public.atina_progress_register(text, text) to anon',
+  'grant execute on function public.atina_progress_claim_local(text, uuid, text, integer) to anon',
+  'grant execute on function public.atina_progress_leaderboard(integer) to anon'
+];
+
+for (const token of required) {
+  if (!sql.includes(token)) {
+    throw new Error('Falta salvaguarda de progressão: ' + token);
+  }
+}
+
+const claimMatch = sql.match(
+  /create or replace function public\.atina_progress_claim_local\(([\s\S]*?)\)\s*returns jsonb/i
+);
+if (!claimMatch) throw new Error('RPC de atribuição de XP não encontrada.');
+
+const claimSignature = claimMatch[1].replace(/\s+/g, ' ').trim();
+if (claimSignature !==
+    'p_device_token text, p_session_id uuid, p_session_token text, p_position integer') {
+  throw new Error('Assinatura inesperada da RPC de atribuição de XP.');
+}
+
+if (/grant\s+execute\s+on\s+function\s+public\.atina_progress_[^(]+\([^;]+\)\s+to\s+public/i.test(sql)) {
+  throw new Error('Uma RPC de progressão não pode ser executável por PUBLIC.');
+}
+if (/p_xp\s+integer|p_points\s+integer/i.test(sql)) {
+  throw new Error('O cliente não pode indicar diretamente a quantidade de XP.');
+}
+if (/revoke\s+all\s+on\s+schema\s+private/i.test(sql)) {
+  throw new Error('Não revogar globalmente o acesso ao schema private.');
+}
+
+const functionNames = [
+  'atina_progress_register',
+  'atina_progress_claim_local',
+  'atina_progress_leaderboard'
+];
+for (const name of functionNames) {
+  const occurrences = sql.match(
+    new RegExp('create or replace function public\\.' + name + '\\b', 'gi')
+  ) ?? [];
+  if (occurrences.length !== 1) {
+    throw new Error('Esperada exatamente uma definição para ' + name + '.');
+  }
+}
+
+
+const frontendRequired = [
+  "atinaServerRpc('atina_progress_register'",
+  "atinaServerRpc('atina_progress_claim_local'",
+  "atinaServerRpc('atina_progress_leaderboard'",
+  "if (locked && result.outcome === 'correct') atinaProgressClaim(state);",
+  'p_device_token: atinaProgressDeviceToken()',
+  'p_session_id: state.session_id',
+  'p_session_token: atinaServerSession.token',
+  'p_position: Number(state.position)'
+];
+for (const token of frontendRequired) {
+  if (!client.includes(token)) {
+    throw new Error('Integração cliente incompleta: ' + token);
+  }
+}
+const claimCall = client.match(/atinaServerRpc\('atina_progress_claim_local',\s*\{([\s\S]*?)\}\s*\)/);
+if (!claimCall) throw new Error('Chamada cliente da RPC de atribuição não encontrada.');
+if (/p_(?:xp|points)\s*:/i.test(claimCall[1])) {
+  throw new Error('O cliente não pode enviar XP ou pontos à RPC de atribuição.');
+}
+for (const id of [
+  'atinaCloudNickname', 'atinaCloudRegister', 'atinaCloudStatus',
+  'atinaCloudXp', 'atinaCloudLeaderboardRefresh', 'atinaCloudLeaderboard'
+]) {
+  if (!html.includes('id="' + id + '"')) {
+    throw new Error('Elemento de interface de progressão em falta: ' + id);
+  }
+}
+
+console.log(
+  'Proposta e integração cliente validadas: pseudónimo, token de dispositivo, ' +
+  'XP apenas após resultado correto bloqueado pelo servidor e classificação global.'
+);

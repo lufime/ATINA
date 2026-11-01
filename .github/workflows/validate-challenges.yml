@@ -24,6 +24,10 @@ jobs:
         run: node --check scripts/validate-challenges.mjs
       - name: Validar cliente server-authoritative e ausência de segredos
         run: node scripts/validate-server-client.mjs
+      - name: Verificar sintaxe do cliente de jogo
+        run: node --check atina-server-client.js
+      - name: Validar progressão pseudónima e XP na nuvem
+        run: node scripts/validate-cloud-progression.mjs
       - name: Validar animações de Mímicas nos modos local e online
         run: node scripts/validate-mimicas-animation.mjs
       - name: Validar animações globais no início e entre desafios
