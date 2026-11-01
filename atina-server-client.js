@@ -131,7 +131,17 @@ function atinaServerApplyState(state, announce = false) {
     atinaServerStopTimers();
     $('resultText').textContent = 'Partida concluída. Resultado: ' + scores.join('–') + ' pontos.';
     screen('result');
-  } else atinaServerStartTimers();
+  } else if (sameChallenge) {
+    atinaServerStartTimers();
+  } else {
+    atinaServerStopTimers();
+    const expectedSession = state.session_id;
+    const expectedPosition = state.position;
+    const finalGame = [challenge.category || 'Desafio', challenge.emoji || '🎯'];
+    mixDraw(finalGame, state.difficulty || difficultyMode).finally(() => {
+      if (atinaServerState?.session_id === expectedSession && atinaServerState?.position === expectedPosition && atinaServerState?.status !== 'completed') atinaServerStartTimers();
+    });
+  }
 }
 async function atinaServerRefresh() {
   if (!atinaServerSession || atinaServerBusy) return;
