@@ -82,9 +82,6 @@ try {
   assert.match(deviceToken, /^[0-9a-f]{64}$/);
   assert.equal(await page.locator('#atinaCloudXp').textContent(), '0 XP');
 
-  await page.locator('#atinaCloudLeaderboardRefresh').click();
-  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
-
   const wrongResultClaimCount = await page.evaluate(() => {
     const sessionId = '00000000-0000-4000-8000-000000000123';
     atinaServerSession = { session_id: sessionId, token: 'a'.repeat(64) };
@@ -123,6 +120,12 @@ try {
   assert.equal(claims[0].args.p_device_token, deviceToken);
   assert.equal(claims[0].args.p_position, 1);
   assert.equal(claims[0].args.p_session_token, 'a'.repeat(64));
+
+  await page.locator('button[data-home-target="online"]').click();
+  await page.locator('#openRanking').click();
+  await page.locator('#rankingPage').waitFor({ state: 'visible' });
+  await page.locator('#atinaCloudLeaderboardRefresh').click();
+  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
 
   assert.deepEqual(pageErrors, [], 'A página não deve produzir erros JavaScript.');
   process.stdout.write('Browser E2E passed: perfil pseudónimo, token de dispositivo, leaderboard, bloqueio de XP em respostas erradas e claim de +10 XP apenas após resultado correto bloqueado pelo servidor.\\n');
