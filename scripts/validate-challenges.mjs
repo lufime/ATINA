@@ -1,11 +1,23 @@
 #!/usr/bin/env node
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, realpathSync } from 'node:fs';
+import { resolve, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const html = readFileSync(resolve(root, 'index.html'), 'utf8');
+const sourceArg = process.env.ATINA_PRIVATE_SOURCE;
+if (!sourceArg || !isAbsolute(sourceArg)) {
+  console.error('Define ATINA_PRIVATE_SOURCE com o caminho absoluto para uma cópia privada do index.html original, guardada fora do repositório.');
+  process.exit(2);
+}
+const realRoot = realpathSync(root);
+const sourcePath = realpathSync(sourceArg);
+const sourceRel = relative(realRoot, sourcePath);
+if (sourceRel === '' || (!sourceRel.startsWith('..') && !isAbsolute(sourceRel))) {
+  console.error('Por segurança, a fonte privada tem de ficar fora do repositório (incluindo caminhos com symlinks).');
+  process.exit(2);
+}
+const html = readFileSync(sourcePath, 'utf8');
 // A declaração é seguida por um comentário que preserva os índices originais.
 // Não acoplar a extração à declaração seguinte (que pode mudar sem alterar os dados).
 const match = html.match(/const games\s*=\s*(\[[\s\S]*?\]);\s*\n\/\/ Preserva os índices originais/);
