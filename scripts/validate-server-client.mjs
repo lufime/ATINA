@@ -6,6 +6,7 @@ const client = readFileSync('atina-server-client.js', 'utf8');
 const pagesConfig = readFileSync('_config.yml', 'utf8');
 const localCompatibility = readFileSync('supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql', 'utf8');
 const multiplayerCompatibility = readFileSync('supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql', 'utf8');
+const localMimeCompatibility = readFileSync('supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql', 'utf8');
 const errors = [];
 
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
@@ -61,6 +62,12 @@ if (markerIndex < 0) {
 }
 
 if (!/const mimeCards=\[\s*\]/.test(html)) errors.push('O catálogo secreto de Mímicas não está vazio no cliente.');
+if (!html.includes("supabaseClient.rpc('atina_v2_local_mime_card'")) errors.push('O modo local não carrega cartas Mímicas individuais do servidor.');
+if (!html.includes('function networkRenderMimeScores(){')) errors.push('A renderização da pontuação de Mímicas multiplayer está em falta.');
+if (!client.includes('O botão local de Mímicas é gerido pelo próprio modo local')) errors.push('O cliente server-authoritative voltou a substituir o botão de Mímicas local.');
+if (!localMimeCompatibility.toLowerCase().includes('function public.atina_v2_local_mime_card(')) errors.push('RPC de cartas Mímicas locais em falta.');
+if (!html.includes('async function networkMimeResolveRound(correct,reason)')) errors.push('A resolução de rondas Mímicas multiplayer não está implementada no cliente.');
+if (!/await networkRefreshRoom\(\);\s*\/\/ Acertar, passar[\s\S]*?await networkMimeNext\(\);/.test(html)) errors.push('A passagem automática da vez Mímicas online não está ligada após o resultado da ronda.');
 if (!html.includes('function answerMatches(){return false;}')) errors.push('O validador legado de respostas continua ativo.');
 if (!html.includes('function submit(){throw new Error')) errors.push('O envio local legado ainda permite validação no cliente.');
 if (!html.includes('async function networkSubmitAnswer(){throw new Error')) errors.push('O envio multiplayer legado ainda permite validação no cliente.');
@@ -108,4 +115,4 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('Cliente seguro válido: JavaScript sintaticamente correto; 802 slots/753 desafios sem pistas, respostas ou alternativas; Mímicas sem palavras secretas no browser; submissões encaminhadas para RPCs do servidor.');
+console.log('Cliente seguro válido: JavaScript sintaticamente correto; 802 slots/753 desafios sem pistas, respostas ou alternativas; Mímicas locais e multiplayer ligadas a RPCs; submissões encaminhadas para o servidor.');

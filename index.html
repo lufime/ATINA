@@ -528,7 +528,7 @@ async function updateAtinaPassword(){
 if(supabaseClient){supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){$('authForms').classList.add('hidden');$('authReset').classList.remove('hidden');screen('authPage');authMessage('Define a tua nova palavra-passe.');} if(event==='SIGNED_OUT'||event==='SIGNED_IN')refreshAtinaSession();});}
 
 let networkRoom=null, networkPollHandle=null, networkLobbyData=null, networkFinalizedResults=null, networkLastRefreshError=null;
-let networkRoomRefreshInFlight=false;
+let networkRoomRefreshInFlight=false, networkRoomRefreshPromise=null;
 let networkGameActive=false,networkGameHost=false,networkGameState=null,networkLastRevision=0,networkClockHandle=null,networkMyScore=0,networkAnsweredThisChallenge=false;
 async function networkPublishGameState(){if(!networkRoom||!networkGameHost||!networkGameState)return;networkGameState.revision=(networkGameState.revision||0)+1;const {error}=await supabaseClient.rpc('atina_v2_publish_game_state',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_state:networkGameState});if(error)throw error;}
 function networkRenderGameState(){if(!networkGameState)return;const st=networkGameState;const pauseActive=!!(st.pause&&Date.parse(st.pause.ends_at)>Date.now());if(st.pos>=st.queue.length){networkGameActive=false;if(networkClockHandle)clearInterval(networkClockHandle);networkClockHandle=null;const players=(networkLobbyData?.players||[]).slice().sort((a,b)=>b.score-a.score);const lines=players.map((p,i)=>(i+1)+'. '+p.nickname+' — '+p.score+' pontos'+(p.team?' · '+p.team:''));const teams={};players.forEach(p=>{if(p.team)teams[p.team]=(teams[p.team]||0)+p.score;});const teamLines=Object.entries(teams).sort((a,b)=>b[1]-a[1]).map(([name,score])=>name+' — '+score+' pontos');$('onlineSave').classList.add('hidden');$('resultText').textContent='Partida multiplayer concluída!'+(teamLines.length?'\n\nClassificação por equipas:\n'+teamLines.join('\n'):'')+'\n\nClassificação individual:\n'+(lines.join('\n')||'Sem pontuações registadas.');screen('result');return;}mode='solo';queue=st.queue;pos=st.pos;revealed=st.revealed;scores=st.scores;answeredCount=st.answeredCount;locked=st.locked;timedMode=st.timedMode;stopTimer();const g=games[queue[pos]],total=isImageChallenge(queue[pos])?6:5;$('category').textContent=g[1]+' '+g[0];difficultyMode=classifyChallenge(queue[pos]);$('level').textContent='DESAFIO '+(pos+1)+' / '+queue.length+' · '+({easy:'FÁCIL',medium:'MÉDIO',hard:'DIFÍCIL'}[difficultyMode]||'MÉDIO');$('player').textContent='Multiplayer · '+(networkGameHost?'Anfitrião':'A acompanhar a partida');$('clues').innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='clue'+(i>=revealed?' hidden-clue':'');d.textContent=i<revealed?'Pista '+(i+1)+': '+g[2][i]:'Pista '+(i+1)+': ainda escondida';$('clues').appendChild(d);} $('clueProgress').textContent=revealed+' de '+total+' reveladas';$('nextClue').disabled=!networkGameHost||locked||revealed>=total||pauseActive;$('nextClue').textContent='Revelar próxima pista';$('answer').value='';$('answer').disabled=locked||pauseActive;$('submit').disabled=locked||pauseActive||networkAnsweredThisChallenge;$('voice').disabled=locked||pauseActive;$('pass').disabled=!networkGameHost||locked||pauseActive;$('pass').classList.toggle('hidden',!networkGameHost);$('continue').classList.toggle('hidden',!locked||!networkGameHost||pauseActive);$('feedback').textContent=st.feedback||'Escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.';$('networkScoreboard').classList.remove('hidden');renderTeamProposal();const roomPlayers=networkLobbyData?.players||[];const teamTotals={};roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+p.score;});$('networkTeamScores').replaceChildren();Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,total],i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+team+' — '+total+' pts';$('networkTeamScores').appendChild(li);});$('networkScores').replaceChildren();roomPlayers.slice().sort((a,b)=>b.score-a.score).forEach((p,i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+p.nickname+' — '+p.score+' pts'+(p.team?' · '+p.team:'');$('networkScores').appendChild(li);});$('totalScore').textContent='⭐ '+networkMyScore+' pontos';$('listenAnswer').classList.toggle('hidden',!locked);$('visualWrap').classList.toggle('hidden',!isImageChallenge(queue[pos]));if(isImageChallenge(queue[pos])){$('mysteryImage').src=g[5]||'';renderPuzzle(revealed);$('mysteryImage').style.setProperty('--blur',Math.max(0,24-revealed*4)+'px');$('veil').style.setProperty('--veil',revealed===6?'0':'.12');}renderNetworkTimeoutPanel();board();update();networkDrawClock();ensureNetworkClock();}
@@ -553,6 +553,19 @@ function ensureNetworkClock(){if(networkClockHandle!==null)return;networkClockHa
 function networkReceiveState(st){if(!st||(!st.queue&&st.mode!=='mimicas')||(networkGameState&&st.revision<=networkLastRevision))return;const sameChallenge=!!(networkGameState&&networkGameState.pos===st.pos&&networkGameState.queue?.[st.pos]===st.queue?.[st.pos]);networkGameState=st;networkLastRevision=st.revision||0;networkGameActive=!st.finished;if(!sameChallenge)networkAnsweredThisChallenge=false;networkGameHost=!!networkLobbyData?.is_host;if(st.mode==='mimicas'){if(networkClockHandle!==null&&st.finished){clearInterval(networkClockHandle);networkClockHandle=null;}networkRenderMimeState();if(!st.finished)ensureNetworkClock();return;}if($('game').classList.contains('hidden'))screen('game');networkRenderGameState();ensureNetworkClock();}
 function renderTeamProposal(){const host=$('teamVotePanel');if(!host)return;host.replaceChildren();host.classList.add('hidden');const p=networkLobbyData?.team_proposal;if(!networkLobbyData?.team||!p)return;host.classList.remove('hidden');const title=document.createElement('strong');title.textContent='Votação da '+p.team;host.appendChild(title);const answer=document.createElement('p');answer.textContent=p.proposer+' propôs: «'+p.answer+'»';host.appendChild(answer);const votes=p.votes||[];const mine=votes.find(v=>v.player_id===networkLobbyData.player_id);const summary=document.createElement('p');summary.className='muted small';summary.textContent='Votos: '+votes.length+' · '+votes.filter(v=>v.agrees).length+' concordam · '+votes.filter(v=>!v.agrees).length+' não concordam';host.appendChild(summary);const status=document.createElement('p');status.textContent=p.status==='accepted'?'✓ Todos concordaram. Resposta aceite.':p.status==='rejected'?'✕ A proposta foi rejeitada.':p.proposer_id===networkLobbyData.player_id?'A aguardar os votos dos teus colegas.':mine?'Voto registado. A aguardar os restantes colegas.':'Concordas com esta resposta?';host.appendChild(status);if(p.status==='pending'&&p.proposer_id!==networkLobbyData.player_id&&!mine){for(const [label,agrees,cls] of [['Concordo',true,'btn full'],['Não concordo',false,'btn secondary full']]){const b=document.createElement('button');b.className=cls;b.textContent=label;b.style.marginTop='7px';b.onclick=async()=>{b.disabled=true;try{await networkCall('atina_v2_vote_team_proposal',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_proposal_id:p.id,p_agrees:agrees});await networkRefreshRoom();}catch(e){b.disabled=false;status.textContent=e.message;}};host.appendChild(b);}}if(p.status==='accepted'){networkAnsweredThisChallenge=true;$('answer').disabled=true;$('submit').disabled=true;}else if(p.status==='rejected'){networkAnsweredThisChallenge=false;const paused=!!networkGameState?.pause;$('answer').disabled=paused;$('submit').disabled=paused;$('answer').value='';}}
 async function networkSubmitAnswer(){throw new Error('A validação multiplayer requer o servidor ATINA.');}
+function networkRenderMimeScores(){
+ const players=networkLobbyData?.players||[];
+ const teams={};players.forEach(p=>{if(p.team)teams[p.team]=(teams[p.team]||0)+Number(p.score||0);});
+ const ranked=Object.entries(teams).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+ if(ranked.length){
+  $('mimeScore1').textContent=ranked[0][0]+': '+ranked[0][1]+' pontos';
+  $('mimeScore2').textContent=ranked[1]?ranked[1][0]+': '+ranked[1][1]+' pontos':'—';
+ }else{
+  const ordered=players.slice().sort((a,b)=>Number(b.score||0)-Number(a.score||0));
+  $('mimeScore1').textContent=(ordered[0]?.nickname||'Jogador 1')+': '+Number(ordered[0]?.score||0)+' pontos';
+  $('mimeScore2').textContent=(ordered[1]?.nickname||'Jogador 2')+': '+Number(ordered[1]?.score||0)+' pontos';
+ }
+}
 async function networkRenderMimeState(){
  const st=networkGameState;if(!st||st.mode!=='mimicas')return;
  mimeStop();
@@ -615,7 +628,22 @@ async function networkMimeReveal(){
  networkGameState.clue_index++;networkGameState.revision=(networkGameState.revision||0)+1;
  try{await networkPublishGameState();await networkRefreshRoom();}catch(e){networkMessage('mimeFeedback',e.message||'Não foi possível revelar a pista.');}
 }
-async function networkMimeResolveRound(){throw new Error('A pontuação de Mímicas é calculada pelo servidor.');}
+async function networkMimeResolveRound(correct,reason){
+ if(!networkRoom||!networkGameHost||!networkGameState||networkGameState.mode!=='mimicas'||networkGameState.locked)return;
+ $('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;
+ try{
+  await networkCall('atina_v2_resolve_mime_round',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_correct:!!correct,p_points:0,p_reason:reason||(correct?'correct':'pass')});
+  await networkRefreshRoom();
+  // Acertar, passar ou esgotar o tempo termina a ronda e passa automaticamente
+  // a vez ao próximo representante; a RPC de estado propaga a nova ronda a todos.
+  if(networkGameState?.mode==='mimicas'&&networkGameState.locked&&!networkGameState.finished){
+   await networkMimeNext();
+  }
+ }catch(e){
+  $('mimeCorrect').disabled=false;$('mimeSkip').disabled=false;
+  networkMessage('mimeFeedback',e.message||'Não foi possível registar o resultado.');
+ }
+}
 async function networkMimeNext(){
  if(!networkGameHost||!networkGameState||networkGameState.mode!=='mimicas')return;
  const st=networkGameState;
@@ -666,7 +694,8 @@ async function networkSetReady(value){if(!networkRoom)return;try{await networkCa
 async function networkAssignTeam(playerId,team){if(!networkRoom)return;try{await networkCall('atina_v2_set_room_team',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_player_id:playerId,p_team:team});await networkRefreshRoom();}catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível alterar a equipa.');}}
 async function networkAutoTeams(){if(!networkLobbyData||!networkLobbyData.is_host)return;try{const players=networkLobbyData.players||[];if(players.length<2){networkMessage('networkLobbyStatus','São necessários pelo menos 2 jogadores para formar uma equipa.');return;}const teamCount=Math.min(6,Math.max(1,Math.floor(players.length/2)));const names=['A','B','C','D','E','F'].slice(0,teamCount);for(let i=0;i<players.length;i++){await networkCall('atina_v2_set_room_team',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_player_id:players[i].id,p_team:'Equipa '+names[i%teamCount]});}await networkRefreshRoom();const teamLabel=teamCount===1?'equipa':'equipas';const note=teamCount===1&&players.length<4?' Para formar duas equipas com pelo menos dois jogadores cada, são necessários 4 jogadores.':'';networkMessage('networkLobbyStatus',players.length+' jogadores distribuídos por '+teamCount+' '+teamLabel+'. Cada jogador deve confirmar que está pronto.'+note);}catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível distribuir as equipas.');}}
 async function networkStartGame(){try{await networkCall('atina_v2_start_room',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});networkGameActive=true;networkGameHost=true;networkGameState={queue:shuffle(games.map((g,i)=>g?i:null).filter(Number.isInteger)),pos:0,revealed:1,scores:[0,0],answeredCount:0,locked:false,feedback:'',timedMode:Number($('timerMode')?.value??60),deadline:Number($('timerMode')?.value??60)?Date.now()+Number($('timerMode')?.value??60)*1000:0,revision:1};ensureNetworkClock();await networkPublishGameState();await networkRefreshRoom();screen('game');networkRenderGameState();}catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível iniciar a partida.');}}
-async function networkRefreshRoom(){if(!networkRoom||networkRoomRefreshInFlight)return;const room=networkRoom;networkRoomRefreshInFlight=true;try{const {data,error}=await supabaseClient.rpc('atina_v2_room_state',{p_room_id:room.room_id,p_token:room.token});if(error)throw error;if(networkRoom!==room)return;networkLastRefreshError=null;networkLobbyData=data;networkGameHost=!!data.is_host;networkMyScore=data.my_score||0;renderNetworkTimeoutPanel();if((data.status==='playing'||data.status==='completed'||data.status==='finished')&&data.game_state&&(data.game_state.queue||data.game_state.mode==='mimicas'||data.game_state.mode==='challenges'||data.game_state.mode==='completed'))networkReceiveState(data.game_state);$('networkLobbyCode').textContent=data.code;$('networkLobbyInfo').textContent=data.players.length+' de '+data.max_players+' jogadores · '+(data.status==='playing'?'Partida iniciada':data.is_host?'És o anfitrião':'À espera do anfitrião');$('networkHostTools').classList.toggle('hidden',!data.is_host||data.status!=='waiting');$('networkGuestTools').classList.toggle('hidden',data.is_host||data.status!=='waiting');$('networkReady').textContent=data.ready?'✓ Pronto (toca para alterar)':'Estou pronto';$('networkPlayers').replaceChildren();data.players.forEach(p=>{const li=document.createElement('li');const name=document.createElement('span');name.textContent=p.nickname+(p.is_host?' · anfitrião':'')+(p.ready?' · ✓ pronto':' · por confirmar');li.appendChild(name);if(data.is_host&&data.status==='waiting'){const select=document.createElement('select');select.className='answer';select.style.maxWidth='135px';select.style.margin='5px';select.setAttribute('aria-label','Equipa de '+p.nickname);[['','Sem equipa'],...['A','B','C','D','E','F'].map(x=>['Equipa '+x,'Equipa '+x])].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;select.appendChild(o);});select.value=p.team||'';select.onchange=()=>{if(select.value)networkAssignTeam(p.id,select.value);};li.appendChild(select);} $('networkPlayers').appendChild(li);});networkMessage('networkLobbyStatus',data.status==='playing'?'A sala foi iniciada. A sincronização dos desafios será a próxima etapa.':'Partilha o código '+data.code+' com os restantes jogadores.');if(data.status==='playing')renderTeamProposal();}catch(e){if(networkRoom===room){networkLastRefreshError=e;networkMessage('networkLobbyStatus','A ligação à sala foi perdida. '+(e.message||''));}}finally{networkRoomRefreshInFlight=false;}}
+async function networkRefreshRoomOnce(){if(!networkRoom||networkRoomRefreshInFlight)return;const room=networkRoom;networkRoomRefreshInFlight=true;try{const {data,error}=await supabaseClient.rpc('atina_v2_room_state',{p_room_id:room.room_id,p_token:room.token});if(error)throw error;if(networkRoom!==room)return;networkLastRefreshError=null;networkLobbyData=data;networkGameHost=!!data.is_host;networkMyScore=data.my_score||0;renderNetworkTimeoutPanel();if((data.status==='playing'||data.status==='completed'||data.status==='finished')&&data.game_state&&(data.game_state.queue||data.game_state.mode==='mimicas'||data.game_state.mode==='challenges'||data.game_state.mode==='completed'))networkReceiveState(data.game_state);$('networkLobbyCode').textContent=data.code;$('networkLobbyInfo').textContent=data.players.length+' de '+data.max_players+' jogadores · '+(data.status==='playing'?'Partida iniciada':data.is_host?'És o anfitrião':'À espera do anfitrião');$('networkHostTools').classList.toggle('hidden',!data.is_host||data.status!=='waiting');$('networkGuestTools').classList.toggle('hidden',data.is_host||data.status!=='waiting');$('networkReady').textContent=data.ready?'✓ Pronto (toca para alterar)':'Estou pronto';$('networkPlayers').replaceChildren();data.players.forEach(p=>{const li=document.createElement('li');const name=document.createElement('span');name.textContent=p.nickname+(p.is_host?' · anfitrião':'')+(p.ready?' · ✓ pronto':' · por confirmar');li.appendChild(name);if(data.is_host&&data.status==='waiting'){const select=document.createElement('select');select.className='answer';select.style.maxWidth='135px';select.style.margin='5px';select.setAttribute('aria-label','Equipa de '+p.nickname);[['','Sem equipa'],...['A','B','C','D','E','F'].map(x=>['Equipa '+x,'Equipa '+x])].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;select.appendChild(o);});select.value=p.team||'';select.onchange=()=>{if(select.value)networkAssignTeam(p.id,select.value);};li.appendChild(select);} $('networkPlayers').appendChild(li);});networkMessage('networkLobbyStatus',data.status==='playing'?'A sala foi iniciada. A sincronização dos desafios será a próxima etapa.':'Partilha o código '+data.code+' com os restantes jogadores.');if(data.status==='playing')renderTeamProposal();}catch(e){if(networkRoom===room){networkLastRefreshError=e;networkMessage('networkLobbyStatus','A ligação à sala foi perdida. '+(e.message||''));}}finally{networkRoomRefreshInFlight=false;}}
+async function networkRefreshRoom(){if(!networkRoom)return;if(networkRoomRefreshPromise){await networkRoomRefreshPromise;return networkRefreshRoom();}const pending=networkRefreshRoomOnce();networkRoomRefreshPromise=pending;try{await pending;}finally{if(networkRoomRefreshPromise===pending)networkRoomRefreshPromise=null;}}
 async function networkLeaveRoom(){networkGameActive=false;networkGameState=null;networkAnsweredThisChallenge=false;networkMyScore=0;networkMimeSecretRound=-1;networkMimeSecret='';$('networkMimeScores')?.remove();$('networkScoreboard').classList.add('hidden');networkLastRevision=0;if(networkClockHandle)clearInterval(networkClockHandle);networkClockHandle=null;if(networkPollHandle)clearInterval(networkPollHandle);networkPollHandle=null;if(networkRoom){try{await supabaseClient.rpc('atina_v2_leave_room',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});}catch(e){}}networkRoom=null;networkLobbyData=null;networkFinalizedResults=null;localStorage.removeItem('atinaNetworkRoom');screen('home');}
 
 
@@ -775,26 +804,47 @@ $('mimicaBack').addEventListener('click',e=>{if(networkGameState?.mode==='mimica
 
 /* Modo Mímicas: cinco pistas visuais progressivas, com pontuação igual ao ATINA. */
 const mimeCards=[];
-let mimeDeck=[],mimePos=0,mimeTeam=0,mimeScores=[0,0],mimeSeconds=60,mimeInterval=null,mimeRunning=false,mimeClue=0,mimeRaceElapsed=[0,0],mimeRaceStartedAt=0,mimeRaceTick=null,mimeRaceFinished=false;
+let mimeDeck=[],mimeUsedCardIds=[],mimePos=0,mimeTeam=0,mimeScores=[0,0],mimeSeconds=60,mimeInterval=null,mimeRunning=false,mimeClue=0,mimeRaceElapsed=[0,0],mimeRaceStartedAt=0,mimeRaceTick=null,mimeRaceFinished=false;
 const mimePoints=[20,16,12,8,5];
 function mimeStop(){if(mimeInterval!==null)clearInterval(mimeInterval);mimeInterval=null;mimeRunning=false;}
-function mimeDrawScores(){$('mimeScore1').textContent='Equipa 1: '+mimeScores[0]+' pontos';$('mimeScore2').textContent='Equipa 2: '+mimeScores[1]+' pontos';$('mimePlayer').textContent='Vez da Equipa '+(mimeTeam+1);$('mimeRound').textContent='RONDA '+Math.min(mimePos+1,mimeDeck.length)+' / '+mimeDeck.length;}
+function mimeDrawScores(){$('mimeScore1').textContent='Equipa 1: '+mimeScores[0]+' pontos';$('mimeScore2').textContent='Equipa 2: '+mimeScores[1]+' pontos';$('mimePlayer').textContent='Vez da Equipa '+(mimeTeam+1);$('mimeRound').textContent='RONDA '+(mimePos+1)+' · '+mimeUsedCardIds.length+' jogadas';}
 function mimeRenderClue(){
- const symbols=[...mimeDeck[mimePos][2][mimeClue]];
- $('mimePictureClue').innerHTML=symbols.map(symbol=>{const code=[...symbol].map(ch=>ch.codePointAt(0).toString(16)).join('-');return '<img alt="" draggable="false" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/'+code+'.svg">';}).join('');
+ const clue=mimeDeck[mimePos]?.[2]?.[mimeClue]||'🎭';
+ $('mimePictureClue').textContent=clue;
+ $('mimePictureClue').style.fontSize='64px';
  $('mimeClueProgress').textContent='Imagem '+(mimeClue+1)+' de 5 · vale '+mimePoints[mimeClue]+' pontos';
  $('mimeReveal').disabled=mimeClue>=4;
  $('mimeReveal').textContent=mimeClue>=4?'Todas as imagens reveladas':'Ver próxima imagem';
 }
+function mimeShowResults(){
+ mimeStop();mimeRaceStop();
+ $('mimeWord').textContent='JOGO TERMINADO!';$('mimePictureClue').textContent='🏆';$('mimeClueProgress').textContent='Resultado final';
+ $('mimeCategory').textContent='';$('mimeFeedback').textContent='Equipa '+(mimeScores[0]===mimeScores[1]?'— empate':(mimeScores[0]>mimeScores[1]?'1':'2')+' venceu')+' · '+mimeScores[0]+'–'+mimeScores[1]+' pontos.';
+ $('mimeNext').textContent='🔄 Jogar novamente';$('mimeNext').dataset.restart='1';$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;
+}
 function mimeShowNext(){
  mimeStop();
- if(mimePos>=mimeDeck.length){
-  $('mimeWord').textContent='JOGO TERMINADO!';$('mimePictureClue').innerHTML='🏆';$('mimeClueProgress').textContent='Resultado final';$('mimeCategory').textContent='';$('mimeFeedback').textContent='Equipa '+(mimeScores[0]===mimeScores[1]?'— empate':(mimeScores[0]>mimeScores[1]?'1':'2')+' venceu')+' · '+mimeScores[0]+'–'+mimeScores[1]+' pontos.';$('mimeNext').textContent='🔄 Jogar novamente';$('mimeNext').dataset.restart='1';$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;return;
- }
- const card=mimeDeck[mimePos];mimeClue=0;
- $('mimeWord').textContent='REPRESENTA A MÍMICA';$('mimeCategory').textContent='Categoria: '+card[1]+' · não falar nem fazer sons';$('mimeFeedback').textContent='Observa a imagem e representa a ideia por mímica. A equipa tenta adivinhar!';mimeSeconds=Number($('timerMode')?.value??60);if(!Number.isFinite(mimeSeconds))mimeSeconds=60;
+ const card=mimeDeck[mimePos];if(!card)return mimeShowResults();
+ mimeClue=0;
+ $('mimeWord').textContent=card[0];$('mimeCategory').textContent='Categoria: '+card[1]+' · só o representante deve ver a palavra';
+ $('mimeFeedback').textContent='Passa o dispositivo ao representante. A equipa tenta adivinhar sem ele falar nem fazer sons.';
+ mimeSeconds=Number($('timerMode')?.value??60);if(!Number.isFinite(mimeSeconds))mimeSeconds=60;
  $('mimeTimer').textContent=mimeSeconds===0?'∞':String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');
- $('mimeNext').textContent='▶ Começar ronda';$('mimeNext').dataset.restart='0';$('mimeCorrect').disabled=false;$('mimeSkip').disabled=false;$('mimeReveal').disabled=true;mimeDrawScores();mimeRenderClue();
+ $('mimeNext').textContent='▶ Começar ronda';$('mimeNext').dataset.restart='0';$('mimeCorrect').disabled=false;$('mimeSkip').disabled=false;$('mimeReveal').disabled=true;
+ mimeDrawScores();mimeRenderClue();
+}
+async function mimeLoadNextCard(){
+ try{
+  const {data,error}=await supabaseClient.rpc('atina_v2_local_mime_card',{p_excluded_ids:mimeUsedCardIds});
+  if(error)throw error;
+  if(!data?.id)return false;
+  mimeUsedCardIds.push(Number(data.id));
+  mimeDeck.push([data.word,data.category,data.clues]);
+  return true;
+ }catch(e){
+  $('mimeFeedback').textContent='Não foi possível carregar uma carta de Mímicas: '+(e.message||'erro de ligação');
+  return false;
+ }
 }
 function mimeRequestFullscreen(){try{if(!document.fullscreenElement){const p=document.documentElement.requestFullscreen();if(p&&p.then)p.then(()=>{try{screen.orientation?.lock?.('landscape');}catch(e){}}).catch(()=>{});}}catch(e){}}
 function mimeRaceFormat(seconds){return raceFormat(seconds);}
@@ -802,21 +852,36 @@ function mimeRaceUpdate(){let el=$('mimeRaceClock');if(!el){el=document.createEl
 function mimeRaceStart(){if(mimeRaceFinished||mimeRaceStartedAt)return;mimeRaceStartedAt=Date.now();if(mimeRaceTick!==null)clearInterval(mimeRaceTick);mimeRaceTick=setInterval(()=>{const now=Date.now();if(mimeRaceStartedAt){mimeRaceElapsed[mimeTeam]+=(now-mimeRaceStartedAt)/1000;mimeRaceStartedAt=now;mimeRaceUpdate();}},250);mimeRaceUpdate();}
 function mimeRaceStop(){if(mimeRaceStartedAt){mimeRaceElapsed[mimeTeam]+=(Date.now()-mimeRaceStartedAt)/1000;mimeRaceStartedAt=0;}if(mimeRaceTick!==null){clearInterval(mimeRaceTick);mimeRaceTick=null;}mimeRaceUpdate();}
 function mimeRaceFinish(winner){mimeRaceStop();mimeRaceFinished=true;mimeStop();$('mimeWord').textContent='🏆 EQUIPA '+(winner+1)+' VENCEU!';$('mimePictureClue').textContent='🏆';$('mimeClueProgress').textContent='Meta de 250 pontos atingida';$('mimeFeedback').textContent='Equipa '+(winner+1)+' venceu a corrida aos 250 pontos em '+mimeRaceFormat(mimeRaceElapsed[winner])+'. Resultado: '+mimeScores[0]+'–'+mimeScores[1]+'.';$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;$('mimeNext').textContent='🔄 Jogar novamente';$('mimeNext').dataset.restart='1';}
-function mimeStartGame(){mimeRequestFullscreen();mimeStop();mimeDeck=shuffle(mimeCards);mimePos=0;mimeTeam=0;mimeScores=[0,0];mimeRaceElapsed=[0,0];mimeRaceStartedAt=0;mimeRaceFinished=false;screen('mimicaGame');mimeShowNext();}
+async function mimeStartGame(){
+ mimeRequestFullscreen();mimeStop();mimeDeck=[];mimeUsedCardIds=[];mimePos=0;mimeTeam=0;mimeScores=[0,0];mimeRaceElapsed=[0,0];mimeRaceStartedAt=0;mimeRaceFinished=false;screen('mimicaGame');
+ $('mimeFeedback').textContent='A preparar as cartas…';
+ if(await mimeLoadNextCard())mimeShowNext();else $('mimeNext').textContent='Tentar novamente';
+}
 function mimeStartClock(){if(mimeRunning||mimePos>=mimeDeck.length||mimeRaceFinished)return;mimeRunning=true;mimeRaceStart();$('mimeReveal').disabled=false;if(mimeSeconds===0){$('mimeTimer').textContent='∞';$('mimeFeedback').textContent='⏱️ Ronda sem limite de tempo!';return;}$('mimeFeedback').textContent='⏱️ O tempo está a contar!';mimeInterval=setInterval(()=>{mimeSeconds=Math.max(0,mimeSeconds-1);$('mimeTimer').textContent=String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');if(mimeSeconds===0){mimeStop();mimeAdvance(false,'Tempo esgotado');}},1000);}
 function mimeRevealClue(){if(mimePos>=mimeDeck.length||mimeClue>=4)return;mimeClue++;mimeRenderClue();$('mimeFeedback').textContent='Nova imagem! A equipa pode continuar a tentar adivinhar.';}
 function mimeAdvance(correct,reason='Palavra passada'){
  mimeStop();mimeRaceStop();const answer=mimeDeck[mimePos][0];
  if(correct){const points=mimePoints[mimeClue];const timedBonus=Number($('timerMode')?.value||0)>0?Math.floor(mimeSeconds/10):0;mimeScores[mimeTeam]+=points+timedBonus;if(mimeScores[mimeTeam]>=250){mimeRaceFinish(mimeTeam);return;}$('mimeFeedback').textContent='🎉 Certo! +'+points+(timedBonus?' + '+timedBonus+' bónus de rapidez':'')+' pontos para a Equipa '+(mimeTeam+1)+'. Resposta: '+answer+'.';}
  else{$('mimeFeedback').textContent=(reason==='Tempo esgotado'?'⏰ Tempo esgotado! ':'Passaram! ')+'A resposta era: '+answer+'. Sem alteração da pontuação.';}
- mimeTeam=1-mimeTeam;mimePos++;if(mimePos>=mimeDeck.length){mimeDeck=shuffle(mimeCards);mimePos=0;mimeSeconds=0;}$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;$('mimeNext').textContent=mimePos>=mimeDeck.length?'Ver resultado':'Próxima ronda →';$('mimeNext').dataset.restart='0';
+ mimeTeam=1-mimeTeam;mimePos++;$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;
+ $('mimeNext').textContent='Próxima ronda →';$('mimeNext').dataset.restart='0';
 }
 $('startMimicas').onclick=mimeStartGame;
 $('mimicaBack').onclick=()=>{mimeStop();mimeRaceStop();screen('home');};
 $('mimeCorrect').onclick=()=>{if(mimeRunning)mimeAdvance(true);else $('mimeFeedback').textContent='Começa a ronda antes de validar um ponto.';};
 $('mimeSkip').onclick=()=>{if(mimeRunning)mimeAdvance(false,'Palavra passada');};
 $('mimeReveal').onclick=mimeRevealClue;
-$('mimeNext').onclick=()=>{if($('mimeNext').dataset.restart==='1'){mimeStartGame();return;}if(mimeRunning)return;if(mimePos>=mimeDeck.length){mimeShowNext();return;}if(mimePos>0||mimeSeconds===0)mimeShowNext();mimeStartClock();};
+$('mimeNext').onclick=async()=>{
+ if($('mimeNext').dataset.restart==='1'){mimeStartGame();return;}
+ if(mimeRunning)return;
+ if(mimePos>=mimeDeck.length){
+  if(mimeUsedCardIds.length>=48){mimeShowResults();return;}
+  $('mimeNext').disabled=true;
+  const loaded=await mimeLoadNextCard();$('mimeNext').disabled=false;
+  if(!loaded){if(mimeUsedCardIds.length>=48)mimeShowResults();else $('mimeNext').textContent='Tentar novamente';return;}
+ }
+ mimeShowNext();mimeStartClock();
+};
 $('categories').addEventListener('click',e=>{let b=e.target.closest('[data-category]');if(b)start('solo',b.dataset.category);});
 $('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>start('duel');$('party').onclick=()=>{start('party');$('player').textContent='🎉 Vez da Equipa 1';$('feedback').textContent='Modo Festa: duas equipas alternam. A última ronda vale pontos a dobrar!';};$('back').onclick=()=>{stopTimer();raceStop();screen('home');};$('nextClue').onclick=reveal;$('submit').onclick=submit;
 $('voice').onclick=()=>{

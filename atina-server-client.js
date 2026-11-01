@@ -267,10 +267,8 @@ $('back').onclick = () => {
   localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
   screen('home');
 };
-$('startMimicas').onclick = () => {
-  atinaServerMessage('Mímicas exige uma sala online: cria ou entra numa sala na secção Multijogador e inicia Mímicas como anfitrião.');
-  $('networkLobby').scrollIntoView?.({ behavior: 'smooth', block: 'center' });
-};
+// O botão local de Mímicas é gerido pelo próprio modo local em index.html.
+
 function atinaServerIsInvalidSession(error) {
   return error?.code === '28000' || /Sessão inválida ou expirada/i.test(error?.message || '');
 }
