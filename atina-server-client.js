@@ -5,6 +5,8 @@ let atinaServerState = null;
 let atinaServerTimer = null;
 let atinaServerPolling = null;
 let atinaServerBusy = false;
+let atinaServerLastResult = '{}';
+let atinaNetworkChallengeKey = '';
 
 async function atinaServerRpc(name, args) {
   if (!supabaseClient) throw new Error('É necessária uma ligação à Internet para jogar. Atualiza a página e tenta novamente.');
@@ -46,6 +48,10 @@ function atinaServerStartTimers() {
 }
 function atinaServerApplyState(state, announce = false) {
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
+  const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
+  const resultKey = JSON.stringify(state.last_result || {});
+  const clearAnswer = !sameChallenge || resultKey !== atinaServerLastResult;
+  atinaServerLastResult = resultKey;
   atinaServerState = state;
   mode = state.mode;
   scores = Array.isArray(state.scores) ? state.scores : [0, 0];
@@ -96,7 +102,7 @@ function atinaServerApplyState(state, announce = false) {
   else if (locked) message = challenge.answer ? 'Resposta: ' + challenge.answer : 'Ronda terminada.';
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
-  $('answer').value = '';
+  if (clearAnswer) $('answer').value = '';
   $('feedback').classList.remove('is-correct', 'is-wrong', 'is-info');
   $('feedback').classList.add(result.outcome === 'correct' ? 'is-correct' : result.outcome === 'wrong' || result.outcome === 'timeout' ? 'is-wrong' : 'is-info');
   $('networkScoreboard').classList.add('hidden');
@@ -214,6 +220,9 @@ board = function() {
     : 'Desafio ' + (pos + 1) + ' de ' + queue.length + ' · ' + scores[0] + ' pontos';
   $('scoreboard').textContent = label;
 };
+raceStart = function() {};
+raceStop = function() {};
+timerTick = function() { atinaServerRenderTimer(); };
 stopTimer = function() {
   if (timerInterval !== null) clearInterval(timerInterval);
   timerInterval = null;
@@ -253,7 +262,8 @@ async function atinaServerRestoreSession() {
 networkReceiveState = function(st) {
   if (!st || (!['challenges', 'mimicas', 'completed'].includes(st.mode))) return;
   const previous = networkGameState;
-  const changed = !previous || previous.pos !== st.pos || previous.challenge_id !== st.challenge_id || previous.round !== st.round;
+  const changed = !previous || previous.pos !== st.pos || previous.challenge_id !== st.challenge_id || previous.round !== st.round || previous.mode !== st.mode;
+  if (changed) { atinaNetworkChallengeKey = [st.mode,st.pos,st.challenge_id,st.round].join(':'); $('answer').value = ''; }
   networkGameState = st;
   networkLastRevision = Number(st.revision || 0);
   networkGameActive = st.mode !== 'completed';
@@ -321,7 +331,6 @@ networkRenderGameState = function() {
   $('answer').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
   $('submit').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
   $('feedback').textContent = st.locked ? 'Resposta: ' + (st.answer || 'ronda terminada') : 'A resposta será validada pelo servidor.';
-  $('answer').value = '';
   $('networkScoreboard').classList.remove('hidden');
   renderTeamProposal();
   const players = networkLobbyData?.players || [];
@@ -352,10 +361,12 @@ networkSubmitAnswer = async function() {
         p_challenge: networkGameState.pos, p_answer: answer
       });
       networkAnsweredThisChallenge = true;
+      $('answer').value = '';
     } else {
       await networkCall('atina_submit_room_answer', {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token, p_answer: answer
       });
+      $('answer').value = '';
     }
     await networkRefreshRoom();
   } catch (error) { $('feedback').textContent = error.message || 'Não foi possível enviar a resposta.'; }
@@ -382,7 +393,7 @@ networkMimeResolveRound = async function(correct, reason) {
   try {
     await networkCall('atina_resolve_mime_round', {
       p_room_id: networkRoom.room_id, p_token: networkRoom.token,
-      p_correct: !!correct, p_reason: reason || (correct ? 'correct' : 'pass')
+      p_correct: !!correct, p_points: 0, p_reason: reason || (correct ? 'correct' : 'pass')
     });
     await networkRefreshRoom();
   } catch (error) {
