@@ -120,6 +120,7 @@ function atinaServerApplyState(state, announce = false) {
   else if (locked) message = challenge.answer ? 'Resposta: ' + challenge.answer : 'Ronda terminada.';
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
+  if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
   if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage');
   else $('solutionImage')?.classList.add('hidden');
   if (clearAnswer) $('answer').value = '';
@@ -403,6 +404,7 @@ networkRenderGameState = function() {
   $('answer').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
   $('submit').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
   $('feedback').textContent = st.locked ? 'Resposta: ' + (st.answer || 'ronda terminada') : (atinaNetworkFeedback || 'A resposta será validada pelo servidor.');
+  if (st.locked) atinaRecordChallengeCompletion('room:' + (networkRoom?.room_id || 'online') + ':' + st.pos);
   $('networkScoreboard').classList.remove('hidden');
   renderTeamProposal();
   const players = networkLobbyData?.players || [];
