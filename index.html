@@ -367,7 +367,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 /* Progressão diária e painel de regresso */
 .daily-mission{margin:16px 0;padding:18px;border:1px solid #786640;border-radius:17px;background:linear-gradient(135deg,#263d55,#15263a 72%);box-shadow:0 12px 28px #0003}.daily-mission-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.daily-kicker{font-size:10px;letter-spacing:.18em;color:#e6c77f;font-weight:850}.daily-mission h3{font-size:19px;margin:7px 0}.daily-mission p{color:#c4d0dd;font-size:13px;margin:6px 0 12px}.daily-progress{height:9px;border-radius:99px;background:#091726;overflow:hidden;margin:12px 0 7px}.daily-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#d2a95c,#f5df9c);border-radius:99px;transition:width .35s ease}.daily-meta{display:flex;justify-content:space-between;gap:8px;color:#b8c5d3;font-size:11px}.daily-stats{display:flex;gap:9px;flex-wrap:wrap;margin:13px 0}.daily-stat{flex:1;min-width:100px;padding:10px 12px;border-radius:11px;background:#07162566}.daily-stat b{display:block;color:#ffdf91;font-size:19px}.daily-stat small{color:#c0ccda;font-size:11px}.daily-mission .btn{margin-top:8px}.atina-xp-panel{margin:14px 0;padding:13px;border-radius:12px;background:#07162566;border:1px solid #ffffff12}.atina-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.atina-badge{font-size:11px;padding:6px 9px;border-radius:99px;background:#091726;color:#718096;border:1px solid #34465a}.atina-badge.earned{color:#ffe09a;background:#3c3425;border-color:#987b45}
 @media(min-width:620px){.daily-mission{padding:22px}.daily-mission h3{font-size:21px}}
-</style>
+\n/* ATINA usa pseudónimo e chave local; ocultar o fluxo legado de contas. */\n#authPage #authForms,#authPage #authReset,#authPage #deleteAccountArea{display:none!important}\n</style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
 button,input,select,textarea{touch-action:manipulation}
@@ -415,7 +415,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </div>
 <p class="feedback" id="networkLobbyStatus" aria-live="polite"></p>
 </section>
-<section id="authPage" class="card hidden"><h2>👤 Conta ATINA</h2><p class="muted small">Cria uma conta com email e palavra-passe. O teu pseudónimo será único.</p>
+<section id="authPage" class="card hidden"><h2>👤 Perfil ATINA</h2><p class="muted small">O ATINA não exige contas, email nem palavras-passe. Escolhe um pseudónimo no painel inicial para guardar a progressão com uma chave privada deste dispositivo.</p>
 <div id="authForms">
 <label class="section" for="authNickname">Pseudónimo (1–20 caracteres)</label><input id="authNickname" class="answer" maxlength="20" autocomplete="nickname" placeholder="O teu pseudónimo">
 <label class="section" for="authEmail">Email</label><input id="authEmail" class="answer" type="email" autocomplete="email" placeholder="nome@email.com">
