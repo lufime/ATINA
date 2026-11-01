@@ -711,7 +711,7 @@ begin
       updated_at=v_now where id=v_session.id returning * into v_session;
     return private.atina_v2_local_public_state(v_session);
   end if;
-  v_correct:=private.atina_challenge_answer_matches(v_session.challenge_queue[v_session.position],p_answer);
+  v_correct:=private.atina_v2_challenge_answer_matches(v_session.challenge_queue[v_session.position],p_answer);
   if not v_correct then
     v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-10;
     v_session.streaks[v_session.current_player]:=0;
