@@ -28,7 +28,7 @@ select ok(
   'anon can use the server-validated progress RPC'
 );
 select ok(
-  not has_function_privilege('anon', 'private.atina_v2_players', 'SELECT'),
+  not has_table_privilege('anon', 'private.atina_v2_players', 'SELECT'),
   'private schema data is not directly accessible to anon'
 );
 
