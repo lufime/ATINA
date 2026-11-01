@@ -56,6 +56,8 @@
     }
   }
 
+  function getSupabase() { return typeof supabaseClient !== 'undefined' ? supabaseClient : null; }
+
   async function saveNickname() {
     const input = $('atinaPlayerNickname');
     const status = $('atinaPlayerStatus');
@@ -64,14 +66,14 @@
       if (status) status.textContent = 'Escolhe um pseudónimo entre 1 e 20 caracteres.';
       return null;
     }
-    if (!window.supabaseClient) {
+    if (!getSupabase()) {
       if (status) status.textContent = 'A ligação ao servidor não está disponível.';
       return null;
     }
     if (status) status.textContent = 'A guardar a progressão…';
     try {
       const token = getToken();
-      const { data, error } = await window.supabaseClient.rpc('atina_v2_player_profile', {
+      const { data, error } = await getSupabase().rpc('atina_v2_player_profile', {
         p_nickname: nickname,
         p_player_token: token
       });
@@ -90,12 +92,12 @@
     const nickname = localStorage.getItem(NICK_KEY);
     const input = $('atinaPlayerNickname');
     if (input && nickname) input.value = nickname;
-    if (!nickname || !window.supabaseClient) return null;
+    if (!nickname || !getSupabase()) return null;
     return saveNickname();
   }
 
   async function recordCorrect(state, session) {
-    if (!state?.session_id || !session?.token || !window.supabaseClient) return null;
+    if (!state?.session_id || !session?.token || !getSupabase()) return null;
     const nickname = localStorage.getItem(NICK_KEY);
     const token = localStorage.getItem(TOKEN_KEY);
     if (!nickname || !/^[0-9a-f]{64}$/.test(token || '')) return null;
