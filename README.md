@@ -1,177 +1,39 @@
 # ATINA — Pensa. Descobre. Atina.
 
-Jogo de desafios em português (pt-PT), pensado para telemóveis.
+Jogo de desafios em português europeu (pt-PT), com 15 modalidades e 753 desafios identificados por posições históricas estáveis.
 
-## Funcionalidades atuais
-- Apagamento definitivo da conta disponível na área autenticada, com confirmação explícita e execução segura no servidor.
-- Indicador visual verde no menu e no cabeçalho quando existe uma sessão iniciada, identificando o pseudónimo ou email da conta.
-- Indicador verde no cabeçalho quando existe sessão iniciada, com pseudónimo ou email da conta.
-- Menu inicial reorganizado para telemóveis: modo de jogo, modalidades em destaque, temporizador e atalhos de conta/ranking em secções separadas.
-- Corrigido erro de JavaScript que impedia a apresentação das 15 modalidades no menu inicial.
-- 15 modalidades e 750 desafios preenchidos, sem respostas principais repetidas dentro da mesma modalidade; todas as modalidades atingiram a meta de 50 desafios.
-- Cinco pistas progressivas por desafio (seis na modalidade Imagem Misteriosa); a última pista dá uma orientação adicional sem revelar diretamente a resposta.
-- As pistas reveladas permanecem visíveis.
-- Resposta errada: menos 10 pontos; é possível tentar novamente.
-- PASSO revela a resposta sem penalização.
-- Pontuação variável conforme a pista usada e bónus de rapidez.
-- Modo individual e duelo local para dois jogadores no mesmo dispositivo.
-- Temporizador opcional: 60 segundos, 90 segundos ou sem limite.
-- Avisos sonoros nos últimos 10 segundos e ao terminar o tempo.
-- Resposta por voz, quando suportada pelo navegador.
-- Leitura da resposta correta em voz alta.
-- Imagem Misteriosa com revelação progressiva.
-- Ranking online (individual e duelo), com consulta dos 10 melhores resultados.
+## Modos de jogo
 
-## Ranking sem email
-O ranking online pode ser usado sem criar conta e sem fornecer email. No fim de cada jogo, basta escolher um pseudónimo (até 20 caracteres) e guardar a pontuação. São enviados para o Supabase apenas o pseudónimo, a pontuação e o modo de jogo. Como não existe conta, não há recuperação de acesso nem garantia de que um pseudónimo pertence sempre à mesma pessoa. O ranking público é recreativo e não deve ser considerado inviolável contra resultados falsos.
+- **Individual** — uma pessoa, com pontuação e sequência geridas pelo servidor.
+- **Duelo** — dois jogadores no mesmo dispositivo, com alternância de vez.
+- **Mix** — desafios de várias modalidades.
+- **Party** — duas equipas no mesmo dispositivo, até 10 desafios e bónus de pontos a dobrar na última ronda.
+- **Multiplayer** — salas online com código, jogadores, equipas, propostas e votação.
+- **Mímicas** — salas online, representante por ronda e palavra secreta visível apenas no dispositivo do representante.
 
-## Publicar com GitHub Pages
-1. Abre **Settings** no repositório.
-2. Entra em **Pages**.
-3. Em **Build and deployment**, escolhe **Deploy from a branch**.
-4. Seleciona a branch main e a pasta / (root).
-5. Guarda e aguarda a publicação.
+## Ligação obrigatória
 
-O jogo é uma aplicação web estática. O duelo local continua disponível no mesmo dispositivo. O multiplayer remoto está a ser desenvolvido por fases.
+**Todos os modos exigem ligação à Internet e validação pelo Supabase. Não existe modo offline nem fallback de validação no browser.**
 
+O cliente envia apenas a resposta textual. A correção, penalizações, pontuação, bónus, prazos, pistas reveladas e transições são controlados pelo servidor. As respostas principais, alternativas aceites e palavras secretas de Mímicas não são incluídas no HTML ou no JavaScript servido ao browser.
 
-## Termos e privacidade
-O ATINA é um jogo pessoal e gratuito. Não é necessário fornecer email nem criar conta para jogar ou guardar pontuações. O ranking guarda o pseudónimo escolhido, a pontuação e o modo de jogo através do Supabase. Os dados não são vendidos nem usados para publicidade. As pontuações enviadas podem permanecer visíveis no ranking.
+Em Mímicas, a decisão de que o gesto foi corretamente adivinhado continua a ser humana e é registada pelo anfitrião; os pontos e o relógio são calculados pelo servidor.
 
+## Segurança e testes
 
-## Nota sobre o menu
-O menu inicial apresenta as modalidades de jogo e o ranking sem exigir conta ou email.
+- Dados de desafios e Mímicas guardados em tabelas privadas, sem leitura direta por clientes.
+- Sessões e salas autenticadas por tokens aleatórios; apenas hashes dos tokens são guardados.
+- RPCs específicas para submissão de respostas, pistas, propostas, votos e transições.
+- Rate limiting no acesso RPC do ATINA.
+- O workflow de validação verifica o catálogo público, a sintaxe JavaScript e a ausência de respostas, alternativas, pistas não reveladas e palavras secretas no cliente.
+- O workflow de replay aplica as migrations numa instância Supabase local descartável e executa os testes pgTAP.
 
-Correção adicional: removidas referências residuais à antiga interface de autenticação, para o menu funcionar sem contas.
+Ver [SECURITY-DESIGN.md](SECURITY-DESIGN.md) para os detalhes, decisões e limitações conhecidas.
 
+## Estado desta branch
 
-### Robustez do arranque
-O menu e as modalidades do jogo não dependem do carregamento da biblioteca externa de autenticação. Se esse serviço ou a respetiva CDN estiver indisponível, o jogo continua a arrancar; as funcionalidades de conta ficam indisponíveis, mas o modo individual, o duelo e o ranking por pseudónimo mantêm-se separados.
+Este trabalho está isolado em `security/server-side-validation`. Não foi feito merge para `main`, deploy nem alteração da base de dados de produção. A integração ainda precisa de testes funcionais num browser real, incluindo telemóveis, reconexão, salas multiplayer, votação por equipa, prazos e Mímicas.
 
+## Publicação
 
-### Menu de modalidades
-As 15 modalidades são agora apresentadas diretamente no HTML inicial, para continuarem visíveis mesmo que um serviço externo ou uma falha de JavaScript impeça a renderização dinâmica. A seleção continua a ser feita pelos botões de cada modalidade.
-
-
-### Ordem do menu
-O menu inicial está organizado pela sequência: 1) Tempo por desafio, 2) Escolhe como jogar, 3) Escolhe uma modalidade.
-
-
-### Multiplayer em rede — primeira fase
-Foi criada a base de salas online para 1 a 12 jogadores, com código de entrada, pseudónimos e lista de participantes atualizada automaticamente. Cada participante usa o seu próprio telemóvel. Esta primeira fase ainda não inicia partidas nem inclui equipas; essas funções serão desenvolvidas na fase seguinte.
-
-
-### Multiplayer em rede — segunda fase
-A sala inclui agora confirmação de prontidão, distribuição automática por duas equipas e atribuição manual de equipa pelo anfitrião. O anfitrião pode iniciar a sala quando houver pelo menos dois jogadores e todos estiverem prontos. O início ainda não sincroniza as perguntas, pistas ou cronómetro; essa é a fase seguinte.
-
-
-### Multiplayer em rede — preparação da sincronização
-Foi acrescentado ao backend um estado partilhado da partida, com versão sequencial, que só o anfitrião pode publicar e que os participantes da sala podem consultar com a respetiva sessão. A leitura e publicação foram testadas com dois jogadores. A interface ainda não usa este estado para sincronizar visualmente desafios, pistas ou cronómetro; essa integração continua pendente.
-
-
-### Multiplayer em rede — terceira fase (sincronização inicial)
-Depois de o anfitrião iniciar, os telemóveis recebem o mesmo desafio, a mesma sequência de pistas e a mesma contagem decrescente, com o anfitrião a controlar a revelação das pistas e a passagem ao desafio seguinte. Nesta fase inicial, as respostas e a pontuação competitiva ainda não estão sincronizadas; o painel dos restantes jogadores é de acompanhamento. A conclusão da lógica de respostas, pontuação por jogador/equipa e ranking multiplayer fica para a fase seguinte.
-
-
-### Multiplayer em rede — quarta fase (respostas e pontuação individual)
-Cada participante pode agora submeter respostas no seu próprio telemóvel. As respostas corretas e erradas são registadas na sala, com pontuação individual e classificação atualizada. A validação da resposta é feita no cliente com a lista de respostas do jogo; por isso, esta versão é recreativa e ainda não tem proteção anti-batota robusta. A pontuação por equipas e o ranking final persistente ficam para a fase seguinte.
-
-
-### Multiplayer em rede — votação por equipa
-Nas partidas por equipas, o primeiro jogador que submete uma resposta apresenta uma proposta à sua equipa. O próprio proponente não vota; todos os restantes colegas têm de escolher «Concordo» ou «Não concordo». A proposta só é aceite quando todos concordam e a resposta está correta. Um voto de discordância rejeita a proposta e permite à equipa tentar novamente. Quando aceite, os pontos são atribuídos aos jogadores dessa equipa. Se a equipa tiver apenas um elemento, não existe votação adicional. A votação e os respetivos votos são guardados no Supabase e consultados pelos telemóveis da sala. A validação da resposta continua a ser feita no cliente, pelo que não existe proteção anti-batota robusta.
-
-
-### Multiplayer em rede — resultados finais
-No fim da sequência de desafios, todos os telemóveis passam para o ecrã de resultados da sala. O ecrã apresenta a classificação individual e, quando existem equipas, a soma dos pontos por equipa. A classificação usa as pontuações registadas na sala; não cria ainda uma entrada no ranking público persistente.
-
-
-### Multiplayer em rede — ranking persistente
-Quando o anfitrião termina o último desafio, fecha a sala através de uma operação protegida no Supabase. Os resultados individuais de todos os participantes são guardados na tabela de histórico da sala, com pseudónimo, equipa, pontuação e data. O ecrã final apresenta a classificação da sala. O histórico não está exposto para consulta pública nesta fase; apenas a função protegida do servidor pode inserir ou atualizar resultados, e a operação de fecho é idempotente para evitar duplicados. A validação das respostas continua a ser feita no cliente, pelo que o sistema não constitui uma solução anti-batota robusta.
-
-
-### Multiplayer em rede — até seis equipas
-O anfitrião pode distribuir automaticamente os participantes por até seis equipas (A a F). O número de equipas é ajustado ao total de jogadores, mantendo, sempre que possível, pelo menos dois jogadores por equipa: 2–5 jogadores formam 2 equipas; 6–7 formam 3; 8–9 formam 4; 10–11 formam 5; 12 formam 6. Também é possível atribuir manualmente cada participante a qualquer uma das seis equipas antes do início da partida. A votação de respostas é aplicada aos colegas da respetiva equipa.
-
-
-### Multiplayer — classificação das equipas em direto
-Durante os desafios, o painel da sala apresenta duas tabelas atualizadas com os dados recebidos do Supabase: classificação por equipas, calculada pela soma dos pontos dos seus membros, e classificação individual. A ordenação das equipas é atualizada à medida que as pontuações dos jogadores são sincronizadas.
-
-
-### Multiplayer — recuperar a partida após atualizar a página
-A sessão da sala (identificador e token de acesso) fica guardada localmente no navegador. Ao atualizar ou reabrir a página no mesmo telemóvel/navegador, o ATINA tenta recuperar a sala e volta ao lobby ou ao desafio que está atualmente sincronizado no Supabase. A partida não é criada de novo nem regressa ao primeiro desafio. Se a sessão tiver expirado ou a sala já não existir, é apresentada uma mensagem e será necessário entrar novamente com o código.
-
-
-### Retoma automática de qualquer desafio
-O progresso dos modos individual e duelo local é guardado no navegador e recuperado ao atualizar a página, incluindo desafio atual, pistas reveladas, pontuação, jogador da vez, resposta escrita e tempo restante. Nas salas multiplayer, a recuperação continua a usar o estado sincronizado da sala. Começar um novo jogo substitui o progresso local anterior.
-
-
-### Organização do menu inicial
-O menu foi reorganizado por ordem de utilização: tempo por desafio, modo de jogo, modalidades, classificação e jogo em rede. Os blocos têm hierarquia visual e espaçamento consistentes, com grelha adaptável a telemóveis e ecrãs maiores.
-
-
-### Recuperação após atualizar a página
-Ao recarregar, o ATINA tenta primeiro recuperar a sessão multiplayer; caso não exista, recupera o progresso local do desafio individual/duelo. Se não houver jogo em curso, restaura o último ecrã visitado. A resposta em edição também é guardada localmente.
-
-
-### Correção do relógio em tempo real (31/10/2026)
-- O contador das partidas online passa a garantir a atualização contínua do relógio no ecrã, incluindo logo no arranque da partida e após a receção de novos estados.
-- A contagem é recalculada a partir do prazo absoluto (`Date.now()`), evitando depender da quantidade de intervalos executados pelo navegador.
-
-
-## Banco de desafios e meta de expansão
-
-O banco atual contém **750 desafios preenchidos em 15 modalidades**. A meta de **750 desafios** foi atingida, com 50 em cada modalidade. Faltam **0 desafios** para atingir essa meta. As contagens são calculadas a partir do array `games` em `index.html`, e o menu atualiza automaticamente o número de desafios por modalidade.
-
-| Modalidade | Atual | Meta |
-|---|---:|---:|
-| Quem sou eu? | 50 | 50 |
-| Onde estou? | 50 | 50 |
-| O que sou? | 50 | 50 |
-| História e mistérios | 50 | 50 |
-| Palavras escondidas | 50 | 50 |
-| Ciência e natureza | 50 | 50 |
-| Cultura geral | 50 | 50 |
-| Imagem misteriosa | 50 | 50 |
-| Lógica e números | 50 | 50 |
-| Desafio surpresa | 50 | 50 |
-| Música e sons | 50 | 50 |
-| Cinema e televisão | 50 | 50 |
-| Desporto | 50 | 50 |
-| Ilusões e truques mentais | 50 | 50 |
-| Detetive | 50 | 50 |
-| **Total** | **750** | **750** |
-
-### Validar o banco de desafios
-
-Executa `node scripts/validate-challenges.mjs` para verificar a estrutura, a distribuição por modalidade, as pistas, as respostas aceites e as respostas repetidas. Usa `node scripts/validate-challenges.mjs --strict` para fazer dos avisos editoriais um erro bloqueante. O GitHub Actions executa esta validação automaticamente em cada pull request para `main` e em cada push para `main`.
-
-
-
-### Jogar na televisão
-O ATINA adapta a interface a ecrãs grandes e pode ser jogado num navegador de Smart TV compatível. Em televisões com comando direcional, as setas movem o foco entre os controlos e o botão OK/Enter ativa o elemento selecionado. Também é possível abrir o jogo num computador ou telemóvel e transmitir o ecrã para a televisão. A disponibilidade de navegadores e transmissão depende do modelo da televisão e do dispositivo. Para escrever respostas, o navegador da TV deve apresentar o respetivo teclado no ecrã; em alternativa, usa um telemóvel ou teclado ligado.
-
-
-### Partilhar ecrã com uma TV ou monitor
-O menu e o ecrã de jogo incluem a opção **Partilhar ecrã / monitor**, com instruções para:
-- Chromecast / Google TV: transmitir o separador ou o ecrã através do Google Chrome.
-- iPhone / iPad: usar Duplicar ecrã (AirPlay).
-- Android: usar Transmitir, Partilhar ecrã ou Smart View.
-- Windows: usar Windows + K para um ecrã sem fios, ou HDMI.
-- Mac: usar Duplicação de ecrã (AirPlay).
-
-A opção também permite colocar o ATINA em ecrã inteiro quando o navegador suporta essa funcionalidade. A ligação à TV é iniciada nas definições do próprio dispositivo; uma página web não consegue iniciar diretamente AirPlay ou Chromecast de forma universal. Os nomes dos menus e a compatibilidade variam por equipamento.
-
-
-### Modo Mímicas
-O menu inclui um modo de Mímicas independente dos 750 desafios de perguntas. Em cada ronda, uma palavra ou situação é apresentada para ser representada sem falar nem fazer sons. As duas equipas alternam as rondas, têm um temporizador configurado pelo tempo escolhido no menu (60 ou 90 segundos; sem limite usa 60 segundos neste modo), ganham um ponto quando acertam e podem passar uma palavra. O baralho inclui animais, profissões, ações, personagens, desporto e situações. O modo funciona no mesmo dispositivo, incluindo em ecrãs grandes e com navegação por comando compatível.
-
-
-### Multiplayer em rede — Mímicas
-O modo Mímicas pode ser iniciado numa sala online, mantendo todos os participantes nos seus próprios telemóveis. O representante roda automaticamente por todos os jogadores, incluindo o anfitrião. Apenas o telemóvel do representante recebe a palavra secreta através de uma função protegida no Supabase; os restantes veem a categoria, as pistas visuais partilhadas e o cronómetro sincronizado. O anfitrião controla o início da ronda, a revelação das pistas, a validação do acerto ou passagem e a ronda seguinte. A pontuação é atribuída à equipa do representante quando existem equipas; sem equipas, é registada individualmente para os restantes jogadores. O modo usa as 48 cartas de Mímicas e guarda os resultados finais no histórico da sala.
-
-
-## Validação server-authoritative — branch de segurança
-
-Na branch `security/server-side-validation`, todos os modos exigem ligação à Internet. O browser já não recebe as respostas nem as alternativas aceites; envia apenas a resposta textual e o servidor valida e calcula a pontuação. Individual, Duelo, Mix e Party usam sessões seguras no Supabase; Multiplayer usa salas, propostas/votos de equipa e Mímicas com segredos privados. Não existe fallback offline.
-
-Esta integração ainda não foi publicada nem integrada em `main`. A validação automatizada e o replay das migrations decorrem em CI; antes de qualquer publicação são necessários testes funcionais num browser real. Ver [SECURITY-DESIGN.md](SECURITY-DESIGN.md) para arquitetura, limites e estado de segurança.
+Não publicar esta branch diretamente. Qualquer merge, PR, deploy ou alteração em produção exige autorização explícita.
