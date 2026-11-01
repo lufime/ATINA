@@ -167,6 +167,7 @@ submit = async function() {
       p_answer: answer
     });
     playAtinaSound(state.last_result?.outcome === 'correct' ? 'correct' : 'wrong');
+    $('answer').value = '';
     atinaServerApplyState(state);
   } catch (error) { atinaServerMessage(error.message || 'Não foi possível validar a resposta.'); }
   finally { atinaServerBusy = false; }
@@ -445,6 +446,9 @@ $('answer').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('answ
 (async function atinaServerBoot() {
   try {
     await networkRestoreSession();
-    if (!networkRoom) await atinaServerRestoreSession();
-  } catch (_) {}
+    if (!networkRoom) {
+      const restored = await atinaServerRestoreSession();
+      if (!restored) screen('home');
+    }
+  } catch (_) { screen('home'); }
 })();
