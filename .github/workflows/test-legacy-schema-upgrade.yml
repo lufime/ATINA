@@ -10,6 +10,10 @@ on:
       - '.github/workflows/test-legacy-schema-upgrade.yml'
   workflow_dispatch:
 
+concurrency:
+  group: legacy-schema-upgrade-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   legacy-upgrade:
     runs-on: ubuntu-latest
