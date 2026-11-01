@@ -955,8 +955,26 @@ window.addEventListener('focus',refreshVisibleClock);
 })();
 
 
-/* Imagem ilustrativa da solução: pesquisa automática no Wikimedia Commons. */
+/* Imagem da solução: só apresentar resultados com correspondência textual à resposta. */
 const atinaSolutionImageCache=new Map();
+function atinaSolutionImageText(value){
+ return String(value||'').replace(/<[^>]*>/g,' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+}
+function atinaSolutionImageMatch(answer,category,item){
+ const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
+ const answerTokens=atinaSolutionImageText(answer).split(/\s+/).filter(token=>token.length>1&&!stop.has(token));
+ const categoryTokens=atinaSolutionImageText(category).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
+ if(!answerTokens.length)return null;
+ const title=atinaSolutionImageText(item.title);
+ const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
+ const text=title+' '+description;
+ const words=new Set(text.split(/\s+/));
+ const matched=answerTokens.filter(token=>words.has(token));
+ const answerCoverage=matched.length/answerTokens.length;
+ if(answerCoverage<(answerTokens.length===1?1:0.5))return null;
+ const categoryCoverage=categoryTokens.length?categoryTokens.filter(token=>words.has(token)).length/categoryTokens.length:0;
+ return {answerCoverage,categoryCoverage};
+}
 async function atinaShowSolutionImage(answer,category,targetId){
  const target=$(targetId);if(!target)return;
  const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
@@ -965,7 +983,7 @@ async function atinaShowSolutionImage(answer,category,targetId){
  target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
  if(!cleanAnswer)return;
  const heading=document.createElement('strong');heading.textContent='📷 A solução em imagem (domínio público / CC0)';
- const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem ilustrativa…';
+ const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
  target.append(heading,status);target.classList.remove('hidden');
  try{
   let item=atinaSolutionImageCache.get(key);
@@ -977,17 +995,17 @@ async function atinaShowSolutionImage(answer,category,targetId){
     const response=await fetch(url,{headers:{Accept:'application/json'}});
     if(!response.ok)throw new Error('Pesquisa indisponível');
     const data=await response.json();
-    const pages=Object.values(data.query?.pages||{});
-    item=pages.map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).find(x=>{
-     const license=String(x.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
-     return x.thumburl&&/^https:\/\//i.test(x.thumburl)&&(/public domain/.test(license)||/\bcc0\b/.test(license));
-    })||null;
-    if(item)break;
+    const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(candidate=>{
+     const license=String(candidate.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
+     return candidate.thumburl&&/^https:\/\//i.test(candidate.thumburl)&&(/public domain/.test(license)||/\bcc0\b/.test(license));
+    }).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate)})).filter(result=>result.match);
+    candidates.sort((a,b)=>b.match.answerCoverage-a.match.answerCoverage||b.match.categoryCoverage-a.match.categoryCoverage);
+    if(candidates.length){item=candidates[0].candidate;break;}
    }
    atinaSolutionImageCache.set(key,item);
   }
   if(target.dataset.solutionKey!==key)return;
-  if(!item){status.textContent='Não foi encontrada uma imagem em domínio público ou CC0 para esta solução.';return;}
+  if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
   const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:10px;background:#091827';
   image.onerror=()=>{image.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
   const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Confirmar licença no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
