@@ -28,7 +28,7 @@ const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 const pageErrors = [];
 
-page.on('pageerror', error => pageErrors.push(error.message));
+page.on('pageerror', error => pageErrors.push({ message: error.message, stack: error.stack }));
 await page.route('https://commons.wikimedia.org/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{\"query\":{\"pages\":{}}}' }));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
   status: 200,
