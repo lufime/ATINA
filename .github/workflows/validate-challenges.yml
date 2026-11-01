@@ -30,3 +30,7 @@ jobs:
         run: node scripts/validate-global-challenge-animation.mjs
       - name: Validar missão diária e progressão do jogador
         run: node scripts/validate-daily-progression.mjs
+      - name: Validar progressão na nuvem por pseudónimo
+        run: node scripts/validate-pseudonym-cloud-progression.mjs
+      - name: Verificar sintaxe do cliente de progressão na nuvem
+        run: node --check atina-cloud-progression.js
