@@ -417,7 +417,7 @@ DECLARE
   v_queue integer[];
   v_now timestamptz;
   v_deadline timestamptz;
-  v_challenge private.atina_v2_challenges%rowtype;
+  v_challenge private.atina_challenges%rowtype;
   v_state jsonb;
 BEGIN
   IF p_difficulty IS NULL OR p_difficulty NOT IN ('easy','medium','hard') THEN
@@ -446,7 +446,7 @@ BEGIN
 
   SELECT array_agg(challenge_id ORDER BY random())
   INTO v_queue
-  FROM private.atina_v2_challenges
+  FROM private.atina_challenges
   WHERE active
     AND difficulty=p_difficulty
     AND (p_category IS NULL OR category=p_category);
@@ -468,7 +468,7 @@ BEGIN
   );
 
   SELECT * INTO v_challenge
-  FROM private.atina_v2_challenges
+  FROM private.atina_challenges
   WHERE challenge_id=v_queue[1] AND active;
 
   v_state := jsonb_build_object(
@@ -515,7 +515,7 @@ SET search_path TO ''
 AS $function$
 DECLARE
   v_game private.atina_v2_room_game_state%rowtype;
-  v_challenge private.atina_v2_challenges%rowtype;
+  v_challenge private.atina_challenges%rowtype;
   v_room public.atina_v2_rooms%rowtype;
   v_clues jsonb;
 BEGIN
@@ -523,7 +523,7 @@ BEGIN
   IF NOT FOUND THEN RETURN NULL; END IF;
   SELECT * INTO v_room FROM public.atina_v2_rooms WHERE id=p_room_id;
   SELECT * INTO v_challenge
-  FROM private.atina_v2_challenges
+  FROM private.atina_challenges
   WHERE challenge_id=v_game.challenge_queue[v_game.position] AND active;
   IF NOT FOUND THEN RAISE EXCEPTION 'Desafio atual indisponível.'; END IF;
 
@@ -586,7 +586,7 @@ BEGIN
   END IF;
 
   SELECT jsonb_array_length(clues) INTO v_total
-  FROM private.atina_v2_challenges
+  FROM private.atina_challenges
   WHERE challenge_id=v_game.challenge_queue[v_game.position] AND active;
   IF v_game.revealed_clues>=v_total THEN
     RETURN jsonb_build_object('status','unchanged','state',private.atina_v2_room_public_state(p_room_id));
@@ -674,7 +674,7 @@ BEGIN
       ELSE (ARRAY[20,16,12,8,5])[v_game.revealed_clues]
     END
     INTO v_base
-    FROM private.atina_v2_challenges c
+    FROM private.atina_challenges c
     WHERE c.challenge_id=v_game.challenge_queue[v_game.position] AND c.active;
     IF v_game.deadline_at IS NOT NULL THEN
       v_speed:=greatest(0,floor(ceil(extract(epoch FROM (v_game.deadline_at-v_now)))/10)::integer);
@@ -768,7 +768,7 @@ BEGIN
       WHEN c.image_url IS NOT NULL THEN (ARRAY[20,16,12,8,6,5])[v_game.revealed_clues]
       ELSE (ARRAY[20,16,12,8,5])[v_game.revealed_clues]
     END INTO v_base
-    FROM private.atina_v2_challenges c
+    FROM private.atina_challenges c
     WHERE c.challenge_id=v_game.challenge_queue[v_game.position] AND c.active;
     IF v_game.deadline_at IS NOT NULL THEN
       -- Replica o ceil dos segundos restantes feito no frontend original, antes de dividir por 10.
@@ -842,7 +842,7 @@ BEGIN
     SELECT CASE WHEN c.image_url IS NOT NULL
       THEN (ARRAY[20,16,12,8,6,5])[v_game.revealed_clues]
       ELSE (ARRAY[20,16,12,8,5])[v_game.revealed_clues] END
-    INTO v_base FROM private.atina_v2_challenges c
+    INTO v_base FROM private.atina_challenges c
     WHERE c.challenge_id=v_game.challenge_queue[v_game.position] AND c.active;
     IF v_game.deadline_at IS NOT NULL THEN
       v_speed:=greatest(0,floor(ceil(extract(epoch FROM (v_game.deadline_at-v_now)))/10)::integer);
@@ -875,14 +875,14 @@ SET search_path TO ''
 AS $function$
 DECLARE
   v_game private.atina_v2_room_game_state%rowtype;
-  v_challenge private.atina_v2_challenges%rowtype;
+  v_challenge private.atina_challenges%rowtype;
   v_room public.atina_v2_rooms%rowtype;
   v_clues jsonb;
 BEGIN
   SELECT * INTO v_game FROM private.atina_v2_room_game_state WHERE room_id=p_room_id;
   IF NOT FOUND THEN RETURN NULL; END IF;
   SELECT * INTO v_room FROM public.atina_v2_rooms WHERE id=p_room_id;
-  SELECT * INTO v_challenge FROM private.atina_v2_challenges
+  SELECT * INTO v_challenge FROM private.atina_challenges
   WHERE challenge_id=v_game.challenge_queue[v_game.position] AND active;
   IF NOT FOUND THEN RAISE EXCEPTION 'Desafio atual indisponível.'; END IF;
   SELECT coalesce(jsonb_agg(cl.value ORDER BY cl.ordinality),'[]'::jsonb)
@@ -1292,7 +1292,7 @@ BEGIN
       THEN (ARRAY[20,16,12,8,6,5])[v_game.revealed_clues]
       ELSE (ARRAY[20,16,12,8,5])[v_game.revealed_clues] END
     INTO v_base
-    FROM private.atina_v2_challenges c
+    FROM private.atina_challenges c
     WHERE c.challenge_id=v_game.challenge_queue[v_game.position] AND c.active;
 
     IF v_game.deadline_at IS NOT NULL THEN
