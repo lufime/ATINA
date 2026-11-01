@@ -29,7 +29,7 @@ const page = await browser.newPage();
 const pageErrors = [];
 
 page.on('pageerror', error => pageErrors.push(error.message));
-await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
+await page.route('https://commons.wikimedia.org/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{\"query\":{\"pages\":{}}}' }));\nawait page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
   status: 200,
   contentType: 'application/javascript',
   body: `
@@ -89,7 +89,7 @@ try {
     atinaServerSession = { session_id: sessionId, token: 'a'.repeat(64) };
     atinaServerState = { session_id: sessionId, position: 1 };
     const state = {
-      session_id: sessionId, position: 1, round_locked: true, status: 'completed',
+      session_id: sessionId, position: 1, round_locked: true, status: 'active',
       mode: 'solo', scores: [0, 0], current_player: 1, queue_size: 1,
       difficulty: 'easy', last_result: { outcome: 'wrong', penalty: 10 },
       challenge: { category: 'Teste', emoji: '🧪', clues: [], total_clues: 5, answer: 'Resposta' }
