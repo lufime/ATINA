@@ -233,6 +233,7 @@ stopTimer = function() {
 };
 startTimer = function() { atinaServerStartTimers(); };
 $('back').onclick = () => {
+  if (networkRoom) { networkLeaveRoom(); return; }
   atinaServerStopTimers();
   atinaServerSession = null;
   atinaServerState = null;
