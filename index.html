@@ -583,6 +583,7 @@ function networkRenderMimeScores(){
 }
 async function networkRenderMimeState(){
  const st=networkGameState;if(!st||st.mode!=='mimicas')return;
+ if(st.locked)atinaRecordChallengeCompletion('room-mime:'+(networkRoom?.room_id||'online')+':'+st.round);
  if(st.locked&&st.answer)atinaShowSolutionImage(st.answer,st.category||'Mímicas','mimeSolutionImage');else if(!st.locked)$('mimeSolutionImage').classList.add('hidden');
  if(st.finished){
   networkGameActive=false;screen('result');
