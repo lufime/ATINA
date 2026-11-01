@@ -8,13 +8,6 @@ on:
       - 'atina-server-client.js'
       - 'scripts/test-cloud-progression-browser.mjs'
       - '.github/workflows/test-cloud-progression-browser.yml'
-  push:
-    branches: [feat/pseudonym-xp-supabase-foundation]
-    paths:
-      - 'index.html'
-      - 'atina-server-client.js'
-      - 'scripts/test-cloud-progression-browser.mjs'
-      - '.github/workflows/test-cloud-progression-browser.yml'
 
 jobs:
   browser-e2e:
