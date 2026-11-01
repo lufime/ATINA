@@ -548,7 +548,7 @@ function networkDrawClock(){
    const stage=$('mimeDrawStage'),icon=$('mimeDrawIcon'),label=$('mimeDrawLabel');
    if(now<drawUntil){const symbols=['🎭','🕺','🐒','🚀','🎬','🦁','🧙','⚽','🎸','🐙','🦖','🤹'];stage.classList.remove('hidden');icon.textContent=symbols[Math.floor((now-(drawUntil-2000))/130)%symbols.length];label.textContent='A BARALHAR AS CARTAS…';$('mimeTimer').textContent='🎲';$('mimeFeedback').textContent='Sorteio da próxima mímica…';}
    else{stage.classList.add('hidden');const left=Math.max(0,Math.ceil((prepareUntil-now)/1000));$('mimeTimer').textContent=left>0?'00:'+String(left).padStart(2,'0'):'A iniciar…';$('mimeFeedback').textContent=left>0?'⏳ Prepara-te! A ronda começa automaticamente.':'A iniciar a ronda…';if(networkGameHost&&left===0&&!st._starting){st._starting=true;networkMimeStartClock().catch(e=>{st._starting=false;networkMessage('mimeFeedback',e.message||'Não foi possível iniciar a ronda.');});}}
-   if(networkLobbyData?.player_id===st.representative_id&&networkMimeSecretRound===st.round&&networkMimeSecret&&now>=drawUntil)$('mimeWord').textContent='🎭 '+networkMimeSecret;
+   if(networkLobbyData?.player_id===st.representative_id&&networkMimeSecretRound===st.round&&networkMimeSecret&&now>=drawUntil)mimeRevealWord('🎭 '+networkMimeSecret);
   }else{$('mimeDrawStage').classList.add('hidden');$('mimeTimer').textContent=!st.started?(duration===0?'∞':String(Math.floor(duration/60)).padStart(2,'0')+':'+String(duration%60).padStart(2,'0')):(!deadline?'∞':String(Math.floor(shown/60)).padStart(2,'0')+':'+String(shown%60).padStart(2,'0'));}
   $('mimeTimer').classList.toggle('urgent',!!deadline&&remaining<=10);$('mimeTimer').classList.toggle('preparing',!st.started&&!!prepareUntil&&now>=drawUntil&&now<prepareUntil);
   if(networkGameHost&&st.started&&deadline&&remaining===0&&!st.locked&&!st._resolving){st._resolving=true;networkMimeResolveRound(false,'timeout');}
@@ -578,7 +578,6 @@ function networkRenderMimeScores(){
 }
 async function networkRenderMimeState(){
  const st=networkGameState;if(!st||st.mode!=='mimicas')return;
- mimeStop();
  if(st.finished){
   networkGameActive=false;screen('result');
   const players=(networkLobbyData?.players||[]).slice().sort((a,b)=>b.score-a.score);
@@ -599,7 +598,8 @@ async function networkRenderMimeState(){
  $('mimePictureClue').textContent=st.clues?.[Math.min(4,Number(st.clue_index)||0)]||'🎭';
  $('mimePictureClue').style.fontSize='64px';
  $('mimeClueProgress').textContent='Imagem '+(Math.min(4,Number(st.clue_index)||0)+1)+' de 5 · vale '+mimePoints[Math.min(4,Number(st.clue_index)||0)]+' pontos';
- $('mimeWord').textContent=st.locked?(st.answer||'Ronda concluída'):isRep?(st.draw_until&&Date.now()<Number(st.draw_until)?'🎭 A sortear…':networkMimeSecretRound===st.round&&networkMimeSecret?'🎭 '+networkMimeSecret:'A carregar palavra secreta…'):'A palavra está oculta neste telemóvel';
+ const onlineWord=st.locked?(st.answer||'Ronda concluída'):isRep?(st.draw_until&&Date.now()<Number(st.draw_until)?'🎭 A sortear…':networkMimeSecretRound===st.round&&networkMimeSecret?'🎭 '+networkMimeSecret:'A carregar palavra secreta…'):'A palavra está oculta neste telemóvel';
+ if(isRep&&!st.locked&&networkMimeSecretRound===st.round&&networkMimeSecret&&Date.now()>=(Number(st.draw_until)||0))mimeRevealWord('🎭 '+networkMimeSecret);else $('mimeWord').textContent=onlineWord;
  $('mimeFeedback').textContent=st.feedback||(isRep?'És o representante. Faz a mímica sem falar!':'Observa o representante e tenta adivinhar.');
  $('mimeReveal').disabled=!networkGameHost||!st.started||st.locked||Number(st.clue_index)>=4;
  $('mimeReveal').textContent=Number(st.clue_index)>=4?'Todas as imagens reveladas':'Ver próxima imagem';
@@ -618,6 +618,7 @@ async function networkRenderMimeState(){
 }
 async function networkStartMimicas(){
  if(!networkRoom||!networkLobbyData?.is_host)return;
+ mimeStop();
  try{
   await networkCall('atina_v2_start_room',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});
   const players=networkLobbyData.players||[];
@@ -817,6 +818,7 @@ const mimeCards=[];
 let mimeDeck=[],mimeUsedCardIds=[],mimePos=0,mimeTeam=0,mimeScores=[0,0],mimeSeconds=60,mimeInterval=null,mimeRunning=false,mimePreparing=false,mimePrepInterval=null,mimeDrawInterval=null,mimeClue=0,mimeRaceElapsed=[0,0],mimeRaceStartedAt=0,mimeRaceTick=null,mimeRaceFinished=false;
 const mimePoints=[20,16,12,8,5];
 function mimeStop(){if(mimeInterval!==null)clearInterval(mimeInterval);if(mimePrepInterval!==null)clearInterval(mimePrepInterval);if(mimeDrawInterval!==null)clearInterval(mimeDrawInterval);mimeInterval=null;mimePrepInterval=null;mimeDrawInterval=null;mimeRunning=false;mimePreparing=false;$('mimeTimer').classList.remove('preparing');$('mimeDrawStage').classList.add('hidden');}
+function mimeRevealWord(word){const el=$('mimeWord');if(el.textContent===word)return;el.textContent=word;el.classList.remove('draw-result');void el.offsetWidth;el.classList.add('draw-result');}
 function mimeDrawScores(){$('mimeScore1').textContent='Equipa 1: '+mimeScores[0]+' pontos';$('mimeScore2').textContent='Equipa 2: '+mimeScores[1]+' pontos';$('mimePlayer').textContent='Vez da Equipa '+(mimeTeam+1);$('mimeRound').textContent='RONDA '+(mimePos+1)+' · '+mimeUsedCardIds.length+' jogadas';}
 function mimeRenderClue(){
  const clue=mimeDeck[mimePos]?.[2]?.[mimeClue]||'🎭';
@@ -843,7 +845,7 @@ function mimeShowNext(){
  mimeDrawScores();mimeRenderClue();$('mimeReveal').disabled=true;
  const stage=$('mimeDrawStage'),icon=$('mimeDrawIcon'),label=$('mimeDrawLabel');stage.classList.remove('hidden');label.textContent='A BARALHAR AS CARTAS…';
  const symbols=['🎭','🕺','🐒','🚀','🎬','🦁','🧙','⚽','🎸','🐙','🦖','🤹'];let tick=0;
- mimeDrawInterval=setInterval(()=>{icon.textContent=symbols[tick%symbols.length];tick++;if(tick>=14){clearInterval(mimeDrawInterval);mimeDrawInterval=null;stage.classList.add('hidden');$('mimeWord').textContent=card[0];$('mimeWord').classList.remove('draw-result');void $('mimeWord').offsetWidth;$('mimeWord').classList.add('draw-result');$('mimeCategory').textContent='Categoria: '+card[1]+' · só o representante deve ver a palavra';mimeBeginPreparation();}},130);
+ mimeDrawInterval=setInterval(()=>{icon.textContent=symbols[tick%symbols.length];tick++;if(tick>=14){clearInterval(mimeDrawInterval);mimeDrawInterval=null;stage.classList.add('hidden');mimeRevealWord(card[0]);$('mimeCategory').textContent='Categoria: '+card[1]+' · só o representante deve ver a palavra';mimeBeginPreparation();}},130);
 }
 function mimeBeginPreparation(){
  mimePreparing=true;let remaining=10;
