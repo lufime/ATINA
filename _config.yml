@@ -1,0 +1,6 @@
+exclude:
+  - .github
+  - scripts
+  - supabase
+  - README.md
+  - SECURITY-DESIGN.md
