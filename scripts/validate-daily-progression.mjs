@@ -16,7 +16,7 @@ for (const id of ['dailyMissionTitle','dailyMissionFill','dailyMissionProgress',
 for (const token of ['atinaReadEngagement','atinaRenderDailyMission','atinaRecordChallengeCompletion','atinaYesterday','dailyCount','streak']) {
   if (!html.includes(token)) throw new Error('Falta a lógica de progressão: ' + token);
 }
-if (!/atinaRecordChallengeCompletion\\('local:'\\+atinaRunId\\+':'\\+pos\\)/.test(html)) throw new Error('As rondas locais não são registadas.');
+if (!html.includes("atinaRecordChallengeCompletion('local:'+atinaRunId+':'+pos)")) throw new Error('As rondas locais não são registadas.');
 if (!client.includes("atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position)")) throw new Error('As sessões individuais não registam progresso.');
 if (!client.includes("atinaRecordChallengeCompletion('room:' + (networkRoom?.room_id || 'online') + ':' + st.pos)")) throw new Error('As salas online não registam progresso.');
 if (!html.includes("$('dailyMissionStart').onclick=()=>showHomePage('categories')")) throw new Error('O atalho para a missão diária não funciona.');
