@@ -969,6 +969,8 @@ const atinaSolutionImageCache=new Map();
 async function atinaShowSolutionImage(answer,category,targetId){
  const target=$(targetId);if(!target)return;
  const key=String(answer||'').trim()+'|'+String(category||'').trim();
+ if(target.dataset.solutionKey===key&&!target.classList.contains('hidden'))return;
+ target.dataset.solutionKey=key;
  target.replaceChildren();target.classList.add('hidden');
  if(!answer)return;
  const heading=document.createElement('strong');heading.textContent='📷 A solução em imagem';
@@ -986,13 +988,14 @@ async function atinaShowSolutionImage(answer,category,targetId){
    item=pages.map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).find(x=>x.thumburl&&/^https:\/\//i.test(x.thumburl))||null;
    atinaSolutionImageCache.set(key,item);
   }
+  if(target.dataset.solutionKey!==key)return;
   if(!item){status.textContent='Não foi encontrada uma imagem adequada para esta solução.';return;}
   const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa: '+answer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:10px;background:#091827';
   image.onerror=()=>{image.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
   const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Ver imagem e licença no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
   status.textContent='Solução: '+answer;
   target.append(image,link);
- }catch(error){status.textContent='Não foi possível procurar uma imagem neste momento.';}
+ }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
 </script><script src="./atina-server-client.js"></script></body></html>
