@@ -65,7 +65,7 @@ if (!/const mimeCards=\[\s*\]/.test(html)) errors.push('O catálogo secreto de M
 if (!html.includes("supabaseClient.rpc('atina_v2_local_mime_card'")) errors.push('O modo local não carrega cartas Mímicas individuais do servidor.');
 if (!html.includes('function networkRenderMimeScores(){')) errors.push('A renderização da pontuação de Mímicas multiplayer está em falta.');
 if (!client.includes('O botão local de Mímicas é gerido pelo próprio modo local')) errors.push('O cliente server-authoritative voltou a substituir o botão de Mímicas local.');
-if (!localMimeCompatibility.includes('function public.atina_v2_local_mime_card(')) errors.push('RPC de cartas Mímicas locais em falta.');
+if (!localMimeCompatibility.toLowerCase().includes('function public.atina_v2_local_mime_card(')) errors.push('RPC de cartas Mímicas locais em falta.');
 if (!html.includes('async function networkMimeResolveRound(correct,reason)')) errors.push('A resolução de rondas Mímicas multiplayer não está implementada no cliente.');
 if (!html.includes('function answerMatches(){return false;}')) errors.push('O validador legado de respostas continua ativo.');
 if (!html.includes('function submit(){throw new Error')) errors.push('O envio local legado ainda permite validação no cliente.');
