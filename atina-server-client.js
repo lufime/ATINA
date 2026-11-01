@@ -16,7 +16,8 @@ async function atinaServerRpc(name, args) {
   return data;
 }
 function atinaServerMessage(message) {
-  const target = $('feedback') || $('networkStatus');
+  const gameVisible = $('game') && !$('game').classList.contains('hidden');
+  const target = gameVisible ? $('feedback') : ($('networkStatus') || $('networkLobbyStatus'));
   if (target) target.textContent = message;
 }
 function atinaServerStopTimers() {
