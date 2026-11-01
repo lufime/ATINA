@@ -21,6 +21,6 @@ if (!client.includes("atinaRecordChallengeCompletion('server:' + state.session_i
 if (!client.includes("atinaRecordChallengeCompletion('room:' + (networkRoom?.room_id || 'online') + ':' + st.pos)")) throw new Error('As salas online não registam progresso.');
 if (!html.includes("$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};")) throw new Error('O atalho não inicia o desafio diário selecionado.');
 if (!html.includes('count/3*100') || !html.includes("data.dailyCount>=3&&data.rewardedDate!==today")) throw new Error('A missão diária não recompensa a conclusão uma única vez.');
-if (!/atinaRecordChallengeCompletion\\('mime-local:/.test(html)) throw new Error('As Mímicas locais não registam progresso.');
+if (!html.includes("atinaRecordChallengeCompletion('mime-local:")) throw new Error('As Mímicas locais não registam progresso.');
 if (!html.includes("atinaRecordChallengeCompletion('room-mime:'")) throw new Error('As Mímicas online não registam progresso.');
 console.log('Progressão validada: missão diária jogável, XP, níveis, conquistas, sequência, deduplicação e modos local/servidor/online; sintaxe JavaScript válida.');
