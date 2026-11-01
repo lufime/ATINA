@@ -97,12 +97,13 @@ for (const rpc of networkRpcs) {
   if (!html.includes("'" + rpc + "'") && !client.includes("'" + rpc + "'")) errors.push('Frontend não chama ' + rpc + '.');
 }
 if (!multiplayerCompatibility.includes('private.atina_mime_cards')) errors.push('A camada v2 não reutiliza o catálogo existente de Mímicas.');
-if (/insert\\s+into\\s+private\\.atina_mime_cards/i.test(multiplayerCompatibility)) errors.push('A migração v2 tenta voltar a inserir cartas de Mímicas.');
+if (/insert\s+into\s+private\.atina_mime_cards/i.test(multiplayerCompatibility)) errors.push('A migração v2 tenta voltar a inserir cartas de Mímicas.');
 if (multiplayerCompatibility.includes('private.atina_v2_mime_cards')) errors.push('A migração v2 referencia uma tabela de cartas inexistente.');
-if (/create\\s+or\\s+replace\\s+function\\s+public\\.atina_(?!v2_)(?:create_room|join_room|leave_room|room_state|set_room_ready|set_room_team|start_room|start_room_challenges|reveal_room_clue|submit_room_answer|pass_room_challenge|next_room_challenge|submit_team_proposal|vote_team_proposal|start_mime_round|get_mime_secret|publish_game_state|resolve_mime_round|finish_mime_room|request_timeout)\\b/i.test(multiplayerCompatibility)) {
+if (/create\s+or\s+replace\s+function\s+public\.atina_(?!v2_)(?:create_room|join_room|leave_room|room_state|set_room_ready|set_room_team|start_room|start_room_challenges|reveal_room_clue|submit_room_answer|pass_room_challenge|next_room_challenge|submit_team_proposal|vote_team_proposal|start_mime_round|get_mime_secret|publish_game_state|resolve_mime_round|finish_mime_room|request_timeout)\b/i.test(multiplayerCompatibility)) {
   errors.push('A migração v2 redefine uma RPC legada em vez de usar o namespace v2.');
 }
-\nif (errors.length) {
+
+if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
