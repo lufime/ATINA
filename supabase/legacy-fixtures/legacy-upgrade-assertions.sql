@@ -112,7 +112,7 @@ begin
     raise exception 'Mímicas next round did not rotate to the next representative';
   end if;
 end
-$;
+$$;
 
 -- The legacy RPC bodies/signatures are represented by stable sentinels. Confirm
 -- the v2 install did not replace the old endpoints with a different contract.
