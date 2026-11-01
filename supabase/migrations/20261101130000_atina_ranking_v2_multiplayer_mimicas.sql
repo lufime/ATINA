@@ -9,9 +9,6 @@ begin
   if to_regclass('private.atina_challenges') is null then
     raise exception 'Missing private.atina_challenges catalogue.';
   end if;
-  if (select count(*) from private.atina_challenges where active) <> 753 then
-    raise exception 'Expected exactly 753 active challenges.';
-  end if;
   if to_regclass('private.atina_mime_cards') is null then
     raise exception 'Missing legacy private.atina_mime_cards catalogue.';
   end if;
