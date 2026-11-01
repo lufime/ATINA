@@ -48,8 +48,8 @@ if (markerIndex < 0) {
       if (valid.length !== 753) errors.push('Esperados 753 desafios; encontrados ' + valid.length + '.');
       for (let i = 0; i < games.length; i++) {
         const item = games[i];
-        if (item && (item[3] !== null || !Array.isArray(item[4]) || item[4].length !== 0)) {
-          errors.push('Desafio no índice ' + i + ': resposta ou alternativas ainda presentes no cliente.');
+        if (item && (item[3] !== null || !Array.isArray(item[2]) || item[2].length !== 0 || !Array.isArray(item[4]) || item[4].length !== 0)) {
+          errors.push('Desafio no índice ' + i + ': pistas, resposta ou alternativas ainda presentes no cliente.');
           break;
         }
       }
@@ -71,4 +71,4 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('Cliente seguro válido: JavaScript sintaticamente correto; 802 slots/753 desafios sem respostas ou alternativas; Mímicas sem palavras secretas no browser; submissões encaminhadas para RPCs do servidor.');
+console.log('Cliente seguro válido: JavaScript sintaticamente correto; 802 slots/753 desafios sem pistas, respostas ou alternativas; Mímicas sem palavras secretas no browser; submissões encaminhadas para RPCs do servidor.');
