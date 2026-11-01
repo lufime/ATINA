@@ -11,8 +11,9 @@ Esta documentação descreve a branch `security/server-side-validation`. As alte
 O `index.html` contém apenas os dados necessários à apresentação inicial:
 - identificador/posição histórica preservada;
 - modalidade e emoji;
-- pistas;
 - URL de imagem, quando aplicável.
+
+As pistas também não são enviadas antecipadamente: o browser recebe apenas as pistas já reveladas pela RPC de estado.
 
 As 753 respostas principais e as respetivas alternativas foram removidas do cliente. O catálogo mantém os 802 slots históricos, incluindo 49 posições vazias, para não alterar os IDs. A classificação de dificuldade por índice é pré-calculada e não contém respostas.
 
@@ -62,7 +63,7 @@ Mímicas usa salas multiplayer. O anfitrião escolhe o representante e faz a ava
 ## Verificações automáticas
 
 O workflow de validação verifica:
-- integridade do catálogo público (753 desafios, sem campos de resposta);
+- integridade do catálogo público (753 desafios, sem pistas não reveladas nem campos de resposta);
 - sintaxe JavaScript inline e do cliente separado;
 - ausência de respostas e alternativas no array enviado ao browser;
 - ausência de cartões secretos de Mímicas no browser;
