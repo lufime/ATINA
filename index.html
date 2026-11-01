@@ -837,7 +837,7 @@ function mimeShowResults(){
  $('mimeNext').textContent='🔄 Jogar novamente';$('mimeNext').dataset.restart='1';$('mimeReveal').disabled=true;$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;
 }
 function mimeShowNext(){
- mimeStop();
+ mimeStop();$('mimeSolutionImage').classList.add('hidden');
  const card=mimeDeck[mimePos];if(!card)return mimeShowResults();
  mimeClue=0;mimePreparing=true;
  $('mimeWord').textContent='🎭 A sortear a próxima mímica…';$('mimeCategory').textContent='Categoria: '+card[1]+' · palavra reservada ao representante';
@@ -989,7 +989,7 @@ async function atinaShowSolutionImage(answer,category,targetId){
   if(!item){status.textContent='Não foi encontrada uma imagem adequada para esta solução.';return;}
   const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa: '+answer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:10px;background:#091827';
   image.onerror=()=>{image.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
-  const link=document.createElement('a');link.href=item.descriptionurl||item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Ver imagem e licença no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
+  const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Ver imagem e licença no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
   status.textContent='Solução: '+answer;
   target.append(image,link);
  }catch(error){status.textContent='Não foi possível procurar uma imagem neste momento.';}
