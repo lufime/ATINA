@@ -127,8 +127,9 @@ Foi preparada na branch desta PR uma primeira camada aditiva para os modos locai
 
 ## Bloqueios antes de produção
 
-- Criar uma fixture descartável fiel ao esquema legado (incluindo colunas, constraints, FKs, RPCs e dados sintéticos equivalentes às quatro salas/quatro jogadores e às 48 cartas) e testar nela a migração v2, verificando que objetos e contratos legados permanecem intactos.
-- Acrescentar pgTAP específico para os novos RPCs locais, multiplayer e Mímicas, permissões/RLS, deadlines, pausas, concorrência e respostas públicas sem segredos.
+- Foi acrescentada uma fixture sintética de compatibilidade e um workflow isolado: `Test legacy schema upgrade`. Na execução `41287466284`, a criação do esquema legado, aplicação exclusiva das duas migrações v2 e asserções terminaram com sucesso. A fixture cobre quatro salas, quatro jogadores, as colunas legadas `is_ready`/`joined_at`/`token_hash text`, 48 cartas, segredos, e sentinelas para `atina_room_state`/`atina_create_room`.
+- O teste confirmou a preservação das quatro salas, quatro jogadores, 48 cartas, zero segredos existentes, coluna `is_ready`, RPCs antigas e permissões/RLS das novas tabelas. Também executou Party (fila limitada, bónus da última ronda e alternância de equipas) e Mímicas (início da ronda, estado público sem resposta e entrega da palavra ao representante).
+- Limite da prova: a fixture é sintética e centrada nos objetos que a migração v2 toca; não é um clone integral de todas as políticas, funções e constraints do projeto remoto. Por isso, não substitui a revisão final do inventário real nem a validação pós-aplicação read-only.
 - Definir uma estratégia de baseline suportada para o histórico real de `atina-ranking`. O replay limpo não resolve a sequência pendente `001–019` que colide com o esquema legado; não usar `migration repair` como atalho.
 - Só depois de todos estes critérios passarem, preparar e rever a migração de upgrade e o plano de rollback. A autorização do utilizador permite a execução final quando segura, não justifica aplicar uma sequência já identificada como incompatível.
 
