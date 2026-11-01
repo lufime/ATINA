@@ -93,7 +93,7 @@ const networkRpcs = [
   'atina_v2_finish_mime_room', 'atina_v2_request_timeout'
 ];
 for (const rpc of networkRpcs) {
-  if (!multiplayerCompatibility.includes('function public.' + rpc + '(')) errors.push('RPC multiplayer v2 em falta: ' + rpc + '.');
+  if (!multiplayerCompatibility.toLowerCase().includes('function public.' + rpc + '(')) errors.push('RPC multiplayer v2 em falta: ' + rpc + '.');
   if (!html.includes("'" + rpc + "'") && !client.includes("'" + rpc + "'")) errors.push('Frontend não chama ' + rpc + '.');
 }
 if (!multiplayerCompatibility.includes('private.atina_mime_cards')) errors.push('A camada v2 não reutiliza o catálogo existente de Mímicas.');
