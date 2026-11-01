@@ -4,6 +4,8 @@ import vm from 'node:vm';
 const html = readFileSync('index.html', 'utf8');
 const client = readFileSync('atina-server-client.js', 'utf8');
 const pagesConfig = readFileSync('_config.yml', 'utf8');
+const localCompatibility = readFileSync('supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql', 'utf8');
+const multiplayerCompatibility = readFileSync('supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql', 'utf8');
 const errors = [];
 
 const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
@@ -64,10 +66,43 @@ if (!html.includes('function submit(){throw new Error')) errors.push('O envio lo
 if (!html.includes('async function networkSubmitAnswer(){throw new Error')) errors.push('O envio multiplayer legado ainda permite validação no cliente.');
 if (!html.includes('<script src="./atina-server-client.js"></script>')) errors.push('O cliente server-authoritative não está incluído.');
 if (!/^\s+- supabase$/m.test(pagesConfig) || !/^\s+- scripts$/m.test(pagesConfig)) errors.push('Pastas privadas/de ferramentas não estão excluídas da publicação GitHub Pages.');
-if (!client.includes("'atina_local_submit_answer'")) errors.push('A RPC local de validação do servidor não está ligada.');
-if (!client.includes("'atina_submit_room_answer'")) errors.push('A RPC multiplayer de validação do servidor não está ligada.');
-if (!client.includes("'atina_submit_team_proposal'")) errors.push('A proposta de equipa segura não está ligada.');
-if (!client.includes("'atina_resolve_mime_round'")) errors.push('A resolução de Mímicas no servidor não está ligada.');
+if (!client.includes("'atina_v2_local_submit_answer'")) errors.push('A RPC local de validação do servidor não está ligada.');
+if (!client.includes("'atina_v2_submit_room_answer'")) errors.push('A RPC multiplayer de validação do servidor não está ligada.');
+if (!client.includes("'atina_v2_submit_team_proposal'")) errors.push('A proposta de equipa segura não está ligada.');
+if (!client.includes("'atina_v2_resolve_mime_round'")) errors.push('A resolução de Mímicas no servidor não está ligada.');
+
+
+const localRpcs = [
+  'atina_v2_start_local_game', 'atina_v2_local_game_state',
+  'atina_v2_local_reveal_clue', 'atina_v2_local_submit_answer',
+  'atina_v2_local_pass_challenge', 'atina_v2_local_next_challenge'
+];
+for (const rpc of localRpcs) {
+  if (!localCompatibility.includes('function public.' + rpc + '(')) errors.push('RPC local v2 em falta: ' + rpc + '.');
+  if (!client.includes("'" + rpc + "'")) errors.push('Cliente local não chama ' + rpc + '.');
+}
+const networkRpcs = [
+  'atina_v2_create_room', 'atina_v2_join_room', 'atina_v2_leave_room',
+  'atina_v2_room_state', 'atina_v2_set_room_ready', 'atina_v2_set_room_team',
+  'atina_v2_start_room', 'atina_v2_start_room_challenges',
+  'atina_v2_reveal_room_clue', 'atina_v2_submit_room_answer',
+  'atina_v2_pass_room_challenge', 'atina_v2_next_room_challenge',
+  'atina_v2_submit_team_proposal', 'atina_v2_vote_team_proposal',
+  'atina_v2_start_mime_round', 'atina_v2_get_mime_secret',
+  'atina_v2_publish_game_state', 'atina_v2_resolve_mime_round',
+  'atina_v2_finish_mime_room', 'atina_v2_request_timeout'
+];
+for (const rpc of networkRpcs) {
+  if (!multiplayerCompatibility.toLowerCase().includes('function public.' + rpc + '(')) errors.push('RPC multiplayer v2 em falta: ' + rpc + '.');
+  if (!html.includes("'" + rpc + "'") && !client.includes("'" + rpc + "'")) errors.push('Frontend não chama ' + rpc + '.');
+}
+if (!multiplayerCompatibility.includes('private.atina_mime_cards')) errors.push('A camada v2 não reutiliza o catálogo existente de Mímicas.');
+if (/insert\s+into\s+private\.atina_mime_cards/i.test(multiplayerCompatibility)) errors.push('A migração v2 tenta voltar a inserir cartas de Mímicas.');
+if (multiplayerCompatibility.includes('private.atina_v2_mime_cards')) errors.push('A migração v2 referencia uma tabela de cartas inexistente.');
+if (multiplayerCompatibility.includes('private.atina_v2_challenges')) errors.push('A migração v2 deve reutilizar private.atina_challenges.');
+if (/create\s+or\s+replace\s+function\s+public\.atina_(?!v2_)(?:create_room|join_room|leave_room|room_state|set_room_ready|set_room_team|start_room|start_room_challenges|reveal_room_clue|submit_room_answer|pass_room_challenge|next_room_challenge|submit_team_proposal|vote_team_proposal|start_mime_round|get_mime_secret|publish_game_state|resolve_mime_round|finish_mime_room|request_timeout)\b/i.test(multiplayerCompatibility)) {
+  errors.push('A migração v2 redefine uma RPC legada em vez de usar o namespace v2.');
+}
 
 if (errors.length) {
   console.error(errors.join('\n'));
