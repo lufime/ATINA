@@ -955,24 +955,34 @@ window.addEventListener('focus',refreshVisibleClock);
 })();
 
 
-/* Imagem da solução: só apresentar resultados com correspondência textual à resposta. */
+/* Imagens de solução: priorizar a imagem representativa da entidade Wikidata. */
 const atinaSolutionImageCache=new Map();
 function atinaSolutionImageText(value){
  return String(value||'').replace(/<[^>]*>/g,' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+}
+function atinaSolutionImageLicense(item){
+ return String(item?.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
+}
+function atinaSolutionImageUsable(item){
+ if(!item?.thumburl||!/^https:\/\//i.test(item.thumburl))return false;
+ const license=atinaSolutionImageLicense(item);
+ if(!(/public domain/.test(license)||/\bcc0\b/.test(license)))return false;
+ // Evita ícones, logótipos e ficheiros vetoriais que podem passar por uma
+ // correspondência de nome, mas não funcionam como fotografia ilustrativa.
+ if(item.mime!=='image/jpeg'||Number(item.width)<400||Number(item.height)<300)return false;
+ const title=atinaSolutionImageText(item.title);
+ if(/\b(icon|logo|symbol|emblem|coat of arms|flag|speaker|audio|sound)\b/.test(title))return false;
+ return true;
 }
 function atinaSolutionImageMatch(answer,category,item){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
  const answerTokens=atinaSolutionImageText(answer).split(/\s+/).filter(token=>token.length>1&&!stop.has(token));
  const categoryTokens=atinaSolutionImageText(category).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
- // Uma única palavra (ex.: "Hanói") pode aparecer na descrição de qualquer foto
- // tirada nessa cidade. Sem contexto suficiente, é mais seguro não mostrar imagem.
  if(answerTokens.length<2)return null;
  const title=atinaSolutionImageText(item.title);
  const titleWords=new Set(title.split(/\s+/));
  const matched=answerTokens.filter(token=>titleWords.has(token));
  const answerCoverage=matched.length/answerTokens.length;
- // Exigir todos os termos da resposta no próprio nome do ficheiro evita aceitar
- // fotografias apenas porque a descrição menciona a resposta incidentalmente.
  if(answerCoverage<1)return null;
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const words=new Set((title+' '+description).split(/\s+/));
@@ -981,11 +991,9 @@ function atinaSolutionImageMatch(answer,category,item){
 }
 async function atinaWikidataSolutionImage(answer){
  const normalizedAnswer=atinaSolutionImageText(answer);
- if(!normalizedAnswer)return null;
- // O P18 do Wikidata liga a entidade diretamente à sua imagem representativa.
- // É uma fonte semântica mais fiável do que aceitar uma foto que apenas menciona a cidade.
+ if(!normalizedAnswer)return {entityFound:false,item:null};
  for(const language of ['pt','en']){
-  const searchUrl='https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(answer)+'&language='+language+'&uselang='+language+'&type=item&limit=5&format=json&origin=*';
+  const searchUrl='https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(answer)+'&language='+language+'&uselang='+language+'&type=item&limit=10&format=json&origin=*';
   const searchResponse=await fetch(searchUrl,{headers:{Accept:'application/json'}});
   if(!searchResponse.ok)continue;
   const searchData=await searchResponse.json();
@@ -996,20 +1004,22 @@ async function atinaWikidataSolutionImage(answer){
   if(!entityResponse.ok)continue;
   const entityData=await entityResponse.json();
   const imageClaims=entityData.entities?.[entity.id]?.claims?.P18||[];
-  for(const claim of imageClaims.slice(0,3)){
+  for(const claim of imageClaims){
    const fileName=claim.mainsnak?.datavalue?.value;
    if(!fileName)continue;
-   const commonsUrl='https://commons.wikimedia.org/w/api.php?action=query&titles='+encodeURIComponent('File:'+fileName)+'&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1000&iiextmetadatafilter=LicenseShortName&format=json&origin=*';
+   const commonsUrl='https://commons.wikimedia.org/w/api.php?action=query&titles='+encodeURIComponent('File:'+fileName)+'&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&iiextmetadatafilter=LicenseShortName&format=json&origin=*';
    const commonsResponse=await fetch(commonsUrl,{headers:{Accept:'application/json'}});
    if(!commonsResponse.ok)continue;
    const commonsData=await commonsResponse.json();
    const page=Object.values(commonsData.query?.pages||{})[0];
    const candidate={title:page?.title,...(page?.imageinfo?.[0]||{})};
-   const license=String(candidate.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
-   if(candidate.thumburl&&/^https:\/\//i.test(candidate.thumburl)&&(/public domain/.test(license)||/cc0/.test(license)))return candidate;
+   if(atinaSolutionImageUsable(candidate))return {entityFound:true,item:candidate};
   }
+  // A entidade é exata, mas não tem imagem representativa com licença e
+  // qualidade adequadas. Não recorrer a uma pesquisa textual ambígua.
+  return {entityFound:true,item:null};
  }
- return null;
+ return {entityFound:false,item:null};
 }
 async function atinaShowSolutionImage(answer,category,targetId){
  const target=$(targetId);if(!target)return;
@@ -1024,22 +1034,24 @@ async function atinaShowSolutionImage(answer,category,targetId){
  try{
   let item=atinaSolutionImageCache.get(key);
   if(item===undefined){
-   const queries=[cleanAnswer,cleanAnswer+' '+cleanCategory].filter((q,i,a)=>q&&a.indexOf(q)===i);
-   item=null;
-   for(const query of queries){
-    const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1000&format=json&origin=*';
-    const response=await fetch(url,{headers:{Accept:'application/json'}});
-    if(!response.ok)throw new Error('Pesquisa indisponível');
-    const data=await response.json();
-    const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(candidate=>{
-     const license=String(candidate.extmetadata?.LicenseShortName?.value||'').replace(/<[^>]*>/g,'').trim().toLowerCase();
-     return candidate.thumburl&&/^https:\/\//i.test(candidate.thumburl)&&(/public domain/.test(license)||/\bcc0\b/.test(license));
-    }).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate)})).filter(result=>result.match);
-    candidates.sort((a,b)=>b.match.answerCoverage-a.match.answerCoverage||b.match.categoryCoverage-a.match.categoryCoverage);
-    if(candidates.length){item=candidates[0].candidate;break;}
+   // Primeiro, procurar a entidade exata e usar apenas a sua imagem P18.
+   const semantic=await atinaWikidataSolutionImage(cleanAnswer);
+   item=semantic.item;
+   // Só usar a pesquisa Commons quando não existe uma entidade Wikidata
+   // exata. Se a entidade existe mas não tem imagem segura, não adivinhar.
+   if(!semantic.entityFound&&!item){
+    const queries=[cleanAnswer,cleanAnswer+' '+cleanCategory].filter((q,i,a)=>q&&a.indexOf(q)===i);
+    for(const query of queries){
+     const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
+     const response=await fetch(url,{headers:{Accept:'application/json'}});
+     if(!response.ok)throw new Error('Pesquisa indisponível');
+     const data=await response.json();
+     const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(atinaSolutionImageUsable).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate)})).filter(result=>result.match);
+     candidates.sort((a,b)=>b.match.answerCoverage-a.match.answerCoverage||b.match.categoryCoverage-a.match.categoryCoverage);
+     if(candidates.length){item=candidates[0].candidate;break;}
+    }
    }
-   if(!item)item=await atinaWikidataSolutionImage(cleanAnswer);
-   atinaSolutionImageCache.set(key,item);
+   atinaSolutionImageCache.set(key,item||null);
   }
   if(target.dataset.solutionKey!==key)return;
   if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
