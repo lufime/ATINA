@@ -126,3 +126,20 @@ Foi preparada na branch desta PR uma primeira camada aditiva para os modos locai
 - Resolver e documentar o percurso de migração/baseline antes de qualquer execução remota.
 
 A PR permanece Draft. Não houve alterações em `main`, `atina-development`, no projeto remoto `atina-ranking` após a transferência já documentada, nem deploy GitHub Pages.
+
+
+## Implementação incremental — multiplayer e Mímicas v2 (2026-11-01)
+
+Foi preparada uma segunda migração candidata: `20261101130000_atina_ranking_v2_multiplayer_mimicas.sql`.
+
+- Cria tabelas isoladas `public.atina_v2_*` e `private.atina_v2_*` para salas, jogadores, respostas, resultados, propostas/votos, estado de jogo, rondas de Mímicas e budgets de pausa.
+- Cria RPCs novas com prefixo `atina_v2_*`; o cliente em `index.html` e `atina-server-client.js` foi atualizado para chamar esses contratos.
+- A camada de Mímicas referencia a tabela já existente `private.atina_mime_cards`; não recria nem volta a inserir as 48 cartas. As rondas e os segredos são tratados na estrutura v2.
+- O pedido de pausa passou a usar `atina_v2_request_timeout` e uma tabela privada de budgets v2, separada dos budgets legados.
+- A migração inclui pré-condições para exigir as 753 perguntas e as 48 cartas existentes, e para recusar colisões com tabelas v2 já criadas.
+- Não redefine nem elimina as RPCs antigas nem altera as tabelas de salas legadas.
+
+**Verificação efetuada:** inspeção estática confirmou que os RPCs chamados pelo cliente têm definições correspondentes na migração, que os nomes de RPC antigos deixaram de ser chamados pelo cliente atualizado e que não existe seed de cartas Mímicas na migração. A migração mantém referências às tabelas antigas apenas nas pré-condições que confirmam a sua existência e na tabela de cartas partilhada.
+
+**Ainda não testado:** não foi executado parser PostgreSQL, replay, pgTAP, teste de upgrade ou teste de browser. A migração depende ainda da estratégia de baseline/histórico e de testes numa base descartável que reproduza o esquema legado. Não aplicar no projeto remoto nesta fase.
+
