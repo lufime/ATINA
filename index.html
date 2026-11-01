@@ -652,7 +652,7 @@ function renderNetworkTimeoutPanel(){
   const b=document.createElement('button');b.className='btn secondary full';b.style.marginTop='7px';
   b.textContent='⏸️ '+label+' · restam '+networkTimeoutLabel(remaining);
   b.disabled=remaining<900||!!state.locked||!!state.pause;
-  b.onclick=async()=>{b.disabled=true;b.textContent='A pedir pausa…';try{await networkCall('atina_request_timeout',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_scope:scope});await networkRefreshRoom();}catch(e){b.disabled=false;b.textContent='⏸️ '+label+' · restam '+networkTimeoutLabel(remaining);info.textContent=e.message||'Não foi possível iniciar a pausa.';}};
+  b.onclick=async()=>{b.disabled=true;b.textContent='A pedir pausa…';try{await networkCall('atina_v2_request_timeout',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_scope:scope});await networkRefreshRoom();}catch(e){b.disabled=false;b.textContent='⏸️ '+label+' · restam '+networkTimeoutLabel(remaining);info.textContent=e.message||'Não foi possível iniciar a pausa.';}};
   actions.appendChild(b);
  };
  add('Pausa individual · 15 min','player',personal);
