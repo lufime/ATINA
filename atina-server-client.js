@@ -7,6 +7,7 @@ let atinaServerPolling = null;
 let atinaServerBusy = false;
 let atinaServerLastResult = '{}';
 let atinaNetworkChallengeKey = '';
+let atinaNetworkFeedback = '';
 
 async function atinaServerRpc(name, args) {
   if (!supabaseClient) throw new Error('É necessária uma ligação à Internet para jogar. Atualiza a página e tenta novamente.');
@@ -259,11 +260,33 @@ async function atinaServerRestoreSession() {
 }
 
 /* Multiplayer challenges use only server-issued state and server-side scoring. */
+networkDrawClock = function() {
+  const st = networkGameState;
+  if (!st || !networkGameActive) return;
+  if (st.mode === 'mimicas') {
+    const deadline = Number(st.deadline || 0);
+    const remaining = deadline ? Math.max(0, Math.ceil((deadline - Date.now()) / 1000)) : 0;
+    $('mimeTimer').textContent = deadline ? String(Math.floor(remaining / 60)).padStart(2, '0') + ':' + String(remaining % 60).padStart(2, '0') : '∞';
+    return;
+  }
+  const pause = st.pause;
+  if (pause && Date.parse(pause.ends_at) > Date.now()) {
+    const left = Math.max(0, Math.ceil((Date.parse(pause.ends_at) - Date.now()) / 1000));
+    $('timerDisplay').textContent = 'PAUSA · ' + String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0');
+    $('timerDisplay').classList.remove('urgent');
+    return;
+  }
+  const deadline = Number(st.deadline || 0);
+  const remaining = deadline ? Math.max(0, Math.ceil((deadline - Date.now()) / 1000)) : 0;
+  $('timerDisplay').textContent = deadline ? String(Math.floor(remaining / 60)).padStart(2, '0') + ':' + String(remaining % 60).padStart(2, '0') : 'Sem limite';
+  $('timerDisplay').classList.toggle('urgent', !!deadline && remaining <= 10);
+  timeLeft = remaining;
+};
 networkReceiveState = function(st) {
   if (!st || (!['challenges', 'mimicas', 'completed'].includes(st.mode))) return;
   const previous = networkGameState;
   const changed = !previous || previous.pos !== st.pos || previous.challenge_id !== st.challenge_id || previous.round !== st.round || previous.mode !== st.mode;
-  if (changed) { atinaNetworkChallengeKey = [st.mode,st.pos,st.challenge_id,st.round].join(':'); $('answer').value = ''; }
+  if (changed) { atinaNetworkChallengeKey = [st.mode,st.pos,st.challenge_id,st.round].join(':'); atinaNetworkFeedback = ''; $('answer').value = ''; }
   networkGameState = st;
   networkLastRevision = Number(st.revision || 0);
   networkGameActive = st.mode !== 'completed';
@@ -330,7 +353,7 @@ networkRenderGameState = function() {
   $('continue').classList.toggle('hidden', !networkGameHost || !st.locked || paused);
   $('answer').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
   $('submit').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
-  $('feedback').textContent = st.locked ? 'Resposta: ' + (st.answer || 'ronda terminada') : 'A resposta será validada pelo servidor.';
+  $('feedback').textContent = st.locked ? 'Resposta: ' + (st.answer || 'ronda terminada') : (atinaNetworkFeedback || 'A resposta será validada pelo servidor.');
   $('networkScoreboard').classList.remove('hidden');
   renderTeamProposal();
   const players = networkLobbyData?.players || [];
@@ -363,9 +386,12 @@ networkSubmitAnswer = async function() {
       networkAnsweredThisChallenge = true;
       $('answer').value = '';
     } else {
-      await networkCall('atina_submit_room_answer', {
+      const result = await networkCall('atina_submit_room_answer', {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token, p_answer: answer
       });
+      atinaNetworkFeedback = result.status === 'correct' ? '✓ Resposta certa! +' + Number(result.points || 0) + ' pontos atribuídos pelo servidor.' : result.status === 'wrong' ? 'Resposta errada: −10 pontos. Tenta novamente.' : result.status === 'already_correct' ? 'Esta resposta já foi contabilizada.' : result.status === 'locked' ? 'A ronda já terminou.' : 'Resposta recebida pelo servidor.';
+      if (result.status === 'correct') playAtinaSound('correct');
+      else if (result.status === 'wrong') playAtinaSound('wrong');
       $('answer').value = '';
     }
     await networkRefreshRoom();
