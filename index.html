@@ -541,9 +541,14 @@ function networkDrawClock(){
  if(networkGameState.mode==='mimicas'){
   const st=networkGameState,duration=Number(st.duration_seconds)||0,deadline=Number(st.deadline)||0;
   const remaining=deadline?Math.max(0,Math.ceil((deadline-Date.now())/1000)):0;
-  const shown=st.started?(deadline?remaining:0):duration;
-  $('mimeTimer').textContent=!st.started?(duration===0?'∞':String(Math.floor(duration/60)).padStart(2,'0')+':'+String(duration%60).padStart(2,'0')):(!deadline?'∞':String(Math.floor(shown/60)).padStart(2,'0')+':'+String(shown%60).padStart(2,'0'));
-  $('mimeTimer').classList.toggle('urgent',!!deadline&&remaining<=10);
+  const shown=st.started?(deadline?remaining:0):duration,now=Date.now(),drawUntil=Number(st.draw_until)||0,prepareUntil=Number(st.prepare_until)||0;
+  if(!st.started&&drawUntil&&prepareUntil){
+   const stage=$('mimeDrawStage'),icon=$('mimeDrawIcon'),label=$('mimeDrawLabel');
+   if(now<drawUntil){const symbols=['🎭','🕺','🐒','🚀','🎬','🦁','🧙','⚽','🎸','🐙','🦖','🤹'];stage.classList.remove('hidden');icon.textContent=symbols[Math.floor((now-(drawUntil-2000))/130)%symbols.length];label.textContent='A BARALHAR AS CARTAS…';$('mimeTimer').textContent='🎲';$('mimeFeedback').textContent='Sorteio da próxima mímica…';}
+   else{stage.classList.add('hidden');const left=Math.max(0,Math.ceil((prepareUntil-now)/1000));$('mimeTimer').textContent=left>0?'00:'+String(left).padStart(2,'0'):'A iniciar…';$('mimeFeedback').textContent=left>0?'⏳ Prepara-te! A ronda começa automaticamente.':'A iniciar a ronda…';if(networkGameHost&&left===0&&!st._starting){st._starting=true;networkMimeStartClock().catch(e=>{st._starting=false;networkMessage('mimeFeedback',e.message||'Não foi possível iniciar a ronda.');});}}
+   if(networkLobbyData?.player_id===st.representative_id&&networkMimeSecretRound===st.round&&networkMimeSecret&&now>=drawUntil)$('mimeWord').textContent='🎭 '+networkMimeSecret;
+  }else{$('mimeDrawStage').classList.add('hidden');$('mimeTimer').textContent=!st.started?(duration===0?'∞':String(Math.floor(duration/60)).padStart(2,'0')+':'+String(duration%60).padStart(2,'0')):(!deadline?'∞':String(Math.floor(shown/60)).padStart(2,'0')+':'+String(shown%60).padStart(2,'0'));}
+  $('mimeTimer').classList.toggle('urgent',!!deadline&&remaining<=10);$('mimeTimer').classList.toggle('preparing',!st.started&&!!prepareUntil&&now>=drawUntil&&now<prepareUntil);
   if(networkGameHost&&st.started&&deadline&&remaining===0&&!st.locked&&!st._resolving){st._resolving=true;networkMimeResolveRound(false,'timeout');}
   return;
  }
@@ -592,7 +597,7 @@ async function networkRenderMimeState(){
  $('mimePictureClue').textContent=st.clues?.[Math.min(4,Number(st.clue_index)||0)]||'🎭';
  $('mimePictureClue').style.fontSize='64px';
  $('mimeClueProgress').textContent='Imagem '+(Math.min(4,Number(st.clue_index)||0)+1)+' de 5 · vale '+mimePoints[Math.min(4,Number(st.clue_index)||0)]+' pontos';
- $('mimeWord').textContent=st.locked?(st.answer||'Ronda concluída'):isRep?(networkMimeSecretRound===st.round&&networkMimeSecret?'🎭 '+networkMimeSecret:'A carregar palavra secreta…'):'A palavra está oculta neste telemóvel';
+ $('mimeWord').textContent=st.locked?(st.answer||'Ronda concluída'):isRep?(st.draw_until&&Date.now()<Number(st.draw_until)?'🎭 A sortear…':networkMimeSecretRound===st.round&&networkMimeSecret?'🎭 '+networkMimeSecret:'A carregar palavra secreta…'):'A palavra está oculta neste telemóvel';
  $('mimeFeedback').textContent=st.feedback||(isRep?'És o representante. Faz a mímica sem falar!':'Observa o representante e tenta adivinhar.');
  $('mimeReveal').disabled=!networkGameHost||!st.started||st.locked||Number(st.clue_index)>=4;
  $('mimeReveal').textContent=Number(st.clue_index)>=4?'Todas as imagens reveladas':'Ver próxima imagem';
@@ -605,7 +610,7 @@ async function networkRenderMimeState(){
  networkRenderMimeScores();
  if(isRep&&networkMimeSecretRound!==st.round){
   networkMimeSecretRound=st.round;networkMimeSecret='';
-  try{const secret=await networkCall('atina_v2_get_mime_secret',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});if(networkGameState?.mode==='mimicas'&&networkGameState.round===st.round&&networkLobbyData?.player_id===st.representative_id){networkMimeSecret=secret.word||'';$('mimeWord').textContent=networkGameState.locked?(networkGameState.answer||networkMimeSecret):'🎭 '+networkMimeSecret;}}
+  try{const secret=await networkCall('atina_v2_get_mime_secret',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});if(networkGameState?.mode==='mimicas'&&networkGameState.round===st.round&&networkLobbyData?.player_id===st.representative_id){networkMimeSecret=secret.word||'';$('mimeWord').textContent=networkGameState.locked?(networkGameState.answer||networkMimeSecret):Date.now()>=(Number(st.draw_until)||0)?'🎭 '+networkMimeSecret:'🎭 A sortear…';}}
   catch(e){$('mimeWord').textContent='Não foi possível carregar a palavra. Contacta o anfitrião.';}
  }
 }
@@ -623,7 +628,7 @@ async function networkStartMimicas(){
 }
 async function networkMimeStartClock(){
  if(!networkGameHost||!networkGameState||networkGameState.mode!=='mimicas'||networkGameState.started||networkGameState.locked)return;
- const st=networkGameState;st.started=true;st.deadline=st.duration_seconds?Date.now()+st.duration_seconds*1000:0;st.revision=(st.revision||0)+1;
+ const st=networkGameState;if(st.prepare_until&&Date.now()<Number(st.prepare_until))return;st.started=true;st.deadline=st.duration_seconds?Date.now()+st.duration_seconds*1000:0;st.revision=(st.revision||0)+1;
  try{await networkPublishGameState();await networkRefreshRoom();}catch(e){networkMessage('mimeFeedback',e.message||'Não foi possível iniciar o cronómetro.');}
 }
 async function networkMimeReveal(){
@@ -833,7 +838,7 @@ function mimeShowNext(){
  $('mimeFeedback').textContent='🎲 Sorteio em curso! Prepara-te para representar.';
  mimeSeconds=Number($('timerMode')?.value??60);if(!Number.isFinite(mimeSeconds))mimeSeconds=60;
  $('mimeNext').textContent='A preparar…';$('mimeNext').disabled=true;$('mimeNext').dataset.restart='0';$('mimeCorrect').disabled=true;$('mimeSkip').disabled=true;$('mimeReveal').disabled=true;
- mimeDrawScores();mimeRenderClue();
+ mimeDrawScores();mimeRenderClue();$('mimeReveal').disabled=true;
  const stage=$('mimeDrawStage'),icon=$('mimeDrawIcon'),label=$('mimeDrawLabel');stage.classList.remove('hidden');label.textContent='A BARALHAR AS CARTAS…';
  const symbols=['🎭','🕺','🐒','🚀','🎬','🦁','🧙','⚽','🎸','🐙','🦖','🤹'];let tick=0;
  mimeDrawInterval=setInterval(()=>{icon.textContent=symbols[tick%symbols.length];tick++;if(tick>=14){clearInterval(mimeDrawInterval);mimeDrawInterval=null;stage.classList.add('hidden');$('mimeWord').textContent=card[0];$('mimeWord').classList.remove('draw-result');void $('mimeWord').offsetWidth;$('mimeWord').classList.add('draw-result');$('mimeCategory').textContent='Categoria: '+card[1]+' · só o representante deve ver a palavra';mimeBeginPreparation();}},130);
@@ -841,7 +846,6 @@ function mimeShowNext(){
 function mimeBeginPreparation(){
  mimePreparing=true;let remaining=10;
  $('mimeTimer').textContent='00:10';$('mimeTimer').classList.add('preparing');$('mimeFeedback').textContent='⏳ Tens 10 segundos para te preparares. A ronda começa automaticamente!';$('mimeDrawStage').classList.add('hidden');
- $('mimePrepInterval')?.clearInterval;
  mimePrepInterval=setInterval(()=>{remaining--;if(remaining>0){$('mimeTimer').textContent='00:'+String(remaining).padStart(2,'0');return;}clearInterval(mimePrepInterval);mimePrepInterval=null;mimePreparing=false;$('mimeTimer').classList.remove('preparing');$('mimeNext').disabled=false;$('mimeNext').textContent='Ronda em curso';mimeStartClock();},1000);
 }
 async function mimeLoadNextCard(){
