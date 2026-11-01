@@ -118,14 +118,21 @@ Foi preparada na branch desta PR uma primeira camada aditiva para os modos locai
 
 **Limite importante:** isto é código preparado na branch, não uma migração aplicada. Não foi executado contra PostgreSQL nem contra `atina-ranking`; a verificação feita até agora foi apenas estática (nomes das RPCs e correspondência das chamadas no cliente). A migração ainda depende de uma estratégia de baseline/histórico que impeça o CLI de tentar aplicar primeiro as migrações antigas incompatíveis.
 
-## Trabalho ainda em falta
+## Estado de validação atualizado (2026-11-01)
 
-- Multiplayer v2: tabelas e RPCs isoladas que não substituam `atina_create_room`, `atina_join_room`, `atina_room_state` e restantes contratos legados.
-- Mímicas: mapear as 48 cartas e os segredos existentes para um fluxo server-authoritative sem recriar nem alterar as tabelas legadas.
-- Testes de upgrade sobre uma cópia descartável do esquema legado, testes SQL/pgTAP para os novos RPCs, regressão dos RPCs antigos, RLS e preservação das salas.
-- Resolver e documentar o percurso de migração/baseline antes de qualquer execução remota.
+- O workflow **Replay Supabase migrations** concluiu com sucesso na head `f3b0a13342442630c741bcf665d494a6ac6ec59d`: todas as migrações do repositório foram aplicadas numa base local descartável vazia, o histórico local foi verificado e a suite pgTAP terminou com `All tests successful` / `Result: PASS`.
+- O workflow **Validar banco de desafios** também concluiu com sucesso na mesma head, incluindo a validação estática ampliada das RPCs v2 e das referências às tabelas Mímicas existentes.
+- Estes resultados provam que a sequência instala numa base vazia e que os testes pgTAP existentes passam. **Não provam ainda um upgrade seguro do esquema legado de `atina-ranking`**, porque o workflow não reproduz as tabelas/RPCs legadas nem as quatro salas reais.
+- As camadas local v2 e multiplayer/Mímicas v2 estão preparadas na branch; não foram aplicadas a nenhum projeto Supabase remoto e ainda não têm testes funcionais dedicados para cada RPC, concorrência, browser ou dispositivos reais.
 
-A PR permanece Draft. Não houve alterações em `main`, `atina-development`, no projeto remoto `atina-ranking` após a transferência já documentada, nem deploy GitHub Pages.
+## Bloqueios antes de produção
+
+- Criar uma fixture descartável fiel ao esquema legado (incluindo colunas, constraints, FKs, RPCs e dados sintéticos equivalentes às quatro salas/quatro jogadores e às 48 cartas) e testar nela a migração v2, verificando que objetos e contratos legados permanecem intactos.
+- Acrescentar pgTAP específico para os novos RPCs locais, multiplayer e Mímicas, permissões/RLS, deadlines, pausas, concorrência e respostas públicas sem segredos.
+- Definir uma estratégia de baseline suportada para o histórico real de `atina-ranking`. O replay limpo não resolve a sequência pendente `001–019` que colide com o esquema legado; não usar `migration repair` como atalho.
+- Só depois de todos estes critérios passarem, preparar e rever a migração de upgrade e o plano de rollback. A autorização do utilizador permite a execução final quando segura, não justifica aplicar uma sequência já identificada como incompatível.
+
+A PR mantém-se Draft até estes bloqueios estarem resolvidos. Não houve alterações em `main`, `atina-development`, nem no projeto remoto `atina-ranking` para além da transferência dos 753 desafios já documentada. Não houve deploy GitHub Pages.
 
 
 ## Implementação incremental — multiplayer e Mímicas v2 (2026-11-01)
