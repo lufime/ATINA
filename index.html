@@ -321,7 +321,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 /* Pistas visuais do modo Mímicas */
 #mimicaGame .mime-picture-clue{min-height:170px!important}
 #mimeDrawStage{display:grid;place-items:center;gap:8px;margin:12px 0;padding:18px;border:1px solid #d3ad68;border-radius:16px;background:radial-gradient(circle at 50% 40%,#294968,#0b1b2d 72%);min-height:150px;overflow:hidden}
-#mimeDrawStage.hidden{display:none!important}#mimeDrawIcon{font-size:clamp(42px,12vw,66px);line-height:1.1;animation:mimeDrawSpin .32s ease-in-out infinite alternate}#mimeDrawLabel{font-weight:850;letter-spacing:.08em;color:#f3c65e;text-align:center}#mimeTimer.preparing{color:#ffe08a;border-color:#f3c65e;animation:timerPulse .65s infinite alternate}#mimeTimer.draw-result{animation:mimeCardReveal .55s ease both}
+#mimeDrawStage.hidden{display:none!important}#mimeDrawIcon{font-size:clamp(42px,12vw,66px);line-height:1.1;animation:mimeDrawSpin .32s ease-in-out infinite alternate}#mimeDrawLabel{font-weight:850;letter-spacing:.08em;color:#f3c65e;text-align:center}#mimeTimer.preparing{color:#ffe08a;border-color:#f3c65e;animation:timerPulse .65s infinite alternate}#mimeWord.draw-result{display:inline-block;transform-origin:center;animation:mimeCardReveal .65s cubic-bezier(.2,.8,.2,1) both}
 @keyframes mimeDrawSpin{from{transform:translateY(-5px) rotate(-9deg) scale(.92)}to{transform:translateY(5px) rotate(9deg) scale(1.08)}}@keyframes mimeCardReveal{0%{opacity:.2;transform:scale(.82) rotateY(80deg)}100%{opacity:1;transform:scale(1) rotateY(0)}}
 #mimicaGame .mime-picture-clue img{width:clamp(48px,13vw,88px);height:clamp(48px,13vw,88px);object-fit:contain;filter:drop-shadow(0 4px 8px #0005)}
 #mimicaGame #mimeClueProgress{font-weight:750;color:#f3c65e}
