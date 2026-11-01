@@ -306,10 +306,12 @@ networkReceiveState = function(st) {
   if (changed) networkAnsweredThisChallenge = false;
   networkGameHost = !!networkLobbyData?.is_host;
   if (st.mode === 'mimicas') {
+    if (st.finished && networkClockHandle !== null) { clearInterval(networkClockHandle); networkClockHandle = null; }
     networkRenderMimeState();
     if (!st.finished) ensureNetworkClock();
   } else if (st.mode === 'completed') {
     networkGameActive = false;
+    if (networkClockHandle !== null) { clearInterval(networkClockHandle); networkClockHandle = null; }
     $('resultText').textContent = 'Partida multiplayer concluída. Consulta a classificação da sala.';
     screen('result');
   } else {
