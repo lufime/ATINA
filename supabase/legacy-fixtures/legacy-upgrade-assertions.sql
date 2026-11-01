@@ -52,6 +52,23 @@ begin
 end
 $$;
 
+-- Local Mímicas RPC returns exactly one card and never requires direct table access.
+do $
+declare
+  v_card jsonb;
+begin
+  v_card := public.atina_v2_local_mime_card(ARRAY[]::integer[]);
+  if coalesce(v_card->>'word','') = '' then raise exception 'Local Mímicas did not return a word'; end if;
+  if jsonb_array_length(v_card->'clues') <> 5 then raise exception 'Local Mímicas card must have five visual clues'; end if;
+  if has_table_privilege('anon','private.atina_mime_cards','SELECT') then raise exception 'anon can directly read private Mímicas cards'; end if;
+  if not has_function_privilege('anon','public.atina_v2_local_mime_card(integer[])','EXECUTE') then raise exception 'anon cannot request a local Mímicas card'; end if;
+  if public.atina_v2_local_mime_card(ARRAY[(v_card->>'id')::integer]) is not null
+     and (public.atina_v2_local_mime_card(ARRAY[(v_card->>'id')::integer])->>'id')::integer = (v_card->>'id')::integer then
+    raise exception 'Local Mímicas returned an excluded card';
+  end if;
+end
+$;
+
 -- Exercise v2 multiplayer room creation and the server-authoritative Mímicas
 -- secret path without changing any of the legacy fixture's rooms or cards.
 do $$
