@@ -24,3 +24,5 @@ jobs:
         run: node --check scripts/validate-challenges.mjs
       - name: Validar cliente server-authoritative e ausência de segredos
         run: node scripts/validate-server-client.mjs
+      - name: Validar animações de Mímicas nos modos local e online
+        run: node scripts/validate-mimicas-animation.mjs
