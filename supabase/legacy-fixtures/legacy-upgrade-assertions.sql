@@ -98,6 +98,11 @@ begin
   end if;
   v_secret := public.atina_v2_get_mime_secret(v_room_id,v_guest_token);
   if coalesce(v_secret->>'word','') = '' then raise exception 'Mímicas representative did not receive the secret'; end if;
+  -- The server clock must be started through the host-authorized state RPC
+  -- before a round can be resolved, even when the round has no time limit.
+  perform public.atina_v2_publish_game_state(
+    v_room_id,v_host_token,jsonb_build_object('started',true,'clue_index',0)
+  );
   v_state := public.atina_v2_resolve_mime_round(v_room_id,v_host_token,false,0,'pass');
   if coalesce((v_state->>'locked')::boolean,false) is not true then
     raise exception 'Mímicas pass did not close the current round';
