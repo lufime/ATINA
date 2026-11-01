@@ -11,11 +11,12 @@ const required = [
   'security definer',
   'set search_path = \'\'',
   'private.atina_v2_local_sessions',
+  "token_hash = extensions.digest(convert_to(p_session_token, 'UTF8'), 'sha256')",
   "last_result ->> 'outcome' = 'correct'",
   'unique (player_id, session_id, challenge_position)',
   'on conflict (player_id, session_id, challenge_position) do nothing',
   'grant execute on function public.atina_progress_register(text, text) to anon',
-  'grant execute on function public.atina_progress_claim_local(text, uuid, integer) to anon',
+  'grant execute on function public.atina_progress_claim_local(text, uuid, text, integer) to anon',
   'grant execute on function public.atina_progress_leaderboard(integer) to anon'
 ];
 for (const token of required) {
