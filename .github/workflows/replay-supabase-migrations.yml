@@ -3,8 +3,14 @@ name: Replay Supabase migrations
 on:
   push:
     branches: [security/server-side-validation]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/replay-supabase-migrations.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/replay-supabase-migrations.yml'
 
 jobs:
   replay-migrations:
