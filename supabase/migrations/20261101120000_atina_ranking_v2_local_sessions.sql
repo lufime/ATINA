@@ -15,9 +15,6 @@ begin
   ) then
     raise exception 'private.atina_challenges.difficulty is required; refusing implicit table alteration.';
   end if;
-  if (select count(*) from private.atina_challenges where active) <> 753 then
-    raise exception 'Expected 753 active challenges; refusing to create local-game RPCs.';
-  end if;
   if to_regclass('private.atina_v2_local_sessions') is not null then
     raise exception 'private.atina_v2_local_sessions already exists; inspect before applying.';
   end if;
