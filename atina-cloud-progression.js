@@ -88,6 +88,28 @@
     }
   }
 
+  async function copyRecoveryCode() {
+    const status = $('atinaPlayerStatus');
+    const token = getToken();
+    try {
+      await navigator.clipboard.writeText(token);
+      if (status) status.textContent = 'Código de recuperação copiado. Guarda-o num local seguro; permite recuperar este pseudónimo noutro dispositivo.';
+    } catch (_) {
+      if (status) status.textContent = 'Não foi possível copiar automaticamente. Usa a opção de recuperar com o código neste dispositivo.';
+    }
+  }
+
+  async function restoreFromCode() {
+    const code = String($('atinaPlayerRecovery')?.value || '').trim().toLowerCase();
+    const status = $('atinaPlayerStatus');
+    if (!/^[0-9a-f]{64}$/.test(code)) {
+      if (status) status.textContent = 'O código de recuperação deve ter 64 caracteres hexadecimais.';
+      return null;
+    }
+    localStorage.setItem(TOKEN_KEY, code);
+    return saveNickname();
+  }
+
   async function restore() {
     const nickname = localStorage.getItem(NICK_KEY);
     const input = $('atinaPlayerNickname');
@@ -111,9 +133,11 @@
     return data;
   }
 
-  window.atinaCloudProgression = { saveNickname, restore, recordCorrect };
+  window.atinaCloudProgression = { saveNickname, restore, recordCorrect, copyRecoveryCode, restoreFromCode };
   document.addEventListener('DOMContentLoaded', () => {
     $('atinaPlayerSave')?.addEventListener('click', () => saveNickname());
+    $('atinaPlayerCopyRecovery')?.addEventListener('click', () => copyRecoveryCode());
+    $('atinaPlayerRestore')?.addEventListener('click', () => restoreFromCode());
     const saved = localStorage.getItem(NICK_KEY);
     if ($('atinaPlayerNickname') && saved) $('atinaPlayerNickname').value = saved;
   });
