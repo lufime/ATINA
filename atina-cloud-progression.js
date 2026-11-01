@@ -101,7 +101,7 @@
     const nickname = localStorage.getItem(NICK_KEY);
     const token = localStorage.getItem(TOKEN_KEY);
     if (!nickname || !/^[0-9a-f]{64}$/.test(token || '')) return null;
-    const { data, error } = await window.supabaseClient.rpc('atina_v2_record_local_progress', {
+    const { data, error } = await getSupabase().rpc('atina_v2_record_local_progress', {
       p_session_id: state.session_id,
       p_session_token: session.token,
       p_player_token: token
