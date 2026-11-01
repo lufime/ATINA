@@ -103,3 +103,26 @@ Manter a migração `019` fora desta integração inicial. Antes de a considerar
 - A migração da tabela privada de desafios foi aplicada no projeto `atina-ranking` com autorização e está agora representada no repositório.
 - Nenhuma outra migração foi aplicada; nenhum deploy foi feito.
 - Este documento regista a análise e a estratégia; não afirma que a compatibilidade já está implementada ou testada.
+
+
+## Implementação incremental — camada local v2 (2026-11-01)
+
+Foi preparada na branch desta PR uma primeira camada aditiva para os modos locais:
+
+- Nova migração candidata: `20261101120000_atina_ranking_v2_local_sessions.sql`.
+- A tabela de sessões é isolada em `private.atina_v2_local_sessions`; os helpers privados de validação de respostas também usam nomes `atina_v2_*`.
+- As seis RPCs locais têm nomes próprios `atina_v2_*`. As RPCs antigas de salas não são substituídas nem redefinidas por esta migração.
+- O cliente local em `atina-server-client.js` foi atualizado para chamar as RPCs v2.
+- Foram incorporadas as regras mais recentes do modo Party (limite de 10 desafios, alternância de equipas e bónus da última ronda).
+- A migração inclui pré-condições para exigir o catálogo privado com dificuldade e exatamente 753 desafios ativos, e recusa criar a tabela v2 se ela já existir.
+
+**Limite importante:** isto é código preparado na branch, não uma migração aplicada. Não foi executado contra PostgreSQL nem contra `atina-ranking`; a verificação feita até agora foi apenas estática (nomes das RPCs e correspondência das chamadas no cliente). A migração ainda depende de uma estratégia de baseline/histórico que impeça o CLI de tentar aplicar primeiro as migrações antigas incompatíveis.
+
+## Trabalho ainda em falta
+
+- Multiplayer v2: tabelas e RPCs isoladas que não substituam `atina_create_room`, `atina_join_room`, `atina_room_state` e restantes contratos legados.
+- Mímicas: mapear as 48 cartas e os segredos existentes para um fluxo server-authoritative sem recriar nem alterar as tabelas legadas.
+- Testes de upgrade sobre uma cópia descartável do esquema legado, testes SQL/pgTAP para os novos RPCs, regressão dos RPCs antigos, RLS e preservação das salas.
+- Resolver e documentar o percurso de migração/baseline antes de qualquer execução remota.
+
+A PR permanece Draft. Não houve alterações em `main`, `atina-development`, no projeto remoto `atina-ranking` após a transferência já documentada, nem deploy GitHub Pages.
