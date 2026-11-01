@@ -31,9 +31,16 @@ begin
   if v_expected = v_actual then return true; end if;
 
   -- In letter riddles, the final single-letter token carries the answer.
-  -- Do not strip it as an article/preposition ("letra o" vs "letra a").
-  -- The canonical answer may include the article: "A letra o".
-  if v_expected ~ '^a letra [a-z]
+  -- Keep it intact, including when the canonical answer starts with "A letra".
+  if v_expected ~ '^a letra [a-z]$' then
+    v_expected := substring(v_expected from 3);
+  end if;
+  if v_actual ~ '^a letra [a-z]$' then
+    v_actual := substring(v_actual from 3);
+  end if;
+  if v_expected ~ '^letra [a-z]$' or v_actual ~ '^letra [a-z]$' then
+    return v_expected = v_actual;
+  end if;
 
   v_words_expected := string_to_array(v_expected, ' ');
   v_words_actual := string_to_array(v_actual, ' ');
