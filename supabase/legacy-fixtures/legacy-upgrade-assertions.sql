@@ -81,10 +81,12 @@ declare
   v_host_token text;
   v_guest_token text;
   v_guest_id uuid;
+  v_host_id uuid;
 begin
   v_host := public.atina_v2_create_room('Anfitrião',4);
   v_room_id := (v_host->>'room_id')::uuid;
   v_host_token := v_host->>'token';
+  v_host_id := (v_host->>'player_id')::uuid;
   v_guest := public.atina_v2_join_room('Convidado',v_host->>'code');
   v_guest_token := v_guest->>'token';
   v_guest_id := (v_guest->>'player_id')::uuid;
@@ -96,8 +98,16 @@ begin
   end if;
   v_secret := public.atina_v2_get_mime_secret(v_room_id,v_guest_token);
   if coalesce(v_secret->>'word','') = '' then raise exception 'Mímicas representative did not receive the secret'; end if;
+  v_state := public.atina_v2_resolve_mime_round(v_room_id,v_host_token,false,0,'pass');
+  if coalesce((v_state->>'locked')::boolean,false) is not true then
+    raise exception 'Mímicas pass did not close the current round';
+  end if;
+  v_state := public.atina_v2_start_mime_round(v_room_id,v_host_token,1,v_host_id,0);
+  if (v_state->>'round')::integer <> 1 or (v_state->>'representative_id')::uuid <> v_host_id then
+    raise exception 'Mímicas next round did not rotate to the next representative';
+  end if;
 end
-$$;
+$;
 
 -- The legacy RPC bodies/signatures are represented by stable sentinels. Confirm
 -- the v2 install did not replace the old endpoints with a different contract.
