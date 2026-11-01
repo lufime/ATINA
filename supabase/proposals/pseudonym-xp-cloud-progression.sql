@@ -72,6 +72,7 @@ $$;
 create or replace function public.atina_progress_claim_local(
   p_device_token text,
   p_session_id uuid,
+  p_session_token text,
   p_position integer
 )
 returns jsonb
@@ -87,7 +88,185 @@ declare
   v_daily_count integer;
   v_daily_bonus integer := 0;
 begin
-  if p_device_token is null or p_device_token !~ '^[0-9a-f]{64}$'
+  if p_device_token is null or p_device_token !~ '^[0-9a-f]{64} or p_position is null or p_position < 1 then
+    raise exception 'Pedido de progressão inválido.' using errcode = '22023';
+  end if;
+
+  select * into v_player
+  from private.atina_players
+  where device_token_hash = extensions.digest(convert_to(p_device_token, 'UTF8'), 'sha256')
+  for update;
+  if not found then
+    raise exception 'Regista primeiro o teu pseudónimo.' using errcode = '28000';
+  end if;
+
+  select * into v_session
+  from private.atina_v2_local_sessions
+  where id = p_session_id
+    and token_hash = extensions.digest(convert_to(p_session_token, 'UTF8'), 'sha256')
+    and position = p_position
+    and round_locked
+    and last_result ->> 'outcome' = 'correct'
+    and expires_at > clock_timestamp();
+  if not found then
+    raise exception 'O servidor ainda não confirmou este desafio como concluído.' using errcode = '55000';
+  end if;
+
+  insert into private.atina_xp_events (player_id, session_id, challenge_position, xp)
+  values (v_player.id, p_session_id, p_position, 10)
+  on conflict (player_id, session_id, challenge_position) do nothing
+  returning id into v_inserted;
+
+  if v_inserted is null then
+    return jsonb_build_object(
+      'awarded', false, 'reason', 'already_claimed',
+      'xp', v_player.total_xp,
+      'level', floor(v_player.total_xp / 250.0)::integer + 1,
+      'total_challenges', v_player.total_challenges
+    );
+  end if;
+
+  v_daily_count := case when v_player.daily_date = v_today then v_player.daily_count + 1 else 1 end;
+  if v_daily_count >= 3 and v_player.daily_reward_date is distinct from v_today then
+    v_daily_bonus := 50;
+  end if;
+
+  update private.atina_players
+  set total_xp = total_xp + 10 + v_daily_bonus,
+      total_challenges = total_challenges + 1,
+      daily_date = v_today,
+      daily_count = least(v_daily_count, 3),
+      daily_reward_date = case when v_daily_bonus > 0 then v_today else daily_reward_date end,
+      updated_at = clock_timestamp()
+  where id = v_player.id
+  returning * into v_player;
+
+  return jsonb_build_object(
+    'awarded', true,
+    'challenge_xp', 10,
+    'daily_bonus', v_daily_bonus,
+    'xp', v_player.total_xp,
+    'level', floor(v_player.total_xp / 250.0)::integer + 1,
+    'total_challenges', v_player.total_challenges,
+    'daily_count', v_player.daily_count
+  );
+end;
+$$;
+
+create or replace function public.atina_progress_leaderboard(p_limit integer default 50)
+returns table(nickname text, xp integer, level integer, challenges integer)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select p.nickname, p.total_xp, floor(p.total_xp / 250.0)::integer + 1, p.total_challenges
+  from private.atina_players p
+  order by p.total_xp desc, p.total_challenges desc, p.created_at asc
+  limit least(greatest(coalesce(p_limit, 50), 1), 100);
+$$;
+
+revoke all on function public.atina_progress_register(text, text) from public, authenticated;
+revoke all on function public.atina_progress_claim_local(text, uuid, text, integer) from public, authenticated;
+revoke all on function public.atina_progress_leaderboard(integer) from public, authenticated;
+grant execute on function public.atina_progress_register(text, text) to anon;
+grant execute on function public.atina_progress_claim_local(text, uuid, integer) to anon;
+grant execute on function public.atina_progress_leaderboard(integer) to anon;
+
+comment on table private.atina_players is
+  'Progressão ATINA associada a pseudónimo e token aleatório de dispositivo; sem conta Supabase Auth.';
+comment on table private.atina_xp_events is
+  'Eventos de XP idempotentes, apenas para rondas corretas validadas pelo servidor.';
+
+     or p_session_token is null or p_session_token !~ '^[0-9a-f]{64} or p_position is null or p_position < 1 then
+    raise exception 'Pedido de progressão inválido.' using errcode = '22023';
+  end if;
+
+  select * into v_player
+  from private.atina_players
+  where device_token_hash = extensions.digest(convert_to(p_device_token, 'UTF8'), 'sha256')
+  for update;
+  if not found then
+    raise exception 'Regista primeiro o teu pseudónimo.' using errcode = '28000';
+  end if;
+
+  select * into v_session
+  from private.atina_v2_local_sessions
+  where id = p_session_id
+    and position = p_position
+    and round_locked
+    and last_result ->> 'outcome' = 'correct'
+    and expires_at > clock_timestamp();
+  if not found then
+    raise exception 'O servidor ainda não confirmou este desafio como concluído.' using errcode = '55000';
+  end if;
+
+  insert into private.atina_xp_events (player_id, session_id, challenge_position, xp)
+  values (v_player.id, p_session_id, p_position, 10)
+  on conflict (player_id, session_id, challenge_position) do nothing
+  returning id into v_inserted;
+
+  if v_inserted is null then
+    return jsonb_build_object(
+      'awarded', false, 'reason', 'already_claimed',
+      'xp', v_player.total_xp,
+      'level', floor(v_player.total_xp / 250.0)::integer + 1,
+      'total_challenges', v_player.total_challenges
+    );
+  end if;
+
+  v_daily_count := case when v_player.daily_date = v_today then v_player.daily_count + 1 else 1 end;
+  if v_daily_count >= 3 and v_player.daily_reward_date is distinct from v_today then
+    v_daily_bonus := 50;
+  end if;
+
+  update private.atina_players
+  set total_xp = total_xp + 10 + v_daily_bonus,
+      total_challenges = total_challenges + 1,
+      daily_date = v_today,
+      daily_count = least(v_daily_count, 3),
+      daily_reward_date = case when v_daily_bonus > 0 then v_today else daily_reward_date end,
+      updated_at = clock_timestamp()
+  where id = v_player.id
+  returning * into v_player;
+
+  return jsonb_build_object(
+    'awarded', true,
+    'challenge_xp', 10,
+    'daily_bonus', v_daily_bonus,
+    'xp', v_player.total_xp,
+    'level', floor(v_player.total_xp / 250.0)::integer + 1,
+    'total_challenges', v_player.total_challenges,
+    'daily_count', v_player.daily_count
+  );
+end;
+$$;
+
+create or replace function public.atina_progress_leaderboard(p_limit integer default 50)
+returns table(nickname text, xp integer, level integer, challenges integer)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select p.nickname, p.total_xp, floor(p.total_xp / 250.0)::integer + 1, p.total_challenges
+  from private.atina_players p
+  order by p.total_xp desc, p.total_challenges desc, p.created_at asc
+  limit least(greatest(coalesce(p_limit, 50), 1), 100);
+$$;
+
+revoke all on function public.atina_progress_register(text, text) from public, authenticated;
+revoke all on function public.atina_progress_claim_local(text, uuid, integer) from public, authenticated;
+revoke all on function public.atina_progress_leaderboard(integer) from public, authenticated;
+grant execute on function public.atina_progress_register(text, text) to anon;
+grant execute on function public.atina_progress_claim_local(text, uuid, integer) to anon;
+grant execute on function public.atina_progress_leaderboard(integer) to anon;
+
+comment on table private.atina_players is
+  'Progressão ATINA associada a pseudónimo e token aleatório de dispositivo; sem conta Supabase Auth.';
+comment on table private.atina_xp_events is
+  'Eventos de XP idempotentes, apenas para rondas corretas validadas pelo servidor.';
+
      or p_session_id is null or p_position is null or p_position < 1 then
     raise exception 'Pedido de progressão inválido.' using errcode = '22023';
   end if;
