@@ -870,7 +870,7 @@ async function mimeStartGame(){
 function mimeStartClock(){if(mimeRunning||mimePos>=mimeDeck.length||mimeRaceFinished)return;mimePreparing=false;mimeRunning=true;mimeRaceStart();$('mimeReveal').disabled=false;if(mimeSeconds===0){$('mimeTimer').textContent='∞';$('mimeFeedback').textContent='⏱️ Ronda sem limite de tempo!';return;}$('mimeFeedback').textContent='⏱️ O tempo está a contar!';mimeInterval=setInterval(()=>{mimeSeconds=Math.max(0,mimeSeconds-1);$('mimeTimer').textContent=String(Math.floor(mimeSeconds/60)).padStart(2,'0')+':'+String(mimeSeconds%60).padStart(2,'0');if(mimeSeconds===0){mimeStop();mimeAdvance(false,'Tempo esgotado');}},1000);}
 function mimeRevealClue(){if(mimePos>=mimeDeck.length||mimeClue>=4)return;mimeClue++;mimeRenderClue();$('mimeFeedback').textContent='Nova imagem! A equipa pode continuar a tentar adivinhar.';}
 function mimeAdvance(correct,reason='Palavra passada'){
- mimeStop();mimeRaceStop();const answer=mimeDeck[mimePos][0];
+ mimeStop();mimeRaceStop();atinaRecordChallengeCompletion('mime-local:'+ (mimeUsedCardIds[mimePos]||mimePos));const answer=mimeDeck[mimePos][0];
  atinaShowSolutionImage(answer,'Mímicas','mimeSolutionImage');
  if(correct){const points=mimePoints[mimeClue];const timedBonus=Number($('timerMode')?.value||0)>0?Math.floor(mimeSeconds/10):0;mimeScores[mimeTeam]+=points+timedBonus;if(mimeScores[mimeTeam]>=250){mimeRaceFinish(mimeTeam);return;}$('mimeFeedback').textContent='🎉 Certo! +'+points+(timedBonus?' + '+timedBonus+' bónus de rapidez':'')+' pontos para a Equipa '+(mimeTeam+1)+'. Resposta: '+answer+'.';}
  else{$('mimeFeedback').textContent=(reason==='Tempo esgotado'?'⏰ Tempo esgotado! ':'Passaram! ')+'A resposta era: '+answer+'. Sem alteração da pontuação.';}
