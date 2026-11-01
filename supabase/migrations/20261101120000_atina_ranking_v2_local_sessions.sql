@@ -27,7 +27,7 @@ $preflight$;
 -- exclusivamente por um canal privado. Não expõe uma RPC que permita testar
 -- respostas arbitrárias; estes helpers destinam-se apenas a outras RPCs SECURITY DEFINER.
 
-create or replace function private.atina_v2_atina_normalize_answer(p_value text)
+create or replace function private.atina_v2_normalize_answer(p_value text)
 returns text
 language sql
 immutable
@@ -42,7 +42,7 @@ as $$
     '[[:space:]]+', ' ', 'g'
   ));
 $$;
-create or replace function private.atina_v2_atina_levenshtein_bounded(p_left text, p_right text)
+create or replace function private.atina_v2_levenshtein_bounded(p_left text, p_right text)
 returns integer
 language plpgsql
 immutable
@@ -76,7 +76,7 @@ begin
 end;
 $$;
 
-create or replace function private.atina_v2_atina_answer_matches(p_expected text, p_actual text)
+create or replace function private.atina_v2_answer_matches(p_expected text, p_actual text)
 returns boolean
 language plpgsql
 immutable
@@ -84,8 +84,8 @@ strict
 set search_path = ''
 as $$
 declare
-  v_expected text := private.atina_v2_atina_normalize_answer(p_expected);
-  v_actual text := private.atina_v2_atina_normalize_answer(p_actual);
+  v_expected text := private.atina_v2_normalize_answer(p_expected);
+  v_actual text := private.atina_v2_normalize_answer(p_actual);
   v_words_expected text[];
   v_words_actual text[];
   v_used boolean[];
@@ -105,7 +105,7 @@ begin
     v_best_distance := 3;
     for j in 1..cardinality(v_words_actual) loop
       if not v_used[j] then
-        v_distance := private.atina_v2_atina_levenshtein_bounded(v_words_expected[i], v_words_actual[j]);
+        v_distance := private.atina_v2_levenshtein_bounded(v_words_expected[i], v_words_actual[j]);
         if v_distance < v_best_distance then
           v_best_distance := v_distance;
           v_best := j;
@@ -124,7 +124,7 @@ begin
 end;
 $$;
 
-create or replace function private.atina_v2_atina_challenge_answer_matches(p_challenge_id integer, p_answer text)
+create or replace function private.atina_v2_challenge_answer_matches(p_challenge_id integer, p_answer text)
 returns boolean
 language sql
 stable
@@ -137,22 +137,22 @@ as $$
     where c.challenge_id = p_challenge_id
       and c.active
       and (
-        private.atina_v2_atina_answer_matches(c.answer, p_answer)
+        private.atina_v2_answer_matches(c.answer, p_answer)
         or exists (
           select 1
           from jsonb_array_elements_text(c.accepted_answers) accepted(answer)
-          where private.atina_v2_atina_answer_matches(accepted.answer, p_answer)
+          where private.atina_v2_answer_matches(accepted.answer, p_answer)
         )
       )
   );
 $$;
 
-revoke all on function private.atina_v2_atina_normalize_answer(text) from public, anon, authenticated;
-revoke all on function private.atina_v2_atina_levenshtein_bounded(text, text) from public, anon, authenticated;
-revoke all on function private.atina_v2_atina_answer_matches(text, text) from public, anon, authenticated;
-revoke all on function private.atina_v2_atina_challenge_answer_matches(integer, text) from public, anon, authenticated;
+revoke all on function private.atina_v2_normalize_answer(text) from public, anon, authenticated;
+revoke all on function private.atina_v2_levenshtein_bounded(text, text) from public, anon, authenticated;
+revoke all on function private.atina_v2_answer_matches(text, text) from public, anon, authenticated;
+revoke all on function private.atina_v2_challenge_answer_matches(integer, text) from public, anon, authenticated;
 
-comment on function private.atina_v2_atina_challenge_answer_matches(integer, text) is
+comment on function private.atina_v2_challenge_answer_matches(integer, text) is
   'Internal-only answer check for authoritative game RPCs; never grant EXECUTE to API roles.';
 
 -- New isolated local-session store (v2 namespace).
@@ -459,7 +459,7 @@ begin
     return private.atina_v2_local_public_state(v_session);
   end if;
 
-  v_correct := private.atina_v2_atina_challenge_answer_matches(
+  v_correct := private.atina_v2_challenge_answer_matches(
     v_session.challenge_queue[v_session.position], p_answer
   );
   if not v_correct then
