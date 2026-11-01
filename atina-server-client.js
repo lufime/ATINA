@@ -17,8 +17,24 @@ async function atinaServerRpc(name, args) {
 }
 function atinaServerMessage(message) {
   const gameVisible = $('game') && !$('game').classList.contains('hidden');
-  const target = gameVisible ? $('feedback') : ($('networkStatus') || $('networkLobbyStatus'));
+  if (gameVisible) {
+    $('feedback').textContent = message;
+    return;
+  }
+  const target = $('networkStatus') || $('networkLobbyStatus');
   if (target) target.textContent = message;
+  const home = $('home');
+  if (home) {
+    let notice = $('atinaConnectionNotice');
+    if (!notice) {
+      notice = document.createElement('p');
+      notice.id = 'atinaConnectionNotice';
+      notice.className = 'feedback';
+      notice.setAttribute('aria-live', 'polite');
+      home.insertBefore(notice, home.firstChild);
+    }
+    notice.textContent = message;
+  }
 }
 function atinaServerStopTimers() {
   if (atinaServerTimer !== null) clearInterval(atinaServerTimer);
