@@ -1,6 +1,13 @@
 name: Test legacy schema upgrade
 
 on:
+  push:
+    branches: [qa/atina-multiplayer-rpc-browser-tests]
+    paths:
+      - 'tests/e2e/**'
+      - 'supabase/migrations/**'
+      - 'supabase/legacy-fixtures/**'
+      - '.github/workflows/test-legacy-schema-upgrade.yml'
   pull_request:
     branches: [main]
     paths:
