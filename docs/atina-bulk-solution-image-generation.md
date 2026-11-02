@@ -27,3 +27,10 @@ A função atualmente implantada deve ser revista antes da primeira execução: 
 A função atual atualiza `image_url` assim que cada imagem é gerada e carregada. Isto substitui o URL anterior daquele desafio; não elimina o ficheiro antigo. O workflow não faz rollback automático. Para uma migração sem risco, guardar previamente os URLs antigos e testar primeiro com um desafio não crítico.
 
 A execução pode consumir créditos significativos na API de imagens. O workflow é manual, serial e limitado a 300 chamadas por execução; não é agendado.
+
+
+## Cópia dos ficheiros para GitHub
+
+O workflow também descarrega cada PNG gerado e cria commits em `images/solutions/<challenge_id>.png` na branch do PR. O `GITHUB_TOKEN` automático recebe permissão `contents: write`; não é necessário criar um PAT.
+
+**Nota:** a função Supabase continua a gravar o URL público do bucket em `image_url`. Esta cópia para o repositório coloca os ficheiros no GitHub, mas não muda automaticamente o jogo para usar GitHub Pages. Essa migração de URLs deve ser feita separadamente depois de confirmar o caminho de publicação pretendido.
