@@ -28,6 +28,12 @@ const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 const pageErrors = [];
 
+await page.addInitScript(() => {
+  Object.defineProperty(navigator, 'clipboard', {
+    configurable: true,
+    value: { writeText: async value => { window.__copiedRecoveryCode = value; } }
+  });
+});
 page.on('pageerror', error => pageErrors.push({ message: error.message, stack: error.stack }));
 await page.route('https://commons.wikimedia.org/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{\"query\":{\"pages\":{}}}' }));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
@@ -80,6 +86,19 @@ try {
   await page.getByText('Pseudónimo guardado. A progressão está sincronizada.').waitFor();
   const deviceToken = await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1'));
   assert.match(deviceToken, /^[0-9a-f]{64}$/);
+  await page.locator('#atinaCloudCopyRecovery').click();
+  await page.getByText('Código de recuperação copiado. Guarda-o num local seguro.').waitFor();
+  assert.equal(await page.evaluate(() => window.__copiedRecoveryCode), deviceToken);
+
+  // Losing localStorage must not silently create a different cloud identity.
+  await page.evaluate(() => localStorage.removeItem('atinaProgressDeviceTokenV1'));
+  await page.reload({ waitUntil: 'load' });
+  await page.getByText(/A chave deste pseudónimo não está neste dispositivo/).waitFor();
+  assert.equal(await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1')), null);
+  await page.locator('#atinaCloudRecoveryCode').fill(deviceToken);
+  await page.locator('#atinaCloudRestore').click();
+  await page.getByText('Pseudónimo guardado. A progressão está sincronizada.').waitFor();
+  assert.equal(await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1')), deviceToken);
   assert.equal(await page.locator('#atinaCloudXp').textContent(), '0 XP');
 
   const wrongResultClaimCount = await page.evaluate(() => {
@@ -96,6 +115,19 @@ try {
     return window.__mockRpcCalls.filter(call => call.name === 'atina_progress_claim_local').length;
   });
   assert.equal(wrongResultClaimCount, 0, 'Uma resposta errada nunca pode gerar um pedido de XP.');
+
+  const duelClaimCount = await page.evaluate(() => {
+    const sessionId = '00000000-0000-4000-8000-000000000124';
+    atinaServerSession = { session_id: sessionId, token: 'b'.repeat(64) };
+    atinaServerApplyState({
+      session_id: sessionId, position: 1, round_locked: true, status: 'active',
+      mode: 'duel', scores: [10, 0], current_player: 1, queue_size: 1,
+      difficulty: 'easy', last_result: { outcome: 'correct', points: 10 },
+      challenge: { category: 'Teste', emoji: '🧪', clues: [], total_clues: 5, answer: 'Resposta' }
+    });
+    return window.__mockRpcCalls.filter(call => call.name === 'atina_progress_claim_local').length;
+  });
+  assert.equal(duelClaimCount, 0, 'Duelo nunca deve creditar XP a um único pseudónimo.');
 
   await page.evaluate(() => {
     const sessionId = '00000000-0000-4000-8000-000000000123';
