@@ -979,6 +979,7 @@ function atinaSolutionImageMatch(answer,category,item){
  const aliases={
   'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],
   'contrabaixo':['contrabaixo','double bass','contrabass'],
+  'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering'],
  };
  const normalized=atinaSolutionImageText(answer);
  const answerTerms=aliases[normalized]||[normalized];
@@ -991,7 +992,7 @@ function atinaSolutionImageMatch(answer,category,item){
  const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>titleWords.has(token)));
  if(!matchedSet)return null;
  const categoryAliases={
-  'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking'],
+  'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],
   'musica e sons':['music','musical','instrument','instruments','sound'],
  };
  const categoryTerms=categoryAliases[atinaSolutionImageText(category)]||categoryTokens;
