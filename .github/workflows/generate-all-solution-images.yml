@@ -1,6 +1,11 @@
 name: Generate all ATINA solution images
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/generate-all-solution-images.yml
   workflow_dispatch:
     inputs:
       confirmation:
@@ -26,7 +31,7 @@ concurrency:
 
 jobs:
   generate:
-    if: ${{ inputs.confirmation == 'GENERATE-753' }}
+    if: ${{ github.event_name == 'push' || inputs.confirmation == 'GENERATE-753' }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -45,7 +50,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           ATINA_IMAGE_UPLOAD_TOKEN: ${{ secrets.ATINA_IMAGE_UPLOAD_TOKEN }}
-          BATCH_SIZE: ${{ inputs.batch_size }}
+          BATCH_SIZE: ${{ inputs.batch_size || '1' }}
         shell: bash
         run: |
           set -euo pipefail
