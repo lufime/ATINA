@@ -24,6 +24,7 @@ const required = [
   "v_session.last_result ->> 'outcome' is distinct from 'correct'",
   'v_session.round_locked',
   'v_session.expires_at <= clock_timestamp()',
+  "if not found or v_owner.player_id <> v_player.id",
   'on conflict (session_id) do nothing',
   'on conflict (player_id, session_id, challenge_position) do nothing',
   'grant execute on function public.atina_progress_register(text, text) to anon',
@@ -78,10 +79,14 @@ const frontendRequired = [
   "atinaServerRpc('atina_progress_claim_local'",
   "atinaServerRpc('atina_progress_leaderboard'",
   "if (locked && result.outcome === 'correct') atinaProgressClaim(state);",
-  'p_device_token: atinaProgressDeviceToken()',
+  'p_device_token: deviceToken',
   'p_session_id: state.session_id',
   'p_session_token: atinaServerSession.token',
-  'p_position: Number(state.position)'
+  'p_position: Number(state.position)',
+  "if (!['solo', 'mix'].includes(state?.mode)) return;",
+  "p_device_token: ['solo', 'mix'].includes(gameMode)",
+  'atinaProgressRestoreFromCode',
+  'atinaProgressCopyRecovery'
 ];
 for (const token of frontendRequired) {
   if (!client.includes(token)) {
@@ -95,7 +100,8 @@ if (/p_(?:xp|points)\s*:/i.test(claimCall[1])) {
 }
 for (const id of [
   'atinaCloudNickname', 'atinaCloudRegister', 'atinaCloudStatus',
-  'atinaCloudXp', 'atinaCloudLeaderboardRefresh', 'atinaCloudLeaderboard'
+  'atinaCloudXp', 'atinaCloudLeaderboardRefresh', 'atinaCloudLeaderboard',
+  'atinaCloudRecoveryCode', 'atinaCloudRestore', 'atinaCloudCopyRecovery'
 ]) {
   if (!html.includes('id="' + id + '"')) {
     throw new Error('Elemento de interface de progressão em falta: ' + id);
