@@ -1025,6 +1025,44 @@ async function atinaWikidataSolutionImage(answer){
 function atinaSolutionImageCoreText(value){
  return atinaSolutionImageText(value).replace(/^(?:um|uma|uns|umas|o|a|os|as)\\s+/,'').trim();
 }
+async function atinaArtInstituteSolutionImage(answer,category){
+ const query=atinaSolutionImageCoreText(answer);
+ if(!query)return null;
+ const params=new URLSearchParams({
+  q:query,limit:'30',
+  fields:'id,title,artist_display,image_id,is_public_domain,thumbnail,alt_titles'
+ });
+ const response=await fetch('https://api.artic.edu/api/v1/artworks/search?'+params.toString(),{
+  headers:{Accept:'application/json','AIC-User-Agent':'ATINA educational game'}
+ });
+ if(!response.ok)return null;
+ const data=await response.json();
+ const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
+ const tokens=query.split(/\s+/).filter(t=>t.length>1&&!stop.has(t));
+ if(!tokens.length)return null;
+ const candidates=(data.data||[]).filter(item=>{
+  if(item.is_public_domain!==true||!item.image_id)return false;
+  const title=atinaSolutionImageText(item.title);
+  const words=new Set(title.split(/\s+/));
+  return tokens.every(token=>words.has(token));
+ }).filter(item=>Number(item.thumbnail?.width||0)>=400&&Number(item.thumbnail?.height||0)>=300);
+ if(!candidates.length)return null;
+ candidates.sort((a,b)=>{
+  const score=item=>atinaSolutionImageText(item.title).split(/\s+/).filter(t=>tokens.includes(t)).length;
+  return score(b)-score(a);
+ });
+ const item=candidates[0];
+ return {
+  title:item.title,
+  thumburl:'https://www.artic.edu/iiif/2/'+encodeURIComponent(item.image_id)+'/full/843,/0/default.jpg',
+  mime:'image/jpeg',width:843,height:Math.round(843*Number(item.thumbnail.height)/Number(item.thumbnail.width)),
+  sourceName:'Art Institute of Chicago',
+  sourceUrl:'https://www.artic.edu/artworks/'+item.id,
+  author:item.artist_display||'Autor não identificado',
+  license:'CC0 / Domínio Público',
+  licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'
+ };
+}
 async function atinaWikipediaSolutionImage(answer,category){
  const normalizedAnswer=atinaSolutionImageCoreText(answer);
  if(!normalizedAnswer)return null;
@@ -1076,8 +1114,13 @@ async function atinaShowSolutionImage(answer,category,targetId){
      if(candidates.length){item=candidates[0].candidate;break;}
     }
    }
-   // Se Wikidata/Commons não fornecerem uma imagem segura, consultar o artigo
-   // exato da Wikipédia. A imagem continua sujeita à validação PD/CC0 do Commons.
+   // Segunda fonte institucional: apenas obras marcadas explicitamente como
+   // domínio público pelo Art Institute of Chicago (CC0).
+   if(!item){
+    try{item=await atinaArtInstituteSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
+   }
+   // Último recurso: artigo exato da Wikipédia, validando novamente a licença
+   // original no Wikimedia Commons antes de apresentar a imagem.
    if(!item){
     try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
    }
@@ -1087,8 +1130,17 @@ async function atinaShowSolutionImage(answer,category,targetId){
   if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
   const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:10px;background:#091827';
   image.onerror=()=>{image.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
-  const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Confirmar licença no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
-  status.textContent='Solução: '+cleanAnswer;target.append(image,link);
+  const sourceName=item.sourceName||'Wikimedia Commons';
+  const sourceUrl=item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_')));
+  const author=item.author||item.extmetadata?.Artist?.value?.replace(/<[^>]*>/g,'').trim()||'Autor não identificado';
+  const license=item.license||atinaSolutionImageLicense(item)||'Domínio Público / CC0';
+  const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
+  const provenance=document.createElement('p');provenance.className='muted small';provenance.style.cssText='margin:8px 0 0;line-height:1.5;overflow-wrap:anywhere';
+  provenance.textContent='Autor: '+author+' · Fonte: '+sourceName+' · Licença: '+license+' · ';
+  const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Ver imagem original';
+  const licenseLink=document.createElement('a');licenseLink.href=licenseUrl;licenseLink.target='_blank';licenseLink.rel='noopener noreferrer';licenseLink.textContent='Ver licença';
+  provenance.append(sourceLink,document.createTextNode(' · '),licenseLink);
+  status.textContent='Solução: '+cleanAnswer;target.append(image,provenance);
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
