@@ -114,3 +114,21 @@ A primeira bateria usa dois contextos Chromium independentes e a chave pública 
 - iniciar o relógio e resolver a ronda.
 
 **Âmbito importante:** estes são testes de integração das RPCs reais a partir de contextos de browser; ainda não percorrem os controlos e ecrãs do `index.html`. Não substituem os E2E da interface completa, nem validam reconexão, concorrência repetida, votação por equipa ou dispositivos físicos. O workflow corre apenas numa Supabase local descartável criada a partir de fixtures sintéticas; nunca usa a URL/key remotas. A execução só será considerada aprovada depois de o GitHub Actions concluir com sucesso.
+
+
+## Auditoria adicional da integração da UI — 2 de novembro de 2026
+
+A leitura dos handlers reais do `index.html` na branch do harness confirmou que a ligação não é apenas uma função de submissão em falta. Existem incompatibilidades estruturais entre o estado antigo esperado pela UI e o contrato das RPCs v2:
+
+1. `networkStartGame()` chama `atina_v2_start_room` e cria no browser uma fila com índices do array `games`. Não chama `atina_v2_start_room_challenges`, que é a RPC que cria a fila autoritativa privada e publica o primeiro desafio.
+2. `networkRefreshRoomOnce()` aceita estados com `mode='challenges'`, mas `networkReceiveState()` rejeita-os porque exige `st.queue` (ou Mímicas). Assim, o estado de desafios devolvido pela RPC v2 não chega ao renderer.
+3. `networkRenderGameState()` espera `st.queue`, `st.scores`, `st.answeredCount` e dados de desafio no array local `games`. O estado v2 contém `challenge_id`, `category`, `clues`, `pos`, `revealed`, `deadline` e `locked`; não contém a fila privada nem o conjunto de pontuações no formato antigo. É necessário definir uma projeção pública e uma associação inequívoca entre `challenge_id` SQL e os dados visuais locais, sem enviar respostas antecipadamente.
+4. `networkSubmitAnswer()` continua a lançar uma exceção fixa em vez de chamar `atina_v2_submit_room_answer`.
+5. Os listeners de UI chamam `networkHostReveal()`, `networkHostPass()` e `networkHostNext()`, mas não foi encontrada definição dessas funções na revisão auditada. A RPC de revelar pista existente é `atina_v2_reveal_room_clue`; passar e avançar usam `atina_v2_pass_room_challenge` e `atina_v2_next_room_challenge`.
+6. `networkPublishGameState()` ainda publica objetos de estado montados no browser. O relógio e a progressão de desafios não devem depender desta publicação; devem usar as operações server-authoritative e o estado devolvido por `atina_v2_room_state`.
+
+### Decisão técnica
+
+Não foi feita uma alteração parcial ao `index.html` nesta revisão. Ligar apenas a submissão ou trocar a RPC de arranque deixaria o renderer a consumir um formato incompatível e poderia criar a falsa impressão de multiplayer funcional. A implementação deve ser feita como uma alteração coerente: (a) configuração local injetável e restrita a localhost/testes; (b) arranque via `atina_v2_start_room_challenges`; (c) adaptador explícito do estado público v2 para a UI, com mapeamento verificado de IDs; (d) handlers de pista, resposta, passar e avançar baseados nas RPCs; (e) relógio apenas de apresentação, com expiração decidida pelo servidor; (f) Playwright a percorrer os ecrãs reais em dois contextos.
+
+A migration v2 tem também RPCs específicas para propostas/votação por equipa. Esse fluxo deve ser tratado numa fase separada, pois `atina_v2_submit_room_answer` rejeita explicitamente jogadores associados a uma equipa. Não se deve apresentar o fluxo individual como suporte já concluído para equipas.
