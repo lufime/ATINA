@@ -1339,14 +1339,8 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[]){
    }
    // Se Wikidata/Art Institute não fornecerem imagem segura, tentar Commons.
    if(!item){
-    const categoryText=atinaSolutionImageText(cleanCategory);
-    const placeCategory=/\b(onde estou|geografia|cidade|capital|pais|país|localizacao|localização)\b/.test(categoryText);
     const searchTerms=[...new Set([...semanticAliases,...visualContexts])];
-    const queries=[
-     ...searchTerms,
-     cleanAnswer,
-     ...(placeCategory?[cleanAnswer+' city',cleanAnswer+' skyline']:[])
-    ].filter((q,i,a)=>q&&a.indexOf(q)===i);
+    const queries=[...searchTerms,cleanAnswer].filter((q,i,a)=>q&&a.indexOf(q)===i);
     for(const query of queries){
      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
      const response=await fetch(url,{headers:{Accept:'application/json'}});
