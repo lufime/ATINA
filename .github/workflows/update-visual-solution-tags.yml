@@ -53,7 +53,7 @@ jobs:
             payload=$(jq -n --argjson limit "$BATCH_SIZE" --argjson after "$cursor" '{limit:$limit,after_challenge_id:$after}')
             response=$(curl --fail-with-body --silent --show-error -X POST "${SUPABASE_URL}/functions/v1/atina-update-solution-tags" \
               -H "Content-Type: application/json" \
-              -H "x-atina-image-upload-token: ${ATINA_IMAGE_UPLOAD_TOKEN}" \
+              -H "x-atina-upload-token: ${ATINA_IMAGE_UPLOAD_TOKEN}" \
               --data "$payload")
             echo "$response" | jq .
             processed=$(echo "$response" | jq -r '.processed // 0')
