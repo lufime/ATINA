@@ -1372,7 +1372,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[]){
    frame.remove();
    status.textContent='A imagem encontrada deixou de estar disponível ou bloqueou o carregamento. Não vamos apresentar uma imagem diferente sem confirmar a solução.';
    const retry=document.createElement('button');retry.type='button';retry.className='btn secondary';retry.textContent='Tentar nova pesquisa';
-   retry.onclick=()=>{atinaSolutionImageCache.delete(key);delete target.dataset.solutionKey;atinaShowSolutionImage(cleanAnswer,cleanCategory,targetId);};
+   retry.onclick=()=>{atinaSolutionImageCache.delete(key);delete target.dataset.solutionKey;atinaShowSolutionImage(cleanAnswer,cleanCategory,targetId,hiddenTags);};
    target.append(retry);
   };
   const brand=document.createElement('img');brand.src='assets/atina-logo-alentejo.svg';brand.alt='ATINA';brand.setAttribute('aria-label','Logótipo ATINA');brand.style.cssText='position:absolute;top:8px;right:8px;width:76px;height:auto;max-height:28px;object-fit:contain;padding:3px 5px;border:1px solid #ffffff55;border-radius:7px;background:#071827d9;pointer-events:none';
