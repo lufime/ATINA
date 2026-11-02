@@ -1165,9 +1165,9 @@ async function atinaShowSolutionImage(answer,category,targetId){
  const frame=document.createElement('div');frame.style.cssText='margin-top:10px;overflow:hidden;border:1px solid #d3ad68;border-radius:14px;background:#10243a';
  const image=document.createElement('img');image.src=atinaFreeSolutionSvg(cleanAnswer,cleanCategory);image.alt='Ilustração ATINA: '+cleanAnswer;image.loading='lazy';image.style.cssText='display:block;width:100%;height:auto;max-height:360px;object-fit:contain';
  frame.appendChild(image);target.append(heading,frame);target.classList.remove('hidden');return;
- const heading=document.createElement('strong');heading.textContent='📷 A solução em imagem';
+ const imageHeading=document.createElement('strong');imageHeading.textContent='📷 A solução em imagem';
  const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
- target.append(heading,status);target.classList.remove('hidden');
+ target.append(imageHeading,status);target.classList.remove('hidden');
  try{
   let item=atinaSolutionImageCache.get(key);
   if(item===undefined){
