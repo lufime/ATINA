@@ -102,3 +102,15 @@ A inspeção do código desta branch identificou pré-condições que têm de se
 - Primeiro, separar a configuração local de teste sem alterar o destino de produção, corrigir/ligar o fluxo de respostas multiplayer às RPCs server-authoritative e confirmar migrations/fixtures.
 - Só depois criar o workflow Playwright com contextos independentes e verificar, também na base local, os estados persistidos e a não divulgação da palavra secreta.
 - Até esses pré-requisitos estarem satisfeitos, este documento permanece um plano de QA com bloqueios identificados, não um relatório de testes executados.
+
+## Harness inicial — RPCs reais em browsers isolados
+
+Foi acrescentado `tests/e2e/multiplayer-rpc-browser.test.cjs` e o workflow `.github/workflows/test-legacy-schema-upgrade.yml` executa-o depois de criar a base Supabase local descartável e aplicar a fixture sintética legacy e as migrations v2 necessárias.
+
+A primeira bateria usa dois contextos Chromium independentes e a chave pública local (anon). Exercita:
+- criar sala, entrar com segundo jogador, prontidão e início;
+- iniciar fila de desafios no servidor, estado público sem resposta, resposta errada, passar e avançar;
+- iniciar uma ronda de Mímicas, obter palavra como representante, rejeitar a tentativa do observador e confirmar que o estado público não contém a palavra antes do fecho;
+- iniciar o relógio e resolver a ronda.
+
+**Âmbito importante:** estes são testes de integração das RPCs reais a partir de contextos de browser; ainda não percorrem os controlos e ecrãs do `index.html`. Não substituem os E2E da interface completa, nem validam reconexão, concorrência repetida, votação por equipa ou dispositivos físicos. O workflow corre apenas numa Supabase local descartável criada a partir de fixtures sintéticas; nunca usa a URL/key remotas. A execução só será considerada aprovada depois de o GitHub Actions concluir com sucesso.
