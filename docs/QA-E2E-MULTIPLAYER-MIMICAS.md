@@ -132,3 +132,18 @@ A leitura dos handlers reais do `index.html` na branch do harness confirmou que 
 Não foi feita uma alteração parcial ao `index.html` nesta revisão. Ligar apenas a submissão ou trocar a RPC de arranque deixaria o renderer a consumir um formato incompatível e poderia criar a falsa impressão de multiplayer funcional. A implementação deve ser feita como uma alteração coerente: (a) configuração local injetável e restrita a localhost/testes; (b) arranque via `atina_v2_start_room_challenges`; (c) adaptador explícito do estado público v2 para a UI, com mapeamento verificado de IDs; (d) handlers de pista, resposta, passar e avançar baseados nas RPCs; (e) relógio apenas de apresentação, com expiração decidida pelo servidor; (f) Playwright a percorrer os ecrãs reais em dois contextos.
 
 A migration v2 tem também RPCs específicas para propostas/votação por equipa. Esse fluxo deve ser tratado numa fase separada, pois `atina_v2_submit_room_answer` rejeita explicitamente jogadores associados a uma equipa. Não se deve apresentar o fluxo individual como suporte já concluído para equipas.
+
+
+## Integração inicial da UI multiplayer — 2 de novembro de 2026
+
+Foi criada a branch `feat/atina-multiplayer-ui-rpc-integration` a partir do harness local. Nesta fase:
+
+- A configuração Supabase do `index.html` aceita `window.__ATINA_TEST_CONFIG__` apenas quando a página corre em `localhost`/ `127.0.0.1` e a URL fornecida também é HTTP local. O URL e a chave de produção permanecem como fallback do site publicado; nenhuma chave service-role é aceite ou necessária.
+- O arranque de desafios consulta primeiro o estado da sala e, quando está em `pending`, chama `atina_v2_start_room_challenges`. A verificação prévia permite recuperar de uma resposta de rede perdida depois do servidor já ter iniciado a sala, sem tentar iniciar a mesma sala novamente.
+- O renderer consome `challenge_id`, `category`, `emoji`, `clues`, `image_url`, `pos`, `queue_length`, `revealed`, `deadline` e `locked` do estado público. Não constrói uma fila de desafios nem escolhe respostas no browser.
+- Os controlos de pista, resposta, passar e avançar chamam respetivamente `atina_v2_reveal_room_clue`, `atina_v2_submit_room_answer`, `atina_v2_pass_room_challenge` e `atina_v2_next_room_challenge`.
+- O relógio do browser é apenas visual; ao chegar a zero, o cliente volta a consultar `atina_v2_room_state`, que reconcilia o prazo no servidor.
+- A atribuição de equipa pode ser removida no lobby. O arranque individual recusa explicitamente salas com equipas, porque a UI de propostas/votação por equipa ainda precisa de integração completa.
+- Foi acrescentado `tests/e2e/multiplayer-ui-browser.test.cjs`, com dois contextos Chromium a percorrer o HTML real, criar/entrar numa sala, iniciar uma partida, submeter uma resposta errada, passar e avançar. O workflow executa este teste contra o Supabase local descartável.
+
+**Estado de validação:** o teste foi acrescentado ao workflow, mas ainda não há confirmação de uma execução CI concluída. Não declarar o fluxo aprovado antes de o job terminar com sucesso. Esta fase cobre apenas o modo individual de desafios; não cobre a votação de equipa, reconexão, retry de submissão concorrente, prazos sob falhas de rede ou dispositivos físicos. O fluxo Mímicas permanece separado e usa as RPCs dedicadas existentes.
