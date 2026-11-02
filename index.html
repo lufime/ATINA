@@ -1005,9 +1005,16 @@ function atinaSolutionImageLicense(item){
 function atinaSolutionImageUsable(item){
  if(!item?.thumburl||!/^https:\/\//i.test(item.thumburl))return false;
  const license=atinaSolutionImageLicense(item);
- // Aceita domínio público/CC0 e licenças Creative Commons de atribuição
- // (CC BY e CC BY-SA); a atribuição é apresentada junto da imagem.
- if(!(/public domain/.test(license)||/\bcc0\b/.test(license)||/\bcc[- ]?by(?:[- ]?sa)?(?:\s|$)/.test(license)))return false;
+ // Apenas licenças que permitem reutilização: domínio público, CC0,
+ // CC BY e CC BY-SA. Licenças de atribuição exigem autor e URL da licença.
+ const publicDomain=/public domain/.test(license);
+ const cc0=/\bcc0\b/.test(license);
+ const attributionLicense=/\bcc[- ]?by(?:[- ]?sa)?(?:\s|$)/.test(license);
+ if(!(publicDomain||cc0||attributionLicense))return false;
+ const metadata=item.extmetadata||{};
+ const author=String(metadata.Artist?.value||'').replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ').trim();
+ const licenseUrl=String(metadata.LicenseUrl?.value||'').trim();
+ if(attributionLicense&&(!author||!/^https:\/\//i.test(licenseUrl)))return false;
  // Evita ícones, logótipos e ficheiros vetoriais que podem passar por uma
  // correspondência de nome, mas não funcionam como fotografia ilustrativa.
  if(!['image/jpeg','image/png','image/webp'].includes(item.mime)||Number(item.width)<400||Number(item.height)<300)return false;
