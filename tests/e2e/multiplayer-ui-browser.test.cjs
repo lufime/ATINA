@@ -74,6 +74,8 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
 
     await guest.locator('#networkReady').click();
     await host.waitForFunction(() => document.querySelector('#networkLobbyInfo')?.textContent.includes('2 de'));
+    await host.locator('#difficultyMode').selectOption('easy');
+    await host.locator('#timerMode').selectOption('0');
     await host.locator('#networkStartGame').click();
     await host.locator('#game').waitFor({ state: 'visible' });
     await host.waitForFunction(() => document.querySelector('#category')?.textContent.trim().length > 0);
