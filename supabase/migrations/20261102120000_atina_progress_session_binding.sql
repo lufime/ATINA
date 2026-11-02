@@ -278,13 +278,22 @@ comment on function public.atina_progress_claim_local(text, uuid, text, integer)
 drop function if exists public.atina_v2_start_local_game(text, text, text, integer);
 drop function if exists public.atina_v2_start_local_game(text, text, text, integer, text);
 create or replace function public.atina_v2_start_local_game(
-  p_game_mode text, p_difficulty text, p_category text default null,
+  p_game_mode text,
+  p_difficulty text,
+  p_category text default null,
   p_timed_mode_seconds integer default 60,
   p_device_token text default null
 )
-returns jsonb language plpgsql security definer set search_path = ''
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
 as $$
-declare v_token text; v_queue integer[]; v_session private.atina_v2_local_sessions; v_player_id uuid;
+declare
+  v_token text;
+  v_queue integer[];
+  v_session private.atina_v2_local_sessions;
+  v_player_id uuid;
 begin
   if p_game_mode is null or p_game_mode not in ('solo','duel','mix','party') then
     raise exception 'Modo inválido.' using errcode='22023';
@@ -298,44 +307,13 @@ begin
   if p_category is not null and length(trim(p_category))=0 then
     raise exception 'Categoria inválida.' using errcode='22023';
   end if;
+
   if p_device_token is not null then
     if p_game_mode not in ('solo','mix') then
       raise exception 'A progressão individual só está disponível em Solo e Mix.'
         using errcode='22023';
     end if;
-    if p_device_token !~ '^[0-9a-f]{64}
-  select array_agg(c.challenge_id order by random()) into v_queue
-  from private.atina_challenges c
-  where c.active and c.difficulty=p_difficulty
-    and (p_category is null or c.category=p_category);
-  if coalesce(cardinality(v_queue),0)=0 then
-    raise exception 'Não existem desafios para estes critérios.' using errcode='22023';
-  end if;
-  if p_game_mode='party' then
-    v_queue:=v_queue[1:least(10,cardinality(v_queue))];
-  end if;
-  v_token:=encode(extensions.gen_random_bytes(32),'hex');
-  insert into private.atina_v2_local_sessions (
-    token_hash,game_mode,difficulty,category,timed_mode_seconds,
-    challenge_queue,position,revealed_clues,current_player,scores,streaks,
-    round_context,deadline_at,expires_at,special_card
-  ) values (
-    extensions.digest(convert_to(v_token,'UTF8'),'sha256'),
-    p_game_mode,p_difficulty,p_category,p_timed_mode_seconds,
-    v_queue,1,1,1,array[0,0],array[0,0],'{}'::jsonb,
-    case when p_timed_mode_seconds=0 then null
-      else clock_timestamp()+make_interval(secs=>p_timed_mode_seconds) end,
-    clock_timestamp()+interval '8 hours',null
-  ) returning * into v_session;
-  if v_player_id is not null then
-    insert into private.atina_xp_session_owners(session_id,player_id)
-    values(v_session.id,v_player_id);
-  end if;
-  return jsonb_build_object('token',v_token,'state',private.atina_v2_local_public_state(v_session));
-end;
-$$;
-
- then
+    if p_device_token !~ '^[0-9a-f]{64}$' then
       raise exception 'Identificador de dispositivo inválido.' using errcode='22023';
     end if;
     select id into v_player_id
@@ -345,6 +323,7 @@ $$;
       raise exception 'Regista primeiro o teu pseudónimo.' using errcode='28000';
     end if;
   end if;
+
   select array_agg(c.challenge_id order by random()) into v_queue
   from private.atina_challenges c
   where c.active and c.difficulty=p_difficulty
@@ -355,6 +334,7 @@ $$;
   if p_game_mode='party' then
     v_queue:=v_queue[1:least(10,cardinality(v_queue))];
   end if;
+
   v_token:=encode(extensions.gen_random_bytes(32),'hex');
   insert into private.atina_v2_local_sessions (
     token_hash,game_mode,difficulty,category,timed_mode_seconds,
@@ -368,10 +348,18 @@ $$;
       else clock_timestamp()+make_interval(secs=>p_timed_mode_seconds) end,
     clock_timestamp()+interval '8 hours',null
   ) returning * into v_session;
-  return jsonb_build_object('token',v_token,'state',private.atina_v2_local_public_state(v_session));
+
+  if v_player_id is not null then
+    insert into private.atina_xp_session_owners(session_id,player_id)
+    values(v_session.id,v_player_id);
+  end if;
+
+  return jsonb_build_object(
+    'token',v_token,
+    'state',private.atina_v2_local_public_state(v_session)
+  );
 end;
 $$;
-
 
 revoke all on function public.atina_v2_start_local_game(text, text, text, integer, text) from public;
 grant execute on function public.atina_v2_start_local_game(text, text, text, integer, text) to anon, authenticated;
