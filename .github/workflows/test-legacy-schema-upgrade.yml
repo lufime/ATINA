@@ -7,6 +7,7 @@ on:
       - 'supabase/migrations/**'
       - 'supabase/legacy-fixtures/**'
       - 'supabase/legacy-fixtures/legacy-upgrade-assertions.sql'
+      - 'tests/e2e/**'
       - '.github/workflows/test-legacy-schema-upgrade.yml'
   workflow_dispatch:
 
@@ -21,6 +22,14 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: npm install --no-save playwright@1.56.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
       - name: Set up Supabase CLI
         uses: supabase/setup-cli@v1
         with:
@@ -43,6 +52,12 @@ jobs:
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
+      - name: Exercise multiplayer and Mímicas RPCs from isolated browsers
+        run: |
+          eval "$(supabase status -o env | grep -E '^(API_URL|ANON_KEY)=')"
+          export SUPABASE_URL="$API_URL"
+          export SUPABASE_ANON_KEY="$ANON_KEY"
+          node --test tests/e2e/multiplayer-rpc-browser.test.cjs
       - name: Assert legacy data and contracts remain intact
         run: |
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
