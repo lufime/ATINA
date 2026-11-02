@@ -28,8 +28,8 @@ jobs:
       - name: Start disposable local Supabase stack
         run: |
           supabase init --force
-          # Keep the disposable database empty: this job applies only the two
-          # compatibility migrations after installing the synthetic legacy fixture.
+          # Keep the disposable database empty: apply only the v2 compatibility
+          # migrations and pseudonym progression migration after the legacy fixture.
           sed -i '/^\[db\.migrations\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
           sed -i '/^\[db\.seed\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
           supabase start
