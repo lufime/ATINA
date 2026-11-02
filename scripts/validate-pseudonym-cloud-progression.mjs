@@ -9,6 +9,8 @@ const checks = [
   ['server-side answer verification', /last_result\s*->>\s*'outcome'\s*<>\s*'correct'/i],
   ['no client-supplied XP', !/p_xp|p_points|p_score/i.test(sql)],
   ['idempotent event key', /unique \(player_id, session_id, position\)/i],
+  ['session bound to player', /add column player_id uuid references private\\.atina_v2_players/i.test(sql)],
+  ['XP award uses bound player', /where id = v_session\\.player_id/i.test(sql)],
   ['daily reward once', /rewarded_date is distinct from v_today/i],
   ['private RLS', /enable row level security/i.test(sql) && /revoke all on private\.atina_v2_players from public, anon, authenticated/i.test(sql)],
   ['restricted RPC grants', /revoke all on function public\.atina_v2_player_profile\(text, text\) from public/i.test(sql) && /grant execute on function public\.atina_v2_record_local_progress\(uuid, text\) to anon, authenticated/i.test(sql)],
