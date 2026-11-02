@@ -1052,7 +1052,13 @@ async function atinaShowSolutionImage(answer,category,targetId){
    // tentar Commons com correspondência estrita do nome (incluindo sinónimos
    // conhecidos) e validação do contexto da categoria.
    if(!item){
-    const queries=[cleanAnswer,cleanAnswer+' '+cleanCategory].filter((q,i,a)=>q&&a.indexOf(q)===i);
+    const categoryText=atinaSolutionImageText(cleanCategory);
+    const placeCategory=/\b(onde estou|geografia|cidade|capital|pais|país|localizacao|localização)\b/.test(categoryText);
+    const queries=[
+     cleanAnswer,
+     cleanAnswer+' '+cleanCategory,
+     ...(placeCategory?[cleanAnswer+' city',cleanAnswer+' skyline',cleanAnswer+' Argentina']:[])
+    ].filter((q,i,a)=>q&&a.indexOf(q)===i);
     for(const query of queries){
      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
      const response=await fetch(url,{headers:{Accept:'application/json'}});
