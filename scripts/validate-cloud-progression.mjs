@@ -6,6 +6,7 @@ const sql = readFileSync(
   'utf8'
 );
 
+const migration = readFileSync(new URL('../supabase/migrations/20261102120000_atina_progress_session_binding.sql', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 
@@ -106,6 +107,18 @@ for (const id of [
   if (!html.includes('id="' + id + '"')) {
     throw new Error('Elemento de interface de progressão em falta: ' + id);
   }
+}
+
+const claimBody = sql.slice(
+  sql.indexOf('create or replace function public.atina_progress_claim_local'),
+  sql.indexOf('create or replace function public.atina_progress_leaderboard')
+);
+if (claimBody.includes('insert into private.atina_xp_session_owners')) {
+  throw new Error('A sessão não pode ser atribuída ao primeiro perfil que reclamar XP.');
+}
+if (!migration.includes('p_device_token text default null') ||
+    !migration.includes('insert into private.atina_xp_session_owners(session_id,player_id)')) {
+  throw new Error('O arranque da sessão não fixa a identidade do pseudónimo no servidor.');
 }
 
 console.log(
