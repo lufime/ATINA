@@ -24,7 +24,7 @@ select ok(
   'anon can use the pseudonym profile RPC'
 );
 select ok(
-  has_function_privilege('anon', 'public.atina_v2_record_local_progress(uuid,text,text)', 'EXECUTE'),
+  has_function_privilege('anon', 'public.atina_v2_record_local_progress(uuid,text)', 'EXECUTE'),
   'anon can use the server-validated progress RPC'
 );
 select ok(
