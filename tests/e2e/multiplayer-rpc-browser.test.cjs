@@ -44,11 +44,11 @@ test('two isolated browser contexts exercise real multiplayer and Mímicas RPCs'
     const created = await host.rpc('atina_v2_create_room', { p_nickname: 'Host-' + suffix, p_max_players: 4 });
     assert.equal(created.error, null, created.error?.message);
     assert.ok(created.data?.room_id && created.data?.token && created.data?.player_id);
-    rooms.push({ room_id: created.data.room_id, token: created.data.token });
+    rooms.push({ player: host, room_id: created.data.room_id, token: created.data.token });
     const joined = await guest.rpc('atina_v2_join_room', { p_nickname: 'Guest-' + suffix, p_code: created.data.code });
     assert.equal(joined.error, null, joined.error?.message);
     assert.ok(joined.data?.token && joined.data?.player_id);
-    rooms.push({ room_id: joined.data.room_id, token: joined.data.token });
+    rooms.push({ player: guest, room_id: joined.data.room_id, token: joined.data.token });
     return {
       host, guest,
       hostRoom: created.data,
@@ -165,13 +165,8 @@ test('two isolated browser contexts exercise real multiplayer and Mímicas RPCs'
   } finally {
     // Best-effort cleanup; each run uses a disposable local database regardless.
     for (const room of rooms) {
-      const player = contexts.length ? contexts[0] : null;
-      if (!player) continue;
       try {
-        const page = player.pages()[0];
-        if (page) await page.evaluate(async ({ roomId, token }) => {
-          await window.atinaRpc('atina_v2_leave_room', { p_room_id: roomId, p_token: token });
-        }, { roomId: room.room_id, token: room.token });
+        await room.player.rpc('atina_v2_leave_room', { p_room_id: room.room_id, p_token: room.token });
       } catch (_) {}
     }
     await Promise.all(contexts.map(context => context.close()));
