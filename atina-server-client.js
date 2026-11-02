@@ -145,11 +145,12 @@ async function atinaProgressCopyRecovery() {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Ainda não existe uma chave neste dispositivo. Regista um pseudónimo ou recupera-o com o código.';
     return;
   }
+  if ($('atinaCloudRecoveryCode')) $('atinaCloudRecoveryCode').value = token;
   try {
     await navigator.clipboard.writeText(token);
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Código de recuperação copiado. Guarda-o num local seguro.';
   } catch (_) {
-    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Não foi possível copiar automaticamente. Seleciona e copia o código de recuperação novamente.';
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Não foi possível copiar automaticamente. O código está no campo de recuperação para copiares manualmente.';
   }
 }
 
@@ -159,9 +160,21 @@ async function atinaProgressRestoreFromCode() {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'O código de recuperação deve ter 64 caracteres hexadecimais.';
     return;
   }
-  localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, code);
+  const nickname = String($('atinaCloudNickname')?.value || localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '').trim();
+  if (!nickname || nickname.length > 20) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Indica primeiro o pseudónimo associado ao código de recuperação.';
+    return;
+  }
   try {
-    await atinaProgressRegister($('atinaCloudNickname')?.value || localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY), false);
+    const data = await atinaServerRpc('atina_progress_register', {
+      p_nickname: nickname,
+      p_device_token: code
+    });
+    localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, code);
+    localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, nickname);
+    atinaCloudProfile = data;
+    atinaProgressRender(data);
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Pseudónimo guardado. A progressão está sincronizada.';
   } catch (error) {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = error.message || 'Não foi possível recuperar o perfil.';
   }
