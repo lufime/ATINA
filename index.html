@@ -1022,7 +1022,28 @@ function atinaSolutionImageUsable(item){
  if(/\b(icon|logo|symbol|emblem|coat of arms|flag|speaker|audio|sound)\b/.test(title))return false;
  return true;
 }
-function atinaSolutionImageMatch(answer,category,item){
+async function atinaSolutionImageAliases(answer){
+ const aliases=new Set([String(answer||'').trim()]);
+ const normalized=atinaSolutionImageText(answer);
+ if(!normalized)return [...aliases];
+ for(const language of ['pt','en']){
+  try{
+   const url='https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(answer)+'&language='+language+'&uselang='+language+'&type=item&limit=8&format=json&origin=*';
+   const response=await fetch(url,{headers:{Accept:'application/json'}});
+   if(!response.ok)continue;
+   const data=await response.json();
+   const exact=(data.search||[]).find(item=>atinaSolutionImageText(item.label)===normalized);
+   if(!exact)continue;
+   aliases.add(exact.label||'');
+   for(const alias of (exact.aliases||[]))if(alias?.value)aliases.add(alias.value);
+   // Wikidata aliases are human-curated names/translations; do not use
+   // broad descriptions or unrelated search-result labels as synonyms.
+   break;
+  }catch(error){}
+ }
+ return [...aliases].map(value=>String(value||'').trim()).filter(Boolean).slice(0,12);
+}
+function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is','the']);
  const aliases={
   'esponja':['esponja','sponge','cleaning sponge'],
@@ -1032,7 +1053,7 @@ function atinaSolutionImageMatch(answer,category,item){
   'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering'],
  };
  const normalized=atinaSolutionImageText(answer);
- const answerTerms=aliases[normalized]||[normalized];
+ const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...extraAliases.map(atinaSolutionImageText)])];
  const answerTokenSets=answerTerms.map(term=>atinaSolutionImageText(term).split(/\s+/).filter(token=>token.length>1&&!stop.has(token)));
  const categoryText=atinaSolutionImageText(category);
  const genericCategories=new Set(['o que sou','quem sou eu','onde estou','logica e numeros','desafio surpresa','cultura geral','historia e misterios','palavras escondidas','imagem misteriosa']);
@@ -1203,7 +1224,7 @@ async function atinaShowSolutionImage(answer,category,targetId){
      const response=await fetch(url,{headers:{Accept:'application/json'}});
      if(!response.ok)throw new Error('Pesquisa indisponível');
      const data=await response.json();
-     const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(atinaSolutionImageUsable).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate)})).filter(result=>result.match);
+     const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(atinaSolutionImageUsable).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate,semanticAliases)})).filter(result=>result.match);
      candidates.sort((a,b)=>b.match.answerCoverage-a.match.answerCoverage||b.match.categoryCoverage-a.match.categoryCoverage);
      if(candidates.length){item=candidates[0].candidate;break;}
     }
