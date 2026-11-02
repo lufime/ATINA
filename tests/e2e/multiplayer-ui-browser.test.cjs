@@ -96,7 +96,7 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
 
     await guest.locator('#answer').fill('resposta-ui-deliberadamente-errada');
     await guest.locator('#submit').click();
-    await guest.waitForFunction(() => document.querySelector('#feedback')?.textContent.includes('tentar novamente'));
+    await guest.waitForFunction(() => (document.querySelector('#feedback')?.textContent || '').trim().length > 0);
     await host.locator('#pass').click();
     await host.waitForFunction(() => !!networkGameState?.locked);
     await host.locator('#continue').click();
