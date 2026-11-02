@@ -983,19 +983,29 @@ function atinaSolutionImageUsable(item){
 }
 function atinaSolutionImageMatch(answer,category,item){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
- const answerTokens=atinaSolutionImageText(answer).split(/\s+/).filter(token=>token.length>1&&!stop.has(token));
+ const aliases={
+  'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],
+  'contrabaixo':['contrabaixo','double bass','contrabass'],
+  'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering'],
+ };
+ const normalized=atinaSolutionImageText(answer);
+ const answerTerms=aliases[normalized]||[normalized];
+ const answerTokenSets=answerTerms.map(term=>atinaSolutionImageText(term).split(/\s+/).filter(token=>token.length>1&&!stop.has(token)));
  const categoryTokens=atinaSolutionImageText(category).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
- if(answerTokens.length===0)return null;
  const title=atinaSolutionImageText(item.title);
- const titleWords=new Set(title.split(/\\s+/));
- const matched=answerTokens.filter(token=>titleWords.has(token));
- const answerCoverage=matched.length/answerTokens.length;
- // Uma palavra só é aceite quando surge como termo completo no título.
- if(answerCoverage<1)return null;
+ const titleWords=new Set(title.split(/\s+/));
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const words=new Set((title+' '+description).split(/\s+/));
- const categoryCoverage=categoryTokens.length?categoryTokens.filter(token=>words.has(token)).length/categoryTokens.length:0;
- return {answerCoverage,categoryCoverage};
+ const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>titleWords.has(token)));
+ if(!matchedSet)return null;
+ const categoryAliases={
+  'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],
+  'musica e sons':['music','musical','instrument','instruments','sound'],
+ };
+ const categoryTerms=categoryAliases[atinaSolutionImageText(category)]||categoryTokens;
+ const categoryCoverage=categoryTerms.length?categoryTerms.filter(token=>words.has(token)).length/categoryTerms.length:0;
+ if(matchedSet.length===1&&categoryTerms.length&&!categoryTerms.some(token=>words.has(token)))return null;
+ return {answerCoverage:1,categoryCoverage};
 }
 async function atinaWikidataSolutionImage(answer){
  const normalizedAnswer=atinaSolutionImageText(answer);
@@ -1069,10 +1079,16 @@ async function atinaShowSolutionImage(answer,category,targetId){
    // Primeiro, procurar a entidade exata e usar apenas a sua imagem P18.
    const semantic=await atinaWikidataSolutionImage(cleanAnswer);
    item=semantic.item;
-   // Só usar a pesquisa Commons quando não existe uma entidade Wikidata
-   // exata. Se a entidade existe mas não tem imagem segura, não adivinhar.
-   if(!semantic.entityFound&&!item){
-    const queries=[cleanAnswer,cleanAnswer+' '+cleanCategory].filter((q,i,a)=>q&&a.indexOf(q)===i);
+   // Se Wikidata não fornecer imagem segura, tentar Commons com
+   // correspondência estrita do nome e validação do contexto da categoria.
+   if(!item){
+    const categoryText=atinaSolutionImageText(cleanCategory);
+    const placeCategory=/\b(onde estou|geografia|cidade|capital|pais|país|localizacao|localização)\b/.test(categoryText);
+    const queries=[
+     cleanAnswer,
+     cleanAnswer+' '+cleanCategory,
+     ...(placeCategory?[cleanAnswer+' city',cleanAnswer+' skyline',cleanAnswer+' Argentina']:[])
+    ].filter((q,i,a)=>q&&a.indexOf(q)===i);
     for(const query of queries){
      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
      const response=await fetch(url,{headers:{Accept:'application/json'}});
