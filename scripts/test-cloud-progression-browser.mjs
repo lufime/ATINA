@@ -131,6 +131,7 @@ try {
 
   await page.evaluate(() => {
     const sessionId = '00000000-0000-4000-8000-000000000123';
+    atinaServerSession = { session_id: sessionId, token: 'a'.repeat(64) };
     atinaServerState = { session_id: sessionId, position: 1 };
     atinaServerApplyState({
       session_id: sessionId, position: 1, round_locked: true, status: 'active',
