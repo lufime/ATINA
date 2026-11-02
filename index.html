@@ -1225,18 +1225,41 @@ async function atinaWikipediaSolutionImage(answer,category){
  }
  return null;
 }
+function atinaSolutionImageCategoryContext(category){
+ const value=atinaSolutionImageText(category);
+ const rules=[
+  [/onde estou|geografia|cidade|capital|pais|localizacao|monumento|lugar/,'geography place city landmark architecture travel'],
+  [/cinema|televisao|filme|series/,'film cinema movie actor actress movie character'],
+  [/musica|sons|instrument/,'music musical instrument musician orchestra concert'],
+  [/desporto|esporte|sport|atleta/,'sport sports athlete competition match equipment'],
+  [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology'],
+  [/historia|misterio|historico/,'history historical person event artifact ancient'],
+  [/arte|pintura|escultura/,'art artwork painting sculpture artist museum'],
+  [/culinaria|comida|alimento/,'food cuisine dish ingredient cooking'],
+  [/tecnologia|inventor|invencao/,'technology invention machine device engineering'],
+  [/mimicas/,'object animal profession activity famous person']
+ ];
+ const match=rules.find(([pattern])=>pattern.test(value));
+ return match?match[1]:'';
+}
 async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','uns','umas','the','of','and','in','on','for','with','what','who','where']);
  const clean=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
  const answerVariants=[answer,...aliases].map(value=>String(value||'').trim()).filter(Boolean);
  const answerTokenSets=answerVariants.map(clean).filter(tokens=>tokens.length);
  if(!answerTokenSets.length)return null;
- const categoryTokens=clean(category);
+ const categoryContext=atinaSolutionImageCategoryContext(category);
+ const categoryTokens=clean(category+' '+categoryContext);
  const contextQueries=contexts.filter(value=>String(value||'').trim()).slice(0,6);
- // Pesquisa a resposta em português, os nomes alternativos e combinações
- // com a categoria. Não limitar a avaliação às palavras portuguesas:
- // muitos repositórios descrevem as fotografias apenas em inglês.
- const queries=[...answerVariants,...answerVariants.slice(1,7).map(value=>value+' '+category),answer+' '+category,...contextQueries].map(value=>String(value||'').trim()).filter((value,index,array)=>value&&array.findIndex(other=>atinaSolutionImageText(other)===atinaSolutionImageText(value))===index).slice(0,14);
+ // Construir a pesquisa com os três elementos: categoria, solução e contexto.
+ // A categoria orienta a pesquisa, mas a solução continua a ser o critério principal.
+ const queries=[
+  answer+' '+categoryContext,
+  answer+' '+category,
+  ...answerVariants.slice(1,8).map(value=>value+' '+categoryContext),
+  ...answerVariants,
+  ...contextQueries.map(value=>answer+' '+value+' '+categoryContext)
+ ].map(value=>String(value||'').trim()).filter((value,index,array)=>value&&array.findIndex(other=>atinaSolutionImageText(other)===atinaSolutionImageText(value))===index).slice(0,18);
  let best=null,bestScore=-1;
  for(const query of queries){
   try{
@@ -1254,15 +1277,14 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
     const tags=(result.tags||[]).map(tag=>typeof tag==='string'?tag:tag?.name||'').join(' ');
     const searchable=atinaSolutionImageText([result.title,result.description,tags,result.creator].filter(Boolean).join(' '));
     const words=new Set(searchable.split(' '));
-    const coverageFor=tokens=>tokens.filter(token=>words.has(token)).length/tokens.length;
+    const coverageFor=tokens=>tokens.length?tokens.filter(token=>words.has(token)).length/tokens.length:0;
     const answerCoverage=Math.max(...answerTokenSets.map(coverageFor));
     const titleCoverage=Math.max(...answerTokenSets.map(tokens=>coverageFor(title.split(' ').filter(Boolean))));
-    const categoryCoverage=categoryTokens.length?coverageFor(categoryTokens):0;
+    const categoryCoverage=coverageFor(categoryTokens);
     const queryTokens=clean(query);
-    const queryCoverage=queryTokens.length?coverageFor(queryTokens):0;
-    // A correspondência no título vale mais do que palavras dispersas
-    // na descrição. A categoria desempata, sem bloquear a resposta exata.
-    const score=answerCoverage*6+titleCoverage*3+queryCoverage+categoryCoverage*0.5;
+    const queryCoverage=coverageFor(queryTokens);
+    // Resposta e título dominam a pontuação; categoria e contexto refinam.
+    const score=answerCoverage*7+titleCoverage*3+categoryCoverage*1.25+queryCoverage*0.75;
     if(answerCoverage<0.34&&titleCoverage===0&&queryCoverage<0.5)continue;
     if(score<=bestScore)continue;
     const licenseLabel=license==='cc0'?'CC0':license==='pdm'?'Domínio Público (PDM)':license==='by-sa'?'CC BY-SA':'CC BY';
