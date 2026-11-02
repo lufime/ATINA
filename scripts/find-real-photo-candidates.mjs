@@ -69,15 +69,21 @@ for (const challenge of input) {
         if (!allowedLicense(license) || !author || !licenseUrl) continue;
         const haystack = norm(title + ' ' + description);
         const answerTokens = norm(answer).split(/[^a-z0-9]+/).filter(t => t.length > 2);
-        const matched = answerTokens.filter(t => haystack.includes(t));
-        // Search terms may broaden discovery (characters, settings, logic objects), but
-        // a candidate still needs an answer-token match in title/description to pass.
-        if (answerTokens.length && matched.length === 0) continue;
+        const expandedTokens = terms.slice(1).flatMap(term => norm(term).split(/[^a-z0-9]+/).filter(t => t.length > 2));
+        const matchedAnswer = answerTokens.filter(t => haystack.includes(t));
+        const matchedContext = [...new Set(expandedTokens)].filter(t => haystack.includes(t));
+        // Accept a clear match to the answer OR to its supplied contextual representation.
+        // This allows fictional characters, actors, locations and concrete logic props.
+        if (matchedAnswer.length === 0 && matchedContext.length === 0) continue;
+        const relevance = matchedAnswer.length
+          ? matchedAnswer.length / Math.max(1, answerTokens.length)
+          : 0.65 * matchedContext.length / Math.max(1, new Set(expandedTokens).size);
         candidates.push({
           title, pageUrl: info.descriptionurl, originalUrl: info.url,
           mime, license, licenseUrl, author, description,
-          relevance: answerTokens.length ? matched.length / answerTokens.length : 0,
-          matchedAnswerTerms: matched
+          relevance,
+          matchedAnswerTerms: matchedAnswer,
+          matchedContextTerms: matchedContext
         });
       }
     } catch (error) {
