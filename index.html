@@ -1227,7 +1227,7 @@ async function atinaWikipediaSolutionImage(answer,category){
 }
 async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','uns','umas','the','of','and','in','on','for','with','what','who','where']);
- const clean=value=>atinaSolutionImageText(value).split(/\\s+/).filter(token=>token.length>2&&!stop.has(token));
+ const clean=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
  const answerTokens=clean(answer);
  if(!answerTokens.length)return null;
  const categoryTokens=clean(category);
@@ -1243,39 +1243,34 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
    const data=await response.json();
    for(const result of (data.results||[])){
     const imageUrl=result.thumbnail||result.url;
-    if(!imageUrl||!/^https:\\/\\//i.test(imageUrl))continue;
+    if(!imageUrl||!String(imageUrl).startsWith('https://'))continue;
     const license=String(result.license||'').toLowerCase();
     if(!['cc0','pdm','by','by-sa'].includes(license))continue;
     if((license==='by'||license==='by-sa')&&!String(result.creator||'').trim())continue;
     const title=atinaSolutionImageText(result.title||'');
     const tags=(result.tags||[]).map(tag=>typeof tag==='string'?tag:tag?.name||'').join(' ');
     const searchable=atinaSolutionImageText([result.title,result.description,tags].filter(Boolean).join(' '));
-    const words=new Set(searchable.split(/\\s+/));
+    const words=new Set(searchable.split(' '));
     const matched=answerTokens.filter(token=>words.has(token));
     const answerCoverage=matched.length/answerTokens.length;
-    const titleCoverage=answerTokens.filter(token=>title.split(/\\s+/).includes(token)).length/answerTokens.length;
+    const titleWords=title.split(' ');
+    const titleCoverage=answerTokens.filter(token=>titleWords.includes(token)).length/answerTokens.length;
     const categoryCoverage=categoryTokens.length?categoryTokens.filter(token=>words.has(token)).length/categoryTokens.length:0;
     const queryTokens=clean(query);
     const queryCoverage=queryTokens.length?queryTokens.filter(token=>words.has(token)).length/queryTokens.length:0;
     const score=answerCoverage*5+titleCoverage*2+queryCoverage*1.5+categoryCoverage*0.75;
-    // Require a meaningful match to the actual answer; broad category-only matches are rejected.
     if(answerCoverage<0.5&&titleCoverage===0&&queryCoverage<0.6)continue;
     if(score<=bestScore)continue;
     const licenseLabel=license==='cc0'?'CC0':license==='pdm'?'Domínio Público (PDM)':license==='by-sa'?'CC BY-SA':'CC BY';
     const licenseUrl=result.license_url||('https://creativecommons.org/licenses/'+license+'/'+(result.license_version||'4.0')+'/');
     bestScore=score;
     best={
-     title:result.title||answer,
-     thumburl:imageUrl,
-     mime:'image/jpeg',
-     width:Number(result.width)||0,
-     height:Number(result.height)||0,
+     title:result.title||answer,thumburl:imageUrl,mime:'image/jpeg',
+     width:Number(result.width)||0,height:Number(result.height)||0,
      sourceName:result.source||result.provider||'Openverse',
      sourceUrl:result.foreign_landing_url||result.url,
      author:result.creator||'Autor não identificado',
-     license:licenseLabel,
-     licenseUrl,
-     matchScore:score
+     license:licenseLabel,licenseUrl,matchScore:score
     };
    }
   }catch(error){}
