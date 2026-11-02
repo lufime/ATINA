@@ -85,3 +85,20 @@ Para cada execução, guardar: commit SHA, versões Node/Supabase/Playwright, ce
 ## Limitações conhecidas da bateria atual
 
 O workflow `test-cloud-progression-browser.yml` cobre progressão pseudónima e usa RPCs simuladas. Não cobre salas multiplayer reais. O workflow `replay-supabase-migrations.yml` executa migrations e pgTAP localmente, mas não conduz browsers através dos fluxos multiplayer. Esta bateria deve ligar essas duas camadas sem recorrer a produção.
+
+## Auditoria técnica pré-E2E — bloqueios confirmados
+
+A inspeção do código desta branch identificou pré-condições que têm de ser resolvidas antes de executar a bateria como E2E real:
+
+1. **Configuração do Supabase fixa no HTML:** em `index.html`, linhas 483–486, `SUPABASE_URL` e `SUPABASE_KEY` são constantes literais e o cliente é criado imediatamente. Não existe atualmente um mecanismo explícito de configuração local para os browsers de teste. O workflow não deve abrir o site de produção nem reutilizar estas constantes; a próxima alteração deve permitir injeção de configuração exclusivamente em localhost/testes, mantendo o comportamento publicado inalterado.
+2. **Submissão multiplayer não implementada no cliente:** `networkSubmitAnswer()`, em `index.html` (linha 584 nesta revisão), lança sempre `A validação multiplayer requer o servidor ATINA.`. Assim, MP-04 e os cenários de resposta/avanço não podem ser considerados executáveis pela UI atual.
+3. **Estado de jogo de desafios ainda é publicado pelo cliente:** `networkStartGame()` constrói a fila e o estado no browser e `networkPublishGameState()` tenta publicar esse estado. Isto tem de ser revisto face ao desenho server-authoritative antes de validar pontuação, concorrência ou transições; não se deve contornar o bloqueio com mocks nem com chamadas RPC artificiais.
+4. **Não foi confirmada a existência de configuração Supabase versionada no caminho `supabase/config.toml`:** o workflow atual cria uma configuração descartável com `supabase init --force`. Antes de adicionar o job Playwright, é necessário confirmar que o replay de migrations e a suite pgTAP criam o schema e fixtures necessários para salas e Mímicas numa base vazia.
+
+### Decisão de execução
+
+- **Não executar** a bateria multiplayer contra o endpoint atualmente codificado no HTML.
+- **Não afirmar** que os cenários MP-01 a MP-10 ou MM-01 a MM-05 passaram.
+- Primeiro, separar a configuração local de teste sem alterar o destino de produção, corrigir/ligar o fluxo de respostas multiplayer às RPCs server-authoritative e confirmar migrations/fixtures.
+- Só depois criar o workflow Playwright com contextos independentes e verificar, também na base local, os estados persistidos e a não divulgação da palavra secreta.
+- Até esses pré-requisitos estarem satisfeitos, este documento permanece um plano de QA com bloqueios identificados, não um relatório de testes executados.
