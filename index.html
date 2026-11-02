@@ -1327,7 +1327,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[]){
   let item=atinaSolutionImageCache.get(key);
   if(item===undefined){
    const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
-   const visualContexts=[...new Set([...atinaSolutionImageVisualContexts(cleanAnswer),...(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').trim()).filter(Boolean)])].slice(0,12);
+   const visualContexts=[...new Set([...(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').trim()).filter(Boolean),...atinaSolutionImageVisualContexts(cleanAnswer)])].slice(0,12);
    // Primeiro, fontes ligadas a uma entidade identificada exatamente.
    // Isto evita que uma fotografia apenas parecida ultrapasse a imagem da entidade certa.
    try{const semantic=await atinaWikidataSolutionImage(cleanAnswer);item=semantic.item;}catch(e){item=null;}
