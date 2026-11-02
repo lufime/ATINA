@@ -1,0 +1,66 @@
+name: Update visual solution tags
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type UPDATE-753-VISUAL-TAGS to confirm
+        required: true
+        type: string
+      batch_size:
+        description: Challenges per batch
+        required: true
+        default: "2"
+        type: choice
+        options: ["1", "2", "3"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atina-visual-tags
+  cancel-in-progress: false
+
+jobs:
+  update-tags:
+    if: ${{ inputs.confirmation == 'UPDATE-753-VISUAL-TAGS' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy tag updater to production Supabase
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::Missing SUPABASE_ACCESS_TOKEN secret"; exit 1; }
+          npx supabase@latest functions deploy atina-update-solution-tags --project-ref qwuxwiurqwfjizkwpmjp --no-verify-jwt
+
+      - name: Update all active challenge tags
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          ATINA_IMAGE_UPLOAD_TOKEN: ${{ secrets.ATINA_IMAGE_UPLOAD_TOKEN }}
+          BATCH_SIZE: ${{ inputs.batch_size }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SUPABASE_URL" || { echo "::error::Missing SUPABASE_URL secret"; exit 1; }
+          test -n "$ATINA_IMAGE_UPLOAD_TOKEN" || { echo "::error::Missing ATINA_IMAGE_UPLOAD_TOKEN secret"; exit 1; }
+          offset=0
+          total=0
+          while true; do
+            payload=$(jq -n --argjson offset "$offset" --argjson limit "$BATCH_SIZE" '{confirm:"UPDATE-SOLUTION-TAGS",offset:$offset,limit:$limit}')
+            response=$(curl --fail-with-body --silent --show-error -X POST "${SUPABASE_URL}/functions/v1/atina-update-solution-tags" \
+              -H "Content-Type: application/json" \
+              -H "x-atina-upload-token: ${ATINA_IMAGE_UPLOAD_TOKEN}" --data "$payload")
+            echo "$response" | jq .
+            processed=$(echo "$response" | jq -r '.processed // 0')
+            done_flag=$(echo "$response" | jq -r '.done // false')
+            total=$((total + processed))
+            echo "Total processed: $total"
+            if [ "$done_flag" = "true" ] || [ "$processed" -eq 0 ]; then break; fi
+            offset=$((offset + BATCH_SIZE))
+            sleep 1
+          done
+          echo "Completed. Total active challenges processed: $total"
