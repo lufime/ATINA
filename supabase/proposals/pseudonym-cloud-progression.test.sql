@@ -38,7 +38,7 @@ select ok(
 );
 select ok(
   has_function_privilege('anon', 'public.atina_v2_record_local_progress(uuid,text)', 'EXECUTE')
-  and not has_function_privilege('anon', 'public.atina_v2_record_local_progress(uuid,text,text)', 'EXECUTE'),
+  and to_regprocedure('public.atina_v2_record_local_progress(uuid,text,text)') is null,
   'XP award RPC no longer accepts a caller-selected player token'
 );
 
