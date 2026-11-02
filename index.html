@@ -1025,6 +1025,7 @@ function atinaSolutionImageUsable(item){
 function atinaSolutionImageMatch(answer,category,item){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
  const aliases={
+  'esponja':['esponja','sponge','cleaning sponge'],
   'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],
   'contrabaixo':['contrabaixo','double bass','contrabass'],
   'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering'],
@@ -1037,7 +1038,7 @@ function atinaSolutionImageMatch(answer,category,item){
  const titleWords=new Set(title.split(/\s+/));
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const words=new Set((title+' '+description).split(/\s+/));
- const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
+ const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>titleWords.has(token)));
  if(!matchedSet)return null;
  const categoryAliases={
   'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],
@@ -1072,7 +1073,7 @@ async function atinaWikidataSolutionImage(answer){
    const commonsData=await commonsResponse.json();
    const page=Object.values(commonsData.query?.pages||{})[0];
    const candidate={title:page?.title,...(page?.imageinfo?.[0]||{})};
-   if(atinaSolutionImageUsable(candidate))return {entityFound:true,item:candidate};
+   if(atinaSolutionImageUsable(candidate)&&atinaSolutionImageMatch(answer,'',candidate))return {entityFound:true,item:candidate};
   }
   // A entidade é exata, mas não tem imagem representativa com licença e
   // qualidade adequadas. Não recorrer a uma pesquisa textual ambígua.
