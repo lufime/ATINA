@@ -707,6 +707,7 @@ async function networkSubmitAnswer(){
    else if(result.status==='wrong'){networkAnsweredThisChallenge=false;playAtinaSound('wrong');}
    else if(result.status==='locked'){networkMessage('feedback','O tempo terminou.');}
    else if(result.status==='already_correct'){networkAnsweredThisChallenge=true;}
+   if(result.status==='wrong')networkMessage('feedback','Ainda não é essa a resposta. Podes tentar novamente.');
    await networkRefreshRoom();
    if(result.status==='wrong')networkMessage('feedback','Ainda não é essa a resposta. Podes tentar novamente.');
   }catch(e){networkMessage('feedback',e.message||'Não foi possível validar a resposta.');}
