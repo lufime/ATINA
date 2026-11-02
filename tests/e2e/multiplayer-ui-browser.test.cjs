@@ -96,9 +96,17 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
 
     await guest.evaluate(() => {
       window.__networkRpcCalls = [];
+      window.__networkRpcResults = [];
       window.__networkSubmitCalls = 0;
       const originalRpc = supabaseClient.rpc.bind(supabaseClient);
-      supabaseClient.rpc = (...args) => { window.__networkRpcCalls.push(args[0]); return originalRpc(...args); };
+      supabaseClient.rpc = async (...args) => {
+        window.__networkRpcCalls.push(args[0]);
+        const result = await originalRpc(...args);
+        if (args[0] === 'atina_v2_submit_room_answer') {
+          window.__networkRpcResults.push({ args: args[1], data: result.data, error: result.error ? { message: result.error.message, code: result.error.code, details: result.error.details, hint: result.error.hint } : null });
+        }
+        return result;
+      };
       const originalSubmit = networkSubmitAnswer;
       window.networkSubmitAnswer = async function(...args) {
         window.__networkSubmitCalls++;
@@ -120,7 +128,8 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
         lastRefreshError: typeof networkLastRefreshError === 'undefined' ? null : String(networkLastRefreshError?.message || networkLastRefreshError),
         roomPresent: typeof networkRoom === 'undefined' ? null : !!networkRoom,
         submitFunctionCalls: window.__networkSubmitCalls,
-        rpcCalls: window.__networkRpcCalls
+        rpcCalls: window.__networkRpcCalls,
+        rpcResults: window.__networkRpcResults
       }));
       assert.fail('Guest answer did not produce a feedback transition. Diagnostics: ' + JSON.stringify(diagnostic) + '; cause: ' + error.message);
     }
