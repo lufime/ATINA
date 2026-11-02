@@ -485,10 +485,10 @@ const ATINA_LOCAL_HOST=['localhost','127.0.0.1'].includes(location.hostname);
 const ATINA_TEST_URL=ATINA_LOCAL_HOST&&typeof ATINA_TEST_CONFIG?.url==='string'?ATINA_TEST_CONFIG.url:'';
 const ATINA_TEST_KEY=ATINA_LOCAL_HOST&&typeof ATINA_TEST_CONFIG?.anonKey==='string'?ATINA_TEST_CONFIG.anonKey:'';
 const ATINA_TEST_URL_VALID=(()=>{try{const u=new URL(ATINA_TEST_URL);return ATINA_LOCAL_HOST&&['localhost','127.0.0.1'].includes(u.hostname)&&u.protocol==='http:';}catch(_){return false;}})();
-const SUPABASE_URL=ATINA_TEST_URL_VALID?ATINA_TEST_URL:'https://qwuxwiurqwfjizkwpmjp.supabase.co';
-const SUPABASE_KEY=ATINA_TEST_URL_VALID&&ATINA_TEST_KEY?ATINA_TEST_KEY:'sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';
+const SUPABASE_URL=ATINA_LOCAL_HOST?(ATINA_TEST_URL_VALID?ATINA_TEST_URL:''):'https://qwuxwiurqwfjizkwpmjp.supabase.co';
+const SUPABASE_KEY=ATINA_LOCAL_HOST?(ATINA_TEST_URL_VALID&&ATINA_TEST_KEY?ATINA_TEST_KEY:''):'sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';
 
-const supabaseClient=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+const supabaseClient=SUPABASE_URL&&SUPABASE_KEY&&window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 let atinaUser=null,atinaProfile=null;
 function authMessage(message){$('authStatus').textContent=message;}
 async function refreshAtinaSession(){
