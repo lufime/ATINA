@@ -1024,52 +1024,33 @@ function atinaSolutionImageUsable(item){
 }
 async function atinaSolutionImageAliases(answer){
  const aliases=new Set([String(answer||'').trim()]);
- const normalized=atinaSolutionImageText(answer);
- if(!normalized)return [...aliases];
+ const raw=String(answer||'').trim();
+ const variants=[raw];
+ // Many film/book titles include a subtitle after a dash or colon.
+ // Search the principal title too, but only accept an exact Wikidata label.
+ const principal=raw.split(/\\s+[–—-]\\s+|:/)[0].trim();
+ if(principal&&principal!==raw)variants.push(principal);
+ const normalizedVariants=new Set(variants.map(atinaSolutionImageText).filter(Boolean));
  for(const language of ['pt','en']){
-  try{
-   const url='https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(answer)+'&language='+language+'&uselang='+language+'&type=item&limit=8&format=json&origin=*';
-   const response=await fetch(url,{headers:{Accept:'application/json'}});
-   if(!response.ok)continue;
-   const data=await response.json();
-   const exact=(data.search||[]).find(item=>atinaSolutionImageText(item.label)===normalized);
-   if(!exact)continue;
-   aliases.add(exact.label||'');
-   for(const alias of (exact.aliases||[])){const value=typeof alias==='string'?alias:alias?.value;if(value)aliases.add(value);}
-   // Wikidata aliases are human-curated names/translations; do not use
-   // broad descriptions or unrelated search-result labels as synonyms.
-   break;
-  }catch(error){}
+  for(const variant of variants){
+   try{
+    const url='https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(variant)+'&language='+language+'&uselang='+language+'&type=item&limit=10&format=json&origin=*';
+    const response=await fetch(url,{headers:{Accept:'application/json'}});
+    if(!response.ok)continue;
+    const data=await response.json();
+    const exact=(data.search||[]).find(item=>normalizedVariants.has(atinaSolutionImageText(item.label)));
+    if(!exact)continue;
+    const description=atinaSolutionImageText(exact.description||'');
+    // If a subtitle was removed, disambiguate the short title as a film/media entity.
+    if(principal!==raw&&!/film|movie|cinema|cinematographic|motion picture/.test(description))continue;
+    aliases.add(exact.label||'');
+    for(const alias of (exact.aliases||[])){const value=typeof alias==='string'?alias:alias?.value;if(value)aliases.add(value);}
+    if(exact.description)aliases.add(exact.description);
+    return [...aliases].map(value=>String(value||'').trim()).filter(Boolean).slice(0,16);
+   }catch(error){}
+  }
  }
- return [...aliases].map(value=>String(value||'').trim()).filter(Boolean).slice(0,12);
-}
-function atinaSolutionImageVisualContexts(answer){
- const normalized=atinaSolutionImageText(answer);
- const contexts={
-  'persistencia':['perseverance','determination','persistence','endurance','person training hard','athlete training','climber reaching summit','runner training','overcoming obstacles'],
-  'perseveranca':['perseverance','determination','persistence','endurance','person training hard','athlete training','climber reaching summit','overcoming obstacles'],
-  'determinação':['determination','perseverance','persistence','person training hard','athlete training','climber reaching summit'],
-  'coragem':['courage','bravery','rescue worker','firefighter helping','person facing danger'],
-  'amizade':['friendship','friends helping each other','friends embracing','people supporting each other'],
-  'liberdade':['freedom','liberty','person running in open field','bird flying free','open door'],
-  'esperanca':['hope','sunrise','seedling growing','person looking at horizon'],
-  'esperança':['hope','sunrise','seedling growing','person looking at horizon'],
-  'trabalho em equipa':['teamwork','team working together','people collaborating','rowing team'],
-  'cooperacao':['cooperation','teamwork','people helping each other'],
-  'cooperação':['cooperation','teamwork','people helping each other'],
-  'resiliencia':['resilience','overcoming adversity','person recovering','athlete overcoming injury'],
-  'resiliência':['resilience','overcoming adversity','person recovering','athlete overcoming injury'],
-  'paz':['peace','dove flying','people embracing','peaceful landscape'],
-  'justica':['justice','courtroom','scales of justice'],
-  'justiça':['justice','courtroom','scales of justice'],
-  'amor':['love','couple embracing','parent holding child'],
-  'felicidade':['happiness','joy','people celebrating','person smiling'],
-  'medo':['fear','person afraid','dark corridor'],
-  'curiosidade':['curiosity','person exploring','scientist observing'],
-  'confianca':['trust','confidence','person helping another climb'],
-  'confiança':['trust','confidence','person helping another climb']
- };
- return contexts[normalized]||[];
+ return [...aliases].map(value=>String(value||'').trim()).filter(Boolean).slice(0,16);
 }
 function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is','the']);
