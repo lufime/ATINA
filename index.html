@@ -1154,77 +1154,35 @@ async function atinaWikipediaSolutionImage(answer,category){
  }
  return null;
 }
-async function atinaShowSolutionImage(answer,category,targetId){
- const target=$(targetId);if(!target)return;
- const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
- const key=cleanAnswer+'|'+cleanCategory;
- if(target.dataset.solutionKey===key&&!target.classList.contains('hidden'))return;
- target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
- if(!cleanAnswer)return;
- const heading=document.createElement('strong');heading.textContent='✨ Ilustração da solução';
- const frame=document.createElement('div');frame.style.cssText='margin-top:10px;overflow:hidden;border:1px solid #d3ad68;border-radius:14px;background:#10243a';
- const image=document.createElement('img');image.src=atinaFreeSolutionSvg(cleanAnswer,cleanCategory);image.alt='Ilustração ATINA: '+cleanAnswer;image.loading='lazy';image.style.cssText='display:block;width:100%;height:auto;max-height:360px;object-fit:contain';
- frame.appendChild(image);target.append(heading,frame);target.classList.remove('hidden');return;
- const heading=document.createElement('strong');heading.textContent='📷 A solução em imagem';
- const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
- target.append(heading,status);target.classList.remove('hidden');
- try{
-  let item=atinaSolutionImageCache.get(key);
-  if(item===undefined){
-   // Primeiro, procurar a entidade exata e usar apenas a sua imagem P18.
-   const semantic=await atinaWikidataSolutionImage(cleanAnswer);
-   item=semantic.item;
-   // Fonte institucional adicional: aceitar apenas obras CC0/domínio público
-   // cuja ficha também confirme o contexto temático da categoria.
-   if(!item){
-    try{item=await atinaArtInstituteSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
-   }
-   // Se Wikidata/Art Institute não fornecerem imagem segura, tentar Commons.
-   if(!item){
-    const categoryText=atinaSolutionImageText(cleanCategory);
-    const placeCategory=/\b(onde estou|geografia|cidade|capital|pais|país|localizacao|localização)\b/.test(categoryText);
-    const queries=[
-     cleanAnswer,
-     cleanAnswer+' '+cleanCategory,
-     ...(placeCategory?[cleanAnswer+' city',cleanAnswer+' skyline',cleanAnswer+' Argentina']:[])
-    ].filter((q,i,a)=>q&&a.indexOf(q)===i);
-    for(const query of queries){
-     const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
-     const response=await fetch(url,{headers:{Accept:'application/json'}});
-     if(!response.ok)throw new Error('Pesquisa indisponível');
-     const data=await response.json();
-     const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(atinaSolutionImageUsable).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate)})).filter(result=>result.match);
-     candidates.sort((a,b)=>b.match.answerCoverage-a.match.answerCoverage||b.match.categoryCoverage-a.match.categoryCoverage);
-     if(candidates.length){item=candidates[0].candidate;break;}
-    }
-   }
-   // Se Wikidata/Commons não fornecerem uma imagem segura, consultar o artigo
-   // exato da Wikipédia. A imagem continua sujeita à validação PD/CC0 do Commons.
-   if(!item){
-    try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
-   }
-   atinaSolutionImageCache.set(key,item||null);
-  }
-  if(target.dataset.solutionKey!==key)return;
-  if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
-  const frame=document.createElement('div');frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
-  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
-  image.onerror=()=>{frame.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
-  const brand=document.createElement('span');brand.textContent='△ ATINA';brand.setAttribute('aria-label','ATINA');brand.style.cssText='position:absolute;top:10px;right:10px;padding:6px 10px;border:1px solid #ffffff55;border-radius:8px;background:#071827b8;color:#fff;font-weight:900;letter-spacing:.14em;font-size:12px;text-shadow:0 1px 5px #000;pointer-events:none';
-  const watermark=document.createElement('span');watermark.textContent='ATINA';watermark.setAttribute('aria-hidden','true');watermark.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-24deg);color:#ffffff30;font-size:clamp(34px,10vw,76px);font-weight:950;letter-spacing:.18em;text-shadow:0 1px 5px #0005;white-space:nowrap;pointer-events:none';
-  frame.append(image,watermark,brand);
-  const provenance=document.createElement('p');provenance.className='muted small';provenance.style.cssText='margin:8px 0 0;line-height:1.5;overflow-wrap:anywhere';
-  const sourceName=item.sourceName||'Wikimedia Commons';
-  const sourceUrl=item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_')));
-  const author=item.author||item.extmetadata?.Artist?.value?.replace(/<[^>]*>/g,'').trim()||'Autor não identificado';
-  const license=item.license||atinaSolutionImageLicense(item)||'Domínio Público / CC0';
-  const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
-  provenance.textContent='Autor: '+author+' · Fonte: '+sourceName+' · Licença: '+license+' · ';
-  const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Ver imagem original';
-  const licenseLink=document.createElement('a');licenseLink.href=licenseUrl;licenseLink.target='_blank';licenseLink.rel='noopener noreferrer';licenseLink.textContent='Ver licença';
-  provenance.append(sourceLink,document.createTextNode(' · '),licenseLink);
-  status.textContent='Solução: '+cleanAnswer;target.append(frame,provenance);
- }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
-}
+async function atinaShowSolutionImage(answer, category, targetId) {
+  const target = $(targetId);
+  if (!target) return;
 
+  const cleanAnswer = String(answer || '').trim();
+  const cleanCategory = String(category || '').trim();
+  const key = cleanAnswer + '|' + cleanCategory;
+
+  if (target.dataset.solutionKey === key && !target.classList.contains('hidden')) return;
+
+  target.dataset.solutionKey = key;
+  target.replaceChildren();
+  target.classList.add('hidden');
+  if (!cleanAnswer) return;
+
+  const heading = document.createElement('strong');
+  heading.textContent = '✨ Ilustração da solução';
+
+  const frame = document.createElement('div');
+  frame.style.cssText = 'margin-top:10px;overflow:hidden;border:1px solid #d3ad68;border-radius:14px;background:#10243a';
+
+  const image = document.createElement('img');
+  image.src = atinaFreeSolutionSvg(cleanAnswer, cleanCategory);
+  image.alt = 'Ilustração ATINA: ' + cleanAnswer;
+  image.loading = 'lazy';
+  image.style.cssText = 'display:block;width:100%;height:auto;max-height:360px;object-fit:contain';
+
+  frame.appendChild(image);
+  target.append(heading, frame);
+  target.classList.remove('hidden');
+}
 </script><script src="./atina-server-client.js"></script></body></html>
