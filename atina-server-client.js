@@ -185,7 +185,9 @@ async function atinaServerStart(gameMode, category = null) {
       p_game_mode: gameMode,
       p_difficulty: difficulty,
       p_category: category,
-      p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60
+      p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
+      p_player_token: /^[0-9a-f]{64}$/.test(localStorage.getItem('atinaPlayerTokenV1') || '')
+        ? localStorage.getItem('atinaPlayerTokenV1') : null
     });
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
     atinaServerSession = { session_id: response.state.session_id, token: response.token };
