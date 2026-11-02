@@ -57,6 +57,7 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
 
   try {
     const host = await openPlayer('host');
+    await host.locator('.home-page-nav [data-home-target="online"]').click();
     await host.locator('#networkNickname').fill('UI-Host');
     await host.locator('#createNetworkRoom').click();
     await host.locator('#networkLobby').waitFor({ state: 'visible' });
