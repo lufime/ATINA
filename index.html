@@ -706,7 +706,7 @@ async function networkSubmitAnswer(){
    const result=await networkCall('atina_v2_submit_room_answer',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_answer:answer});
    $('answer').value='';
    if(result.status==='correct'){networkAnsweredThisChallenge=true;networkTransientFeedback='';playAtinaSound('correct');}
-   else if(result.status==='wrong'){networkAnsweredThisChallenge=false;networkTransientFeedback='Ainda não é essa a resposta. Podes tentar novamente.';playAtinaSound('wrong');}
+   else if(result.status==='wrong'){networkAnsweredThisChallenge=false;networkTransientFeedback='Ainda não é essa a resposta. Podes tentar novamente.';networkMessage('feedback',networkTransientFeedback);playAtinaSound('wrong');}
    else if(result.status==='locked'){networkMessage('feedback','O tempo terminou.');}
    else if(result.status==='already_correct'){networkAnsweredThisChallenge=true;}
    await networkRefreshRoom();
