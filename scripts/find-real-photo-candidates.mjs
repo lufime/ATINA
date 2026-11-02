@@ -10,7 +10,7 @@
  * Run: node scripts/find-real-photo-candidates.mjs private-challenges.json
  * Output: photo-candidates-review.json (never commit this file; it contains answers).
  */
-import fs from "node:fs/promises';
+import fs from 'node:fs/promises';
 
 const inputPath = process.argv[2];
 if (!inputPath) {
