@@ -9,7 +9,7 @@ on:
       - 'supabase/legacy-fixtures/**'
       - '.github/workflows/test-legacy-schema-upgrade.yml'
   pull_request:
-    branches: [main]
+    branches: [main, qa/atina-multiplayer-rpc-browser-tests]
     paths:
       - 'supabase/migrations/**'
       - 'supabase/legacy-fixtures/**'
