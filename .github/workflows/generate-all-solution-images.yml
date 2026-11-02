@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: Type GENERATE-753 to start generation and replace image_url values
+        description: Type GENERATE-753 to start generating and publishing all challenge images
         required: true
         type: string
       batch_size:
         description: Images per request (1-3)
         required: true
-        default: "3"
+        default: "1"
         type: choice
         options:
           - "1"
@@ -26,82 +26,65 @@ concurrency:
 
 jobs:
   generate:
-    if: \${{ inputs.confirmation == 'GENERATE-753' }}
+    if: ${{ inputs.confirmation == 'GENERATE-753' }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure Git identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Generate images and publish them to GitHub in resumable batches
+      - name: Generate images and publish them to GitHub in batches
         env:
-          SUPABASE_URL: \${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: \${{ secrets.SUPABASE_ANON_KEY }}
-          ATINA_IMAGE_UPLOAD_TOKEN: \${{ secrets.ATINA_IMAGE_UPLOAD_TOKEN }}
-          BATCH_SIZE: \${{ inputs.batch_size }}
-          GH_TOKEN: \${{ github.token }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          ATINA_IMAGE_UPLOAD_TOKEN: ${{ secrets.ATINA_IMAGE_UPLOAD_TOKEN }}
+          BATCH_SIZE: ${{ inputs.batch_size }}
         shell: bash
         run: |
           set -euo pipefail
-          : "\${SUPABASE_URL:?Missing SUPABASE_URL secret}"
-          : "\${SUPABASE_ANON_KEY:?Missing SUPABASE_ANON_KEY secret}"
-          : "\${ATINA_IMAGE_UPLOAD_TOKEN:?Missing ATINA_IMAGE_UPLOAD_TOKEN secret}"
+          : "${SUPABASE_URL:?Missing SUPABASE_URL secret}"
+          : "${SUPABASE_ANON_KEY:?Missing SUPABASE_ANON_KEY secret}"
+          : "${ATINA_IMAGE_UPLOAD_TOKEN:?Missing ATINA_IMAGE_UPLOAD_TOKEN secret}"
 
           cursor=-1
           total=0
           max_batches=300
           for ((batch=1; batch<=max_batches; batch++)); do
-            payload=$(jq -n --argjson limit "$BATCH_SIZE" --argjson after "$cursor" \
-              '{limit:$limit, after_challenge_id:$after}')
-            response=$(curl --fail-with-body --silent --show-error \
-              -X POST "\${SUPABASE_URL}/functions/v1/atina-generate-solution-images" \
-              -H "apikey: \${SUPABASE_ANON_KEY}" \
-              -H "Authorization: Bearer \${SUPABASE_ANON_KEY}" \
-              -H "Content-Type: application/json" \
-              -H "x-atina-upload-token: \${ATINA_IMAGE_UPLOAD_TOKEN}" \
-              --data "$payload")
-
+            payload=$(jq -n --argjson limit "$BATCH_SIZE" --argjson after "$cursor" '{limit:$limit, after_challenge_id:$after}')
+            response=$(curl --fail-with-body --silent --show-error -X POST "${SUPABASE_URL}/functions/v1/atina-generate-solution-images" -H "apikey: ${SUPABASE_ANON_KEY}" -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" -H "Content-Type: application/json" -H "x-atina-upload-token: ${ATINA_IMAGE_UPLOAD_TOKEN}" --data "$payload")
             echo "$response" | jq .
             success=$(echo "$response" | jq -r '.success // false')
             processed=$(echo "$response" | jq -r '.processed // 0')
             done_flag=$(echo "$response" | jq -r '.done // false')
             next_cursor=$(echo "$response" | jq -r '.next_after_challenge_id // empty')
+            if [[ "$success" != "true" ]]; then echo "::error::Image generation failed; stopping."; exit 1; fi
+            if [[ "$processed" -eq 0 && "$done_flag" != "true" ]]; then echo "::error::Generator made no progress; stopping."; exit 1; fi
 
-            if [[ "$success" != "true" ]]; then
-              echo "::error::Image generation batch failed."
-              exit 1
-            fi
-            if [[ "$processed" -eq 0 && "$done_flag" != "true" ]]; then
-              echo "::error::Generator made no progress; stopping."
-              exit 1
-            fi
-
-            # Download each generated image and commit it under images/solutions/<challenge_id>.png.
             while IFS=$'\t' read -r challenge_id image_url; do
               [[ -n "$challenge_id" && -n "$image_url" ]] || continue
               mkdir -p images/solutions
-              curl --fail-with-body --silent --show-error "$image_url" \
-                -o "images/solutions/\${challenge_id}.png"
+              tmp="images/solutions/${challenge_id}.png.tmp"
+              curl --fail-with-body --silent --show-error "$image_url" -o "$tmp"
+              file --mime-type "$tmp" | grep -q 'image/png$' || { echo "::error::Invalid PNG for challenge ${challenge_id}"; exit 1; }
+              mv "$tmp" "images/solutions/${challenge_id}.png"
             done < <(echo "$response" | jq -r '.results[] | select(.success == true) | [.challenge_id, .image_url] | @tsv')
 
             git add images/solutions
             if ! git diff --cached --quiet; then
-              git commit -m "Add ATINA solution images batch $batch"
-              git push origin "HEAD:\${GITHUB_REF_NAME}"
+              git commit -m "Add ATINA solution images batch ${batch}"
+              git push origin "HEAD:${GITHUB_REF_NAME}"
             fi
-
             total=$((total + processed))
-            if [[ -n "$next_cursor" ]]; then cursor="$next_cursor"; fi
-            echo "Batch $batch complete; generated in this run: $total"
-            if [[ "$done_flag" == "true" ]]; then
-              echo "Generation completed. Total processed: $total"
-              exit 0
-            fi
+            [[ -z "$next_cursor" ]] || cursor="$next_cursor"
+            echo "Batch ${batch} complete; total generated: ${total}"
+            if [[ "$done_flag" == "true" ]]; then echo "All available challenges processed: ${total}"; exit 0; fi
           done
-          echo "::error::Reached safety limit of $max_batches batches."
+          echo "::error::Reached safety limit of ${max_batches} batches."
           exit 1
