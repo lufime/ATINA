@@ -976,21 +976,29 @@ function atinaSolutionImageUsable(item){
 }
 function atinaSolutionImageMatch(answer,category,item){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
- const answerTokens=atinaSolutionImageText(answer).split(/\s+/).filter(token=>token.length>1&&!stop.has(token));
+ const aliases={
+  'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],
+  'contrabaixo':['contrabaixo','double bass','contrabass'],
+ };
+ const normalized=atinaSolutionImageText(answer);
+ const answerTerms=aliases[normalized]||[normalized];
+ const answerTokenSets=answerTerms.map(term=>atinaSolutionImageText(term).split(/\s+/).filter(token=>token.length>1&&!stop.has(token)));
  const categoryTokens=atinaSolutionImageText(category).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
- if(!answerTokens.length)return null;
  const title=atinaSolutionImageText(item.title);
  const titleWords=new Set(title.split(/\s+/));
- const matched=answerTokens.filter(token=>titleWords.has(token));
- const answerCoverage=matched.length/answerTokens.length;
- if(answerCoverage<1)return null;
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const words=new Set((title+' '+description).split(/\s+/));
- const categoryCoverage=categoryTokens.length?categoryTokens.filter(token=>words.has(token)).length/categoryTokens.length:0;
- // Respostas de uma palavra (ex.: Contrabaixo) só passam se a descrição
- // também confirmar o contexto da categoria; evita falsos positivos.
- if(answerTokens.length===1&&categoryTokens.length&&!categoryTokens.some(token=>words.has(token)))return null;
- return {answerCoverage,categoryCoverage};
+ const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>titleWords.has(token)));
+ if(!matchedSet)return null;
+ const categoryAliases={
+  'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking'],
+  'musica e sons':['music','musical','instrument','instruments','sound'],
+ };
+ const categoryTerms=categoryAliases[atinaSolutionImageText(category)]||categoryTokens;
+ const categoryCoverage=categoryTerms.length?categoryTerms.filter(token=>words.has(token)).length/categoryTerms.length:0;
+ // Para respostas de uma palavra, confirmar o contexto temático na descrição/título.
+ if(matchedSet.length===1&&categoryTerms.length&&!categoryTerms.some(token=>words.has(token)))return null;
+ return {answerCoverage:1,categoryCoverage};
 }
 async function atinaWikidataSolutionImage(answer){
  const normalizedAnswer=atinaSolutionImageText(answer);
