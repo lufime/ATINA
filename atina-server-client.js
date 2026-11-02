@@ -22,9 +22,10 @@ let atinaCloudProfile = null;
 const atinaCloudClaimsInFlight = new Set();
 const atinaCloudClaimsDone = new Set();
 
-function atinaProgressDeviceToken() {
+function atinaProgressDeviceToken(createIfMissing = true) {
   let token = localStorage.getItem(ATINA_PROGRESS_DEVICE_KEY) || '';
   if (/^[0-9a-f]{64}$/.test(token)) return token;
+  if (!createIfMissing) return null;
   if (!window.crypto?.getRandomValues) throw new Error('Este navegador não permite criar um identificador seguro para o dispositivo.');
   const bytes = new Uint8Array(32);
   window.crypto.getRandomValues(bytes);
@@ -50,9 +51,14 @@ function atinaProgressRender(profile) {
 async function atinaProgressRegister(nickname, quiet = false) {
   const clean = String(nickname || '').trim();
   if (!clean || clean.length > 20) throw new Error('Escolhe um pseudónimo entre 1 e 20 caracteres.');
+  const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
+  const deviceToken = atinaProgressDeviceToken(!savedNickname);
+  if (!deviceToken) {
+    throw new Error('A chave deste pseudónimo não está neste dispositivo. Recupera primeiro com o código de 64 caracteres; não será criada uma progressão nova.');
+  }
   const data = await atinaServerRpc('atina_progress_register', {
     p_nickname: clean,
-    p_device_token: atinaProgressDeviceToken()
+    p_device_token: deviceToken
   });
   atinaCloudProfile = data;
   localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, clean);
@@ -64,7 +70,13 @@ async function atinaProgressRegister(nickname, quiet = false) {
 }
 
 async function atinaProgressClaim(state) {
+  if (!['solo', 'mix'].includes(state?.mode)) return;
   if (!state || state.last_result?.outcome !== 'correct' || !state.round_locked || !atinaServerSession) return;
+  const deviceToken = atinaProgressDeviceToken(false);
+  if (!deviceToken) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'A chave de recuperação não está neste dispositivo. Recupera o perfil antes de sincronizar XP.';
+    return;
+  }
   const key = state.session_id + ':' + state.position;
   if (atinaCloudClaimsDone.has(key) || atinaCloudClaimsInFlight.has(key)) return;
   atinaCloudClaimsInFlight.add(key);
@@ -78,7 +90,7 @@ async function atinaProgressClaim(state) {
       await atinaProgressRegister(savedNickname, true);
     }
     const result = await atinaServerRpc('atina_progress_claim_local', {
-      p_device_token: atinaProgressDeviceToken(),
+      p_device_token: deviceToken,
       p_session_id: state.session_id,
       p_session_token: atinaServerSession.token,
       p_position: Number(state.position)
@@ -127,6 +139,47 @@ async function atinaProgressLoadLeaderboard() {
   }
 }
 
+async function atinaProgressCopyRecovery() {
+  const token = atinaProgressDeviceToken(false);
+  if (!token) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Ainda não existe uma chave neste dispositivo. Regista um pseudónimo ou recupera-o com o código.';
+    return;
+  }
+  if ($('atinaCloudRecoveryCode')) $('atinaCloudRecoveryCode').value = token;
+  try {
+    await navigator.clipboard.writeText(token);
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Código de recuperação copiado. Guarda-o num local seguro.';
+  } catch (_) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Não foi possível copiar automaticamente. O código está no campo de recuperação para copiares manualmente.';
+  }
+}
+
+async function atinaProgressRestoreFromCode() {
+  const code = String($('atinaCloudRecoveryCode')?.value || '').trim().toLowerCase();
+  if (!/^[0-9a-f]{64}$/.test(code)) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'O código de recuperação deve ter 64 caracteres hexadecimais.';
+    return;
+  }
+  const nickname = String($('atinaCloudNickname')?.value || localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '').trim();
+  if (!nickname || nickname.length > 20) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Indica primeiro o pseudónimo associado ao código de recuperação.';
+    return;
+  }
+  try {
+    const data = await atinaServerRpc('atina_progress_register', {
+      p_nickname: nickname,
+      p_device_token: code
+    });
+    localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, code);
+    localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, nickname);
+    atinaCloudProfile = data;
+    atinaProgressRender(data);
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Pseudónimo guardado. A progressão está sincronizada.';
+  } catch (error) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = error.message || 'Não foi possível recuperar o perfil.';
+  }
+}
+
 function atinaProgressBoot() {
   const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
   if ($('atinaCloudNickname')) $('atinaCloudNickname').value = savedNickname;
@@ -139,7 +192,11 @@ function atinaProgressBoot() {
     finally { button.disabled = false; }
   });
   $('atinaCloudLeaderboardRefresh')?.addEventListener('click', atinaProgressLoadLeaderboard);
-  if (savedNickname) atinaProgressRegister(savedNickname, true).catch(error => {
+  $('atinaCloudCopyRecovery')?.addEventListener('click', atinaProgressCopyRecovery);
+  $('atinaCloudRestore')?.addEventListener('click', atinaProgressRestoreFromCode);
+  if (savedNickname && !atinaProgressDeviceToken(false)) {
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'A chave deste pseudónimo não está neste dispositivo. Introduz o código de recuperação; não será criado outro perfil.';
+  } else if (savedNickname) atinaProgressRegister(savedNickname, true).catch(error => {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Perfil guardado neste dispositivo; sincronização pendente: ' + (error.message || 'falha de ligação');
   });
 }
@@ -295,11 +352,19 @@ async function atinaServerStart(gameMode, category = null) {
   try {
     const duration = Number($('timerMode')?.value ?? 60);
     const difficulty = $('difficultyMode')?.value || 'medium';
+    if (['solo', 'mix'].includes(gameMode) && !atinaCloudProfile) {
+      const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
+      if (savedNickname && atinaProgressDeviceToken(false)) {
+        try { await atinaProgressRegister(savedNickname, true); } catch (_) {}
+      }
+    }
     const response = await atinaServerRpc('atina_v2_start_local_game', {
       p_game_mode: gameMode,
       p_difficulty: difficulty,
       p_category: category,
-      p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60
+      p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
+      p_device_token: ['solo', 'mix'].includes(gameMode) && atinaCloudProfile
+        ? atinaProgressDeviceToken(false) : null
     });
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
     atinaServerSession = { session_id: response.state.session_id, token: response.token };

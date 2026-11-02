@@ -163,19 +163,15 @@ begin
       using errcode = '55000';
   end if;
 
-  -- Bind the whole local session to the first pseudonymous profile that claims it.
-  insert into private.atina_xp_session_owners (session_id, player_id)
-  values (p_session_id, v_player.id)
-  on conflict (session_id) do nothing;
-
+  -- Ownership was fixed by the server when the individual session started.
   select *
     into v_owner
     from private.atina_xp_session_owners
    where session_id = p_session_id
    for update;
 
-  if v_owner.player_id <> v_player.id then
-    raise exception 'Esta sessão já está associada a outro perfil.'
+  if not found or v_owner.player_id <> v_player.id then
+    raise exception 'Esta sessão não está associada a este perfil.'
       using errcode = '42501';
   end if;
 

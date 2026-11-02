@@ -141,3 +141,73 @@ begin
   end if;
 end
 $$;
+
+-- Pseudonym XP is bound at session creation, not by the first claimant.
+do $cloud_binding$
+declare
+  v_profile jsonb;
+  v_other jsonb;
+  v_started jsonb;
+  v_party jsonb;
+  v_state jsonb;
+  v_award jsonb;
+  v_again jsonb;
+  v_session uuid;
+  v_party_session uuid;
+  v_token text;
+  v_answer text;
+  v_player uuid;
+begin
+  v_profile := public.atina_progress_register('LegacyXP', repeat('a',64));
+  v_player := (v_profile->>'player_id')::uuid;
+  v_other := public.atina_progress_register('OtherXP', repeat('b',64));
+
+  v_started := public.atina_v2_start_local_game('solo','easy',null,0,repeat('a',64));
+  v_session := (v_started->'state'->>'session_id')::uuid;
+  v_token := v_started->>'token';
+  if (select player_id from private.atina_xp_session_owners where session_id=v_session) is distinct from v_player then
+    raise exception 'Solo session was not bound to its selected pseudonym';
+  end if;
+  select answer into v_answer from private.atina_challenges
+   where challenge_id=(v_started->'state'->'challenge'->>'id')::integer;
+  v_state := public.atina_v2_local_submit_answer(v_session,v_token,v_answer);
+  if v_state->'last_result'->>'outcome' is distinct from 'correct' then
+    raise exception 'Synthetic correct answer was not accepted';
+  end if;
+  v_award := public.atina_progress_claim_local(repeat('a',64),v_session,v_token,1);
+  if coalesce((v_award->>'awarded')::boolean,false) is not true then
+    raise exception 'The bound pseudonym did not receive XP';
+  end if;
+  v_again := public.atina_progress_claim_local(repeat('a',64),v_session,v_token,1);
+  if coalesce((v_again->>'awarded')::boolean,true) is not false then
+    raise exception 'A repeated claim awarded XP twice';
+  end if;
+  begin
+    perform public.atina_progress_claim_local(repeat('b',64),v_session,v_token,1);
+    raise exception 'A different pseudonym claimed an already-bound session';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  v_party := public.atina_v2_start_local_game('party','easy',null,0,null);
+  v_party_session := (v_party->'state'->>'session_id')::uuid;
+  if exists(select 1 from private.atina_xp_session_owners where session_id=v_party_session) then
+    raise exception 'Party session was assigned to one pseudonym';
+  end if;
+  select answer into v_answer from private.atina_challenges
+   where challenge_id=(v_party->'state'->'challenge'->>'id')::integer;
+  v_state := public.atina_v2_local_submit_answer(v_party_session,v_party->>'token',v_answer);
+  begin
+    perform public.atina_progress_claim_local(repeat('a',64),v_party_session,v_party->>'token',1);
+    raise exception 'Party session awarded XP to one pseudonym';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    perform public.atina_v2_start_local_game('party','easy',null,0,repeat('a',64));
+    raise exception 'Party accepted an individual pseudonym token';
+  exception when invalid_parameter_value then
+    null;
+  end;
+end
+$cloud_binding$;
