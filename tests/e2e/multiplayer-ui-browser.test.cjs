@@ -94,6 +94,17 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
     assert.ok(hostState.queueLength >= 1);
     assert.equal(hostState.hasAnswer, false, 'active challenge state must not disclose the answer');
 
+    await guest.evaluate(() => {
+      window.__networkRpcCalls = [];
+      window.__networkSubmitCalls = 0;
+      const originalRpc = supabaseClient.rpc.bind(supabaseClient);
+      supabaseClient.rpc = (...args) => { window.__networkRpcCalls.push(args[0]); return originalRpc(...args); };
+      const originalSubmit = networkSubmitAnswer;
+      window.networkSubmitAnswer = async function(...args) {
+        window.__networkSubmitCalls++;
+        return originalSubmit.apply(this, args);
+      };
+    });
     const initialGuestFeedback = await guest.locator('#feedback').textContent();
     await guest.locator('#answer').fill('resposta-ui-deliberadamente-errada');
     await guest.locator('#submit').click();
@@ -106,7 +117,10 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
         gameActive: typeof networkGameActive === 'undefined' ? null : networkGameActive,
         actionInFlight: typeof networkActionInFlight === 'undefined' ? null : networkActionInFlight,
         submitButton: (() => { const b = document.querySelector('#submit'); return b ? { disabled: b.disabled } : null; })(),
-        lastRefreshError: typeof networkLastRefreshError === 'undefined' ? null : String(networkLastRefreshError?.message || networkLastRefreshError)
+        lastRefreshError: typeof networkLastRefreshError === 'undefined' ? null : String(networkLastRefreshError?.message || networkLastRefreshError),
+        roomPresent: typeof networkRoom === 'undefined' ? null : !!networkRoom,
+        submitFunctionCalls: window.__networkSubmitCalls,
+        rpcCalls: window.__networkRpcCalls
       }));
       assert.fail('Guest answer did not produce a feedback transition. Diagnostics: ' + JSON.stringify(diagnostic) + '; cause: ' + error.message);
     }
