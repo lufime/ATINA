@@ -239,7 +239,7 @@ declare
   v_card jsonb;
   v_player_id uuid;
 begin
-  if p_game_mode is null or p_game_mode not in ('solo', 'duel', 'mix') then
+  if p_game_mode is null or p_game_mode not in ('solo', 'duel', 'mix', 'party') then
     raise exception 'Modo inválido nesta versão.' using errcode = '22023';
   end if;
   if p_difficulty is null or p_difficulty not in ('easy', 'medium', 'hard') then
@@ -271,8 +271,12 @@ begin
     raise exception 'Não existem desafios para estes critérios.' using errcode = '22023';
   end if;
 
+  if p_game_mode = 'party' then
+    v_queue := v_queue[1:least(10, cardinality(v_queue))];
+  end if;
+
   v_token := encode(extensions.gen_random_bytes(32), 'hex');
-  v_card := null;
+  v_card := null; -- Mantém o comportamento original: sem carta especial na primeira ronda.
   insert into private.atina_v2_local_sessions (
     token_hash, player_id, game_mode, difficulty, category, timed_mode_seconds,
     challenge_queue, position, revealed_clues, current_player, scores, streaks,
