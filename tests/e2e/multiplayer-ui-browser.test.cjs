@@ -97,6 +97,7 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
     await guest.locator('#answer').fill('resposta-ui-deliberadamente-errada');
     await guest.locator('#submit').click();
     await guest.waitForFunction(() => (document.querySelector('#feedback')?.textContent || '').trim().length > 0);
+    await host.evaluate(() => { window.__atinaPassClickObserved = false; document.querySelector('#pass')?.addEventListener('click', () => { window.__atinaPassClickObserved = true; }, { once: true, capture: true }); });
     await host.locator('#pass').click();
     try {
       await host.waitForFunction(() => !!networkGameState?.locked, { timeout: 10000 });
@@ -106,6 +107,10 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
         feedback: document.querySelector('#feedback')?.textContent || '',
         networkStatus: document.querySelector('#networkStatus')?.textContent || '',
         actionInFlight: typeof networkActionInFlight === 'undefined' ? null : networkActionInFlight,
+        gameActive: typeof networkGameActive === 'undefined' ? null : networkGameActive,
+        roomPresent: typeof networkRoom === 'undefined' ? null : !!networkRoom,
+        passButton: (() => { const b = document.querySelector('#pass'); return b ? { disabled: b.disabled, hidden: b.classList.contains('hidden'), text: b.textContent } : null; })(),
+        passClickObserved: window.__atinaPassClickObserved,
         lastRefreshError: typeof networkLastRefreshError === 'undefined' ? null : {
           message: networkLastRefreshError?.message,
           code: networkLastRefreshError?.code
