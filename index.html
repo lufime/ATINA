@@ -367,6 +367,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 /* Progressão diária e painel de regresso */
 .daily-mission{margin:16px 0;padding:18px;border:1px solid #786640;border-radius:17px;background:linear-gradient(135deg,#263d55,#15263a 72%);box-shadow:0 12px 28px #0003}.daily-mission-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.daily-kicker{font-size:10px;letter-spacing:.18em;color:#e6c77f;font-weight:850}.daily-mission h3{font-size:19px;margin:7px 0}.daily-mission p{color:#c4d0dd;font-size:13px;margin:6px 0 12px}.daily-progress{height:9px;border-radius:99px;background:#091726;overflow:hidden;margin:12px 0 7px}.daily-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#d2a95c,#f5df9c);border-radius:99px;transition:width .35s ease}.daily-meta{display:flex;justify-content:space-between;gap:8px;color:#b8c5d3;font-size:11px}.daily-stats{display:flex;gap:9px;flex-wrap:wrap;margin:13px 0}.daily-stat{flex:1;min-width:100px;padding:10px 12px;border-radius:11px;background:#07162566}.daily-stat b{display:block;color:#ffdf91;font-size:19px}.daily-stat small{color:#c0ccda;font-size:11px}.daily-mission .btn{margin-top:8px}.atina-xp-panel{margin:14px 0;padding:13px;border-radius:12px;background:#07162566;border:1px solid #ffffff12}.atina-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.atina-badge{font-size:11px;padding:6px 9px;border-radius:99px;background:#091726;color:#718096;border:1px solid #34465a}.atina-badge.earned{color:#ffe09a;background:#3c3425;border-color:#987b45}
 @media(min-width:620px){.daily-mission{padding:22px}.daily-mission h3{font-size:21px}}
+
+/* ATINA Alentejo identity — preview implementation */
+.brand{background:linear-gradient(135deg,#0b315b 0%,#17466a 68%,#203f45 100%);border-color:#52718a}
+.logo-image{display:block;width:min(100%,430px);height:auto;max-height:118px;object-fit:contain;object-position:left center;margin:7px 0 5px}
+.brand .eyebrow{color:#f5d9a0}
+.brand .tag{color:#f4ead7;font-weight:600;letter-spacing:.035em}
+@media(max-width:420px){.logo-image{max-width:100%;max-height:92px;margin:5px 0 3px}}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
@@ -378,7 +385,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </style>
 </head>
 <body><main class="wrap">
-<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><div class="logo">ATINA</div><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
+<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
 <nav class="home-page-nav" aria-label="Navegação principal">
 <button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
 <button type="button" class="home-nav-btn" data-home-target="play">🎮 Jogar</button>
@@ -1053,7 +1060,7 @@ async function atinaShowSolutionImage(answer,category,targetId){
  if(target.dataset.solutionKey===key&&!target.classList.contains('hidden'))return;
  target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
  if(!cleanAnswer)return;
- const heading=document.createElement('strong');heading.textContent='📷 A solução em imagem (domínio público / CC0)';
+ const heading=document.createElement('strong');heading.textContent='📷 A solução em imagem';
  const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
  target.append(heading,status);target.classList.remove('hidden');
  try{
@@ -1085,10 +1092,14 @@ async function atinaShowSolutionImage(answer,category,targetId){
   }
   if(target.dataset.solutionKey!==key)return;
   if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
-  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:10px;background:#091827';
-  image.onerror=()=>{image.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
-  const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Confirmar licença no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
-  status.textContent='Solução: '+cleanAnswer;target.append(image,link);
+  const frame=document.createElement('div');frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
+  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
+  image.onerror=()=>{frame.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
+  const brand=document.createElement('span');brand.textContent='△ ATINA';brand.setAttribute('aria-label','ATINA');brand.style.cssText='position:absolute;top:10px;right:10px;padding:6px 10px;border:1px solid #ffffff55;border-radius:8px;background:#071827b8;color:#fff;font-weight:900;letter-spacing:.14em;font-size:12px;text-shadow:0 1px 5px #000;pointer-events:none';
+  const watermark=document.createElement('span');watermark.textContent='ATINA';watermark.setAttribute('aria-hidden','true');watermark.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-24deg);color:#ffffff30;font-size:clamp(34px,10vw,76px);font-weight:950;letter-spacing:.18em;text-shadow:0 1px 5px #0005;white-space:nowrap;pointer-events:none';
+  frame.append(image,watermark,brand);
+  const link=document.createElement('a');link.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'));link.target='_blank';link.rel='noopener noreferrer';link.textContent='Ver fonte e licença da imagem no Wikimedia Commons';link.className='muted small';link.style.cssText='display:block;margin-top:8px;color:#c6d7e8;overflow-wrap:anywhere';
+  status.textContent='Solução: '+cleanAnswer;target.append(frame,link);
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
