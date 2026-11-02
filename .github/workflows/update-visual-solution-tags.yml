@@ -47,20 +47,23 @@ jobs:
           set -euo pipefail
           test -n "$SUPABASE_URL" || { echo "::error::Missing SUPABASE_URL secret"; exit 1; }
           test -n "$ATINA_IMAGE_UPLOAD_TOKEN" || { echo "::error::Missing ATINA_IMAGE_UPLOAD_TOKEN secret"; exit 1; }
-          offset=0
+          cursor=-1
           total=0
-          while true; do
-            payload=$(jq -n --argjson offset "$offset" --argjson limit "$BATCH_SIZE" '{confirm:"UPDATE-SOLUTION-TAGS",offset:$offset,limit:$limit}')
+          for ((batch=1; batch<=400; batch++)); do
+            payload=$(jq -n --argjson limit "$BATCH_SIZE" --argjson after "$cursor" '{limit:$limit,after_challenge_id:$after}')
             response=$(curl --fail-with-body --silent --show-error -X POST "${SUPABASE_URL}/functions/v1/atina-update-solution-tags" \
               -H "Content-Type: application/json" \
-              -H "x-atina-upload-token: ${ATINA_IMAGE_UPLOAD_TOKEN}" --data "$payload")
+              -H "x-atina-image-upload-token: ${ATINA_IMAGE_UPLOAD_TOKEN}" \
+              --data "$payload")
             echo "$response" | jq .
             processed=$(echo "$response" | jq -r '.processed // 0')
             done_flag=$(echo "$response" | jq -r '.done // false')
+            next_cursor=$(echo "$response" | jq -r '.next_after_challenge_id // empty')
             total=$((total + processed))
             echo "Total processed: $total"
-            if [ "$done_flag" = "true" ] || [ "$processed" -eq 0 ]; then break; fi
-            offset=$((offset + BATCH_SIZE))
+            if [ "$done_flag" = "true" ]; then break; fi
+            if [ -z "$next_cursor" ] || [ "$processed" -eq 0 ]; then echo "::error::No cursor progress"; exit 1; fi
+            cursor="$next_cursor"
             sleep 1
           done
           echo "Completed. Total active challenges processed: $total"
