@@ -26,7 +26,6 @@ const required = [
   'v_session.round_locked',
   'v_session.expires_at <= clock_timestamp()',
   "if not found or v_owner.player_id <> v_player.id",
-  'on conflict (session_id) do nothing',
   'on conflict (player_id, session_id, challenge_position) do nothing',
   'grant execute on function public.atina_progress_register(text, text) to anon',
   'grant execute on function public.atina_progress_claim_local(text, uuid, text, integer) to anon',
@@ -117,7 +116,17 @@ if (claimBody.includes('insert into private.atina_xp_session_owners')) {
   throw new Error('A sessão não pode ser atribuída ao primeiro perfil que reclamar XP.');
 }
 if (!migration.includes('p_device_token text default null') ||
-    !migration.includes('insert into private.atina_xp_session_owners(session_id,player_id)')) {
+    !migration.includes("if p_device_token !~ '^[0-9a-f]{64}
+  throw new Error('O arranque da sessão não fixa a identidade do pseudónimo no servidor.');
+}
+
+console.log(
+  'Proposta e integração cliente validadas: pseudónimo, token de dispositivo, ' +
+  'XP apenas após resultado correto bloqueado pelo servidor e classificação global.'
+);
+ then") ||
+    !migration.includes('insert into private.atina_xp_session_owners(session_id,player_id)') ||
+    !migration.includes("p_game_mode not in ('solo','mix')")) {
   throw new Error('O arranque da sessão não fixa a identidade do pseudónimo no servidor.');
 }
 
