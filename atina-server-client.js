@@ -186,7 +186,10 @@ async function atinaServerStart(gameMode, category = null) {
       p_difficulty: difficulty,
       p_category: category,
       p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
-      p_player_token: /^[0-9a-f]{64}$/.test(localStorage.getItem('atinaPlayerTokenV1') || '')
+      // Cloud XP is per individual profile; never credit one pseudonym for
+      // answers submitted by both players/teams in Duel or Party.
+      p_player_token: ['solo', 'mix'].includes(gameMode)
+        && /^[0-9a-f]{64}$/.test(localStorage.getItem('atinaPlayerTokenV1') || '')
         ? localStorage.getItem('atinaPlayerTokenV1') : null
     });
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
