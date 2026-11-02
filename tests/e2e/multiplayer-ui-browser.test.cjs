@@ -94,10 +94,23 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
     assert.ok(hostState.queueLength >= 1);
     assert.equal(hostState.hasAnswer, false, 'active challenge state must not disclose the answer');
 
+    const initialGuestFeedback = await guest.locator('#feedback').textContent();
     await guest.locator('#answer').fill('resposta-ui-deliberadamente-errada');
     await guest.locator('#submit').click();
-    await guest.waitForFunction(() => (document.querySelector('#feedback')?.textContent || '').trim().length > 0);
-    await host.evaluate(() => { window.__atinaPassClickObserved = false; document.querySelector('#pass')?.addEventListener('click', () => { window.__atinaPassClickObserved = true; }, { once: true, capture: true }); });
+    try {
+      await guest.waitForFunction(initial => (document.querySelector('#feedback')?.textContent || '') !== initial, initialGuestFeedback, { timeout: 10000 });
+    } catch (error) {
+      const diagnostic = await guest.evaluate(() => ({
+        feedback: document.querySelector('#feedback')?.textContent || '',
+        gameState: typeof networkGameState === 'undefined' ? null : networkGameState,
+        gameActive: typeof networkGameActive === 'undefined' ? null : networkGameActive,
+        actionInFlight: typeof networkActionInFlight === 'undefined' ? null : networkActionInFlight,
+        submitButton: (() => { const b = document.querySelector('#submit'); return b ? { disabled: b.disabled } : null; })(),
+        lastRefreshError: typeof networkLastRefreshError === 'undefined' ? null : String(networkLastRefreshError?.message || networkLastRefreshError)
+      }));
+      assert.fail('Guest answer did not produce a feedback transition. Diagnostics: ' + JSON.stringify(diagnostic) + '; cause: ' + error.message);
+    }
+    await host.evaluate(() => { window.__atinaPassClickObserved = false; document.addEventListener('click', event => { if (event.target?.closest?.('#pass')) window.__atinaPassClickObserved = true; }, { once: true, capture: true }); });
     await host.locator('#pass').click();
     try {
       await host.waitForFunction(() => !!networkGameState?.locked, { timeout: 10000 });
