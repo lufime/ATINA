@@ -1228,16 +1228,19 @@ async function atinaWikipediaSolutionImage(answer,category){
 async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','uns','umas','the','of','and','in','on','for','with','what','who','where']);
  const clean=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
- const answerTokens=clean(answer);
- if(!answerTokens.length)return null;
+ const answerVariants=[answer,...aliases].map(value=>String(value||'').trim()).filter(Boolean);
+ const answerTokenSets=answerVariants.map(clean).filter(tokens=>tokens.length);
+ if(!answerTokenSets.length)return null;
  const categoryTokens=clean(category);
- const aliasQueries=aliases.filter(value=>String(value||'').trim()).slice(0,5);
- const contextQueries=contexts.filter(value=>String(value||'').trim()).slice(0,4);
- const queries=[answer,answer+' '+category,...aliasQueries,...contextQueries].map(value=>String(value||'').trim()).filter((value,index,array)=>value&&array.findIndex(other=>atinaSolutionImageText(other)===atinaSolutionImageText(value))===index).slice(0,8);
- let best=null,bestScore=0;
+ const contextQueries=contexts.filter(value=>String(value||'').trim()).slice(0,6);
+ // Pesquisa a resposta em português, os nomes alternativos e combinações
+ // com a categoria. Não limitar a avaliação às palavras portuguesas:
+ // muitos repositórios descrevem as fotografias apenas em inglês.
+ const queries=[...answerVariants,...answerVariants.slice(1,7).map(value=>value+' '+category),answer+' '+category,...contextQueries].map(value=>String(value||'').trim()).filter((value,index,array)=>value&&array.findIndex(other=>atinaSolutionImageText(other)===atinaSolutionImageText(value))===index).slice(0,14);
+ let best=null,bestScore=-1;
  for(const query of queries){
   try{
-   const params=new URLSearchParams({q:query,page_size:'35',license:'cc0,pdm,by,by-sa',mature:'false',extension:'jpg,png,webp'});
+   const params=new URLSearchParams({q:query,page_size:'50',license:'cc0,pdm,by,by-sa',mature:'false',extension:'jpg,png,webp'});
    const response=await fetch('https://api.openverse.org/v1/images/?'+params.toString(),{headers:{Accept:'application/json'}});
    if(!response.ok)continue;
    const data=await response.json();
@@ -1249,17 +1252,18 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
     if((license==='by'||license==='by-sa')&&!String(result.creator||'').trim())continue;
     const title=atinaSolutionImageText(result.title||'');
     const tags=(result.tags||[]).map(tag=>typeof tag==='string'?tag:tag?.name||'').join(' ');
-    const searchable=atinaSolutionImageText([result.title,result.description,tags].filter(Boolean).join(' '));
+    const searchable=atinaSolutionImageText([result.title,result.description,tags,result.creator].filter(Boolean).join(' '));
     const words=new Set(searchable.split(' '));
-    const matched=answerTokens.filter(token=>words.has(token));
-    const answerCoverage=matched.length/answerTokens.length;
-    const titleWords=title.split(' ');
-    const titleCoverage=answerTokens.filter(token=>titleWords.includes(token)).length/answerTokens.length;
-    const categoryCoverage=categoryTokens.length?categoryTokens.filter(token=>words.has(token)).length/categoryTokens.length:0;
+    const coverageFor=tokens=>tokens.filter(token=>words.has(token)).length/tokens.length;
+    const answerCoverage=Math.max(...answerTokenSets.map(coverageFor));
+    const titleCoverage=Math.max(...answerTokenSets.map(tokens=>coverageFor(title.split(' ').filter(Boolean))));
+    const categoryCoverage=categoryTokens.length?coverageFor(categoryTokens):0;
     const queryTokens=clean(query);
-    const queryCoverage=queryTokens.length?queryTokens.filter(token=>words.has(token)).length/queryTokens.length:0;
-    const score=answerCoverage*5+titleCoverage*2+queryCoverage*1.5+categoryCoverage*0.75;
-    if(answerCoverage<0.5&&titleCoverage===0&&queryCoverage<0.6)continue;
+    const queryCoverage=queryTokens.length?coverageFor(queryTokens):0;
+    // A correspondência no título vale mais do que palavras dispersas
+    // na descrição. A categoria desempata, sem bloquear a resposta exata.
+    const score=answerCoverage*6+titleCoverage*3+queryCoverage+categoryCoverage*0.5;
+    if(answerCoverage<0.34&&titleCoverage===0&&queryCoverage<0.5)continue;
     if(score<=bestScore)continue;
     const licenseLabel=license==='cc0'?'CC0':license==='pdm'?'Domínio Público (PDM)':license==='by-sa'?'CC BY-SA':'CC BY';
     const licenseUrl=result.license_url||('https://creativecommons.org/licenses/'+license+'/'+(result.license_version||'4.0')+'/');
@@ -1275,7 +1279,7 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
    }
   }catch(error){}
  }
- return bestScore>=2.5?best:null;
+ return bestScore>=2.0?best:null;
 }
 async function atinaShowSolutionImage(answer,category,targetId){
  const target=$(targetId);if(!target)return;
