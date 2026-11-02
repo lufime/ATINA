@@ -1150,7 +1150,7 @@ async function atinaWikipediaSolutionImage(answer,category){
   const commonsData=await commonsResponse.json();
   const filePage=Object.values(commonsData.query?.pages||{})[0];
   const candidate={title:filePage?.title,...(filePage?.imageinfo?.[0]||{})};
-  if(atinaSolutionImageUsable(candidate)&&atinaSolutionImageMatch(normalizedAnswer,category,candidate))return candidate;
+  if(atinaSolutionImageUsable(candidate)&&atinaSolutionImageMatch(normalizedAnswer,category,candidate)){candidate.sourceName='Wikipédia em português (imagem alojada no Wikimedia Commons)';candidate.sourceUrl='https://'+language+'.wikipedia.org/wiki/'+encodeURIComponent(page.title.replace(/ /g,'_'));return candidate;}
  }
  return null;
 }
@@ -1167,9 +1167,11 @@ async function atinaShowSolutionImage(answer,category,targetId){
  try{
   let item=atinaSolutionImageCache.get(key);
   if(item===undefined){
-   // Primeiro, procurar a entidade exata e usar apenas a sua imagem P18.
-   const semantic=await atinaWikidataSolutionImage(cleanAnswer);
-   item=semantic.item;
+   // Priorizar o artigo correspondente na Wikipédia em português.
+   // A imagem é validada na página do ficheiro no Commons para obter autor e licença.
+   try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
+   // Se não existir imagem adequada na Wikipédia, usar a imagem representativa da entidade Wikidata.
+   if(!item){const semantic=await atinaWikidataSolutionImage(cleanAnswer);item=semantic.item;}
    // Fonte institucional adicional: aceitar apenas obras CC0/domínio público
    // cuja ficha também confirme o contexto temático da categoria.
    if(!item){
@@ -1193,11 +1195,6 @@ async function atinaShowSolutionImage(answer,category,targetId){
      candidates.sort((a,b)=>b.match.answerCoverage-a.match.answerCoverage||b.match.categoryCoverage-a.match.categoryCoverage);
      if(candidates.length){item=candidates[0].candidate;break;}
     }
-   }
-   // Se Wikidata/Commons não fornecerem uma imagem segura, consultar o artigo
-   // exato da Wikipédia. A imagem continua sujeita à validação PD/CC0 do Commons.
-   if(!item){
-    try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
    }
    atinaSolutionImageCache.set(key,item||null);
   }
