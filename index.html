@@ -480,8 +480,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL='https://qwuxwiurqwfjizkwpmjp.supabase.co';
-const SUPABASE_KEY='sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';
+const ATINA_TEST_CONFIG=window.__ATINA_TEST_CONFIG__||null;
+const ATINA_LOCAL_HOST=['localhost','127.0.0.1'].includes(location.hostname);
+const ATINA_TEST_URL=ATINA_LOCAL_HOST&&typeof ATINA_TEST_CONFIG?.url==='string'?ATINA_TEST_CONFIG.url:'';
+const ATINA_TEST_KEY=ATINA_LOCAL_HOST&&typeof ATINA_TEST_CONFIG?.anonKey==='string'?ATINA_TEST_CONFIG.anonKey:'';
+const ATINA_TEST_URL_VALID=(()=>{try{const u=new URL(ATINA_TEST_URL);return ATINA_LOCAL_HOST&&['localhost','127.0.0.1'].includes(u.hostname)&&u.protocol==='http:';}catch(_){return false;}})();
+const SUPABASE_URL=ATINA_TEST_URL_VALID?ATINA_TEST_URL:'https://qwuxwiurqwfjizkwpmjp.supabase.co';
+const SUPABASE_KEY=ATINA_TEST_URL_VALID&&ATINA_TEST_KEY?ATINA_TEST_KEY:'sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';
 
 const supabaseClient=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 let atinaUser=null,atinaProfile=null;
@@ -553,9 +558,70 @@ let networkRoomRefreshInFlight=false, networkRoomRefreshPromise=null;
 let networkLastPollAt=0;
 function networkStartPolling(){if(networkPollHandle)clearInterval(networkPollHandle);networkLastPollAt=0;networkPollHandle=setInterval(()=>{if(!networkRoom)return;const delay=document.hidden?5000:networkGameActive?700:1500,now=Date.now();if(now-networkLastPollAt<delay)return;networkLastPollAt=now;networkRefreshRoom();},250);}
 let networkGameActive=false,networkGameHost=false,networkGameState=null,networkLastRevision=0,networkClockHandle=null,networkMyScore=0,networkAnsweredThisChallenge=false;
+let networkActionInFlight=false,networkDeadlineRefreshInFlight=false;
 let networkAnimatedChallengeKey='';
 async function networkPublishGameState(){if(!networkRoom||!networkGameHost||!networkGameState)return;networkGameState.revision=(networkGameState.revision||0)+1;const {error}=await supabaseClient.rpc('atina_v2_publish_game_state',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_state:networkGameState});if(error)throw error;}
-function networkRenderGameState(){if(!networkGameState)return;const st=networkGameState;const pauseActive=!!(st.pause&&Date.parse(st.pause.ends_at)>Date.now());if(st.pos>=st.queue.length){networkGameActive=false;if(networkClockHandle)clearInterval(networkClockHandle);networkClockHandle=null;const players=(networkLobbyData?.players||[]).slice().sort((a,b)=>b.score-a.score);const lines=players.map((p,i)=>(i+1)+'. '+p.nickname+' — '+p.score+' pontos'+(p.team?' · '+p.team:''));const teams={};players.forEach(p=>{if(p.team)teams[p.team]=(teams[p.team]||0)+p.score;});const teamLines=Object.entries(teams).sort((a,b)=>b[1]-a[1]).map(([name,score])=>name+' — '+score+' pontos');$('onlineSave').classList.add('hidden');$('resultText').textContent='Partida multiplayer concluída!'+(teamLines.length?'\n\nClassificação por equipas:\n'+teamLines.join('\n'):'')+'\n\nClassificação individual:\n'+(lines.join('\n')||'Sem pontuações registadas.');screen('result');return;}mode='solo';queue=st.queue;pos=st.pos;revealed=st.revealed;scores=st.scores;answeredCount=st.answeredCount;locked=st.locked;timedMode=st.timedMode;stopTimer();const g=games[queue[pos]],total=isImageChallenge(queue[pos])?6:5;$('category').textContent=g[1]+' '+g[0];difficultyMode=classifyChallenge(queue[pos]);$('level').textContent='DESAFIO '+(pos+1)+' / '+queue.length+' · '+({easy:'FÁCIL',medium:'MÉDIO',hard:'DIFÍCIL'}[difficultyMode]||'MÉDIO');$('player').textContent='Multiplayer · '+(networkGameHost?'Anfitrião':'A acompanhar a partida');$('clues').innerHTML='';for(let i=0;i<total;i++){const d=document.createElement('div');d.className='clue'+(i>=revealed?' hidden-clue':'');d.textContent=i<revealed?'Pista '+(i+1)+': '+g[2][i]:'Pista '+(i+1)+': ainda escondida';$('clues').appendChild(d);} $('clueProgress').textContent=revealed+' de '+total+' reveladas';$('nextClue').disabled=!networkGameHost||locked||revealed>=total||pauseActive;$('nextClue').textContent='Revelar próxima pista';$('answer').value='';$('answer').disabled=locked||pauseActive;$('submit').disabled=locked||pauseActive||networkAnsweredThisChallenge;$('voice').disabled=locked||pauseActive;$('pass').disabled=!networkGameHost||locked||pauseActive;$('pass').classList.toggle('hidden',!networkGameHost);$('continue').classList.toggle('hidden',!locked||!networkGameHost||pauseActive);atinaRenderRevealedAnswer('feedback',st.feedback||'Escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.');$('feedback').classList.toggle('solution-revealed',!!locked);if(locked)atinaShowSolutionImage(g[3]||st.answer,g[0],'solutionImage');else $('solutionImage').classList.add('hidden');$('networkScoreboard').classList.remove('hidden');renderTeamProposal();const roomPlayers=networkLobbyData?.players||[];const teamTotals={};roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+p.score;});$('networkTeamScores').replaceChildren();Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,total],i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+team+' — '+total+' pts';$('networkTeamScores').appendChild(li);});$('networkScores').replaceChildren();roomPlayers.slice().sort((a,b)=>b.score-a.score).forEach((p,i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+p.nickname+' — '+p.score+' pts'+(p.team?' · '+p.team:'');$('networkScores').appendChild(li);});$('totalScore').textContent='⭐ '+networkMyScore+' pontos';$('listenAnswer').classList.toggle('hidden',!locked);$('visualWrap').classList.toggle('hidden',!isImageChallenge(queue[pos]));if(isImageChallenge(queue[pos])){$('mysteryImage').src=atinaFreeSolutionSvg(g[3],g[0]);renderPuzzle(revealed);$('mysteryImage').style.setProperty('--blur',Math.max(0,24-revealed*4)+'px');$('veil').style.setProperty('--veil',revealed===6?'0':'.12');}renderNetworkTimeoutPanel();board();update();const animationKey=(networkRoom?.room_id||'room')+':'+st.pos+':'+st.queue[st.pos];if(animationKey!==networkAnimatedChallengeKey){networkAnimatedChallengeKey=animationKey;mixDraw();}networkDrawClock();ensureNetworkClock();}
+function networkRenderGameState(){
+ if(!networkGameState)return;
+ const st=networkGameState;
+ const pauseActive=!!(st.pause&&Date.parse(st.pause.ends_at)>Date.now());
+ const queueLength=Number(st.queue_length||st.queue?.length||0);
+ if(st.mode==='completed'||st.pos>=queueLength){
+  networkGameActive=false;
+  if(networkClockHandle)clearInterval(networkClockHandle);
+  networkClockHandle=null;
+  const players=(networkLobbyData?.players||[]).slice().sort((a,b)=>b.score-a.score);
+  const lines=players.map((p,i)=>(i+1)+'. '+p.nickname+' — '+p.score+' pontos'+(p.team?' · '+p.team:''));
+  const teams={};players.forEach(p=>{if(p.team)teams[p.team]=(teams[p.team]||0)+Number(p.score||0);});
+  const teamLines=Object.entries(teams).sort((a,b)=>b[1]-a[1]).map(([name,score])=>name+' — '+score+' pontos');
+  $('onlineSave').classList.add('hidden');
+  $('resultText').textContent='Partida multiplayer concluída!'+(teamLines.length?'\n\nClassificação por equipas:\n'+teamLines.join('\n'):'')+'\n\nClassificação individual:\n'+(lines.join('\n')||'Sem pontuações registadas.');
+  screen('result');return;
+ }
+ const total=st.image_url?6:5;
+ mode='solo';pos=Number(st.pos)||0;queue=Array.from({length:queueLength},(_,i)=>i);
+ revealed=Number(st.revealed)||1;locked=!!st.locked;timedMode=Number(st.timedMode)||0;
+ scores=(networkLobbyData?.players||[]).slice(0,2).map(p=>Number(p.score)||0);
+ answeredCount=0;stopTimer();
+ const category=String(st.category||'Desafio'),emoji=String(st.emoji||'');
+ $('category').textContent=emoji+' '+category;
+ difficultyMode=$('difficultyMode')?.value||'medium';
+ $('level').textContent='DESAFIO '+(pos+1)+' / '+queueLength+' · '+({easy:'FÁCIL',medium:'MÉDIO',hard:'DIFÍCIL'}[difficultyMode]||'MÉDIO');
+ $('player').textContent='Multiplayer · '+(networkGameHost?'Anfitrião':'A acompanhar a partida');
+ $('clues').replaceChildren();
+ for(let i=0;i<total;i++){
+  const d=document.createElement('div');d.className='clue'+(i>=revealed?' hidden-clue':'');
+  d.textContent=i<revealed?'Pista '+(i+1)+': '+String(st.clues?.[i]||''):'Pista '+(i+1)+': ainda escondida';
+  $('clues').appendChild(d);
+ }
+ $('clueProgress').textContent=revealed+' de '+total+' reveladas';
+ $('nextClue').disabled=!networkGameHost||locked||revealed>=total||pauseActive;
+ $('nextClue').textContent='Revelar próxima pista';
+ $('answer').value='';$('answer').disabled=locked||pauseActive||!!networkLobbyData?.team;
+ $('submit').disabled=locked||pauseActive||networkAnsweredThisChallenge||!!networkLobbyData?.team;
+ $('voice').disabled=locked||pauseActive;
+ $('pass').disabled=!networkGameHost||locked||pauseActive;
+ $('pass').classList.toggle('hidden',!networkGameHost);
+ $('continue').classList.toggle('hidden',!locked||!networkGameHost||pauseActive);
+ atinaRenderRevealedAnswer('feedback',st.feedback||(networkLobbyData?.team?'O modo de propostas e votação por equipa ainda não está ligado a este ecrã.':'Escreve a tua resposta.'));
+ $('feedback').classList.toggle('solution-revealed',!!locked);
+ if(locked)atinaShowSolutionImage(st.answer,category,'solutionImage');else $('solutionImage').classList.add('hidden');
+ $('networkScoreboard').classList.remove('hidden');renderTeamProposal();
+ const roomPlayers=networkLobbyData?.players||[];
+ const teamTotals={};roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+Number(p.score||0);});
+ $('networkTeamScores').replaceChildren();
+ Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,score],i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+team+' — '+score+' pts';$('networkTeamScores').appendChild(li);});
+ $('networkScores').replaceChildren();
+ roomPlayers.slice().sort((a,b)=>Number(b.score||0)-Number(a.score||0)).forEach((p,i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+p.nickname+' — '+p.score+' pts'+(p.team?' · '+p.team:'');$('networkScores').appendChild(li);});
+ $('totalScore').textContent='⭐ '+networkMyScore+' pontos';
+ $('listenAnswer').classList.toggle('hidden',!locked);
+ $('visualWrap').classList.toggle('hidden',!st.image_url);
+ if(st.image_url){$('mysteryImage').src=st.image_url;renderPuzzle(revealed);$('mysteryImage').style.setProperty('--blur',Math.max(0,24-revealed*4)+'px');$('veil').style.setProperty('--veil',revealed===6?'0':'.12');}
+ renderNetworkTimeoutPanel();
+ const animationKey=(networkRoom?.room_id||'room')+':'+st.pos+':'+st.challenge_id;
+ if(animationKey!==networkAnimatedChallengeKey){networkAnimatedChallengeKey=animationKey;mixDraw();}
+ networkDrawClock();ensureNetworkClock();
+}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(networkGameActive)networkDrawClock();else timerTick();if(networkRoom){networkLastPollAt=Date.now();networkRefreshRoom();}});window.addEventListener('focus',()=>{if(networkGameActive)networkDrawClock();else timerTick();if(networkRoom){networkLastPollAt=Date.now();networkRefreshRoom();}});
 function networkDrawClock(){
  if(!networkGameState||!networkGameActive)return;
@@ -576,12 +642,73 @@ function networkDrawClock(){
  const pause=networkGameState.pause;
  if(pause&&Date.parse(pause.ends_at)>Date.now()){const left=Math.max(0,Math.ceil((Date.parse(pause.ends_at)-Date.now())/1000));$('timerDisplay').textContent='PAUSA · '+String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');$('timerDisplay').classList.remove('urgent');return;}
  if(pause){$('timerDisplay').textContent='A retomar…';return;}
- const d=Number(networkGameState.deadline)||0;timeLeft=d?Math.max(0,Math.ceil((d-Date.now())/1000)):0;drawTimer();if(networkGameHost&&d&&timeLeft===0&&!networkGameState.locked){networkGameState.locked=true;networkGameState.deadline=0;networkGameState.feedback='Tempo esgotado! O desafio terminou.';networkPublishGameState().then(networkRenderGameState).catch(e=>networkMessage('feedback',e.message));}
+ const d=Number(networkGameState.deadline)||0;timeLeft=d?Math.max(0,Math.ceil((d-Date.now())/1000)):0;drawTimer();if(d&&timeLeft===0&&!networkDeadlineRefreshInFlight){networkDeadlineRefreshInFlight=true;networkRefreshRoom().catch(e=>networkMessage('feedback',e.message||'Não foi possível atualizar o estado.')).finally(()=>{networkDeadlineRefreshInFlight=false;});}
 }
 function ensureNetworkClock(){if(networkClockHandle!==null)return;networkClockHandle=setInterval(networkDrawClock,100);networkDrawClock();}
-function networkReceiveState(st){if(!st||(!st.queue&&st.mode!=='mimicas')||(networkGameState&&st.revision<=networkLastRevision))return;const sameChallenge=!!(networkGameState&&networkGameState.pos===st.pos&&networkGameState.queue?.[st.pos]===st.queue?.[st.pos]);networkGameState=st;networkLastRevision=st.revision||0;networkGameActive=!st.finished;if(!sameChallenge)networkAnsweredThisChallenge=false;networkGameHost=!!networkLobbyData?.is_host;if(st.mode==='mimicas'){if(networkClockHandle!==null&&st.finished){clearInterval(networkClockHandle);networkClockHandle=null;}networkRenderMimeState();if(!st.finished)ensureNetworkClock();return;}if($('game').classList.contains('hidden'))screen('game');networkRenderGameState();ensureNetworkClock();}
+function networkReceiveState(st){
+  if(!st)return;
+  if(st.mode==='challenges'){
+   const previous=networkGameState;
+   const sameChallenge=!!(previous&&previous.mode==='challenges'&&previous.challenge_id===st.challenge_id);
+   if(previous&&Number(st.revision||0)<=networkLastRevision&&sameChallenge)return;
+   networkGameState={...st,queue_length:Number(st.queue_length||0),pos:Number(st.pos||0)};
+   networkLastRevision=Number(st.revision||0);networkGameActive=true;
+   if(!sameChallenge)networkAnsweredThisChallenge=false;
+   networkGameHost=!!networkLobbyData?.is_host;
+   if($('game').classList.contains('hidden'))screen('game');
+   networkRenderGameState();ensureNetworkClock();return;
+  }
+  if(st.mode==='completed'){
+   networkGameState={...st,queue_length:Number(st.queue_length||0),pos:Number(st.pos||0)};
+   networkLastRevision=Number(st.revision||0);networkGameActive=true;networkGameHost=!!networkLobbyData?.is_host;
+   networkRenderGameState();return;
+  }
+  if(st.mode==='mimicas'){
+   if(networkGameState?.mode==='mimicas'&&Number(st.revision||0)<=networkLastRevision)return;
+   networkGameState=st;networkLastRevision=Number(st.revision||0);networkGameActive=!st.finished;networkGameHost=!!networkLobbyData?.is_host;
+   if(networkClockHandle!==null&&st.finished){clearInterval(networkClockHandle);networkClockHandle=null;}
+   networkRenderMimeState();if(!st.finished)ensureNetworkClock();
+  }
+ }
 function renderTeamProposal(){const host=$('teamVotePanel');if(!host)return;host.replaceChildren();host.classList.add('hidden');const p=networkLobbyData?.team_proposal;if(!networkLobbyData?.team||!p)return;host.classList.remove('hidden');const title=document.createElement('strong');title.textContent='Votação da '+p.team;host.appendChild(title);const answer=document.createElement('p');answer.textContent=p.proposer+' propôs: «'+p.answer+'»';host.appendChild(answer);const votes=p.votes||[];const mine=votes.find(v=>v.player_id===networkLobbyData.player_id);const summary=document.createElement('p');summary.className='muted small';summary.textContent='Votos: '+votes.length+' · '+votes.filter(v=>v.agrees).length+' concordam · '+votes.filter(v=>!v.agrees).length+' não concordam';host.appendChild(summary);const status=document.createElement('p');status.textContent=p.status==='accepted'?'✓ Todos concordaram. Resposta aceite.':p.status==='rejected'?'✕ A proposta foi rejeitada.':p.proposer_id===networkLobbyData.player_id?'A aguardar os votos dos teus colegas.':mine?'Voto registado. A aguardar os restantes colegas.':'Concordas com esta resposta?';host.appendChild(status);if(p.status==='pending'&&p.proposer_id!==networkLobbyData.player_id&&!mine){for(const [label,agrees,cls] of [['Concordo',true,'btn full'],['Não concordo',false,'btn secondary full']]){const b=document.createElement('button');b.className=cls;b.textContent=label;b.style.marginTop='7px';b.onclick=async()=>{b.disabled=true;try{await networkCall('atina_v2_vote_team_proposal',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_proposal_id:p.id,p_agrees:agrees});await networkRefreshRoom();}catch(e){b.disabled=false;status.textContent=e.message;}};host.appendChild(b);}}if(p.status==='accepted'){networkAnsweredThisChallenge=true;$('answer').disabled=true;$('submit').disabled=true;}else if(p.status==='rejected'){networkAnsweredThisChallenge=false;const paused=!!networkGameState?.pause;$('answer').disabled=paused;$('submit').disabled=paused;$('answer').value='';}}
-async function networkSubmitAnswer(){throw new Error('A validação multiplayer requer o servidor ATINA.');}
+async function networkHostReveal(){
+ if(!networkRoom||!networkGameHost||networkGameState?.mode!=='challenges'||networkActionInFlight)return;
+ networkActionInFlight=true;
+ try{await networkCall('atina_v2_reveal_room_clue',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});await networkRefreshRoom();}
+ catch(e){networkMessage('feedback',e.message||'Não foi possível revelar a pista.');}
+ finally{networkActionInFlight=false;}
+}
+async function networkHostPass(){
+ if(!networkRoom||!networkGameHost||networkGameState?.mode!=='challenges'||networkActionInFlight)return;
+ networkActionInFlight=true;
+ try{await networkCall('atina_v2_pass_room_challenge',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});await networkRefreshRoom();}
+ catch(e){networkMessage('feedback',e.message||'Não foi possível passar o desafio.');}
+ finally{networkActionInFlight=false;}
+}
+async function networkHostNext(){
+ if(!networkRoom||!networkGameHost||networkGameState?.mode!=='challenges'||networkActionInFlight)return;
+ networkActionInFlight=true;
+ try{const result=await networkCall('atina_v2_next_room_challenge',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});if(result.status==='completed'){networkFinalizedResults=result.results||[];}networkAnsweredThisChallenge=false;await networkRefreshRoom();}
+ catch(e){networkMessage('feedback',e.message||'Não foi possível avançar o desafio.');}
+ finally{networkActionInFlight=false;}
+}
+async function networkSubmitAnswer(){
+  if(!networkRoom||!networkGameState||networkGameState.mode!=='challenges'||networkActionInFlight)return;
+  if(networkLobbyData?.team){networkMessage('feedback','O fluxo de propostas e votação por equipa ainda não está integrado neste ecrã. Retira a atribuição de equipa para jogar em modo individual.');return;}
+  const answer=$('answer').value.trim();if(!answer){networkMessage('feedback','Escreve primeiro a tua resposta.');$('answer').focus();return;}
+  networkActionInFlight=true;$('submit').disabled=true;
+  try{
+   const result=await networkCall('atina_v2_submit_room_answer',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_answer:answer});
+   $('answer').value='';
+   if(result.status==='correct'){networkAnsweredThisChallenge=true;playAtinaSound('correct');}
+   else if(result.status==='wrong'){networkAnsweredThisChallenge=false;playAtinaSound('wrong');}
+   else if(result.status==='locked'){networkMessage('feedback','O tempo terminou.');}
+   else if(result.status==='already_correct'){networkAnsweredThisChallenge=true;}
+   await networkRefreshRoom();
+   if(result.status==='wrong')networkMessage('feedback','Ainda não é essa a resposta. Podes tentar novamente.');
+  }catch(e){networkMessage('feedback',e.message||'Não foi possível validar a resposta.');}
+  finally{networkActionInFlight=false;if(networkGameState?.mode==='challenges')$('submit').disabled=!!networkGameState.locked||networkAnsweredThisChallenge||!!networkLobbyData?.team;}
+ }
 function networkRenderMimeScores(){
  const players=networkLobbyData?.players||[];
  const teams={};players.forEach(p=>{if(p.team)teams[p.team]=(teams[p.team]||0)+Number(p.score||0);});
@@ -725,8 +852,18 @@ async function networkCall(name,args){const {data,error}=await supabaseClient.rp
 async function networkSetReady(value){if(!networkRoom)return;try{await networkCall('atina_v2_set_room_ready',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_ready:value});await networkRefreshRoom();}catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível atualizar o estado.');}}
 async function networkAssignTeam(playerId,team){if(!networkRoom)return;try{await networkCall('atina_v2_set_room_team',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_player_id:playerId,p_team:team});await networkRefreshRoom();}catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível alterar a equipa.');}}
 async function networkAutoTeams(){if(!networkLobbyData||!networkLobbyData.is_host)return;try{const players=networkLobbyData.players||[];if(players.length<2){networkMessage('networkLobbyStatus','São necessários pelo menos 2 jogadores para formar uma equipa.');return;}const teamCount=Math.min(6,Math.max(1,Math.floor(players.length/2)));const names=['A','B','C','D','E','F'].slice(0,teamCount);for(let i=0;i<players.length;i++){await networkCall('atina_v2_set_room_team',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_player_id:players[i].id,p_team:'Equipa '+names[i%teamCount]});}await networkRefreshRoom();const teamLabel=teamCount===1?'equipa':'equipas';const note=teamCount===1&&players.length<4?' Para formar duas equipas com pelo menos dois jogadores cada, são necessários 4 jogadores.':'';networkMessage('networkLobbyStatus',players.length+' jogadores distribuídos por '+teamCount+' '+teamLabel+'. Cada jogador deve confirmar que está pronto.'+note);}catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível distribuir as equipas.');}}
-async function networkStartGame(){try{await networkCall('atina_v2_start_room',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});networkGameActive=true;networkGameHost=true;networkGameState={queue:shuffle(games.map((g,i)=>g?i:null).filter(Number.isInteger)),pos:0,revealed:1,scores:[0,0],answeredCount:0,locked:false,feedback:'',timedMode:Number($('timerMode')?.value??60),deadline:Number($('timerMode')?.value??60)?Date.now()+Number($('timerMode')?.value??60)*1000:0,revision:1};ensureNetworkClock();await networkPublishGameState();await networkRefreshRoom();screen('game');networkRenderGameState();}catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível iniciar a partida.');}}
-async function networkRefreshRoomOnce(){if(!networkRoom||networkRoomRefreshInFlight)return;const room=networkRoom;networkRoomRefreshInFlight=true;try{const {data,error}=await supabaseClient.rpc('atina_v2_room_state',{p_room_id:room.room_id,p_token:room.token});if(error)throw error;if(networkRoom!==room)return;networkLastRefreshError=null;networkLobbyData=data;networkGameHost=!!data.is_host;networkMyScore=data.my_score||0;renderNetworkTimeoutPanel();if((data.status==='playing'||data.status==='completed'||data.status==='finished')&&data.game_state&&(data.game_state.queue||data.game_state.mode==='mimicas'||data.game_state.mode==='challenges'||data.game_state.mode==='completed'))networkReceiveState(data.game_state);$('networkLobbyCode').textContent=data.code;$('networkLobbyInfo').textContent=data.players.length+' de '+data.max_players+' jogadores · '+(data.status==='playing'?'Partida iniciada':data.is_host?'És o anfitrião':'À espera do anfitrião');$('networkHostTools').classList.toggle('hidden',!data.is_host||data.status!=='waiting');$('networkGuestTools').classList.toggle('hidden',data.is_host||data.status!=='waiting');$('networkReady').textContent=data.ready?'✓ Pronto (toca para alterar)':'Estou pronto';$('networkPlayers').replaceChildren();data.players.forEach(p=>{const li=document.createElement('li');const name=document.createElement('span');name.textContent=p.nickname+(p.is_host?' · anfitrião':'')+(p.ready?' · ✓ pronto':' · por confirmar');li.appendChild(name);if(data.is_host&&data.status==='waiting'){const select=document.createElement('select');select.className='answer';select.style.maxWidth='135px';select.style.margin='5px';select.setAttribute('aria-label','Equipa de '+p.nickname);[['','Sem equipa'],...['A','B','C','D','E','F'].map(x=>['Equipa '+x,'Equipa '+x])].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;select.appendChild(o);});select.value=p.team||'';select.onchange=()=>{if(select.value)networkAssignTeam(p.id,select.value);};li.appendChild(select);} $('networkPlayers').appendChild(li);});networkMessage('networkLobbyStatus',data.status==='playing'?'A sala foi iniciada. A sincronização dos desafios será a próxima etapa.':'Partilha o código '+data.code+' com os restantes jogadores.');if(data.status==='playing')renderTeamProposal();}catch(e){if(networkRoom===room){networkLastRefreshError=e;networkMessage('networkLobbyStatus','A ligação à sala foi perdida. '+(e.message||''));}}finally{networkRoomRefreshInFlight=false;}}
+async function networkStartGame(){
+  if(!networkRoom||!networkLobbyData?.is_host)return;
+  if((networkLobbyData.players||[]).some(p=>p.team)){networkMessage('networkLobbyStatus','O fluxo de equipas usa propostas e votação e ainda não está ligado a este ecrã. Remove as equipas antes de iniciar o modo individual.');return;}
+  try{
+   await networkCall('atina_v2_start_room',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});
+   const duration=Number($('timerMode')?.value??60),difficulty=$('difficultyMode')?.value||'medium';
+   await networkCall('atina_v2_start_room_challenges',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_difficulty:difficulty,p_duration_seconds:Number.isFinite(duration)?duration:60,p_category:null});
+   networkGameActive=true;networkGameHost=true;networkLastRevision=0;networkAnsweredThisChallenge=false;
+   await networkRefreshRoom();screen('game');
+  }catch(e){networkMessage('networkLobbyStatus',e.message||'Não foi possível iniciar a partida.');}
+ }
+async function networkRefreshRoomOnce(){if(!networkRoom||networkRoomRefreshInFlight)return;const room=networkRoom;networkRoomRefreshInFlight=true;try{const {data,error}=await supabaseClient.rpc('atina_v2_room_state',{p_room_id:room.room_id,p_token:room.token});if(error)throw error;if(networkRoom!==room)return;networkLastRefreshError=null;networkLobbyData=data;networkGameHost=!!data.is_host;networkMyScore=data.my_score||0;renderNetworkTimeoutPanel();if((data.status==='playing'||data.status==='completed'||data.status==='finished')&&data.game_state)networkReceiveState(data.game_state);$('networkLobbyCode').textContent=data.code;$('networkLobbyInfo').textContent=data.players.length+' de '+data.max_players+' jogadores · '+(data.status==='playing'?'Partida iniciada':data.is_host?'És o anfitrião':'À espera do anfitrião');$('networkHostTools').classList.toggle('hidden',!data.is_host||data.status!=='waiting');$('networkGuestTools').classList.toggle('hidden',data.is_host||data.status!=='waiting');$('networkReady').textContent=data.ready?'✓ Pronto (toca para alterar)':'Estou pronto';$('networkPlayers').replaceChildren();data.players.forEach(p=>{const li=document.createElement('li');const name=document.createElement('span');name.textContent=p.nickname+(p.is_host?' · anfitrião':'')+(p.ready?' · ✓ pronto':' · por confirmar');li.appendChild(name);if(data.is_host&&data.status==='waiting'){const select=document.createElement('select');select.className='answer';select.style.maxWidth='135px';select.style.margin='5px';select.setAttribute('aria-label','Equipa de '+p.nickname);[['','Sem equipa'],...['A','B','C','D','E','F'].map(x=>['Equipa '+x,'Equipa '+x])].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;select.appendChild(o);});select.value=p.team||'';select.onchange=()=>{if(select.value)networkAssignTeam(p.id,select.value);};li.appendChild(select);} $('networkPlayers').appendChild(li);});networkMessage('networkLobbyStatus',data.status==='playing'?'A sala foi iniciada. A sincronização dos desafios será a próxima etapa.':'Partilha o código '+data.code+' com os restantes jogadores.');if(data.status==='playing')renderTeamProposal();}catch(e){if(networkRoom===room){networkLastRefreshError=e;networkMessage('networkLobbyStatus','A ligação à sala foi perdida. '+(e.message||''));}}finally{networkRoomRefreshInFlight=false;}}
 async function networkRefreshRoom(){if(!networkRoom)return;if(networkRoomRefreshPromise){await networkRoomRefreshPromise;return networkRefreshRoom();}const pending=networkRefreshRoomOnce();networkRoomRefreshPromise=pending;try{await pending;}finally{if(networkRoomRefreshPromise===pending)networkRoomRefreshPromise=null;}}
 async function networkLeaveRoom(){networkGameActive=false;networkGameState=null;networkAnsweredThisChallenge=false;networkMyScore=0;networkMimeSecretRound=-1;networkMimeSecret='';$('networkMimeScores')?.remove();$('networkScoreboard').classList.add('hidden');networkLastRevision=0;if(networkClockHandle)clearInterval(networkClockHandle);networkClockHandle=null;if(networkPollHandle)clearInterval(networkPollHandle);networkPollHandle=null;if(networkRoom){try{await supabaseClient.rpc('atina_v2_leave_room',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});}catch(e){}}networkRoom=null;networkLobbyData=null;networkFinalizedResults=null;localStorage.removeItem('atinaNetworkRoom');screen('home');}
 
