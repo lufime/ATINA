@@ -2,9 +2,11 @@ name: Test legacy schema upgrade
 
 on:
   push:
-    branches: [qa/atina-multiplayer-rpc-browser-tests]
+    branches: [qa/atina-multiplayer-rpc-browser-tests, feat/atina-multiplayer-ui-rpc-integration]
     paths:
       - 'tests/e2e/**'
+      - 'index.html'
+      - 'atina-server-client.js'
       - 'supabase/migrations/**'
       - 'supabase/legacy-fixtures/**'
       - '.github/workflows/test-legacy-schema-upgrade.yml'
@@ -67,6 +69,12 @@ jobs:
           export SUPABASE_URL="$API_URL"
           export SUPABASE_ANON_KEY="$ANON_KEY"
           node --test tests/e2e/multiplayer-rpc-browser.test.cjs
+      - name: Exercise multiplayer challenge flow through the actual ATINA UI
+        run: |
+          eval "$(supabase status -o env | grep -E '^(API_URL|ANON_KEY)=')"
+          export SUPABASE_URL="$API_URL"
+          export SUPABASE_ANON_KEY="$ANON_KEY"
+          node --test tests/e2e/multiplayer-ui-browser.test.cjs
       - name: Assert legacy data and contracts remain intact
         run: |
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
