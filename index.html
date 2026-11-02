@@ -559,6 +559,7 @@ let networkLastPollAt=0;
 function networkStartPolling(){if(networkPollHandle)clearInterval(networkPollHandle);networkLastPollAt=0;networkPollHandle=setInterval(()=>{if(!networkRoom)return;const delay=document.hidden?5000:networkGameActive?700:1500,now=Date.now();if(now-networkLastPollAt<delay)return;networkLastPollAt=now;networkRefreshRoom();},250);}
 let networkGameActive=false,networkGameHost=false,networkGameState=null,networkLastRevision=0,networkClockHandle=null,networkMyScore=0,networkAnsweredThisChallenge=false;
 let networkActionInFlight=false,networkDeadlineRefreshInFlight=false;
+let networkTransientFeedback='';
 let networkAnimatedChallengeKey='';
 async function networkPublishGameState(){if(!networkRoom||!networkGameHost||!networkGameState)return;networkGameState.revision=(networkGameState.revision||0)+1;const {error}=await supabaseClient.rpc('atina_v2_publish_game_state',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_state:networkGameState});if(error)throw error;}
 function networkRenderGameState(){
@@ -603,7 +604,7 @@ function networkRenderGameState(){
  $('pass').disabled=!networkGameHost||locked||pauseActive;
  $('pass').classList.toggle('hidden',!networkGameHost);
  $('continue').classList.toggle('hidden',!locked||!networkGameHost||pauseActive);
- atinaRenderRevealedAnswer('feedback',st.feedback||(networkLobbyData?.team?'O modo de propostas e votação por equipa ainda não está ligado a este ecrã.':'Escreve a tua resposta.'));
+ atinaRenderRevealedAnswer('feedback',networkTransientFeedback||st.feedback||(networkLobbyData?.team?'O modo de propostas e votação por equipa ainda não está ligado a este ecrã.':'Escreve a tua resposta.'));
  $('feedback').classList.toggle('solution-revealed',!!locked);
  if(locked)atinaShowSolutionImage(st.answer,category,'solutionImage');else $('solutionImage').classList.add('hidden');
  $('networkScoreboard').classList.remove('hidden');renderTeamProposal();
@@ -656,7 +657,8 @@ function networkReceiveState(st){
    if(unchanged)return;
    networkGameState={...st,queue_length:Number(st.queue_length||0),pos:Number(st.pos||0)};
    networkLastRevision=Math.max(networkLastRevision,Number(st.revision||0));networkGameActive=true;
-   if(!sameChallenge)networkAnsweredThisChallenge=false;
+   if(!sameChallenge){networkAnsweredThisChallenge=false;networkTransientFeedback='';}
+   if(st.locked)networkTransientFeedback='';
    networkGameHost=!!networkLobbyData?.is_host;
    if($('game').classList.contains('hidden'))screen('game');
    networkRenderGameState();ensureNetworkClock();return;
@@ -699,17 +701,16 @@ async function networkSubmitAnswer(){
   if(!networkRoom||!networkGameState||networkGameState.mode!=='challenges'||networkActionInFlight)return;
   if(networkLobbyData?.team){networkMessage('feedback','O fluxo de propostas e votação por equipa ainda não está integrado neste ecrã. Retira a atribuição de equipa para jogar em modo individual.');return;}
   const answer=$('answer').value.trim();if(!answer){networkMessage('feedback','Escreve primeiro a tua resposta.');$('answer').focus();return;}
-  networkActionInFlight=true;$('submit').disabled=true;
+  networkActionInFlight=true;$('submit').disabled=true;networkTransientFeedback='';
   try{
    const result=await networkCall('atina_v2_submit_room_answer',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_answer:answer});
    $('answer').value='';
-   if(result.status==='correct'){networkAnsweredThisChallenge=true;playAtinaSound('correct');}
-   else if(result.status==='wrong'){networkAnsweredThisChallenge=false;playAtinaSound('wrong');}
+   if(result.status==='correct'){networkAnsweredThisChallenge=true;networkTransientFeedback='';playAtinaSound('correct');}
+   else if(result.status==='wrong'){networkAnsweredThisChallenge=false;networkTransientFeedback='Ainda não é essa a resposta. Podes tentar novamente.';playAtinaSound('wrong');}
    else if(result.status==='locked'){networkMessage('feedback','O tempo terminou.');}
    else if(result.status==='already_correct'){networkAnsweredThisChallenge=true;}
-   if(result.status==='wrong')networkMessage('feedback','Ainda não é essa a resposta. Podes tentar novamente.');
    await networkRefreshRoom();
-   if(result.status==='wrong')networkMessage('feedback','Ainda não é essa a resposta. Podes tentar novamente.');
+   if(result.status==='wrong')networkMessage('feedback',networkTransientFeedback);
   }catch(e){networkMessage('feedback',e.message||'Não foi possível validar a resposta.');}
   finally{networkActionInFlight=false;if(networkGameState?.mode==='challenges')$('submit').disabled=!!networkGameState.locked||networkAnsweredThisChallenge||!!networkLobbyData?.team;}
  }
