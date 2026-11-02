@@ -126,13 +126,3 @@ console.log(
   'Proposta e integração cliente validadas: pseudónimo, token de dispositivo, ' +
   'XP apenas após resultado correto bloqueado pelo servidor e classificação global.'
 );
- then") ||
-    !migration.includes('insert into private.atina_xp_session_owners(session_id,player_id)') ||
-    !migration.includes("p_game_mode not in ('solo','mix')")) {
-  throw new Error('O arranque da sessão não fixa a identidade do pseudónimo no servidor.');
-}
-
-console.log(
-  'Proposta e integração cliente validadas: pseudónimo, token de dispositivo, ' +
-  'XP apenas após resultado correto bloqueado pelo servidor e classificação global.'
-);
