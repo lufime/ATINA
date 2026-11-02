@@ -1023,9 +1023,10 @@ function atinaSolutionImageUsable(item){
  return true;
 }
 function atinaSolutionImageMatch(answer,category,item){
- const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
+ const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is','the']);
  const aliases={
   'esponja':['esponja','sponge','cleaning sponge'],
+  'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],
   'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],
   'contrabaixo':['contrabaixo','double bass','contrabass'],
   'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering'],
@@ -1033,12 +1034,13 @@ function atinaSolutionImageMatch(answer,category,item){
  const normalized=atinaSolutionImageText(answer);
  const answerTerms=aliases[normalized]||[normalized];
  const answerTokenSets=answerTerms.map(term=>atinaSolutionImageText(term).split(/\s+/).filter(token=>token.length>1&&!stop.has(token)));
- const categoryTokens=atinaSolutionImageText(category).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
+ const categoryText=atinaSolutionImageText(category);
+ const genericCategories=new Set(['o que sou','quem sou eu','onde estou','logica e numeros','desafio surpresa','cultura geral','historia e misterios','palavras escondidas','imagem misteriosa']);
+ const categoryTokens=genericCategories.has(categoryText)?[]:categoryText.split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
  const title=atinaSolutionImageText(item.title);
- const titleWords=new Set(title.split(/\s+/));
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const words=new Set((title+' '+description).split(/\s+/));
- const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>titleWords.has(token)));
+ const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
  const categoryAliases={
   'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],
