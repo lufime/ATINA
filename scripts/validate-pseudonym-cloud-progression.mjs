@@ -2,6 +2,8 @@
 import { readFileSync } from 'node:fs';
 
 const sql = readFileSync(new URL('../supabase/migrations/20261101190000_atina_v2_pseudonym_cloud_progression.sql', import.meta.url), 'utf8');
+const serverClient = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
+const progressionClient = readFileSync(new URL('../atina-cloud-progression.js', import.meta.url), 'utf8');
 const checks = [
   ['private player table', /create table private\.atina_v2_players/i.test(sql)],
   ['hashed player token', /token_hash bytea not null unique/i.test(sql)],
@@ -15,6 +17,7 @@ const checks = [
   ['private RLS', /enable row level security/i.test(sql) && /revoke all on private\.atina_v2_players from public, anon, authenticated/i.test(sql)],
   ['restricted RPC grants', /revoke all on function public\.atina_v2_player_profile\(text, text\) from public/i.test(sql) && /grant execute on function public\.atina_v2_record_local_progress\(uuid, text\) to anon, authenticated/i.test(sql)],
   ['party mode retained', /p_game_mode not in \('solo', 'duel', 'mix', 'party'\)/i.test(sql) && /if p_game_mode = 'party' then[\s\S]*?least\(10, cardinality\(v_queue\)\)/i.test(sql)],
+  ['cloud XP limited to individual modes', /\['solo', 'mix'\]\.includes\(gameMode\)/.test(serverClient) && /!\['solo', 'mix'\]\.includes\(state\?\.mode\)/.test(progressionClient)],
   ['fixed search_path', (sql.match(/set search_path = ''/g) || []).length >= 2],
 ];
 let failed = false;
