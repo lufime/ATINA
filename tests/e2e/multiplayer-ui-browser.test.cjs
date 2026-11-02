@@ -66,6 +66,7 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
     hostRoom = await host.evaluate(() => JSON.parse(localStorage.getItem('atinaNetworkRoom')));
 
     const guest = await openPlayer('guest');
+    await guest.locator('.home-page-nav [data-home-target="online"]').click();
     await guest.locator('#networkNickname').fill('UI-Guest');
     await guest.locator('#networkRoomCode').fill(code);
     await guest.locator('#joinNetworkRoom').click();
