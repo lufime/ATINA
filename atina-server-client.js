@@ -307,7 +307,7 @@ function atinaServerApplyState(state, announce = false) {
   $('feedback').textContent = message;
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
   if (locked && result.outcome === 'correct') atinaProgressClaim(state);
-  if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage');
+  if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage', Array.isArray(challenge.tags) ? challenge.tags : []);
   else $('solutionImage')?.classList.add('hidden');
   if (clearAnswer) $('answer').value = '';
   $('feedback').classList.remove('is-correct', 'is-wrong', 'is-info');
