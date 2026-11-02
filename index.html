@@ -1005,10 +1005,19 @@ function atinaSolutionImageLicense(item){
 function atinaSolutionImageUsable(item){
  if(!item?.thumburl||!/^https:\/\//i.test(item.thumburl))return false;
  const license=atinaSolutionImageLicense(item);
- if(!(/public domain/.test(license)||/\bcc0\b/.test(license)))return false;
+ // Apenas licenças que permitem reutilização: domínio público, CC0,
+ // CC BY e CC BY-SA. Licenças de atribuição exigem autor e URL da licença.
+ const publicDomain=/public domain/.test(license);
+ const cc0=/\bcc0\b/.test(license);
+ const attributionLicense=/\bcc[- ]?by(?:[- ]?sa)?(?:\s|$)/.test(license);
+ if(!(publicDomain||cc0||attributionLicense))return false;
+ const metadata=item.extmetadata||{};
+ const author=String(metadata.Artist?.value||'').replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ').trim();
+ const licenseUrl=String(metadata.LicenseUrl?.value||'').trim();
+ if(attributionLicense&&(!author||!/^https:\/\//i.test(licenseUrl)))return false;
  // Evita ícones, logótipos e ficheiros vetoriais que podem passar por uma
  // correspondência de nome, mas não funcionam como fotografia ilustrativa.
- if(item.mime!=='image/jpeg'||Number(item.width)<400||Number(item.height)<300)return false;
+ if(!['image/jpeg','image/png','image/webp'].includes(item.mime)||Number(item.width)<400||Number(item.height)<300)return false;
  const title=atinaSolutionImageText(item.title);
  if(/\b(icon|logo|symbol|emblem|coat of arms|flag|speaker|audio|sound)\b/.test(title))return false;
  return true;
@@ -1028,7 +1037,7 @@ function atinaSolutionImageMatch(answer,category,item){
  const titleWords=new Set(title.split(/\s+/));
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const words=new Set((title+' '+description).split(/\s+/));
- const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>titleWords.has(token)));
+ const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
  const categoryAliases={
   'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],
