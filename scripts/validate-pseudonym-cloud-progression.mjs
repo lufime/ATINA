@@ -11,7 +11,7 @@ const checks = [
   ['idempotent event key', /unique \(player_id, session_id, position\)/i],
   ['daily reward once', /rewarded_date is distinct from v_today/i],
   ['private RLS', /enable row level security/i.test(sql) && /revoke all on private\.atina_v2_players from public, anon, authenticated/i.test(sql)],
-  ['restricted RPC grants', /revoke all on function public\.atina_v2_player_profile\(text, text\) from public/i.test(sql) && /grant execute on function public\.atina_v2_record_local_progress\(uuid, text, text\) to anon, authenticated/i.test(sql)],
+  ['restricted RPC grants', /revoke all on function public\.atina_v2_player_profile\(text, text\) from public/i.test(sql) && /grant execute on function public\.atina_v2_record_local_progress\(uuid, text\) to anon, authenticated/i.test(sql)],
   ['fixed search_path', (sql.match(/set search_path = ''/g) || []).length >= 2],
 ];
 let failed = false;
