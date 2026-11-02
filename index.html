@@ -993,6 +993,11 @@ $('mimeNext').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'
 $('mimeReveal').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'){e.preventDefault();e.stopImmediatePropagation();networkMimeReveal();}},true);
 $('mimeCorrect').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'){e.preventDefault();e.stopImmediatePropagation();networkMimeResolveRound(true,'correct');}},true);
 $('mimeSkip').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'){e.preventDefault();e.stopImmediatePropagation();networkMimeResolveRound(false,'pass');}},true);
+$('nextClue').addEventListener('click',e=>{if(networkRoom&&networkGameState?.mode==='challenges'){e.preventDefault();e.stopImmediatePropagation();networkHostReveal();}},true);
+$('pass').addEventListener('click',e=>{if(networkRoom&&networkGameState?.mode==='challenges'){e.preventDefault();e.stopImmediatePropagation();networkHostPass();}},true);
+$('continue').addEventListener('click',e=>{if(networkRoom&&networkGameState?.mode==='challenges'){e.preventDefault();e.stopImmediatePropagation();networkHostNext();}},true);
+$('submit').addEventListener('click',e=>{if(networkRoom&&networkGameState?.mode==='challenges'){e.preventDefault();e.stopImmediatePropagation();networkSubmitAnswer();}},true);
+$('answer').addEventListener('keydown',e=>{if(networkRoom&&networkGameState?.mode==='challenges'&&e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();networkSubmitAnswer();}},true);
 $('mimicaBack').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'){e.preventDefault();e.stopImmediatePropagation();networkLeaveRoom();}},true);
 
 /* Modo Mímicas: cinco pistas visuais progressivas, com pontuação igual ao ATINA. */
