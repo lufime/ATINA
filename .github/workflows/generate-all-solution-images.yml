@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   generate:
-    if: ${{ inputs.confirmation == 'GENERATE-753' }}
+    if: \${{ inputs.confirmation == 'GENERATE-753' }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
@@ -38,18 +38,19 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Generate images in resumable batches
+      - name: Generate images and publish them to GitHub in resumable batches
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          ATINA_IMAGE_UPLOAD_TOKEN: ${{ secrets.ATINA_IMAGE_UPLOAD_TOKEN }}
-          BATCH_SIZE: ${{ inputs.batch_size }}
+          SUPABASE_URL: \${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: \${{ secrets.SUPABASE_ANON_KEY }}
+          ATINA_IMAGE_UPLOAD_TOKEN: \${{ secrets.ATINA_IMAGE_UPLOAD_TOKEN }}
+          BATCH_SIZE: \${{ inputs.batch_size }}
+          GH_TOKEN: \${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          : "${SUPABASE_URL:?Missing SUPABASE_URL secret}"
-          : "${SUPABASE_ANON_KEY:?Missing SUPABASE_ANON_KEY secret}"
-          : "${ATINA_IMAGE_UPLOAD_TOKEN:?Missing ATINA_IMAGE_UPLOAD_TOKEN secret}"
+          : "\${SUPABASE_URL:?Missing SUPABASE_URL secret}"
+          : "\${SUPABASE_ANON_KEY:?Missing SUPABASE_ANON_KEY secret}"
+          : "\${ATINA_IMAGE_UPLOAD_TOKEN:?Missing ATINA_IMAGE_UPLOAD_TOKEN secret}"
 
           cursor=-1
           total=0
@@ -58,11 +59,11 @@ jobs:
             payload=$(jq -n --argjson limit "$BATCH_SIZE" --argjson after "$cursor" \
               '{limit:$limit, after_challenge_id:$after}')
             response=$(curl --fail-with-body --silent --show-error \
-              -X POST "${SUPABASE_URL}/functions/v1/atina-generate-solution-images" \
-              -H "apikey: ${SUPABASE_ANON_KEY}" \
-              -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+              -X POST "\${SUPABASE_URL}/functions/v1/atina-generate-solution-images" \
+              -H "apikey: \${SUPABASE_ANON_KEY}" \
+              -H "Authorization: Bearer \${SUPABASE_ANON_KEY}" \
               -H "Content-Type: application/json" \
-              -H "x-atina-upload-token: ${ATINA_IMAGE_UPLOAD_TOKEN}" \
+              -H "x-atina-upload-token: \${ATINA_IMAGE_UPLOAD_TOKEN}" \
               --data "$payload")
 
             echo "$response" | jq .
@@ -72,34 +73,26 @@ jobs:
             next_cursor=$(echo "$response" | jq -r '.next_after_challenge_id // empty')
 
             if [[ "$success" != "true" ]]; then
-              echo "::error::Image generation batch failed. Existing images for unprocessed challenges were left untouched."
+              echo "::error::Image generation batch failed."
               exit 1
             fi
             if [[ "$processed" -eq 0 && "$done_flag" != "true" ]]; then
-              echo "::error::Generator made no progress; stopping to avoid an infinite loop."
+              echo "::error::Generator made no progress; stopping."
               exit 1
             fi
-            # Copy each generated PNG from the public Supabase bucket into this repository.
-            while IFS=
-            echo "Batch $batch complete; generated in this run: $total"
-            if [[ "$done_flag" == "true" ]]; then
-              echo "Generation completed. Total processed: $total"
-              exit 0
-            fi
-          done
-          echo "::error::Reached safety limit of $max_batches batches; rerun workflow to resume from the first remaining challenge."
-          exit 1
-\t' read -r challenge_id image_url; do
+
+            # Download each generated image and commit it under images/solutions/<challenge_id>.png.
+            while IFS=$'\t' read -r challenge_id image_url; do
               [[ -n "$challenge_id" && -n "$image_url" ]] || continue
               mkdir -p images/solutions
-              curl --fail-with-body --silent --show-error "$image_url" \\
-                -o "images/solutions/${challenge_id}.png"
+              curl --fail-with-body --silent --show-error "$image_url" \
+                -o "images/solutions/\${challenge_id}.png"
             done < <(echo "$response" | jq -r '.results[] | select(.success == true) | [.challenge_id, .image_url] | @tsv')
 
             git add images/solutions
             if ! git diff --cached --quiet; then
               git commit -m "Add ATINA solution images batch $batch"
-              git push origin "HEAD:${GITHUB_REF_NAME}"
+              git push origin "HEAD:\${GITHUB_REF_NAME}"
             fi
 
             total=$((total + processed))
@@ -110,5 +103,5 @@ jobs:
               exit 0
             fi
           done
-          echo "::error::Reached safety limit of $max_batches batches; rerun workflow to resume from the first remaining challenge."
+          echo "::error::Reached safety limit of $max_batches batches."
           exit 1
