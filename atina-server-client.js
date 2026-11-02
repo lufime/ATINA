@@ -352,6 +352,12 @@ async function atinaServerStart(gameMode, category = null) {
   try {
     const duration = Number($('timerMode')?.value ?? 60);
     const difficulty = $('difficultyMode')?.value || 'medium';
+    if (['solo', 'mix'].includes(gameMode) && !atinaCloudProfile) {
+      const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
+      if (savedNickname && atinaProgressDeviceToken(false)) {
+        try { await atinaProgressRegister(savedNickname, true); } catch (_) {}
+      }
+    }
     const response = await atinaServerRpc('atina_v2_start_local_game', {
       p_game_mode: gameMode,
       p_difficulty: difficulty,
