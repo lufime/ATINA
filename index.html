@@ -1328,13 +1328,13 @@ async function atinaShowSolutionImage(answer,category,targetId){
   if(item===undefined){
    const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
    const visualContexts=atinaSolutionImageVisualContexts(cleanAnswer);
-   // Pesquisa visual ampla no Openverse: título, etiquetas e contexto semântico,
-   // com seleção apenas de imagens reutilizáveis e atribuição explícita.
-   try{item=await atinaOpenverseSolutionImage(cleanAnswer,cleanCategory,semanticAliases,visualContexts);}catch(e){item=null;}
-   // Fontes de reserva quando o Openverse não devolve correspondência convincente.
+   // Primeiro, fontes ligadas a uma entidade identificada exatamente.
+   // Isto evita que uma fotografia apenas parecida ultrapasse a imagem da entidade certa.
+   try{const semantic=await atinaWikidataSolutionImage(cleanAnswer);item=semantic.item;}catch(e){item=null;}
+   // Segunda opção: imagem da página exata da Wikipédia, validada pelo título.
    if(!item){try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}}
-   // Se não existir imagem adequada na Wikipédia, usar a imagem representativa da entidade Wikidata.
-   if(!item){const semantic=await atinaWikidataSolutionImage(cleanAnswer);item=semantic.item;}
+   // Só depois recorrer à pesquisa aberta, com licença e relevância verificadas.
+   try{if(!item)item=await atinaOpenverseSolutionImage(cleanAnswer,cleanCategory,semanticAliases,visualContexts);}catch(e){item=null;}
    // Fonte institucional adicional: aceitar apenas obras CC0/domínio público
    // cuja ficha também confirme o contexto temático da categoria.
    if(!item){
@@ -1368,7 +1368,13 @@ async function atinaShowSolutionImage(answer,category,targetId){
   if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
   const frame=document.createElement('div');frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
   const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
-  image.onerror=()=>{frame.remove();status.textContent='Não foi possível carregar a imagem encontrada.';};
+  image.onerror=()=>{
+   frame.remove();
+   status.textContent='A imagem encontrada deixou de estar disponível ou bloqueou o carregamento. Não vamos apresentar uma imagem diferente sem confirmar a solução.';
+   const retry=document.createElement('button');retry.type='button';retry.className='btn secondary';retry.textContent='Tentar nova pesquisa';
+   retry.onclick=()=>{atinaSolutionImageCache.delete(key);delete target.dataset.solutionKey;atinaShowSolutionImage(cleanAnswer,cleanCategory,targetId);};
+   target.append(retry);
+  };
   const brand=document.createElement('img');brand.src='assets/atina-logo-alentejo.svg';brand.alt='ATINA';brand.setAttribute('aria-label','Logótipo ATINA');brand.style.cssText='position:absolute;top:8px;right:8px;width:76px;height:auto;max-height:28px;object-fit:contain;padding:3px 5px;border:1px solid #ffffff55;border-radius:7px;background:#071827d9;pointer-events:none';
   frame.append(image,brand);
   const provenance=document.createElement('p');provenance.className='muted small';provenance.style.cssText='margin:8px 0 0;line-height:1.5;overflow-wrap:anywhere';
