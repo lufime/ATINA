@@ -1025,14 +1025,15 @@ async function atinaWikipediaSolutionImage(answer,category){
  const normalizedAnswer=atinaSolutionImageText(answer);
  if(!normalizedAnswer)return null;
  for(const language of ['pt','en']){
-  const params=new URLSearchParams({action:'query',format:'json',origin:'*',generator:'search',gsrsearch:answer,gsrnamespace:'0',gsrlimit:'8',prop:'pageimages',piprop:'thumbnail',pithumbsize:'1000'});
+  const params=new URLSearchParams({action:'query',format:'json',origin:'*',generator:'search',gsrsearch:answer,gsrnamespace:'0',gsrlimit:'8',prop:'pageimages',piprop:'name|thumbnail',pithumbsize:'1000'});
   const response=await fetch('https://'+language+'.wikipedia.org/w/api.php?'+params.toString(),{headers:{Accept:'application/json'}});
   if(!response.ok)continue;
   const data=await response.json();
   const pages=Object.values(data.query?.pages||{});
   const page=pages.find(p=>atinaSolutionImageText(p.title)===normalizedAnswer);
   if(!page?.thumbnail?.source)continue;
-  const fileName=decodeURIComponent(page.thumbnail.source.split('/').pop().split('?')[0]);
+  const fileName=page.pageimage;
+  if(!fileName)continue;
   const commonsUrl='https://commons.wikimedia.org/w/api.php?action=query&titles='+encodeURIComponent('File:'+fileName)+'&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
   const commonsResponse=await fetch(commonsUrl,{headers:{Accept:'application/json'}});
   if(!commonsResponse.ok)continue;
