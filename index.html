@@ -1254,11 +1254,8 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
  // Construir a pesquisa com os três elementos: categoria, solução e contexto.
  // A categoria orienta a pesquisa, mas a solução continua a ser o critério principal.
  const queries=[
-  answer+' '+categoryContext,
-  answer+' '+category,
-  ...answerVariants.slice(1,8).map(value=>value+' '+categoryContext),
-  ...answerVariants,
-  ...contextQueries.map(value=>answer+' '+value+' '+categoryContext)
+  ...answerVariants.slice(0,8),
+  ...contextQueries.map(value=>answer+' '+value)
  ].map(value=>String(value||'').trim()).filter((value,index,array)=>value&&array.findIndex(other=>atinaSolutionImageText(other)===atinaSolutionImageText(value))===index).slice(0,18);
  let best=null,bestScore=-1;
  for(const query of queries){
@@ -1347,10 +1344,8 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[]){
     const searchTerms=[...new Set([...semanticAliases,...visualContexts])];
     const queries=[
      ...searchTerms,
-     ...searchTerms.map(term=>term+' '+cleanCategory),
      cleanAnswer,
-     cleanAnswer+' '+cleanCategory,
-     ...(placeCategory?[cleanAnswer+' city',cleanAnswer+' skyline',cleanAnswer+' Argentina']:[])
+     ...(placeCategory?[cleanAnswer+' city',cleanAnswer+' skyline']:[])
     ].filter((q,i,a)=>q&&a.indexOf(q)===i);
     for(const query of queries){
      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
