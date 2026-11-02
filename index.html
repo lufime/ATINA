@@ -1311,6 +1311,15 @@ async function atinaShowSolutionImage(answer,category,targetId){
  target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
  if(!cleanAnswer)return;
 
+ const isNumericSolution=/^[+-]?(?:\\d+|\\d{1,3}(?:[ .\\u00a0]\\d{3})+)(?:[,.]\\d+)?$/.test(cleanAnswer);
+ if(isNumericSolution){
+  const numberHeading=document.createElement('strong');numberHeading.textContent='🔢 A solução em número';
+  const numberDisplay=document.createElement('div');numberDisplay.textContent=cleanAnswer;
+  numberDisplay.setAttribute('role','img');numberDisplay.setAttribute('aria-label','Número da solução: '+cleanAnswer);
+  numberDisplay.style.cssText='display:flex;align-items:center;justify-content:center;min-height:190px;margin-top:10px;padding:18px;border:1px solid #eac05d88;border-radius:14px;background:linear-gradient(135deg,#233d59,#0b1b2d);color:#ffdc82;font-size:clamp(64px,18vw,112px);font-weight:900;line-height:1.1;letter-spacing:.02em;overflow-wrap:anywhere;text-align:center;text-shadow:0 4px 18px #0008';
+  const numberCaption=document.createElement('p');numberCaption.className='muted small';numberCaption.textContent='Como a solução é um número, mostramos o próprio número em vez de procurar uma fotografia.';
+  target.append(numberHeading,numberDisplay,numberCaption);target.classList.remove('hidden');return;
+ }
  const imageHeading=document.createElement('strong');imageHeading.textContent='📷 A solução em imagem';
  const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
  target.append(imageHeading,status);target.classList.remove('hidden');
