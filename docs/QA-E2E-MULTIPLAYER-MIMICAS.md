@@ -138,7 +138,7 @@ A migration v2 tem também RPCs específicas para propostas/votação por equipa
 
 Foi criada a branch `feat/atina-multiplayer-ui-rpc-integration` a partir do harness local. Nesta fase:
 
-- A configuração Supabase do `index.html` aceita `window.__ATINA_TEST_CONFIG__` apenas quando a página corre em `localhost`/ `127.0.0.1` e a URL fornecida também é HTTP local. O URL e a chave de produção permanecem como fallback do site publicado; nenhuma chave service-role é aceite ou necessária.
+- A configuração Supabase do `index.html` aceita `window.__ATINA_TEST_CONFIG__` apenas quando a página corre em `localhost`/ `127.0.0.1` e a URL fornecida também é HTTP local. Fora de localhost, o site publicado mantém o URL/chave de produção. Em localhost, se a configuração de teste não for válida, a ligação Supabase fica desativada (fail-closed), em vez de recorrer à produção. Nenhuma chave service-role é aceite ou necessária.
 - O arranque de desafios consulta primeiro o estado da sala e, quando está em `pending`, chama `atina_v2_start_room_challenges`. A verificação prévia permite recuperar de uma resposta de rede perdida depois do servidor já ter iniciado a sala, sem tentar iniciar a mesma sala novamente.
 - O renderer consome `challenge_id`, `category`, `emoji`, `clues`, `image_url`, `pos`, `queue_length`, `revealed`, `deadline` e `locked` do estado público. Não constrói uma fila de desafios nem escolhe respostas no browser.
 - Os controlos de pista, resposta, passar e avançar chamam respetivamente `atina_v2_reveal_room_clue`, `atina_v2_submit_room_answer`, `atina_v2_pass_room_challenge` e `atina_v2_next_room_challenge`.
@@ -147,3 +147,6 @@ Foi criada a branch `feat/atina-multiplayer-ui-rpc-integration` a partir do harn
 - Foi acrescentado `tests/e2e/multiplayer-ui-browser.test.cjs`, com dois contextos Chromium a percorrer o HTML real, criar/entrar numa sala, iniciar uma partida, submeter uma resposta errada, passar e avançar. O workflow executa este teste contra o Supabase local descartável.
 
 **Estado de validação:** o teste foi acrescentado ao workflow, mas ainda não há confirmação de uma execução CI concluída. Não declarar o fluxo aprovado antes de o job terminar com sucesso. Esta fase cobre apenas o modo individual de desafios; não cobre a votação de equipa, reconexão, retry de submissão concorrente, prazos sob falhas de rede ou dispositivos físicos. O fluxo Mímicas permanece separado e usa as RPCs dedicadas existentes.
+
+
+Uma revisão subsequente também ajustou a receção de estado para não ignorar uma transição autoritativa (por exemplo, ronda bloqueada) apenas porque o campo `revision` da projeção SQL não avançou. O cliente compara igualmente os campos de estado relevantes (`locked`, `revealed`, pistas e feedback). Foi validada a sintaxe JavaScript dos scripts inline e de `atina-server-client.js`; isto não substitui a execução Playwright/CI.
