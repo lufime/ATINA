@@ -1,7 +1,7 @@
 -- Bind pseudonymous XP to the player selected when an individual game session starts.
--- PROPOSTA ATINA: progressão na nuvem sem contas.
--- Esta proposta NÃO é uma migração aplicada. Rever e testar em ambiente isolado
--- antes de qualquer aprovação ou aplicação. O cliente nunca envia XP nem pontos.
+-- ATINA pseudonym cloud progression with session-time player binding.
+-- Installs the cloud progression RPCs and binds Solo/Mix sessions at creation.
+-- The client never sends XP or points.
 --
 -- Pré-requisitos:
 --   * private.atina_v2_local_sessions já existe.
