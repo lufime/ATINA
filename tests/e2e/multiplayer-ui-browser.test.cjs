@@ -98,7 +98,22 @@ test('two real ATINA UI contexts create, join, start and advance a server-author
     await guest.locator('#submit').click();
     await guest.waitForFunction(() => (document.querySelector('#feedback')?.textContent || '').trim().length > 0);
     await host.locator('#pass').click();
-    await host.waitForFunction(() => !!networkGameState?.locked);
+    try {
+      await host.waitForFunction(() => !!networkGameState?.locked, { timeout: 10000 });
+    } catch (error) {
+      const diagnostic = await host.evaluate(() => ({
+        gameState: typeof networkGameState === 'undefined' ? null : networkGameState,
+        feedback: document.querySelector('#feedback')?.textContent || '',
+        networkStatus: document.querySelector('#networkStatus')?.textContent || '',
+        actionInFlight: typeof networkActionInFlight === 'undefined' ? null : networkActionInFlight,
+        lastRefreshError: typeof networkLastRefreshError === 'undefined' ? null : {
+          message: networkLastRefreshError?.message,
+          code: networkLastRefreshError?.code
+        },
+        isHost: typeof networkGameHost === 'undefined' ? null : networkGameHost
+      }));
+      assert.fail('Host did not observe the passed challenge as locked. Diagnostics: ' + JSON.stringify(diagnostic) + '; cause: ' + error.message);
+    }
     await host.locator('#continue').click();
     await host.waitForFunction(() => networkGameState?.mode === 'challenges' && networkGameState?.pos === 1);
 
