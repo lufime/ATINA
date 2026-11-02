@@ -1228,6 +1228,8 @@ async function atinaShowSolutionImage(answer,category,targetId){
  try{
   let item=atinaSolutionImageCache.get(key);
   if(item===undefined){
+   const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
+   const visualContexts=atinaSolutionImageVisualContexts(cleanAnswer);
    // Priorizar o artigo correspondente na Wikipédia em português.
    // A imagem é validada na página do ficheiro no Commons para obter autor e licença.
    try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
@@ -1242,7 +1244,10 @@ async function atinaShowSolutionImage(answer,category,targetId){
    if(!item){
     const categoryText=atinaSolutionImageText(cleanCategory);
     const placeCategory=/\b(onde estou|geografia|cidade|capital|pais|país|localizacao|localização)\b/.test(categoryText);
+    const searchTerms=[...new Set([...semanticAliases,...visualContexts])];
     const queries=[
+     ...searchTerms,
+     ...searchTerms.map(term=>term+' '+cleanCategory),
      cleanAnswer,
      cleanAnswer+' '+cleanCategory,
      ...(placeCategory?[cleanAnswer+' city',cleanAnswer+' skyline',cleanAnswer+' Argentina']:[])
