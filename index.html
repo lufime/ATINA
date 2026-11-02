@@ -650,9 +650,12 @@ function networkReceiveState(st){
   if(st.mode==='challenges'){
    const previous=networkGameState;
    const sameChallenge=!!(previous&&previous.mode==='challenges'&&previous.challenge_id===st.challenge_id);
-   if(previous&&Number(st.revision||0)<=networkLastRevision&&sameChallenge)return;
+   const unchanged=sameChallenge&&Number(st.revision||0)<=networkLastRevision&&
+    !!previous.locked===!!st.locked&&Number(previous.revealed||0)===Number(st.revealed||0)&&
+    JSON.stringify(previous.clues||[])===JSON.stringify(st.clues||[])&&String(previous.feedback||'')===String(st.feedback||'');
+   if(unchanged)return;
    networkGameState={...st,queue_length:Number(st.queue_length||0),pos:Number(st.pos||0)};
-   networkLastRevision=Number(st.revision||0);networkGameActive=true;
+   networkLastRevision=Math.max(networkLastRevision,Number(st.revision||0));networkGameActive=true;
    if(!sameChallenge)networkAnsweredThisChallenge=false;
    networkGameHost=!!networkLobbyData?.is_host;
    if($('game').classList.contains('hidden'))screen('game');
