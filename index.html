@@ -1026,6 +1026,12 @@ async function atinaSolutionImageAliases(answer){
  const aliases=new Set([String(answer||'').trim()]);
  const raw=String(answer||'').trim();
  const variants=[raw];
+ const knownFilmTitles={
+  'e.t. o extraterrestre':['E.T. the Extra-Terrestrial','ET the Extra-Terrestrial','E.T. (1982 film)'],
+  'alien o oitavo passageiro':['Alien (1979 film)','Alien (film)']
+ };
+ const normalizedAnswer=atinaSolutionImageText(raw);
+ for(const known of (knownFilmTitles[normalizedAnswer]||[]))variants.push(known);
  // Many film/book titles include a subtitle after a dash or colon.
  // Search the principal title too, but only accept an exact Wikidata label.
  const principal=raw.split(/\\s+[–—-]\\s+|:/)[0].trim();
