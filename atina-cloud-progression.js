@@ -133,6 +133,7 @@
   }
 
   async function recordCorrect(state, session) {
+    if (!['solo', 'mix'].includes(state?.mode)) return null;
     if (!state?.session_id || !session?.token || !getSupabase()) return null;
     const nickname = localStorage.getItem(NICK_KEY);
     if (!nickname) return null;
