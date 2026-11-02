@@ -1035,7 +1035,7 @@ async function atinaSolutionImageAliases(answer){
    const exact=(data.search||[]).find(item=>atinaSolutionImageText(item.label)===normalized);
    if(!exact)continue;
    aliases.add(exact.label||'');
-   for(const alias of (exact.aliases||[]))if(alias?.value)aliases.add(alias.value);
+   for(const alias of (exact.aliases||[])){const value=typeof alias==='string'?alias:alias?.value;if(value)aliases.add(value);}
    // Wikidata aliases are human-curated names/translations; do not use
    // broad descriptions or unrelated search-result labels as synonyms.
    break;
