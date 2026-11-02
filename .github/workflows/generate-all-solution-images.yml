@@ -18,7 +18,7 @@ on:
           - "3"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: atina-solution-image-generation
@@ -30,6 +30,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Generate images in resumable batches
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -71,6 +79,29 @@ jobs:
               echo "::error::Generator made no progress; stopping to avoid an infinite loop."
               exit 1
             fi
+            # Copy each generated PNG from the public Supabase bucket into this repository.
+            while IFS=
+            echo "Batch $batch complete; generated in this run: $total"
+            if [[ "$done_flag" == "true" ]]; then
+              echo "Generation completed. Total processed: $total"
+              exit 0
+            fi
+          done
+          echo "::error::Reached safety limit of $max_batches batches; rerun workflow to resume from the first remaining challenge."
+          exit 1
+\t' read -r challenge_id image_url; do
+              [[ -n "$challenge_id" && -n "$image_url" ]] || continue
+              mkdir -p images/solutions
+              curl --fail-with-body --silent --show-error "$image_url" \\
+                -o "images/solutions/${challenge_id}.png"
+            done < <(echo "$response" | jq -r '.results[] | select(.success == true) | [.challenge_id, .image_url] | @tsv')
+
+            git add images/solutions
+            if ! git diff --cached --quiet; then
+              git commit -m "Add ATINA solution images batch $batch"
+              git push origin "HEAD:${GITHUB_REF_NAME}"
+            fi
+
             total=$((total + processed))
             if [[ -n "$next_cursor" ]]; then cursor="$next_cursor"; fi
             echo "Batch $batch complete; generated in this run: $total"
