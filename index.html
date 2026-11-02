@@ -1059,9 +1059,9 @@ function atinaArtInstituteCategoryMatch(category,item){
   {pattern:/arte|pintura|escultura/,terms:['art','painting','sculpture','drawing','portrait','artist','artwork']}
  ];
  const group=groups.find(entry=>entry.pattern.test(categoryText));
- const terms=group?group.terms:categoryText.split(/\\s+/).filter(token=>token.length>3&&!['para','com','uma','uns','das','dos'].includes(token));
+ const terms=group?group.terms:categoryText.split(/\s+/).filter(token=>token.length>3&&!['para','com','uma','uns','das','dos'].includes(token));
  // Sem contexto reconhecível não aceitar uma obra apenas pelo título.
- return terms.length>0&&terms.some(term=>context.split(/\\s+/).includes(term));
+ return terms.length>0&&terms.some(term=>context.split(/\s+/).includes(term));
 }
 async function atinaArtInstituteSolutionImage(answer,category){
  const query=atinaSolutionImageCoreText(answer);
@@ -1076,17 +1076,17 @@ async function atinaArtInstituteSolutionImage(answer,category){
  if(!response.ok)return null;
  const data=await response.json();
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
- const tokens=query.split(/\\s+/).filter(t=>t.length>1&&!stop.has(t));
+ const tokens=query.split(/\s+/).filter(t=>t.length>1&&!stop.has(t));
  if(!tokens.length)return null;
  const candidates=(data.data||[]).filter(item=>{
   if(item.is_public_domain!==true||!item.image_id)return false;
   const title=atinaSolutionImageText(item.title);
-  const words=new Set(title.split(/\\s+/));
+  const words=new Set(title.split(/\s+/));
   return tokens.every(token=>words.has(token))&&atinaArtInstituteCategoryMatch(category,item);
  }).filter(item=>Number(item.thumbnail?.width||0)>=400&&Number(item.thumbnail?.height||0)>=300);
  if(!candidates.length)return null;
  candidates.sort((a,b)=>{
-  const score=item=>atinaSolutionImageText(item.title).split(/\\s+/).filter(t=>tokens.includes(t)).length;
+  const score=item=>atinaSolutionImageText(item.title).split(/\s+/).filter(t=>tokens.includes(t)).length;
   return score(b)-score(a);
  });
  const item=candidates[0];
