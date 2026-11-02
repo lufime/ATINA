@@ -59,6 +59,8 @@ jobs:
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
+      - name: Seed deterministic local-only challenge fixtures
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f tests/e2e/seed-local.sql
       - name: Exercise multiplayer and Mímicas RPCs from isolated browsers
         run: |
           eval "$(supabase status -o env | grep -E '^(API_URL|ANON_KEY)=')"
