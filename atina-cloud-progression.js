@@ -10,9 +10,10 @@
     return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
   }
 
-  function getToken() {
+  function getToken(createIfMissing = true) {
     let token = localStorage.getItem(TOKEN_KEY);
     if (!/^[0-9a-f]{64}$/.test(token || '')) {
+      if (!createIfMissing) return null;
       token = randomToken();
       localStorage.setItem(TOKEN_KEY, token);
     }
@@ -70,9 +71,13 @@
       if (status) status.textContent = 'A ligação ao servidor não está disponível.';
       return null;
     }
+    if (!getToken(false) && localStorage.getItem(NICK_KEY)) {
+      if (status) status.textContent = 'A chave deste pseudónimo não está neste dispositivo. Recupera primeiro com o código de 64 caracteres; não vamos criar uma progressão nova por cima da antiga.';
+      return null;
+    }
     if (status) status.textContent = 'A guardar a progressão…';
     try {
-      const token = getToken();
+      const token = getToken(true);
       const { data, error } = await getSupabase().rpc('atina_v2_player_profile', {
         p_nickname: nickname,
         p_player_token: token
@@ -90,7 +95,11 @@
 
   async function copyRecoveryCode() {
     const status = $('atinaPlayerStatus');
-    const token = getToken();
+    const token = getToken(false);
+    if (!token) {
+      if (status) status.textContent = 'Ainda não existe uma chave guardada neste dispositivo. Guarda primeiro um pseudónimo ou recupera-o com o código.';
+      return;
+    }
     try {
       await navigator.clipboard.writeText(token);
       if (status) status.textContent = 'Código de recuperação copiado. Guarda-o num local seguro; permite recuperar este pseudónimo noutro dispositivo.';
@@ -115,18 +124,21 @@
     const input = $('atinaPlayerNickname');
     if (input && nickname) input.value = nickname;
     if (!nickname || !getSupabase()) return null;
+    if (!getToken(false)) {
+      const status = $('atinaPlayerStatus');
+      if (status) status.textContent = 'A chave local não foi encontrada. Para proteger a progressão anterior, não foi criado outro jogador. Introduz o código de recuperação.';
+      return null;
+    }
     return saveNickname();
   }
 
   async function recordCorrect(state, session) {
     if (!state?.session_id || !session?.token || !getSupabase()) return null;
     const nickname = localStorage.getItem(NICK_KEY);
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (!nickname || !/^[0-9a-f]{64}$/.test(token || '')) return null;
+    if (!nickname) return null;
     const { data, error } = await getSupabase().rpc('atina_v2_record_local_progress', {
       p_session_id: state.session_id,
-      p_session_token: session.token,
-      p_player_token: token
+      p_session_token: session.token
     });
     if (error) throw error;
     render(data);
