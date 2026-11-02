@@ -1048,9 +1048,10 @@ async function atinaShowSolutionImage(answer,category,targetId){
    // Primeiro, procurar a entidade exata e usar apenas a sua imagem P18.
    const semantic=await atinaWikidataSolutionImage(cleanAnswer);
    item=semantic.item;
-   // Só usar a pesquisa Commons quando não existe uma entidade Wikidata
-   // exata. Se a entidade existe mas não tem imagem segura, não adivinhar.
-   if(!semantic.entityFound&&!item){
+   // Se a entidade não tiver uma imagem P18 com licença/qualidade adequadas,
+   // tentar Commons com correspondência estrita do nome (incluindo sinónimos
+   // conhecidos) e validação do contexto da categoria.
+   if(!item){
     const queries=[cleanAnswer,cleanAnswer+' '+cleanCategory].filter((q,i,a)=>q&&a.indexOf(q)===i);
     for(const query of queries){
      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
