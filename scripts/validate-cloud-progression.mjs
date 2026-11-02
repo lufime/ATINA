@@ -116,7 +116,9 @@ if (claimBody.includes('insert into private.atina_xp_session_owners')) {
   throw new Error('A sessão não pode ser atribuída ao primeiro perfil que reclamar XP.');
 }
 if (!migration.includes('p_device_token text default null') ||
-    !migration.includes("if p_device_token !~ '^[0-9a-f]{64}
+    !migration.includes('if p_device_token !~') ||
+    !migration.includes("insert into private.atina_xp_session_owners(session_id,player_id)") ||
+    !migration.includes("p_game_mode not in ('solo','mix')")) {
   throw new Error('O arranque da sessão não fixa a identidade do pseudónimo no servidor.');
 }
 
