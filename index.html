@@ -1232,6 +1232,24 @@ async function atinaShowSolutionImage(answer,category,targetId){
  if(target.dataset.solutionKey===key&&!target.classList.contains('hidden'))return;
  target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
  if(!cleanAnswer)return;
+
+ // Ilustrações originais ATINA para Cinema e Televisão (sem imagens de cartazes/personagens protegidos).
+ const cinemaText=cleanCategory.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ const answerText=cleanAnswer.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ const cinemaArt=[
+  {keys:['o rei leao','rei leao','the lion king'],src:'assets/cinema-rei-leao.svg'},
+  {keys:['a guerra dos tronos','guerra dos tronos','game of thrones'],src:'assets/cinema-guerra-tronos.svg'},
+  {keys:['harry potter'],src:'assets/cinema-escola-magica.svg'},
+  {keys:['o padrinho','the godfather'],src:'assets/cinema-padrinho.svg'},
+  {keys:['a procura de nemo','procura de nemo','finding nemo'],src:'assets/cinema-oceano.svg'}
+ ];
+ const artwork=cinemaText.includes('cinema')?cinemaArt.find(entry=>entry.keys.some(k=>answerText.includes(k))):null;
+ if(artwork){
+  const frame=document.createElement('div');frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
+  const image=document.createElement('img');image.src=artwork.src;image.alt='Ilustração original inspirada em '+cleanAnswer;image.loading='lazy';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:cover';
+  const brand=document.createElement('img');brand.src='assets/atina-logo-alentejo.svg';brand.alt='ATINA';brand.style.cssText='position:absolute;top:9px;right:9px;width:88px;height:auto;max-height:34px;object-fit:contain;padding:4px 6px;border:1px solid #ffffff55;border-radius:7px;background:#071827e8;pointer-events:none';
+  frame.append(image,brand);status.textContent='Solução: '+cleanAnswer+' · Ilustração original ATINA';target.append(frame);return;
+ }
  const imageHeading=document.createElement('strong');imageHeading.textContent='📷 A solução em imagem';
  const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
  target.append(imageHeading,status);target.classList.remove('hidden');
