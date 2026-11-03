@@ -1318,7 +1318,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   target.append(numberHeading,numberDisplay,numberCaption);target.classList.remove('hidden');return;
  }
  const imageHeading=document.createElement('strong');imageHeading.textContent='📷 A solução em imagem';
- const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
+ const status=document.createElement('p');status.className='muted small';status.textContent=preGeneratedUrl?'A carregar a ilustração da solução…':'A procurar uma imagem que corresponda à resposta…';
  target.append(imageHeading,status);target.classList.remove('hidden');
  try{
   let item=preGeneratedUrl&&/^https:\/\//i.test(preGeneratedUrl)?{title:'Ilustração da solução ATINA',thumburl:preGeneratedUrl,mime:'image/png',sourceName:'ATINA · imagem preparada',sourceUrl:preGeneratedUrl,author:'ATINA',license:'Imagem gerada para o jogo',licenseUrl:preGeneratedUrl}:atinaSolutionImageCache.get(key);
@@ -1356,7 +1356,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   if(target.dataset.solutionKey!==key)return;
   if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
   const frame=document.createElement('div');frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
-  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading='lazy';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
+  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading=preGeneratedUrl?'eager':'lazy';image.fetchPriority=preGeneratedUrl?'high':'auto';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
   image.onerror=()=>{
    frame.remove();
    status.textContent='A imagem encontrada deixou de estar disponível ou bloqueou o carregamento. Não vamos apresentar uma imagem diferente sem confirmar a solução.';
