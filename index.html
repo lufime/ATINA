@@ -1109,7 +1109,7 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
   'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering'],
  };
  const normalized=atinaSolutionImageText(answer);
- const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...extraAliases.map(atinaSolutionImageText)])];
+ const conciseAliases=(Array.isArray(extraAliases)?extraAliases:[]).map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&atinaSolutionImageText(value).split(/\\s+/).filter(token=>token.length>2&&!stop.has(token)).length<=5).map(atinaSolutionImageText);\n const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...conciseAliases])];
  const answerTokenSets=answerTerms.map(term=>atinaSolutionImageText(term).split(/\s+/).filter(token=>token.length>1&&!stop.has(token)));
  const categoryText=atinaSolutionImageText(category);
  const genericCategories=new Set(['o que sou','quem sou eu','onde estou','logica e numeros','desafio surpresa','cultura geral','historia e misterios','palavras escondidas','imagem misteriosa']);
@@ -1373,8 +1373,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    }
    // Se Wikidata/Art Institute não fornecerem imagem segura, tentar Commons.
    if(!item){
-    const searchTerms=[...new Set([...semanticAliases,...tagContexts,...atinaSolutionImageVisualContexts(cleanAnswer),...(descriptionContext?[descriptionContext]:[])])];
-    const queries=[...searchTerms,cleanAnswer].filter((q,i,a)=>q&&a.indexOf(q)===i);
+    const conciseClues=tagContexts.filter(value=>value.length<=90);\n    const visualTerms=atinaSolutionImageVisualContexts(cleanAnswer).filter(value=>value.length<=90);\n    const searchTerms=[...new Set([...semanticAliases,...conciseClues,...visualTerms])];\n    const queries=[...searchTerms,cleanAnswer].filter((q,i,a)=>q&&a.indexOf(q)===i).slice(0,10);
     for(const query of queries){
      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
      const response=await fetch(url,{headers:{Accept:'application/json'}});
