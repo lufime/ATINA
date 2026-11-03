@@ -1125,7 +1125,7 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  };
  const categoryTerms=categoryAliases[atinaSolutionImageText(category)]||categoryTokens;
  const categoryCoverage=categoryTerms.length?categoryTerms.filter(token=>words.has(token)).length/categoryTerms.length:0;
- if(matchedSet.length===1&&categoryTerms.length&&!categoryTerms.some(token=>words.has(token)))return null;
+ // A categoria é apenas um reforço: nunca rejeitar uma correspondência exata da resposta por falta de palavras da categoria.
  return {answerCoverage:1,categoryCoverage};
 }
 async function atinaWikidataSolutionImage(answer){
@@ -1268,7 +1268,7 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
  if(!answerTokenSets.length)return null;
  const categoryContext=atinaSolutionImageCategoryContext(category);
  const categoryTokens=clean(category+' '+categoryContext);
- const contextQueries=contexts.filter(value=>String(value||'').trim()).slice(0,6);
+ const contextQueries=contexts.map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&value.split(/\\s+/).length<=10).slice(0,6);
  // Construir a pesquisa com os três elementos: categoria, solução e contexto.
  // A categoria orienta a pesquisa, mas a solução continua a ser o critério principal.
  const queries=[
