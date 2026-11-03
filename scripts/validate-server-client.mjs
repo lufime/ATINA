@@ -16,7 +16,7 @@ const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
 if (!scripts.length) errors.push('Não foi encontrado JavaScript inline.');
 for (let i = 0; i < scripts.length; i++) {
   try { new vm.Script(scripts[i], { filename: 'index.inline.' + (i + 1) + '.js' }); }
-  catch (error) { errors.push('JavaScript inline ' + (i + 1) + ': ' + error.message); }
+  catch (error) { errors.push('JavaScript inline ' + (i + 1) + ': ' + (error.stack || error.message)); }
 }
 try { new vm.Script(client, { filename: 'atina-server-client.js' }); }
 catch (error) { errors.push('Cliente seguro: ' + error.message); }
