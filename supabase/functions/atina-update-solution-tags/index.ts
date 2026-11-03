@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     const after = Number.isInteger(body.after_challenge_id) ? body.after_challenge_id : -1;
     const supabase = createClient(url, dbKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data: rows, error } = await supabase.schema("private").from("atina_challenges")
-      .select("challenge_id,category,answer,difficulty,solution_tags")
+      .select("challenge_id,category,answer,difficulty,solution_tags,solution_description")
       .eq("active", true).gt("challenge_id", after).order("challenge_id").limit(limit);
     if (error) throw error;
     if (!rows?.length) return json({ success: true, processed: 0, done: true, next_after_challenge_id: after });
@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     const results = [];
     let cursor = after;
     for (const row of rows) {
-      const prompt = `Produz etiquetas de pesquisa de imagens em português europeu para a solução de um desafio visual. Descreve o aspeto que uma fotografia ou ilustração mostraria: objetos concretos, formas, partes, materiais, cores distintivas, cenário e elementos reconhecíveis. Dá prioridade a expressões curtas e específicas úteis em motores de pesquisa de imagens. Não traduzas a resposta, não devolvas a resposta como etiqueta, evita termos vagos e não inventes atributos improváveis. Para conceitos abstratos ou números, devolve apenas etiquetas visuais que façam sentido. Responde exclusivamente em JSON: {"tags":["..."]}, com 6 a 12 etiquetas únicas.\nCategoria: ${row.category}\nSolução: ${row.answer}\nDificuldade: ${row.difficulty ?? "geral"}\nEtiquetas existentes (não repetir): ${JSON.stringify(row.solution_tags ?? [])}`;
+      const prompt = `Cria uma descrição visual interna, em português europeu, da solução do desafio, para encontrar uma fotografia ou ilustração que corresponda realmente ao que a solução representa. A descrição deve identificar o objeto, pessoa, lugar ou conceito e explicar os seus elementos visuais reconhecíveis: forma, partes, materiais, cores, arquitetura, contexto e enquadramento. Sê concreta e específica, sem floreados, sem pistas do jogo e sem inventar detalhes incertos. Para conceitos abstratos, descreve uma representação visual reconhecível e não enganadora. Depois cria 6 a 12 etiquetas de pesquisa curtas, específicas e úteis, coerentes com a descrição. Não uses a descrição nem as etiquetas como variantes da resposta; são apenas metadados internos para pesquisa de imagens. Responde exclusivamente em JSON: {"description":"...","tags":["..."]}.\nCategoria: ${row.category}\nSolução oficial: ${row.answer}\nDificuldade: ${row.difficulty ?? "geral"}\nDescrição anterior (se existir, melhora-a e mantém o sentido): ${row.solution_description ?? ""}\nEtiquetas existentes (não repetir): ${JSON.stringify(row.solution_tags ?? [])}`;
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -63,10 +63,10 @@ Deno.serve(async (req) => {
       const unique = additions.map((x) => x.trim()).filter((x) => x.length > 1 && x.length <= 100)
         .filter((x) => { const k = x.toLocaleLowerCase("pt-PT"); if (seen.has(k)) return false; seen.add(k); return true; });
       const { error: updateError } = await supabase.schema("private").from("atina_challenges")
-        .update({ solution_tags: [...existing, ...unique] }).eq("challenge_id", row.challenge_id).eq("active", true);
+        .update({ solution_description: description, solution_tags: [...existing, ...unique] }).eq("challenge_id", row.challenge_id).eq("active", true);
       if (updateError) throw updateError;
       cursor = row.challenge_id;
-      results.push({ challenge_id: row.challenge_id, success: true, added: unique.length });
+      results.push({ challenge_id: row.challenge_id, success: true, description_updated: true, added: unique.length });
     }
     const processed = results.length;
     return json({ success: true, processed, results, next_after_challenge_id: cursor, done: rows.length < limit });
