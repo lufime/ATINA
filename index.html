@@ -1114,16 +1114,11 @@ function atinaSolutionImageVisualContexts(answer){
  return contexts[normalized]||[];
 }
 function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
- const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is','the']);
- const aliases={
-  'esponja':['esponja','sponge','cleaning sponge'],
-  'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],
-  'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],
-  'contrabaixo':['contrabaixo','double bass','contrabass'],
-  'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering'],
- };
+ const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is']);
+ const aliases={'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
  const normalized=atinaSolutionImageText(answer);
- const conciseAliases=(Array.isArray(extraAliases)?extraAliases:[]).map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&atinaSolutionImageText(value).split(/\\s+/).filter(token=>token.length>2&&!stop.has(token)).length<=5).map(atinaSolutionImageText);\n const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...conciseAliases])];
+ const conciseAliases=(Array.isArray(extraAliases)?extraAliases:[]).map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&atinaSolutionImageText(value).split(/\s+/).filter(token=>token.length>2&&!stop.has(token)).length<=5).map(atinaSolutionImageText);
+ const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...conciseAliases])];
  const answerTokenSets=answerTerms.map(term=>atinaSolutionImageText(term).split(/\s+/).filter(token=>token.length>1&&!stop.has(token)));
  const categoryText=atinaSolutionImageText(category);
  const genericCategories=new Set(['o que sou','quem sou eu','onde estou','logica e numeros','desafio surpresa','cultura geral','historia e misterios','palavras escondidas','imagem misteriosa']);
@@ -1133,13 +1128,9 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const words=new Set((title+' '+description).split(/\s+/));
  const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
- const categoryAliases={
-  'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],
-  'musica e sons':['music','musical','instrument','instruments','sound'],
- };
- const categoryTerms=categoryAliases[atinaSolutionImageText(category)]||categoryTokens;
+ const categoryAliases={'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],'musica e sons':['music','musical','instrument','instruments','sound']};
+ const categoryTerms=categoryAliases[categoryText]||categoryTokens;
  const categoryCoverage=categoryTerms.length?categoryTerms.filter(token=>words.has(token)).length/categoryTerms.length:0;
- // A categoria é apenas um reforço: nunca rejeitar uma correspondência exata da resposta por falta de palavras da categoria.
  return {answerCoverage:1,categoryCoverage};
 }
 async function atinaWikidataSolutionImage(answer){
