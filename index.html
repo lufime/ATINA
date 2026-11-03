@@ -1371,7 +1371,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   if(target.dataset.solutionKey!==key)return;
   if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
   const frame=document.createElement('div');frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
-  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading=preGeneratedUrl?'eager':'lazy';image.fetchPriority=preGeneratedUrl?'high':'auto';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
+  const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading='eager';image.fetchPriority=preGeneratedUrl?'high':'auto';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
   image.onerror=()=>{
    frame.remove();
    status.textContent='A imagem encontrada deixou de estar disponível ou bloqueou o carregamento. Não vamos apresentar uma imagem diferente sem confirmar a solução.';
