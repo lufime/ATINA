@@ -997,6 +997,7 @@ window.addEventListener('focus',refreshVisibleClock);
 /* Imagens de solução: priorizar a imagem representativa da entidade Wikidata. */
 const atinaSolutionImageCache=new Map();
 const atinaSolutionImagePreloads=new Map();
+const atinaSolutionImageReady=new Map();
 function atinaPrepareSolutionImage(answer,category,hiddenTags=[],visualDescription=''){
  const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
  const cleanDescription=String(visualDescription||'').trim();
@@ -1008,7 +1009,8 @@ function atinaPrepareSolutionImage(answer,category,hiddenTags=[],visualDescripti
  staging.id='atinaSolutionPreload_'+Math.random().toString(36).slice(2);
  staging.style.cssText='position:fixed;left:-10000px;top:-10000px;width:1px;height:1px;overflow:hidden';
  document.body.appendChild(staging);
- const task=atinaShowSolutionImage(cleanAnswer,cleanCategory,staging.id,hiddenTags,null,cleanDescription).catch(()=>{}).finally(()=>{staging.remove();atinaSolutionImagePreloads.delete(key);});
+ atinaSolutionImageReady.set(key,staging);
+ const task=atinaShowSolutionImage(cleanAnswer,cleanCategory,staging.id,hiddenTags,null,cleanDescription).catch(()=>{}).finally(()=>{atinaSolutionImagePreloads.delete(key);});
  atinaSolutionImagePreloads.set(key,task);
  return task;
 }
@@ -1321,6 +1323,20 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
  const key=cleanAnswer+'|'+cleanCategory;
  if(target.dataset.solutionKey===key&&!target.classList.contains('hidden'))return;
+ const prepared=atinaSolutionImageReady.get(key);
+ if(prepared&&prepared.id!==targetId){
+  const pending=atinaSolutionImagePreloads.get(key);
+  if(pending)await pending;
+  const ready=atinaSolutionImageReady.get(key);
+  if(ready&&ready.id!==targetId){
+   target.replaceChildren(...Array.from(ready.childNodes));
+   target.dataset.solutionKey=key;
+   target.classList.remove('hidden');
+   ready.remove();
+   atinaSolutionImageReady.delete(key);
+   return;
+  }
+ }
  target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
  if(!cleanAnswer)return;
 
