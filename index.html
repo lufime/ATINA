@@ -1300,7 +1300,7 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
  }
  return bestScore>=2.0?best:null;
 }
-async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[]){
+async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],preGeneratedUrl=null){
  const target=$(targetId);if(!target)return;
  const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
  const key=cleanAnswer+'|'+cleanCategory;
@@ -1321,7 +1321,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[]){
  const status=document.createElement('p');status.className='muted small';status.textContent='A procurar uma imagem que corresponda à resposta…';
  target.append(imageHeading,status);target.classList.remove('hidden');
  try{
-  let item=atinaSolutionImageCache.get(key);
+  let item=preGeneratedUrl&&/^https:\/\//i.test(preGeneratedUrl)?{title:'Ilustração da solução ATINA',thumburl:preGeneratedUrl,mime:'image/png',sourceName:'ATINA · imagem preparada',sourceUrl:preGeneratedUrl,author:'ATINA',license:'Imagem gerada para o jogo',licenseUrl:preGeneratedUrl}:atinaSolutionImageCache.get(key);
   if(item===undefined){
    const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
    const visualContexts=[...new Set([...(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').trim()).filter(Boolean),...atinaSolutionImageVisualContexts(cleanAnswer)])].slice(0,12);
