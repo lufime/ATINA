@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::Missing SUPABASE_ACCESS_TOKEN secret"; exit 1; }
-          npx supabase@latest functions deploy atina-update-solution-tags --project-ref qwuxwiurqwfjizkwpmjp --no-verify-jwt
+          npx supabase@latest functions deploy atina-update-solution-tags --project-ref qwuxwiurqwfjizkwpmjp --no-verify-jwt --yes
 
       - name: Update all active challenge tags
         env:
