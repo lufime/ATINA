@@ -77,7 +77,7 @@ function atinaRenderSolutionMetadata(challenge, visible) {
   let safeWikipediaUrl = '';
   try {
     const parsed = new URL(wikipediaUrl);
-    if (parsed.protocol === 'https:' && /(^|\\.)wikipedia\\.org$/i.test(parsed.hostname)) safeWikipediaUrl = parsed.href;
+    if (parsed.protocol === 'https:' && (parsed.hostname === 'wikipedia.org' || parsed.hostname.endsWith('.wikipedia.org'))) safeWikipediaUrl = parsed.href;
   } catch (_) {}
 
   if (!description && !imageUrl && !safeWikipediaUrl) return;
@@ -85,7 +85,7 @@ function atinaRenderSolutionMetadata(challenge, visible) {
   heading.textContent = '📚 Sobre esta solução';
   panel.appendChild(heading);
 
-  if (imageUrl && /^https:\\/\\//i.test(imageUrl)) {
+  if (imageUrl.startsWith('https://')) {
     const image = document.createElement('img');
     image.src = imageUrl;
     image.alt = 'Imagem da solução: ' + String(challenge.answer || 'resposta revelada');
