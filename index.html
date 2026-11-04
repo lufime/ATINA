@@ -367,6 +367,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 /* Progressão diária e painel de regresso */
 .daily-mission{margin:16px 0;padding:18px;border:1px solid #786640;border-radius:17px;background:linear-gradient(135deg,#263d55,#15263a 72%);box-shadow:0 12px 28px #0003}.daily-mission-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.daily-kicker{font-size:10px;letter-spacing:.18em;color:#e6c77f;font-weight:850}.daily-mission h3{font-size:19px;margin:7px 0}.daily-mission p{color:#c4d0dd;font-size:13px;margin:6px 0 12px}.daily-progress{height:9px;border-radius:99px;background:#091726;overflow:hidden;margin:12px 0 7px}.daily-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#d2a95c,#f5df9c);border-radius:99px;transition:width .35s ease}.daily-meta{display:flex;justify-content:space-between;gap:8px;color:#b8c5d3;font-size:11px}.daily-stats{display:flex;gap:9px;flex-wrap:wrap;margin:13px 0}.daily-stat{flex:1;min-width:100px;padding:10px 12px;border-radius:11px;background:#07162566}.daily-stat b{display:block;color:#ffdf91;font-size:19px}.daily-stat small{color:#c0ccda;font-size:11px}.daily-mission .btn{margin-top:8px}.atina-xp-panel{margin:14px 0;padding:13px;border-radius:12px;background:#07162566;border:1px solid #ffffff12}.atina-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.atina-badge{font-size:11px;padding:6px 9px;border-radius:99px;background:#091726;color:#718096;border:1px solid #34465a}.atina-badge.earned{color:#ffe09a;background:#3c3425;border-color:#987b45}
 @media(min-width:620px){.daily-mission{padding:22px}.daily-mission h3{font-size:21px}}
+.admin-online-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.admin-online-stat{background:#10263b;border:1px solid #38536b;border-radius:12px;padding:12px 8px;text-align:center;min-width:0}
+.admin-online-stat strong{display:block;font-size:clamp(24px,6vw,34px);line-height:1.2;color:#ffe09a}
+.admin-online-stat span{display:block;font-size:11px;color:#c7d5e2;margin-top:5px}
+.admin-online-room{border:1px solid #38536b;border-radius:12px;padding:12px;margin:9px 0;background:#10263b}
+.admin-online-room h4{margin:0 0 5px;color:#ffe09a}
+.admin-online-room ul{margin:8px 0 0;padding-left:22px}
+@media(max-width:380px){.admin-online-stats{grid-template-columns:1fr}.admin-online-stat{display:flex;align-items:center;justify-content:space-between;text-align:left}}
+
 @media(max-width:420px){.logo-image{max-width:100%;max-height:92px;margin:5px 0 3px}}
 
 /* ATINA Alentejo identity — preview implementation */
@@ -394,7 +403,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </style>
 </head>
 <body><main class="wrap">
-<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
+<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div><button type="button" id="adminOnlineButton" class="btn secondary hidden" onclick="openAdminOnlinePage()" style="margin-top:10px">📊 Administração · Online</button></header>
 <nav class="home-page-nav" aria-label="Navegação principal">
 <button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
 <button type="button" class="home-nav-btn" data-home-target="play">🎮 Jogar</button>
@@ -463,6 +472,25 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div id="saveDuel" class="hidden"><label class="section" for="nickP1">Jogador 1</label><input id="nickP1" class="answer" maxlength="20" placeholder="Pseudónimo do Jogador 1"><button type="button" class="btn secondary full" id="saveP1Btn">Guardar pontuação do Jogador 1</button><label class="section" for="nickP2">Jogador 2</label><input id="nickP2" class="answer" maxlength="20" placeholder="Pseudónimo do Jogador 2"><button type="button" class="btn full" id="saveP2Btn">Guardar pontuação do Jogador 2</button></div>
 <p id="saveStatus" class="feedback" aria-live="polite"></p><div class="online-ranking"><div class="row"><strong>Classificação</strong><select id="rankingMode" class="answer" style="width:auto;margin:0;padding:8px"><option value="solo">Individual</option><option value="duel">Duelo</option></select></div><button type="button" class="btn secondary full" id="loadRanking">Ver ranking online</button><ol id="rankingList"></ol></div></div>
 <button type="button" class="btn full" id="resultHome">Voltar ao menu</button></section><section id="rankingPage" class="card hidden"><h2>🏆 Ranking ATINA</h2><p class="muted small">Os 10 melhores resultados de cada modalidade de jogo.</p><p class="muted small">Classificação histórica por modalidade:</p><div class="online-ranking" style="margin:12px 0;padding:13px;border:1px solid #8d7448;border-radius:14px"><strong>☁️ Progressão global ATINA</strong><p class="muted small">XP acumulado por pseudónimo, independentemente do dispositivo.</p><button type="button" class="btn secondary full" id="atinaCloudLeaderboardRefresh">Atualizar classificação global</button><ol id="atinaCloudLeaderboard"></ol></div><div class="row"><strong>Classificação</strong><select id="menuRankingMode" class="answer" style="width:auto;margin:0;padding:8px"><option value="solo">Individual</option><option value="duel">Duelo</option></select></div><button type="button" class="btn secondary full" id="refreshMenuRanking" style="margin-top:12px">Atualizar ranking</button><ol id="menuRankingList"></ol><button type="button" class="btn full" id="rankingBack" style="margin-top:12px">Voltar ao menu</button></section>
+<section id="adminOnlinePage" class="card hidden" aria-labelledby="adminOnlineTitle">
+ <div class="row" style="align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+  <h2 id="adminOnlineTitle">📊 Administração ATINA</h2>
+  <button type="button" class="btn secondary" onclick="screen('home')">← Voltar</button>
+ </div>
+ <p class="muted small">Presença atualizada automaticamente. Um jogador é considerado online quando comunicou com o servidor nos últimos 60 segundos.</p>
+ <div class="admin-online-stats">
+  <div class="admin-online-stat"><strong id="adminOnlinePlayers">—</strong><span>Jogadores online</span></div>
+  <div class="admin-online-stat"><strong id="adminOnlineRooms">—</strong><span>Salas ativas</span></div>
+  <div class="admin-online-stat"><strong id="adminOnlineTotal">—</strong><span>Jogadores nas salas ativas</span></div>
+ </div>
+ <div class="row" style="justify-content:space-between;align-items:center;margin:14px 0">
+  <span class="muted small" id="adminOnlineUpdated">A aguardar dados…</span>
+  <button type="button" class="btn secondary" id="adminOnlineRefresh" onclick="loadAdminOnline()">↻ Atualizar</button>
+ </div>
+ <h3>Jogadores e salas</h3>
+ <div id="adminOnlineRoomList" aria-live="polite"><p class="muted small">A carregar…</p></div>
+ <p class="feedback" id="adminOnlineError" role="status"></p>
+</section>
 <div class="footer">ATINA · Pensa. Descobre. Atina. · Ranking online disponível no fim de cada jogo.</div>
 <section id="screenShareHelp" class="card hidden" role="dialog" aria-labelledby="screenShareTitle" aria-modal="true" style="margin:14px 0">
  <div class="row"><h2 id="screenShareTitle" style="margin:0;font-size:20px">📺 Mostrar ATINA na TV ou monitor</h2><button class="btn secondary" id="closeScreenShare" type="button" aria-label="Fechar">✕</button></div>
@@ -491,9 +519,43 @@ async function refreshAtinaSession(){
  atinaProfile=null;
  if(atinaUser){const {data:profile}=await supabaseClient.from('atina_profiles').select('nickname').eq('user_id',atinaUser.id).maybeSingle();atinaProfile=profile||null;}
  const signedIn=!!atinaUser;
- $('authSummary').textContent=signedIn?(atinaProfile?.nickname||atinaUser.email)+' · sessão iniciada':'Joga sem conta ou entra para usar o teu perfil.';
+ const adminButton=$('adminOnlineButton');if(adminButton)adminButton.classList.toggle('hidden',!signedIn||String(atinaUser.email||'').toLowerCase()!=='lufime@gmail.com');
 
+ $('authSummary').textContent=signedIn?(atinaProfile?.nickname||atinaUser.email)+' · sessão iniciada':'Joga sem conta ou entra para usar o teu perfil.';
 }
+async function openAdminOnlinePage(){
+ if(!atinaUser||String(atinaUser.email||'').toLowerCase()!=='lufime@gmail.com'){authMessage('Esta área está reservada ao administrador.');return;}
+ screen('adminOnlinePage');await loadAdminOnline();
+}
+async function loadAdminOnline(){
+ if(!atinaUser||String(atinaUser.email||'').toLowerCase()!=='lufime@gmail.com')return;
+ const refresh=$('adminOnlineRefresh'),errorEl=$('adminOnlineError'),roomList=$('adminOnlineRoomList');
+ if(refresh)refresh.disabled=true;if(errorEl)errorEl.textContent='';
+ try{
+  const {data,error}=await supabaseClient.rpc('atina_admin_online_overview');
+  if(error)throw error;
+  $('adminOnlinePlayers').textContent=String(data?.online_players??0);
+  $('adminOnlineRooms').textContent=String(data?.active_rooms??0);
+  $('adminOnlineTotal').textContent=String(data?.players_in_active_rooms??0);
+  $('adminOnlineUpdated').textContent='Atualizado às '+new Date(data.generated_at||Date.now()).toLocaleTimeString('pt-PT');
+  roomList.replaceChildren();
+  const rooms=Array.isArray(data?.rooms)?data.rooms:[];
+  if(!rooms.length){const empty=document.createElement('p');empty.className='muted small';empty.textContent='Não há jogadores online neste momento.';roomList.appendChild(empty);}
+  rooms.forEach(room=>{
+   const card=document.createElement('div');card.className='admin-online-room';
+   const title=document.createElement('h4');title.textContent='Sala '+String(room.code||'—');card.appendChild(title);
+   const info=document.createElement('p');info.className='muted small';info.textContent=String(room.online_count||0)+' online · '+String(room.players_total||0)+' jogador(es) na sala · '+(room.status==='waiting'?'À espera':String(room.status||'Estado desconhecido'));card.appendChild(info);
+   const list=document.createElement('ul');
+   (Array.isArray(room.players)?room.players:[]).forEach(player=>{
+    const li=document.createElement('li');li.textContent=String(player.nickname||'Jogador')+(player.is_host?' · anfitrião':'');list.appendChild(li);
+   });
+   card.appendChild(list);roomList.appendChild(card);
+  });
+ }catch(e){if(errorEl)errorEl.textContent=e?.message||'Não foi possível carregar os dados de presença.';}
+ finally{if(refresh)refresh.disabled=false;}
+}
+setInterval(()=>{const page=$('adminOnlinePage');if(page&&!page.classList.contains('hidden')&&!document.hidden)loadAdminOnline();},15000);
+
 async function createAtinaAccount(){
  const nickname=$('authNickname').value.trim(),email=$('authEmail').value.trim(),password=$('authPassword').value;
  if(!nickname||nickname.length>20){authMessage('Escolhe um pseudónimo entre 1 e 20 caracteres.');return;}
@@ -797,7 +859,7 @@ const ATINA_PROGRESS_KEY='atinaProgressV1';
 function saveLocalProgress(){if(networkRoom||!queue.length||!['solo','duel'].includes(mode))return;try{localStorage.setItem(ATINA_PROGRESS_KEY,JSON.stringify({mode,scores,player,queue,pos,revealed,locked,answeredCount,timedMode,timeLeft,difficultyMode,correctStreak,raceElapsed,feedback:$('feedback').textContent,answer:$('answer').value,updatedAt:Date.now()}));}catch(e){}}
 function restoreLocalProgress(){if(networkRoom)return;let p;try{p=JSON.parse(localStorage.getItem(ATINA_PROGRESS_KEY)||'null');}catch(e){localStorage.removeItem(ATINA_PROGRESS_KEY);return;}if(!p||!Array.isArray(p.queue)||!p.queue.length||!['solo','duel'].includes(p.mode)||!Number.isInteger(p.pos)||p.pos<0||p.pos>=p.queue.length||p.queue.some(n=>!Number.isInteger(n)||!games[n]))return false;mode=p.mode;scores=Array.isArray(p.scores)?p.scores:[0,0];player=p.player||0;raceElapsed=Array.isArray(p.raceElapsed)?p.raceElapsed:[0,0];raceStartedAt=0;raceFinished=false;queue=p.queue;pos=p.pos;difficultyMode=p.difficultyMode||'medium';correctStreak=p.correctStreak||0;answeredCount=p.answeredCount||0;timedMode=p.timedMode||0;timeLeft=Math.max(0,p.timeLeft||0);revealed=Math.max(1,Math.min(p.revealed||1,isImageChallenge(queue[pos])?6:5));locked=false;screen('game');load();for(let n=1;n<revealed;n++)reveal();$('answer').value=p.answer||'';if(p.locked)end(p.feedback||'Desafio concluído.');else{$('feedback').textContent=p.feedback||'';stopTimer();timeLeft=Math.max(0,(p.timeLeft||0)-Math.floor((Date.now()-(p.updatedAt||Date.now()))/1000));if(timedMode&&timeLeft===0){scores[player]-=10;answeredCount++;end('⏰ O tempo terminou enquanto a página estava fechada. A resposta correta era: '+games[queue[pos]][3]+'.');}else startTimer(true);}update();board();return true;}
 const ATINA_SCREEN_KEY='atinaLastScreen';
-function screen(id){['home','game','mimicaGame','result','rankingPage','authPage','networkLobby'].forEach(x=>$(x).classList.toggle('hidden',x!==id));try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}}
+function screen(id){['home','game','mimicaGame','result','rankingPage','authPage','networkLobby','adminOnlinePage'].forEach(x=>$(x).classList.toggle('hidden',x!==id));try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}}
 function restoreLastScreen(){if(networkRoom)return;let id='home';try{id=localStorage.getItem(ATINA_SCREEN_KEY)||'home';}catch(e){}if(!['home','game','result','rankingPage','authPage','networkLobby'].includes(id))id='home';if(id==='game'&&!queue.length)id='home';screen(id);if(id==='rankingPage')loadMenuRanking();update();}
 
 function update(){ $('totalScore').textContent=(mode==='duel'||mode==='party')?'Equipa 1: '+scores[0]+' · Equipa 2: '+scores[1]:'⭐ '+scores[0]+' pontos';$('progress').textContent=answeredCount+' / '+queue.length+' desafios concluídos';}
