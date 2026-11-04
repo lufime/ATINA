@@ -1,5 +1,5 @@
 {
-  "active": false,
-  "message": "Estamos a fazer melhorias no ATINA. Poderão ocorrer interrupções temporárias.",
-  "updated_at": null
+  "active": true,
+  "message": "🛠️ Estamos a atualizar o ATINA. Poderão ocorrer interrupções temporárias. Obrigado pela paciência!",
+  "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
