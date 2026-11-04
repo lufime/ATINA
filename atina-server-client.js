@@ -810,6 +810,7 @@ function atinaNoticeBoot() {
   window.setInterval(atinaNoticeRefresh, 15000);
 }
 
+atinaNoticeBoot();
 atinaProgressBoot();
 atinaOnlineCountBoot();
 (async function atinaServerBoot() {
