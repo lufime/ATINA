@@ -249,6 +249,49 @@ function atinaServerStartTimers() {
   atinaServerTimer = setInterval(atinaServerRenderTimer, 250);
   atinaServerPolling = setInterval(() => atinaServerRefresh().catch(() => {}), 2500);
 }
+function atinaRenderSolutionWikipedia(challenge) {
+  const target = $('solutionImage');
+  if (!target || !challenge || !atinaServerState?.round_locked) return;
+  if (String(atinaServerState.challenge?.id) !== String(challenge.id)) return;
+
+  target.querySelector('[data-solution-wikipedia]')?.remove();
+  const description = String(challenge.solution_description || '').trim();
+  const wikipedia = String(challenge.solution_wikipedia_url || '').trim();
+  let safeWikipediaUrl = '';
+  try {
+    const parsed = new URL(wikipedia);
+    if (parsed.protocol === 'https:' && /(^|\\.)wikipedia\\.org$/i.test(parsed.hostname)) {
+      safeWikipediaUrl = parsed.href;
+    }
+  } catch (_) {}
+
+  if (!description && !safeWikipediaUrl) return;
+  const details = document.createElement('div');
+  details.dataset.solutionWikipedia = 'true';
+  details.style.cssText = 'margin-top:12px;padding-top:11px;border-top:1px solid #365777;line-height:1.5';
+  if (description) {
+    const heading = document.createElement('strong');
+    heading.textContent = 'Sobre esta imagem';
+    heading.style.display = 'block';
+    heading.style.marginBottom = '5px';
+    const copy = document.createElement('p');
+    copy.className = 'muted small';
+    copy.textContent = description;
+    copy.style.margin = '0';
+    details.append(heading, copy);
+  }
+  if (safeWikipediaUrl) {
+    const link = document.createElement('a');
+    link.href = safeWikipediaUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Consultar na Wikipédia';
+    link.style.cssText = 'display:inline-block;margin-top:9px;color:#f3c65e;text-decoration:underline;font-weight:700';
+    details.append(link);
+  }
+  target.append(details);
+}
+
 function atinaServerApplyState(state, announce = false) {
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
   const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
@@ -307,8 +350,18 @@ function atinaServerApplyState(state, announce = false) {
   $('feedback').textContent = message;
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
   if (locked && result.outcome === 'correct') atinaProgressClaim(state);
-  if (locked) atinaShowSolutionImage(challenge.answer, challenge.category, 'solutionImage', Array.isArray(challenge.tags) ? challenge.tags : [], challenge.solution_image_url || null);
-  else $('solutionImage')?.classList.add('hidden');
+  if (locked) {
+    atinaShowSolutionImage(
+      challenge.answer,
+      challenge.category,
+      'solutionImage',
+      Array.isArray(challenge.tags) ? challenge.tags : [],
+      challenge.solution_image_url || null,
+      challenge.solution_description || ''
+    ).then(() => atinaRenderSolutionWikipedia(challenge)).catch(() => {});
+  } else {
+    $('solutionImage')?.classList.add('hidden');
+  }
   if (clearAnswer) $('answer').value = '';
   $('feedback').classList.remove('is-correct', 'is-wrong', 'is-info');
   $('feedback').classList.add(result.outcome === 'correct' ? 'is-correct' : result.outcome === 'wrong' || result.outcome === 'timeout' ? 'is-wrong' : 'is-info');
