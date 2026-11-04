@@ -128,7 +128,7 @@ async function atinaProgressLoadLeaderboard() {
     }
     rows.forEach((row, index) => {
       const item = document.createElement('li');
-      item.textContent = (index + 1) + '. ' + row.nickname + ' — ' + Number(row.xp || 0) + ' XP · nível ' + Number(row.level || 1);
+      item.textContent = row.nickname + ' — ' + Number(row.xp || 0) + ' XP · nível ' + Number(row.level || 1);
       list.appendChild(item);
     });
   } catch (error) {
