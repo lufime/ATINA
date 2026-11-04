@@ -370,10 +370,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 /* ATINA Alentejo identity — preview implementation */
 .brand{background:linear-gradient(135deg,#0b315b 0%,#17466a 68%,#203f45 100%);border-color:#52718a}
-.logo-image{display:block;width:min(100%,430px);height:auto;max-height:118px;object-fit:contain;object-position:left center;margin:7px 0 5px}
+
 .brand .eyebrow{color:#f5d9a0}
 .brand .tag{color:#f4ead7;font-weight:600;letter-spacing:.035em}
-@media(max-width:420px){.logo-image{max-width:100%;max-height:92px;margin:5px 0 3px}}
+
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
@@ -392,7 +392,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </style>
 </head>
 <body><main class="wrap">
-<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
+<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div></header>
 <nav class="home-page-nav" aria-label="Navegação principal">
 <button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
 <button type="button" class="home-nav-btn" data-home-target="play">🎮 Jogar</button>
@@ -1412,8 +1412,8 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    retry.onclick=()=>{atinaSolutionImageCache.delete(key);delete target.dataset.solutionKey;atinaShowSolutionImage(cleanAnswer,cleanCategory,targetId,hiddenTags,null,visualDescription);};
    target.append(retry);
   };
-  const brand=document.createElement('img');brand.src='assets/atina-logo-alentejo.svg';brand.alt='';brand.style.cssText='position:absolute;top:8px;right:8px;width:76px;height:auto;max-height:28px;object-fit:contain;padding:3px 5px;border:1px solid #ffffff55;border-radius:7px;background:#071827d9;pointer-events:none';
-  frame.append(image,brand);
+  
+  frame.append(image);
   const provenance=document.createElement('p');provenance.className='muted small';provenance.style.cssText='margin:8px 0 0;line-height:1.5;overflow-wrap:anywhere';
   const sourceName=item.sourceName||'Wikimedia Commons';
   const sourceUrl=item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_')));
