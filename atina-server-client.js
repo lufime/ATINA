@@ -732,23 +732,46 @@ function atinaOnlineCountBoot() {
   counter.setAttribute('role', 'status');
   counter.setAttribute('aria-live', 'polite');
   counter.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 11px;border:1px solid #39896c;border-radius:999px;background:#123c35;color:#b6f3d0;font-size:12px;font-weight:800;line-height:1.35';
-  counter.textContent = '● A consultar jogadores online…';
+  counter.textContent = '● A ligar presença…';
   const adminButton = document.getElementById('adminOnlineButton');
   if (adminButton) header.insertBefore(counter, adminButton);
   else header.appendChild(counter);
 
+  const presenceKey = 'atinaSitePresenceSessionV1';
+  const getSessionId = () => {
+    let id = localStorage.getItem(presenceKey) || '';
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return id;
+    if (window.crypto?.randomUUID) id = window.crypto.randomUUID();
+    else {
+      const bytes = new Uint8Array(16);
+      window.crypto.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 15) | 64;
+      bytes[8] = (bytes[8] & 63) | 128;
+      const hex = Array.from(bytes, value => value.toString(16).padStart(2, '0')).join('');
+      id = hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20);
+    }
+    localStorage.setItem(presenceKey, id);
+    return id;
+  };
+  const sessionId = getSessionId();
+
+  const heartbeat = async () => {
+    await atinaServerRpc('atina_site_presence_heartbeat', { p_session_id: sessionId });
+  };
   const refresh = async () => {
     try {
+      await heartbeat();
       const count = await atinaServerRpc('atina_online_player_count', {});
       const total = Math.max(0, Number(count) || 0);
       counter.textContent = '● ' + total + (total === 1 ? ' jogador online' : ' jogadores online');
       counter.dataset.count = String(total);
     } catch (_) {
-      counter.textContent = '● Jogadores online indisponível';
+      counter.textContent = '● Presença online indisponível';
       delete counter.dataset.count;
     }
   };
   refresh();
+  window.setInterval(heartbeat, 25000);
   window.setInterval(refresh, 15000);
 }
 
