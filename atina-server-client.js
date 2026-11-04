@@ -752,6 +752,64 @@ function atinaOnlineCountBoot() {
   window.setInterval(refresh, 15000);
 }
 
+
+// Aviso global de manutenção/alterações, controlado pela administração.
+async function atinaNoticeRefresh() {
+  if (!supabaseClient) return;
+  try {
+    const { data, error } = await supabaseClient.from('atina_site_notice')
+      .select('active,message').eq('id', 1).maybeSingle();
+    if (error) throw error;
+    const banner = document.getElementById('atinaUpdateNotice');
+    const message = document.getElementById('atinaUpdateNoticeMessage');
+    if (!banner || !message) return;
+    const active = !!data?.active && !!String(data?.message || '').trim();
+    message.textContent = active ? String(data.message).trim() : '';
+    banner.classList.toggle('hidden', !active);
+    const toggle = document.getElementById('atinaNoticeActive');
+    const field = document.getElementById('atinaNoticeMessage');
+    if (toggle && document.activeElement !== toggle) toggle.checked = !!data?.active;
+    if (field && document.activeElement !== field && data?.message) field.value = data.message;
+  } catch (error) {
+    console.warn('Aviso global ATINA indisponível:', error);
+  }
+}
+async function atinaNoticeSave() {
+  const status = document.getElementById('atinaNoticeStatus');
+  const button = document.getElementById('atinaNoticeSave');
+  if (!atinaUser || String(atinaUser.email || '').toLowerCase() !== 'lufime@gmail.com') {
+    if (status) status.textContent = 'Apenas o administrador pode publicar avisos.';
+    return;
+  }
+  const active = !!document.getElementById('atinaNoticeActive')?.checked;
+  const message = String(document.getElementById('atinaNoticeMessage')?.value || '').trim();
+  if (active && !message) {
+    if (status) status.textContent = 'Escreve uma mensagem antes de ativar o aviso.';
+    return;
+  }
+  if (button) button.disabled = true;
+  if (status) status.textContent = 'A guardar…';
+  try {
+    const { error } = await supabaseClient.from('atina_site_notice').upsert({
+      id: 1, active, message: message || 'Estamos a fazer melhorias no ATINA. Poderão ocorrer interrupções temporárias.',
+      updated_at: new Date().toISOString()
+    });
+    if (error) throw error;
+    if (status) status.textContent = active ? 'Aviso publicado para todos os jogadores.' : 'Aviso desativado.';
+    await atinaNoticeRefresh();
+  } catch (error) {
+    if (status) status.textContent = 'Não foi possível guardar: ' + (error.message || 'erro desconhecido');
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+function atinaNoticeBoot() {
+  const save = document.getElementById('atinaNoticeSave');
+  if (save) save.addEventListener('click', atinaNoticeSave);
+  atinaNoticeRefresh();
+  window.setInterval(atinaNoticeRefresh, 15000);
+}
+
 atinaProgressBoot();
 atinaOnlineCountBoot();
 (async function atinaServerBoot() {
