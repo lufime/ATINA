@@ -476,6 +476,14 @@ update = function() {
     ? 'Jogador/Equipa 1: ' + scores[0] + ' · Jogador/Equipa 2: ' + scores[1]
     : '⭐ ' + scores[0] + ' pontos';
   $('progress').textContent = answeredCount + ' / ' + queue.length + ' desafios concluídos';
+  const liveScore = $('atinaRoundScore');
+  const liveStreak = $('atinaRoundStreak');
+  const liveRound = $('atinaRoundNumber');
+  const liveTotal = $('atinaRoundTotal');
+  if (liveScore) liveScore.textContent = String(scores[mode === 'duel' || mode === 'party' ? player : 0] || 0);
+  if (liveStreak) liveStreak.textContent = String(Number(atinaServerState?.correct_streak || atinaServerState?.streak || 0));
+  if (liveRound) liveRound.textContent = String(Math.min(pos + 1, queue.length || 1));
+  if (liveTotal) liveTotal.textContent = String(queue.length || 1);
 };
 board = function() {
   const label = mode === 'duel' ? 'Jogador 1: ' + scores[0] + ' · Jogador 2: ' + scores[1]
