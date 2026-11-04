@@ -1,0 +1,64 @@
+name: Aviso automático de alterações ATINA
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - '*.js'
+      - 'assets/**'
+      - 'supabase/migrations/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atina-update-notice
+  cancel-in-progress: false
+
+jobs:
+  notify-players:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar configuração
+        env:
+          SUPABASE_URL: ${{ secrets.ATINA_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ATINA_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          test -n "$SUPABASE_URL" || { echo "::error::Falta o secret ATINA_SUPABASE_URL"; exit 1; }
+          test -n "$SUPABASE_SERVICE_ROLE_KEY" || { echo "::error::Falta o secret ATINA_SUPABASE_SERVICE_ROLE_KEY"; exit 1; }
+
+      - name: Ativar aviso para todos os jogadores
+        env:
+          SUPABASE_URL: ${{ secrets.ATINA_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ATINA_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            "$SUPABASE_URL/rest/v1/atina_site_notice?id=eq.1" \
+            -X PATCH \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            --data-binary '{"active":true,"message":"🛠️ Estamos a atualizar o ATINA. Poderão ocorrer interrupções temporárias. Obrigado pela paciência!"}'
+
+      - name: Dar tempo à publicação do GitHub Pages
+        run: sleep 120
+
+      - name: Desativar aviso após a publicação
+        if: success()
+        env:
+          SUPABASE_URL: ${{ secrets.ATINA_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ATINA_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            "$SUPABASE_URL/rest/v1/atina_site_notice?id=eq.1" \
+            -X PATCH \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            --data-binary '{"active":false}'
