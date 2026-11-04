@@ -755,23 +755,18 @@ function atinaOnlineCountBoot() {
 
 // Aviso global de manutenção/alterações, controlado pela administração.
 async function atinaNoticeRefresh() {
-  if (!supabaseClient) return;
   try {
-    const { data, error } = await supabaseClient.from('atina_site_notice')
-      .select('active,message').eq('id', 1).maybeSingle();
-    if (error) throw error;
+    const response = await fetch('https://raw.githubusercontent.com/lufime/ATINA/main/atina-update-status.json?ts=' + Date.now(), { cache: 'no-store' });
+    if (!response.ok) throw new Error('Não foi possível consultar o estado da atualização.');
+    const data = await response.json();
     const banner = document.getElementById('atinaUpdateNotice');
     const message = document.getElementById('atinaUpdateNoticeMessage');
     if (!banner || !message) return;
     const active = !!data?.active && !!String(data?.message || '').trim();
     message.textContent = active ? String(data.message).trim() : '';
     banner.classList.toggle('hidden', !active);
-    const toggle = document.getElementById('atinaNoticeActive');
-    const field = document.getElementById('atinaNoticeMessage');
-    if (toggle && document.activeElement !== toggle) toggle.checked = !!data?.active;
-    if (field && document.activeElement !== field && data?.message) field.value = data.message;
   } catch (error) {
-    console.warn('Aviso global ATINA indisponível:', error);
+    console.warn('Aviso automático ATINA indisponível:', error);
   }
 }
 async function atinaNoticeSave() {
