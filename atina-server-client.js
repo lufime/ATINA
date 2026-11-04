@@ -61,6 +61,7 @@ async function atinaProgressRegister(nickname, quiet = false) {
     p_device_token: deviceToken
   });
   atinaCloudProfile = data;
+  window.atinaCloudProfile = data;
   localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, clean);
   atinaProgressRender(data);
   if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = quiet
@@ -97,7 +98,9 @@ async function atinaProgressClaim(state) {
     });
     atinaCloudClaimsDone.add(key);
     atinaCloudProfile = result;
+    window.atinaCloudProfile = result;
     atinaProgressRender(result);
+    atinaRenderDailyMission();
     if ($('atinaCloudStatus')) {
       $('atinaCloudStatus').textContent = result.awarded
         ? '✨ +' + (Number(result.challenge_xp) || 10) + ' XP' + (Number(result.daily_bonus) ? ' · bónus diário +' + result.daily_bonus + ' XP' : '') + ' confirmado pelo servidor.'
@@ -173,7 +176,9 @@ async function atinaProgressRestoreFromCode() {
     localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, code);
     localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, nickname);
     atinaCloudProfile = data;
+    window.atinaCloudProfile = data;
     atinaProgressRender(data);
+    atinaRenderDailyMission();
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Pseudónimo guardado. A progressão está sincronizada.';
   } catch (error) {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = error.message || 'Não foi possível recuperar o perfil.';
