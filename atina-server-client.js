@@ -260,7 +260,7 @@ function atinaRenderSolutionWikipedia(challenge) {
   let safeWikipediaUrl = '';
   try {
     const parsed = new URL(wikipedia);
-    if (parsed.protocol === 'https:' && /(^|\\.)wikipedia\\.org$/i.test(parsed.hostname)) {
+    if (parsed.protocol === 'https:' && /(^|\.)wikipedia\.org$/i.test(parsed.hostname)) {
       safeWikipediaUrl = parsed.href;
     }
   } catch (_) {}
