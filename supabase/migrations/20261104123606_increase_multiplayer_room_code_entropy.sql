@@ -1,0 +1,99 @@
+ALTER TABLE public.atina_v2_rooms
+  DROP CONSTRAINT IF EXISTS atina_v2_rooms_code_check;
+
+ALTER TABLE public.atina_v2_rooms
+  ADD CONSTRAINT atina_v2_rooms_code_check
+  CHECK (code ~ '^[A-F0-9]{12}$');
+
+CREATE OR REPLACE FUNCTION public.atina_v2_create_room(
+  p_nickname text,
+  p_max_players integer
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_room public.atina_v2_rooms%rowtype;
+  v_player public.atina_v2_room_players%rowtype;
+  v_token text;
+  v_code text;
+  v_attempt integer:=0;
+BEGIN
+  IF p_nickname IS NULL OR char_length(btrim(p_nickname)) NOT BETWEEN 1 AND 32 THEN
+    RAISE EXCEPTION 'Pseudónimo inválido.';
+  END IF;
+  IF p_max_players IS NULL OR p_max_players NOT BETWEEN 2 AND 20 THEN
+    RAISE EXCEPTION 'Número de jogadores inválido.';
+  END IF;
+
+  v_token:=encode(extensions.gen_random_bytes(32),'hex');
+  LOOP
+    v_code:=upper(substr(encode(extensions.gen_random_bytes(8),'hex'),1,12));
+    BEGIN
+      INSERT INTO public.atina_v2_rooms(code,max_players)
+      VALUES(v_code,p_max_players)
+      RETURNING * INTO v_room;
+      EXIT;
+    EXCEPTION WHEN unique_violation THEN
+      v_attempt:=v_attempt+1;
+      IF v_attempt>=8 THEN
+        RAISE EXCEPTION 'Não foi possível gerar um código de sala. Tenta novamente.';
+      END IF;
+    END;
+  END LOOP;
+
+  INSERT INTO public.atina_v2_room_players(room_id,token_hash,nickname,is_host,ready)
+  VALUES(v_room.id,extensions.digest(v_token,'sha256'),btrim(p_nickname),true,true)
+  RETURNING * INTO v_player;
+
+  RETURN jsonb_build_object(
+    'room_id',v_room.id,'token',v_token,'code',v_room.code,'player_id',v_player.id
+  );
+END;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.atina_v2_join_room(
+  p_nickname text,
+  p_code text
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_room public.atina_v2_rooms%rowtype;
+  v_player public.atina_v2_room_players%rowtype;
+  v_token text;
+BEGIN
+  IF p_nickname IS NULL OR char_length(btrim(p_nickname)) NOT BETWEEN 1 AND 32 THEN
+    RAISE EXCEPTION 'Pseudónimo inválido.';
+  END IF;
+  IF p_code IS NULL OR p_code !~ '^[A-Fa-f0-9]{12}$' THEN
+    RAISE EXCEPTION 'Código de sala inválido.';
+  END IF;
+
+  SELECT * INTO v_room
+  FROM public.atina_v2_rooms
+  WHERE code=upper(p_code)
+  FOR UPDATE;
+
+  IF NOT FOUND OR v_room.status<>'waiting' THEN
+    RAISE EXCEPTION 'Sala não encontrada ou já iniciada.';
+  END IF;
+  IF (SELECT count(*) FROM public.atina_v2_room_players WHERE room_id=v_room.id)>=v_room.max_players THEN
+    RAISE EXCEPTION 'A sala está cheia.';
+  END IF;
+
+  v_token:=encode(extensions.gen_random_bytes(32),'hex');
+  INSERT INTO public.atina_v2_room_players(room_id,token_hash,nickname,is_host,ready)
+  VALUES(v_room.id,extensions.digest(v_token,'sha256'),btrim(p_nickname),false,false)
+  RETURNING * INTO v_player;
+
+  RETURN jsonb_build_object(
+    'room_id',v_room.id,'token',v_token,'code',v_room.code,'player_id',v_player.id
+  );
+END;
+$function$;
