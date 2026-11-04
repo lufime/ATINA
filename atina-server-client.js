@@ -779,19 +779,47 @@ function atinaOnlineCountBoot() {
 
 // Aviso global de manutenção/alterações, controlado pela administração.
 async function atinaNoticeRefresh() {
+  const banner = document.getElementById('atinaUpdateNotice');
+  const message = document.getElementById('atinaUpdateNoticeMessage');
+  if (!banner || !message) return;
+
+  let active = false;
+  let noticeMessage = '';
+
+  // O aviso manual do painel de administração tem prioridade.
   try {
-    const response = await fetch('https://raw.githubusercontent.com/lufime/ATINA/main/atina-update-status.json?ts=' + Date.now(), { cache: 'no-store' });
-    if (!response.ok) throw new Error('Não foi possível consultar o estado da atualização.');
-    const data = await response.json();
-    const banner = document.getElementById('atinaUpdateNotice');
-    const message = document.getElementById('atinaUpdateNoticeMessage');
-    if (!banner || !message) return;
-    const active = !!data?.active && !!String(data?.message || '').trim();
-    message.textContent = active ? String(data.message).trim() : '';
-    banner.classList.toggle('hidden', !active);
+    if (supabaseClient) {
+      const { data, error } = await supabaseClient
+        .from('atina_site_notice')
+        .select('active,message,updated_at')
+        .eq('id', 1)
+        .maybeSingle();
+      if (!error && data?.active && String(data.message || '').trim()) {
+        active = true;
+        noticeMessage = String(data.message).trim();
+      }
+    }
   } catch (error) {
-    console.warn('Aviso automático ATINA indisponível:', error);
+    console.warn('Aviso manual ATINA indisponível:', error);
   }
+
+  // Se não houver aviso manual ativo, consulta o aviso automático do GitHub.
+  if (!active) {
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/lufime/ATINA/main/atina-update-status.json?ts=' + Date.now(), { cache: 'no-store' });
+      if (!response.ok) throw new Error('Não foi possível consultar o estado da atualização.');
+      const data = await response.json();
+      if (data?.active && String(data.message || '').trim()) {
+        active = true;
+        noticeMessage = String(data.message).trim();
+      }
+    } catch (error) {
+      console.warn('Aviso automático ATINA indisponível:', error);
+    }
+  }
+
+  message.textContent = active ? noticeMessage : '';
+  banner.classList.toggle('hidden', !active);
 }
 async function atinaNoticeSave() {
   const status = document.getElementById('atinaNoticeStatus');
