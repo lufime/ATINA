@@ -528,7 +528,34 @@ button:active{filter:brightness(1.08)}
 .atina-scoring small{font-size:11px;line-height:1.45;color:#b8c8d8}
 #atinaCloudProgressPanel{margin:14px 0}
 @media(max-width:430px){.atina-howto{padding:13px}.atina-howto-steps{gap:5px}.atina-howto-steps>div{display:block;padding:9px 7px}.atina-howto-steps b{margin-bottom:6px}.atina-howto-steps strong{font-size:11px}.atina-howto-steps small{font-size:10px}}
-</style></head>
+</style>
+<style>
+/* Dashboard simplificado: acção primeiro, explicação essencial depois */
+.atina-quickstart{margin:14px 0 18px;padding:17px;border:1px solid #3b5d7b;border-radius:19px;background:linear-gradient(145deg,#142f49,#102237);box-shadow:0 9px 24px #0003}
+.atina-quickstart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.atina-quickstart-kicker{font-size:10px;letter-spacing:.16em;font-weight:900;color:#f2cf86}
+.atina-quickstart h3{margin:5px 0;font-size:20px;color:#fff}
+.atina-quickstart p{margin:0;color:#c1d0df;font-size:13px;line-height:1.45}
+.atina-quickstart-icon{font-size:31px}
+.atina-quickstart-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.atina-quickstart-actions button{min-height:48px;padding:10px;font-size:13px}
+.atina-quickstart-actions button:first-child{grid-column:1/-1}
+.atina-quickstart-info{display:flex;flex-wrap:wrap;gap:7px 13px;margin-top:13px;padding-top:11px;border-top:1px solid #ffffff1c;color:#d6e1ec;font-size:11px;font-weight:700}
+.atina-howto{display:none!important}
+#home .daily-mission{margin-top:12px}
+#home .daily-mission-top h3{font-size:18px}
+#home .daily-mission>p{font-size:13px;line-height:1.45}
+#home .daily-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+#home .atina-xp-panel{padding:12px;border-radius:14px}
+@media(max-width:420px){
+ .atina-quickstart{padding:14px}
+ .atina-quickstart h3{font-size:18px}
+ .atina-quickstart-actions{gap:7px}
+ .atina-quickstart-actions button{font-size:12px;min-height:46px}
+ .atina-quickstart-info{font-size:10px;gap:6px 10px}
+}
+</style>
+</head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div><button type="button" id="adminOnlineButton" class="btn secondary hidden" onclick="openAdminOnlinePage()" style="margin-top:10px">📊 Administração · Online</button></header>
 <nav class="home-page-nav" aria-label="Navegação principal">
@@ -540,7 +567,17 @@ button:active{filter:brightness(1.08)}
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite" style="margin:12px 0;padding:13px 15px;border:1px solid #d3ad68;border-radius:14px;background:linear-gradient(110deg,#49391f,#302a22);color:#ffe2a0;font-weight:700;line-height:1.45">
  <div style="display:flex;gap:10px;align-items:flex-start"><span aria-hidden="true">🛠️</span><div><strong>AVISO AOS JOGADORES</strong><div id="atinaUpdateNoticeMessage" style="font-weight:500;margin-top:4px"></div></div></div>
 </div>
-<section id="home"><div class="sound-control home-page-panel" data-home-page="dashboard"><div class="home-welcome"><div class="home-welcome-kicker">BEM-VINDO AO ATINA</div><h2>Está na hora de pôr a mente à prova.</h2><p>Escolhe um modo de jogo, descobre pistas e soma pontos. Podes jogar sozinho, em equipa ou com amigos à distância.</p><button type="button" class="btn full" data-home-target="play">Começar a jogar →</button></div><section class="atina-howto" aria-label="Como jogar ATINA">
+<section id="home"><div class="sound-control home-page-panel" data-home-page="dashboard"><div class="home-welcome"><div class="home-welcome-kicker">BEM-VINDO AO ATINA</div><h2>Está na hora de pôr a mente à prova.</h2><p>Escolhe um modo de jogo, descobre pistas e soma pontos. Podes jogar sozinho, em equipa ou com amigos à distância.</p><button type="button" class="btn full" data-home-target="play">Começar a jogar →</button></div>
+<section class="atina-quickstart" aria-label="Começar a jogar">
+  <div class="atina-quickstart-head"><div><span class="atina-quickstart-kicker">ENTRA EM JOGO</span><h3>O que te apetece jogar?</h3><p>Escolhe uma opção e começa sem complicações.</p></div><span aria-hidden="true" class="atina-quickstart-icon">🎮</span></div>
+  <div class="atina-quickstart-actions">
+    <button type="button" class="btn" data-home-target="play">🎯 Jogar sozinho</button>
+    <button type="button" class="btn secondary" data-home-target="online">🌐 Jogar em rede</button>
+    <button type="button" class="btn secondary" data-home-target="categories">🧩 Explorar categorias</button>
+  </div>
+  <div class="atina-quickstart-info"><span>⭐ Fácil 10 pts</span><span>🟠 Médio 15 pts</span><span>🔴 Difícil 20 pts</span></div>
+</section>
+<section class="atina-howto" aria-label="Como jogar ATINA">
 <div class="atina-howto-title"><span>🧭</span><div><strong>Como começar</strong><small>Em três passos simples</small></div></div>
 <div class="atina-howto-steps">
 <div><b>1</b><span><strong>Escolhe</strong><small>Uma modalidade ou Modo Mix</small></span></div>
