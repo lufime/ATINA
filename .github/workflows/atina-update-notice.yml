@@ -25,10 +25,9 @@ jobs:
     steps:
       - name: Validar configuração
         env:
-          SUPABASE_URL: ${{ secrets.ATINA_SUPABASE_URL }}
+          SUPABASE_URL: https://qwuxwiurqwfjizkwpmjp.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ATINA_SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          test -n "$SUPABASE_URL" || { echo "::error::Falta o secret ATINA_SUPABASE_URL"; exit 1; }
           test -n "$SUPABASE_SERVICE_ROLE_KEY" || { echo "::error::Falta o secret ATINA_SUPABASE_SERVICE_ROLE_KEY"; exit 1; }
 
       - name: Ativar aviso para todos os jogadores
