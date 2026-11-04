@@ -46,6 +46,18 @@ function atinaProgressRender(profile) {
   if ($('atinaCloudNextLevel')) $('atinaCloudNextLevel').textContent = progress + ' / 250 XP para o próximo nível · faltam ' + (250 - progress) + ' XP';
   if (fill) fill.style.width = (progress / 250 * 100) + '%';
   if ($('atinaCloudNickname') && profile.nickname) $('atinaCloudNickname').value = profile.nickname;
+  // Atualizar diretamente o painel principal com a mesma fonte de XP da nuvem.
+  const homeXp = $('atinaXpValue'), homeLevel = $('atinaLevelValue');
+  const homeFill = $('atinaXpFill'), homeMeta = $('atinaXpMeta');
+  if (homeXp) homeXp.textContent = xp + ' XP';
+  if (homeLevel) homeLevel.textContent = 'Nível ' + level;
+  if (homeFill) homeFill.style.width = (progress / 250 * 100) + '%';
+  if (homeMeta) homeMeta.textContent = progress + ' / 250 XP para o próximo nível';
+  const badges = $('atinaBadges');
+  if (badges) {
+    const milestones = [{at:1,icon:'🌱',name:'Primeiros passos'},{at:10,icon:'🧠',name:'Mente ativa'},{at:25,icon:'🔥',name:'Persistente'},{at:50,icon:'🏅',name:'Veterano'},{at:100,icon:'👑',name:'Lenda ATINA'}];
+    badges.innerHTML = milestones.map(b => '<span class="atina-badge ' + ((Number(profile.total_challenges)||0) >= b.at ? 'earned' : '') + '" title="' + b.name + '">' + b.icon + ' ' + b.name + '</span>').join('');
+  }
 }
 
 async function atinaProgressRegister(nickname, quiet = false) {
