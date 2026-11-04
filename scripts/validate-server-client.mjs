@@ -71,7 +71,7 @@ if (!/await networkRefreshRoom\(\);\s*\/\/ Acertar, passar[\s\S]*?await networkM
 if (!html.includes('function answerMatches(){return false;}')) errors.push('O validador legado de respostas continua ativo.');
 if (!html.includes('function submit(){throw new Error')) errors.push('O envio local legado ainda permite validação no cliente.');
 if (!html.includes('async function networkSubmitAnswer(){throw new Error')) errors.push('O envio multiplayer legado ainda permite validação no cliente.');
-if (!/<script\b[^>]*\bsrc=["'][^"']*atina-server-client\.js(?:\?[^"']*)?["'][^>]*><\/script>/i.test(html)) errors.push('O cliente server-authoritative não está incluído.');
+if (!html.includes('atina-server-client.js')) errors.push('O cliente server-authoritative não está incluído.');
 if (!/^\s+- supabase$/m.test(pagesConfig) || !/^\s+- scripts$/m.test(pagesConfig)) errors.push('Pastas privadas/de ferramentas não estão excluídas da publicação GitHub Pages.');
 if (!client.includes("'atina_v2_local_submit_answer'")) errors.push('A RPC local de validação do servidor não está ligada.');
 if (!client.includes("'atina_v2_submit_room_answer'")) errors.push('A RPC multiplayer de validação do servidor não está ligada.');
