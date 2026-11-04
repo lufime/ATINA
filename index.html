@@ -1432,7 +1432,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  const status=document.createElement('p');status.className='muted small';status.textContent=preGeneratedUrl?'A carregar a ilustração da solução…':'A procurar uma imagem que corresponda à resposta…';
  target.append(imageHeading,status);target.classList.remove('hidden');
  try{
-  let item=preGeneratedUrl&&/^https:\/\//i.test(preGeneratedUrl)?{title:'Ilustração da solução ATINA',thumburl:preGeneratedUrl,mime:'image/png',sourceName:'ATINA · imagem preparada',sourceUrl:preGeneratedUrl,author:'ATINA',license:'Imagem gerada para o jogo',licenseUrl:preGeneratedUrl}:atinaSolutionImageCache.get(key);
+  let item=preGeneratedUrl&&/^https:\/\//i.test(preGeneratedUrl)?{title:'Imagem associada à solução',thumburl:preGeneratedUrl,mime:'image/*',sourceName:'Imagem associada ao desafio',sourceUrl:preGeneratedUrl,author:'Autor não identificado',license:'Por verificar',licenseUrl:''}:atinaSolutionImageCache.get(key);
   if(item===undefined){
    const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
    const tagContexts=(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').trim()).filter(Boolean);
@@ -1489,10 +1489,14 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
   provenance.textContent='Autor: '+author+' · Fonte: '+sourceName+' · Licença: '+license+' · ';
   const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Ver imagem original';
-  const licenseLink=document.createElement('a');licenseLink.href=licenseUrl;licenseLink.target='_blank';licenseLink.rel='noopener noreferrer';licenseLink.textContent='Ver licença';
-  provenance.append(sourceLink,document.createTextNode(' · '),licenseLink);
+  sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Abrir imagem original';
+  provenance.append(sourceLink);
+  if(licenseUrl&&/^https:\/\//i.test(licenseUrl)){
+   const licenseLink=document.createElement('a');licenseLink.href=licenseUrl;licenseLink.target='_blank';licenseLink.rel='noopener noreferrer';licenseLink.textContent='Consultar licença';
+   provenance.append(document.createTextNode(' · '),licenseLink);
+  }
   status.textContent='Solução: '+cleanAnswer;target.append(frame,provenance);
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261104-3"></script></body></html>
+</script><script src="./atina-server-client.js?v=20261104-4"></script></body></html>
