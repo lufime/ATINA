@@ -64,6 +64,7 @@ async function atinaProgressRegister(nickname, quiet = false) {
   window.atinaCloudProfile = data;
   localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, clean);
   atinaProgressRender(data);
+  atinaRenderDailyMission();
   if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = quiet
     ? 'Perfil sincronizado. O progresso está pronto.'
     : 'Pseudónimo guardado. A progressão está sincronizada.';
