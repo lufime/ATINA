@@ -385,6 +385,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .brand .eyebrow{color:#f5d9a0}
 .brand .tag{color:#f4ead7;font-weight:600;letter-spacing:.035em}
 
+
+/* A descrição editorial da imagem da solução não deve aparecer no jogo. */
+#solutionImage [data-solution-wikipedia]{display:none!important}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
@@ -1492,4 +1495,4 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261104-2"></script></body></html>
+</script><script src="./atina-server-client.js?v=20261104-3"></script></body></html>
