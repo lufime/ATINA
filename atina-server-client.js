@@ -733,6 +733,7 @@ function atinaOnlineCountBoot() {
   counter.setAttribute('aria-live', 'polite');
   counter.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 11px;border:1px solid #39896c;border-radius:999px;background:#123c35;color:#b6f3d0;font-size:12px;font-weight:800;line-height:1.35';
   counter.textContent = '● A ligar presença…';
+  counter.title = 'Pessoas com o ATINA aberto neste momento; não significa que estejam numa sala de jogo.';
   const adminButton = document.getElementById('adminOnlineButton');
   if (adminButton) header.insertBefore(counter, adminButton);
   else header.appendChild(counter);
@@ -763,7 +764,7 @@ function atinaOnlineCountBoot() {
       await heartbeat();
       const count = await atinaServerRpc('atina_online_player_count', {});
       const total = Math.max(0, Number(count) || 0);
-      counter.textContent = '● ' + total + (total === 1 ? ' jogador online' : ' jogadores online');
+      counter.textContent = '● ' + total + (total === 1 ? ' pessoa no ATINA' : ' pessoas no ATINA');
       counter.dataset.count = String(total);
     } catch (_) {
       counter.textContent = '● Presença online indisponível';
