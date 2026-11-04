@@ -589,7 +589,24 @@ button:active{filter:brightness(1.08)}
 [data-home-page="settings"] .answer{width:100%;box-sizing:border-box}
 [data-home-page="settings"] .sound-toggle{width:100%;min-height:48px}
 @media(max-width:480px){[data-home-page="ranking"] .home-welcome,[data-home-page="settings"] .home-welcome{padding:16px}}
-</style><style>.atina-live-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}.atina-live-stats span{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;padding:9px 5px;border:1px solid #385775;border-radius:12px;background:#0a1d30;color:#cbd9e7;font-size:11px;text-align:center}.atina-live-stats b{color:#ffdc82;font-size:13px}#game .clue{line-height:1.5}#game .clue-revealed{animation:atinaClueIn .22s ease-out}@keyframes atinaClueIn{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}#game #feedback.is-correct{border:1px solid #4aaf80;background:#123d32}#game #feedback.is-wrong{border:1px solid #bd6a62;background:#432a31}#game #answer:focus{border-color:#f3ce82!important;box-shadow:0 0 0 3px #f3ce8233}@media(max-width:390px){.atina-live-stats{gap:5px}.atina-live-stats span{font-size:10px;padding:8px 2px}}</style></head>
+</style><style>.atina-live-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}.atina-live-stats span{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;padding:9px 5px;border:1px solid #385775;border-radius:12px;background:#0a1d30;color:#cbd9e7;font-size:11px;text-align:center}.atina-live-stats b{color:#ffdc82;font-size:13px}#game .clue{line-height:1.5}#game .clue-revealed{animation:atinaClueIn .22s ease-out}@keyframes atinaClueIn{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}#game #feedback.is-correct{border:1px solid #4aaf80;background:#123d32}#game #feedback.is-wrong{border:1px solid #bd6a62;background:#432a31}#game #answer:focus{border-color:#f3ce82!important;box-shadow:0 0 0 3px #f3ce8233}@media(max-width:390px){.atina-live-stats{gap:5px}.atina-live-stats span{font-size:10px;padding:8px 2px}}</style><style>
+/* Navegação compacta e prioridades visuais */
+.home-page-nav{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;max-width:900px}
+.home-nav-btn{min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:clamp(10px,1.8vw,13px);padding:9px 4px}
+.home-nav-btn[data-home-target="play"],.home-nav-btn[data-home-target="profile"]{border:1px solid #d6ad64;background:linear-gradient(135deg,#294d6d,#17334e);font-weight:900}
+.home-nav-btn[data-home-target="play"]{box-shadow:inset 0 0 0 1px #f0cb8044}
+.home-nav-btn[data-home-target="profile"]{border-color:#8baecb}
+.home-nav-btn.active{outline:2px solid #f1cf8a;outline-offset:1px}
+@media(max-width:620px){
+ .home-page-nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;position:sticky;top:3px;padding:6px}
+ .home-nav-btn{min-height:42px;font-size:12px;padding:8px 4px}
+}
+@media(max-width:360px){
+ .home-page-nav{gap:4px;padding:4px}
+ .home-nav-btn{font-size:10px;min-height:40px}
+}
+</style>
+</head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div><button type="button" id="adminOnlineButton" class="btn secondary hidden" onclick="openAdminOnlinePage()" style="margin-top:10px">📊 Administração · Online</button></header>
 <nav class="home-page-nav" id="atinaMainNav" aria-label="Navegação principal">
@@ -1753,4 +1770,4 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261104-23"></script></body></html>
+</script><script src="./atina-server-client.js?v=20261104-24"></script></body></html>
