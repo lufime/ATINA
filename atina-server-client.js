@@ -322,6 +322,16 @@ function atinaServerApplyState(state, announce = false) {
     renderPuzzle(Math.max(1, revealed));
   }
   const result = state.last_result || {};
+  // Renderiza o total devolvido pelo servidor diretamente no marcador da ronda.
+  // O fallback para os pontos do resultado evita deixar o indicador a zero
+  // caso uma resposta intermédia traga o resultado antes do total atualizado.
+  const liveScoreNow = $('atinaRoundScore');
+  if (liveScoreNow) {
+    const scoreList = Array.isArray(state.scores) ? state.scores.map(value => Number(value) || 0) : [];
+    const activeScore = scoreList[player] ?? scoreList[0] ?? 0;
+    const awardedNow = result.outcome === 'correct' ? Number(result.points || 0) : 0;
+    liveScoreNow.textContent = String(Math.max(activeScore, awardedNow));
+  }
   let message = '';
   if (result.outcome === 'correct') {
     message = 'Certo! ' + (challenge.answer || 'Resposta validada pelo servidor') + ' · +' + Number(result.points || 0) + ' pontos.';
