@@ -249,10 +249,10 @@ function atinaServerStartTimers() {
   atinaServerTimer = setInterval(atinaServerRenderTimer, 250);
   atinaServerPolling = setInterval(() => atinaServerRefresh().catch(() => {}), 2500);
 }
-function atinaRenderSolutionWikipedia(challenge) {
+function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallengeId = null) {
   const target = $('solutionImage');
-  if (!target || !challenge || !atinaServerState?.round_locked) return;
-  if (String(atinaServerState.challenge?.id) !== String(challenge.id)) return;
+  if (!target || !challenge || !isLocked) return;
+  if (String(activeChallengeId) !== String(challenge.id)) return;
 
   target.querySelector('[data-solution-wikipedia]')?.remove();
   const description = String(challenge.solution_description || '').trim();
@@ -358,7 +358,7 @@ function atinaServerApplyState(state, announce = false) {
       Array.isArray(challenge.tags) ? challenge.tags : [],
       challenge.solution_image_url || null,
       challenge.solution_description || ''
-    ).then(() => atinaRenderSolutionWikipedia(challenge)).catch(() => {});
+    ).then(() => atinaRenderSolutionWikipedia(challenge, !!atinaServerState?.round_locked, atinaServerState?.challenge?.id)).catch(() => {});
   } else {
     $('solutionImage')?.classList.add('hidden');
   }
