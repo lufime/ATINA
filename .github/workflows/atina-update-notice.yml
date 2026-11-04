@@ -2,8 +2,7 @@ name: Aviso automático de alterações ATINA
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'index.html'
       - '*.js'
@@ -13,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: atina-update-notice
@@ -23,41 +22,39 @@ jobs:
   notify-players:
     runs-on: ubuntu-latest
     steps:
-      - name: Validar configuração
-        env:
-          SUPABASE_URL: https://qwuxwiurqwfjizkwpmjp.supabase.co
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ATINA_SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Obter repositório
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Ativar aviso público
         run: |
-          test -n "$SUPABASE_SERVICE_ROLE_KEY" || { echo "::error::Falta o secret ATINA_SUPABASE_SERVICE_ROLE_KEY"; exit 1; }
+          cat > atina-update-status.json <<'JSON'
+          {
+            "active": true,
+            "message": "🛠️ Estamos a atualizar o ATINA. Poderão ocorrer interrupções temporárias. Obrigado pela paciência!",
+            "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add atina-update-status.json
+          git commit -m "Ativa aviso automático de atualização [skip ci]" || true
+          git push
 
-      - name: Ativar aviso para todos os jogadores
-        env:
-          SUPABASE_URL: ${{ secrets.ATINA_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ATINA_SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          curl --fail-with-body --silent --show-error \
-            "$SUPABASE_URL/rest/v1/atina_site_notice?id=eq.1" \
-            -X PATCH \
-            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
-            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
-            -H "Content-Type: application/json" \
-            -H "Prefer: return=minimal" \
-            --data-binary '{"active":true,"message":"🛠️ Estamos a atualizar o ATINA. Poderão ocorrer interrupções temporárias. Obrigado pela paciência!"}'
+      - name: Aguardar publicação
+        run: sleep 180
 
-      - name: Dar tempo à publicação do GitHub Pages
-        run: sleep 120
-
-      - name: Desativar aviso após a publicação
+      - name: Desativar aviso após a atualização
         if: success()
-        env:
-          SUPABASE_URL: ${{ secrets.ATINA_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ATINA_SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          curl --fail-with-body --silent --show-error \
-            "$SUPABASE_URL/rest/v1/atina_site_notice?id=eq.1" \
-            -X PATCH \
-            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
-            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
-            -H "Content-Type: application/json" \
-            -H "Prefer: return=minimal" \
-            --data-binary '{"active":false}'
+          cat > atina-update-status.json <<'JSON'
+          {
+            "active": false,
+            "message": "",
+            "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          JSON
+          git add atina-update-status.json
+          git commit -m "Desativa aviso automático de atualização [skip ci]" || true
+          git push
