@@ -530,6 +530,9 @@ button:active{filter:brightness(1.08)}
 @media(max-width:430px){.atina-howto{padding:13px}.atina-howto-steps{gap:5px}.atina-howto-steps>div{display:block;padding:9px 7px}.atina-howto-steps b{margin-bottom:6px}.atina-howto-steps strong{font-size:11px}.atina-howto-steps small{font-size:10px}}
 </style>
 <style>
+/* Visibilidade estrita do painel de imagem: só na categoria dedicada */
+#visualWrap:not([data-challenge-category="imagem-misteriosa"]){display:none!important}
+#visualWrap[data-challenge-category="imagem-misteriosa"]{display:block!important}
 /* Dashboard simplificado: acção primeiro, explicação essencial depois */
 .atina-quickstart{margin:14px 0 18px;padding:17px;border:1px solid #3b5d7b;border-radius:19px;background:linear-gradient(145deg,#142f49,#102237);box-shadow:0 9px 24px #0003}
 .atina-quickstart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
@@ -1009,16 +1012,13 @@ function atinaSetChallengeVisual(index){
  if(!wrap)return false;
  const category=String(games[index]?.[0]||'').trim().toLocaleLowerCase('pt-PT');
  const show=category==='imagem misteriosa';
- if(show){
-   wrap.hidden=false;
-   wrap.classList.remove('hidden');
-   wrap.style.removeProperty('display');
- }else{
-   wrap.hidden=true;
-   wrap.classList.add('hidden');
-   wrap.style.setProperty('display','none','important');
+ wrap.dataset.challengeCategory=show?'imagem-misteriosa':'outra';
+ wrap.hidden=!show;
+ wrap.classList.toggle('hidden',!show);
+ wrap.style.setProperty('display',show?'block':'none','important');
+ if(!show){
    if(image){image.removeAttribute('src');image.alt='';}
-   $('tileMask')?.replaceChildren();
+   const mask=$('tileMask');if(mask)mask.replaceChildren();
    const label=$('revealLabel');if(label)label.textContent='';
  }
  return show;
@@ -1699,4 +1699,4 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261104-14"></script></body></html>
+</script><script src="./atina-server-client.js?v=20261104-15"></script></body></html>
