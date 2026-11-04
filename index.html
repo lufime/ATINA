@@ -403,6 +403,67 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* Resposta certa revelada: separar e destacar a solução */
 #game .feedback.solution-revealed{font-size:16px!important;font-weight:500!important;line-height:1.5!important}
 #game .feedback .solution-answer{display:inline-block;margin-top:5px;font-size:clamp(25px,7vw,32px)!important;font-weight:950!important;line-height:1.2!important;letter-spacing:.015em;color:#ffe09a;text-shadow:0 2px 14px #eac05d55}
+
+
+/* ATINA UI system — hierarquia, consistência e adaptação */
+:root{
+ --atina-surface:#10243a;
+ --atina-surface-raised:#17324d;
+ --atina-border:#2d4c69;
+ --atina-accent:#f0c96f;
+ --atina-radius:18px;
+}
+html{scroll-behavior:smooth}
+body{line-height:1.5;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+.wrap{width:min(100%,820px);padding-left:clamp(12px,3vw,22px);padding-right:clamp(12px,3vw,22px)}
+.brand{position:relative;overflow:hidden}
+.brand:after{content:"";position:absolute;right:-54px;top:-85px;width:210px;height:210px;border:1px solid #ffffff12;border-radius:50%;box-shadow:0 0 0 22px #ffffff08,0 0 0 46px #ffffff05;pointer-events:none}
+.logo-image{display:block;width:min(100%,330px);max-height:110px;object-fit:contain;object-position:left center;margin:8px 0 2px}
+.home-page-nav{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:#35516c}
+.home-nav-btn{min-height:44px;line-height:1.2;white-space:nowrap}
+.home-nav-btn.active{color:#ffe5a4}
+#home{gap:14px}
+#home .home-page-panel{min-width:0}
+#home .sound-control{display:block;padding:0;border:0;background:transparent;box-shadow:none}
+#home .home-welcome{margin:0 0 14px;padding:clamp(18px,4vw,25px);border-radius:20px}
+#home .home-welcome h2{max-width:19ch;font-size:clamp(25px,6vw,34px);letter-spacing:-.025em}
+#home .home-welcome p{max-width:58ch}
+#home .home-welcome .btn{max-width:320px;min-height:52px}
+#home .daily-mission{margin:0 0 14px;padding:clamp(14px,3vw,19px);border-color:#695c3f}
+#home #atinaCloudProgressPanel{margin:0 0 14px!important;border-radius:17px!important}
+#home .card,#home .settings-block,#home .play-block,#home .account-block,#home .network-block,#home .categories-block{border-radius:17px}
+#home .section{letter-spacing:.005em}
+#home .tile{height:100%;min-height:96px!important}
+#home .tile small{font-size:11px!important}
+#home .btn{transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}
+#home .btn:focus-visible,.home-nav-btn:focus-visible,.tile:focus-visible{outline:3px solid var(--atina-accent);outline-offset:3px}
+#home .network-block .answer,#home .account-block .answer{width:100%;min-width:0}
+#game>.card,#mimicaGame .card{border-radius:20px}
+#game .answer,#home .answer{width:100%;min-width:0}
+#game .actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+#game button,#mimicaGame button{touch-action:manipulation}
+#rankingList{padding-left:24px}
+#rankingList li{padding:8px 4px}
+#atinaUpdateNotice{box-shadow:0 8px 22px #0003}
+input,select,textarea{max-width:100%}
+button:disabled{cursor:not-allowed;opacity:.58;filter:saturate(.65)}
+@media(min-width:600px){
+ .wrap{padding-top:22px}
+ .home-page-nav{margin-top:16px}
+ #home .daily-mission{padding:21px}
+ #home .modes{gap:11px}
+ #home .tile{min-height:108px!important}
+}
+@media(max-width:420px){
+ .home-page-nav{top:4px;margin:10px 0 14px;padding:4px}
+ .home-nav-btn{font-size:11px;min-height:42px}
+ #home .home-welcome{padding:17px 15px}
+ #home .daily-mission{padding:14px}
+ #home .daily-mission h3{font-size:17px}
+ #home .daily-meta{font-size:10px}
+ #game .actions{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body><main class="wrap">
@@ -1511,4 +1572,4 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261104-8"></script></body></html>
+</script><script src="./atina-server-client.js?v=20261104-9"></script></body></html>
