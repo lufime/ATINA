@@ -465,6 +465,49 @@ button:disabled{cursor:not-allowed;opacity:.58;filter:saturate(.65)}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
+
+<style>
+/* ATINA UI refresh — hierarquia visual, leitura rápida e mobile */
+:root{--atina-panel:#10243a;--atina-panel-soft:#142d46;--atina-line:#34536f;--atina-gold:#f3ce82}
+.wrap{width:min(100%,820px);padding:clamp(12px,3vw,22px) 14px 38px}
+.brand{padding:clamp(16px,3vw,24px);border-radius:24px;box-shadow:0 14px 34px #0004}
+.brand .eyebrow{font-size:clamp(10px,2vw,12px);letter-spacing:.18em}
+.brand .logo-image{max-height:clamp(76px,16vw,124px);margin:8px 0}
+.brand .tag{font-size:clamp(15px,3vw,19px);line-height:1.35}
+.brand .stats{margin-top:15px;padding-top:13px;border-top:1px solid #ffffff20;font-size:clamp(12px,2.5vw,15px);font-weight:750}
+.home-page-nav{backdrop-filter:blur(14px);background:#091a2beF;border-color:#36536e;box-shadow:0 9px 25px #0004}
+.home-nav-btn{font-size:clamp(11px,2.4vw,14px);min-height:48px}
+.home-nav-btn:focus-visible,.btn:focus-visible,.tile:focus-visible{outline:3px solid #f3ce82;outline-offset:3px}
+.home-welcome,.daily-mission,.home-block,.card{box-shadow:0 8px 24px #0002}
+.home-welcome{border-radius:20px}
+.home-welcome p,.daily-mission p{max-width:62ch}
+.home-page-panel .section{font-size:clamp(15px,3vw,18px);letter-spacing:.01em}
+.home-hint,.muted.small{line-height:1.55}
+#categories .tile{min-height:112px;display:flex;flex-direction:column;justify-content:center;gap:3px}
+#categories .tile small{line-height:1.4}
+#atinaOnlinePlayerCount{font-size:clamp(11px,2.5vw,13px)!important;white-space:normal}
+#atinaUpdateNotice{border-radius:16px!important;line-height:1.55!important}
+#game .card{padding:clamp(15px,3vw,22px)!important}
+#game #question{line-height:1.25!important;letter-spacing:-.02em}
+#game .pill{max-width:100%;white-space:normal}
+input,select,textarea{border-radius:12px!important}
+button{transition:transform .15s ease,filter .15s ease,background-color .15s ease}
+button:active{filter:brightness(1.08)}
+@media(max-width:480px){
+ .wrap{padding:10px 10px 30px}
+ .brand{padding:15px 14px;border-radius:20px}
+ .brand .logo-image{max-height:88px;margin:5px 0}
+ .brand .stats{gap:7px;flex-wrap:wrap;margin-top:11px;padding-top:10px}
+ .home-page-nav{top:3px;margin:10px 0 13px;padding:4px;gap:3px;border-radius:14px}
+ .home-nav-btn{min-height:44px;padding:8px 2px;font-size:11px;border-radius:10px}
+ .home-welcome{padding:17px 15px}
+ .home-welcome h2{font-size:23px}
+ .home-welcome p{font-size:13px}
+ #categories .tile{min-height:100px;padding:11px}
+ #atinaUpdateNotice{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){button{transition:none}.home-page-panel{animation:none}}
+</style>
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div><button type="button" id="adminOnlineButton" class="btn secondary hidden" onclick="openAdminOnlinePage()" style="margin-top:10px">📊 Administração · Online</button></header>
@@ -1572,4 +1615,4 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261104-10"></script></body></html>
+</script><script src="./atina-server-client.js?v=20261104-11"></script></body></html>
