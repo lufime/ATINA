@@ -37,3 +37,18 @@ Este trabalho está isolado em `security/server-side-validation`. Não foi feito
 ## Publicação
 
 Não publicar esta branch diretamente. Qualquer merge, PR, deploy ou alteração em produção exige autorização explícita.
+
+## Avisos automáticos de atualização
+
+O workflow `.github/workflows/atina-update-notice.yml` ativa o aviso global no início de alterações publicadas na branch `main` que afetem o jogo, os recursos ou as migrations. Aguarda 120 segundos para a publicação do GitHub Pages e desativa o aviso se os passos terminarem com sucesso. Se o workflow falhar, o aviso fica ativo para não deixar os jogadores sem informação.
+
+### Configuração obrigatória (uma vez)
+
+No GitHub, abre **Settings → Secrets and variables → Actions → New repository secret** e cria:
+
+- Nome: `ATINA_SUPABASE_SERVICE_ROLE_KEY`
+- Valor: a chave **service_role** do projeto Supabase usado pelo ATINA.
+
+Esta chave é confidencial: guarda-a apenas como GitHub Actions secret. Nunca a coloques no HTML, JavaScript ou neste repositório.
+
+O workflow cobre commits na branch `main`, incluindo alterações em `supabase/migrations/**`. Alterações feitas manualmente no Dashboard do Supabase, fora de um workflow/migration commit, não geram um evento GitHub e não são detetadas por este mecanismo; para garantir avisos também nesses casos, as alterações de produção devem ser aplicadas através do processo de migrations versionadas no repositório.
