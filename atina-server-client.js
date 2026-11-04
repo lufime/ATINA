@@ -64,6 +64,52 @@ function atinaServerStartTimers() {
   atinaServerTimer = setInterval(atinaServerRenderTimer, 250);
   atinaServerPolling = setInterval(() => atinaServerRefresh().catch(() => {}), 2500);
 }
+function atinaRenderSolutionMetadata(challenge, visible) {
+  const panel = $('solutionMetadata');
+  if (!panel) return;
+  panel.replaceChildren();
+  panel.classList.add('hidden');
+  if (!visible || !challenge) return;
+
+  const description = String(challenge.solution_description || '').trim();
+  const imageUrl = String(challenge.solution_image_url || '').trim();
+  const wikipediaUrl = String(challenge.solution_wikipedia_url || '').trim();
+  let safeWikipediaUrl = '';
+  try {
+    const parsed = new URL(wikipediaUrl);
+    if (parsed.protocol === 'https:' && (parsed.hostname === 'wikipedia.org' || parsed.hostname.endsWith('.wikipedia.org'))) safeWikipediaUrl = parsed.href;
+  } catch (_) {}
+
+  if (!description && !imageUrl && !safeWikipediaUrl) return;
+  const heading = document.createElement('strong');
+  heading.textContent = '📚 Sobre esta solução';
+  panel.appendChild(heading);
+
+  if (imageUrl.startsWith('https://')) {
+    const image = document.createElement('img');
+    image.src = imageUrl;
+    image.alt = 'Imagem da solução: ' + String(challenge.answer || 'resposta revelada');
+    image.loading = 'lazy';
+    image.referrerPolicy = 'no-referrer';
+    image.onerror = () => image.remove();
+    panel.appendChild(image);
+  }
+  if (description) {
+    const paragraph = document.createElement('p');
+    paragraph.textContent = description;
+    panel.appendChild(paragraph);
+  }
+  if (safeWikipediaUrl) {
+    const link = document.createElement('a');
+    link.href = safeWikipediaUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Consultar na Wikipédia ↗';
+    panel.appendChild(link);
+  }
+  panel.classList.remove('hidden');
+}
+
 function atinaServerApplyState(state, announce = false) {
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
   const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
@@ -81,6 +127,7 @@ function atinaServerApplyState(state, announce = false) {
   answeredCount = Number(state.answered_count || 0);
   difficultyMode = state.difficulty || difficultyMode;
   const challenge = state.challenge;
+  atinaRenderSolutionMetadata(challenge, !!state.round_locked);
   const total = Number(challenge.total_clues || (challenge.image_url ? 6 : 5));
   $('category').textContent = (challenge.emoji || '') + ' ' + (challenge.category || 'Desafio');
   $('level').textContent = 'DESAFIO ' + (pos + 1) + ' / ' + queue.length + ' · ' + difficultyLabel(difficultyMode);
