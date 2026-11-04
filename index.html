@@ -606,6 +606,39 @@ button:active{filter:brightness(1.08)}
  .home-nav-btn{font-size:10px;min-height:40px}
 }
 </style>
+<style id="atina-professional-ui">
+/* ATINA · sistema visual profissional */
+:root{--atina-surface:#102238;--atina-surface-raised:#172d45;--atina-border:#314b65;--atina-gold:#e2bd78;--atina-text:#f5f7fa;--atina-muted:#b1bfce}
+body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#071321 100%);color:var(--atina-text);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{width:min(100% - 28px,900px);padding:clamp(12px,2.5vw,24px) 0 48px}
+.brand{position:relative;overflow:hidden;padding:clamp(20px,4vw,32px);border:1px solid #48627b;border-radius:22px;background:linear-gradient(125deg,#193a58 0%,#142b43 58%,#203d58 100%);box-shadow:0 18px 48px #02091466}
+.brand:after{content:"";position:absolute;width:190px;height:190px;right:-60px;top:-95px;border:1px solid #ffffff18;border-radius:50%;box-shadow:0 0 0 24px #ffffff08,0 0 0 48px #ffffff05;pointer-events:none}
+.logo{font-size:clamp(30px,6vw,42px);letter-spacing:.19em}
+.tag{font-size:14px;line-height:1.5}
+.home-page-nav{position:sticky;top:5px;z-index:30;backdrop-filter:blur(18px);background:#091a2beF;border:1px solid #3b5670;border-radius:16px;box-shadow:0 10px 28px #0005}
+.home-nav-btn{border-radius:11px;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.home-nav-btn.active{background:linear-gradient(135deg,#315879,#1c3b58);color:#fff;box-shadow:inset 0 0 0 1px #e2bd7866}
+.card,.tile,.home-welcome,.atina-quickstart,.atina-howto,.daily-mission{border:1px solid var(--atina-border);box-shadow:0 10px 26px #02091430}
+.card{border-radius:18px;background:linear-gradient(155deg,#142a41,#102238)}
+.tile{border-radius:15px;background:linear-gradient(145deg,#172f48,#11243a);transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.tile:hover{transform:translateY(-2px);border-color:#7893ac;background:#1b3853}
+.btn{min-height:46px;border-radius:12px;font-weight:750;letter-spacing:.005em;box-shadow:0 4px 12px #0002;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}
+.btn:hover{filter:brightness(1.08);box-shadow:0 7px 18px #0003}
+.btn.secondary{background:#1a3048;border-color:#3a536c}
+.answer,select,input,textarea{border-color:#435d76;border-radius:12px}
+.answer:focus,select:focus,input:focus,textarea:focus{outline:2px solid #e2bd78;outline-offset:2px;border-color:#e2bd78}
+.section{letter-spacing:.015em}
+.pill{background:#0b1d30;border-color:#405a73;color:#d2deea}
+.footer{padding-top:18px;border-top:1px solid #263e55}
+@media(max-width:620px){
+ .wrap{width:calc(100% - 22px);padding-top:10px}
+ .brand{border-radius:17px}
+ .home-page-nav{top:3px;border-radius:14px}
+ .card{padding:15px}
+ .actions{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div><button type="button" id="adminOnlineButton" class="btn secondary hidden" onclick="openAdminOnlinePage()" style="margin-top:10px">📊 Administração · Online</button></header>
@@ -1770,4 +1803,4 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261104-24"></script></body></html>
+</script><script src="./atina-server-client.js?v=20261104-25"></script></body></html>
