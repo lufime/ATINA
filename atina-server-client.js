@@ -251,45 +251,11 @@ function atinaServerStartTimers() {
 }
 function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallengeId = null) {
   const target = $('solutionImage');
-  if (!target || !challenge || !isLocked) return;
-  if (String(activeChallengeId) !== String(challenge.id)) return;
-
+  if (!target) return;
+  // A descrição editorial e o link «Sobre esta imagem» deixaram de ser
+  // apresentados; a descrição continua disponível apenas como contexto
+  // interno para encontrar uma imagem adequada.
   target.querySelector('[data-solution-wikipedia]')?.remove();
-  const description = String(challenge.solution_description || '').trim();
-  const wikipedia = String(challenge.solution_wikipedia_url || '').trim();
-  let safeWikipediaUrl = '';
-  try {
-    const parsed = new URL(wikipedia);
-    if (parsed.protocol === 'https:' && /(^|\.)wikipedia\.org$/i.test(parsed.hostname)) {
-      safeWikipediaUrl = parsed.href;
-    }
-  } catch (_) {}
-
-  if (!description && !safeWikipediaUrl) return;
-  const details = document.createElement('div');
-  details.dataset.solutionWikipedia = 'true';
-  details.style.cssText = 'margin-top:12px;padding-top:11px;border-top:1px solid #365777;line-height:1.5';
-  if (description) {
-    const heading = document.createElement('strong');
-    heading.textContent = 'Sobre esta imagem';
-    heading.style.display = 'block';
-    heading.style.marginBottom = '5px';
-    const copy = document.createElement('p');
-    copy.className = 'muted small';
-    copy.textContent = description;
-    copy.style.margin = '0';
-    details.append(heading, copy);
-  }
-  if (safeWikipediaUrl) {
-    const link = document.createElement('a');
-    link.href = safeWikipediaUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = 'Consultar na Wikipédia';
-    link.style.cssText = 'display:inline-block;margin-top:9px;color:#f3c65e;text-decoration:underline;font-weight:700';
-    details.append(link);
-  }
-  target.append(details);
 }
 
 function atinaServerApplyState(state, announce = false) {
