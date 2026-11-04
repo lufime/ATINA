@@ -740,7 +740,36 @@ $('nextClue').onclick = reveal;
 $('pass').onclick = pass;
 $('continue').onclick = next;
 $('answer').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('answer').disabled) { e.preventDefault(); submit(); } });
+function atinaOnlineCountBoot() {
+  const header = document.querySelector('.brand');
+  if (!header || document.getElementById('atinaOnlinePlayerCount')) return;
+  const counter = document.createElement('div');
+  counter.id = 'atinaOnlinePlayerCount';
+  counter.setAttribute('role', 'status');
+  counter.setAttribute('aria-live', 'polite');
+  counter.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 11px;border:1px solid #39896c;border-radius:999px;background:#123c35;color:#b6f3d0;font-size:12px;font-weight:800;line-height:1.35';
+  counter.textContent = '● A consultar jogadores online…';
+  const adminButton = document.getElementById('adminOnlineButton');
+  if (adminButton) header.insertBefore(counter, adminButton);
+  else header.appendChild(counter);
+
+  const refresh = async () => {
+    try {
+      const count = await atinaServerRpc('atina_online_player_count', {});
+      const total = Math.max(0, Number(count) || 0);
+      counter.textContent = '● ' + total + (total === 1 ? ' jogador online' : ' jogadores online');
+      counter.dataset.count = String(total);
+    } catch (_) {
+      counter.textContent = '● Jogadores online indisponível';
+      delete counter.dataset.count;
+    }
+  };
+  refresh();
+  window.setInterval(refresh, 15000);
+}
+
 atinaProgressBoot();
+atinaOnlineCountBoot();
 (async function atinaServerBoot() {
   try {
     await networkRestoreSession();
