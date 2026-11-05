@@ -1488,8 +1488,18 @@ async function atinaSolutionImageAliases(answer){
   'e.t. o extraterrestre':['E.T. the Extra-Terrestrial','ET the Extra-Terrestrial','E.T. (1982 film)'],
   'alien o oitavo passageiro':['Alien (1979 film)','Alien (film)']
  };
+ // Nomes comuns de espécies: pesquisar também a designação internacional e científica.
+ const knownAnimalNames={
+  'raposa vermelha':['red fox','Vulpes vulpes','raposa-comum'],
+  'raposa':['fox','Vulpes vulpes'],
+  'lobo iberico':['Iberian wolf','Canis lupus signatus'],
+  'lince iberico':['Iberian lynx','Lynx pardinus'],
+  'urso pardo':['brown bear','Ursus arctos'],
+  'aguia real':['golden eagle','Aquila chrysaetos']
+ };
  const normalizedAnswer=atinaSolutionImageText(raw);
- for(const known of (knownFilmTitles[normalizedAnswer]||[]))variants.push(known);
+ for(const known of [...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[])])variants.push(known);
+ for(const known of (knownAnimalNames[normalizedAnswer]||[]))aliases.add(known);
  // Many film/book titles include a subtitle after a dash or colon.
  // Search the principal title too, but only accept an exact Wikidata label.
  const principal=raw.split(/\\s+[–—-]\\s+|:/)[0].trim();
@@ -1693,7 +1703,7 @@ function atinaSolutionImageCategoryContext(category){
   [/cinema|televisao|filme|series/,'film cinema movie actor actress movie character'],
   [/musica|sons|instrument/,'music musical instrument musician orchestra concert'],
   [/desporto|esporte|sport|atleta/,'sport sports athlete competition match equipment'],
-  [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology'],
+  [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology mammal mammalia carnivore canid canine vulpes species fauna vertebrate bird reptile fish insect animalia'],
   [/historia|misterio|historico/,'history historical person event artifact ancient'],
   [/arte|pintura|escultura/,'art artwork painting sculpture artist museum'],
   [/culinaria|comida|alimento/,'food cuisine dish ingredient cooking'],
