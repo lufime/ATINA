@@ -1888,6 +1888,40 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
  }
  return bestScore>=6.0?best:null;
 }
+async function atinaWikipediaSolutionExcerpt(answer){
+ const title=String(answer||'').trim();
+ if(!title)return null;
+ for(const language of ['pt','en']){
+  try{
+   const url='https://'+language+'.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent('intitle:"'+title+'"')+'&gsrlimit=5&prop=extracts|info&exintro=1&explaintext=1&exchars=650&inprop=url&format=json&origin=*';
+   const response=await fetch(url,{headers:{Accept:'application/json'}});
+   if(!response.ok)continue;
+   const data=await response.json();
+   const pages=Object.values(data.query?.pages||{});
+   const normalized=atinaSolutionImageText(title).replace(/^(o|a|os|as)\s+/,'');
+   const page=pages.find(page=>atinaSolutionImageText(page.title)===atinaSolutionImageText(title))||pages.find(page=>atinaSolutionImageText(page.title)===normalized);
+   if(!page||!page.extract||!/^https:\/\//.test(page.fullurl||''))continue;
+   const extract=String(page.extract).replace(/\s+/g,' ').trim();
+   if(extract.length<45)continue;
+   return {text:extract.slice(0,650),url:page.fullurl,language};
+  }catch(error){}
+ }
+ return null;
+}
+async function atinaAppendWikipediaSolutionExcerpt(target,answer,key){
+ const paragraph=document.createElement('p');
+ paragraph.className='muted small';
+ paragraph.textContent='A consultar a Wikipédia…';
+ target.append(paragraph);
+ const entry=await atinaWikipediaSolutionExcerpt(answer);
+ if(target.dataset.solutionKey!==key)return;
+ if(!entry){paragraph.textContent='Não foi encontrado um resumo da Wikipédia que identifique esta resposta com segurança.';return;}
+ paragraph.textContent=entry.text;
+ const link=document.createElement('a');
+ link.href=entry.url;link.target='_blank';link.rel='noopener noreferrer';
+ link.textContent=entry.language==='pt'?'Ler artigo na Wikipédia':'Ler artigo na Wikipédia (inglês)';
+ target.append(link);
+}
 async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],preGeneratedUrl=null,visualDescription=''){
  const target=$(targetId);if(!target)return;
  const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
@@ -1968,7 +2002,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    atinaSolutionImageCache.set(key,item||null);
   }
   if(target.dataset.solutionKey!==key)return;
-  if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';return;}
+  if(!item){status.textContent='Não encontrámos uma imagem suficientemente relacionada com esta resposta. Preferimos não mostrar uma imagem enganadora.';await atinaAppendWikipediaSolutionExcerpt(target,cleanAnswer,key);return;}
   const frame=document.createElement('div');frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
   const image=document.createElement('img');image.src=item.thumburl;image.alt='Imagem ilustrativa da solução: '+cleanAnswer;image.loading='eager';image.fetchPriority='auto';image.referrerPolicy='no-referrer';image.style.cssText='display:block;width:100%;max-height:300px;object-fit:contain;background:#091827';
   image.onerror=()=>{
@@ -2004,7 +2038,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const licenseLink=document.createElement('a');licenseLink.href=licenseUrl;licenseLink.target='_blank';licenseLink.rel='noopener noreferrer';licenseLink.textContent='Consultar licença';
    provenance.append(document.createTextNode(' · '),licenseLink);
   }
-  status.textContent='Solução: '+cleanAnswer;target.append(frame,provenance);
+  status.textContent='Solução: '+cleanAnswer;target.append(frame);await atinaAppendWikipediaSolutionExcerpt(target,cleanAnswer,key);if(target.dataset.solutionKey===key)target.append(provenance);
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível procurar uma imagem neste momento.';}
 }
 
