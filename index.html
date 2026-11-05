@@ -1497,9 +1497,13 @@ async function atinaSolutionImageAliases(answer){
   'urso pardo':['brown bear','Ursus arctos'],
   'aguia real':['golden eagle','Aquila chrysaetos']
  };
+ const knownScienceNames={
+  'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock']
+ };
  const normalizedAnswer=atinaSolutionImageText(raw);
- for(const known of [...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[])])variants.push(known);
- for(const known of (knownAnimalNames[normalizedAnswer]||[]))aliases.add(known);
+ const knownTerms=[...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])];
+ for(const known of knownTerms)variants.push(known);
+ for(const known of [...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])])aliases.add(known);
  // Many film/book titles include a subtitle after a dash or colon.
  // Search the principal title too, but only accept an exact Wikidata label.
  const principal=raw.split(/\\s+[–—-]\\s+|:/)[0].trim();
@@ -1545,7 +1549,8 @@ function atinaSolutionImageVisualContexts(answer){
   'felicidade':['happiness','joy','people celebrating','person smiling'],
   'medo':['fear','person afraid','dark corridor'],
   'curiosidade':['curiosity','person exploring','scientist observing'],
-  'confianca':['trust','confidence','person helping another climb']
+  'confianca':['trust','confidence','person helping another climb'],
+  'magma':['magma','molten rock','molten silicate rock','magma chamber','molten material beneath earth crust','volcanic geology']
  };
  return contexts[normalized]||[];
 }
@@ -1703,7 +1708,7 @@ function atinaSolutionImageCategoryContext(category){
   [/cinema|televisao|filme|series/,'film cinema movie actor actress movie character'],
   [/musica|sons|instrument/,'music musical instrument musician orchestra concert'],
   [/desporto|esporte|sport|atleta/,'sport sports athlete competition match equipment'],
-  [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology mammal mammalia carnivore canid canine vulpes species fauna vertebrate bird reptile fish insect animalia'],
+  [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology geology geological earth science volcano volcanic magma lava rock mineral mineralogy mammal mammalia carnivore canid canine vulpes species fauna vertebrate bird reptile fish insect animalia'],
   [/historia|misterio|historico/,'history historical person event artifact ancient'],
   [/arte|pintura|escultura/,'art artwork painting sculpture artist museum'],
   [/culinaria|comida|alimento/,'food cuisine dish ingredient cooking'],
