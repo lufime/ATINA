@@ -1637,13 +1637,11 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const words=new Set(searchableText.split(/\s+/));
  const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
- // Aplicar validação temática em todas as categorias: a resposta exata não
- // basta se os metadados não confirmarem também o tipo de assunto procurado.
+ // A categoria é um sinal de relevância, não uma condição obrigatória de texto:
+ // metadados de imagens raramente repetem rótulos como «ciência», «desporto» ou
+ // «história». A resposta/alias tem de corresponder; regras específicas abaixo
+ // continuam a bloquear homónimos e assuntos incompatíveis.
  const categoryContext=atinaSolutionImageCategoryContext(category);
- // Em desafios históricos, títulos como «Battle of Thermopylae» são evidência
- // suficiente mesmo sem conter literalmente «history» ou «historical».
- const categoryEvidenceTokens=atinaSolutionImageText(categoryContext).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
- if(categoryEvidenceTokens.length&&!categoryEvidenceTokens.some(token=>words.has(token)))return null;
  // Em «Onde estou?», exigir sempre evidência de uma vista urbana identificável.
  // Uma menção à cidade em fotos de transportes não é evidência visual suficiente.
  if(categoryText==='onde estou'){
@@ -1859,8 +1857,8 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
     const answerCoverage=Math.max(...answerTokenSets.map(coverageFor));
     const titleCoverage=Math.max(...answerTokenSets.map(tokens=>coverageFor(title.split(' ').filter(Boolean))));
     const categoryCoverage=coverageFor(categoryTokens);
-    // Exigir confirmação temática também na pesquisa aberta, em qualquer categoria.
-    if(categoryTokens.length&&categoryCoverage===0)continue;
+    // A categoria serve para ordenar resultados, não como bloqueio universal:
+    // muitos metadados de imagens identificam o assunto sem repetir o nome da categoria.
     if(atinaSolutionImageText(category)==='onde estou'){
      const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|historic center|old town|city centre|city center|cityscape|skyline|town hall|square|plaza|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|praca|fachada|bairro historico|ruas antigas)\b/.test(searchable);
      if(!cityEvidence)continue;
