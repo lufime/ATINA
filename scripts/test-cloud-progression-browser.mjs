@@ -78,6 +78,8 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
 
 try {
   await page.goto(`http://127.0.0.1:${address.port}/`, { waitUntil: 'load' });
+  // The cloud profile lives on the profile page; navigate there before testing its controls.
+  await page.evaluate(() => showHomePage('profile'));
   await page.locator('#atinaCloudRegister').waitFor({ state: 'visible' });
   assert.equal(await page.title(), 'ATINA — Pensa. Descobre. Atina.');
 
