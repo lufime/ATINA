@@ -793,7 +793,7 @@ function atinaOnlineCountBoot() {
       await atinaServerRpc('atina_site_presence_heartbeat', { p_session_id: sessionId });
       const count = await atinaServerRpc('atina_online_player_count', {});
       const total = Math.max(0, Number(count) || 0);
-      counter.textContent = '● ' + total + (total === 1 ? ' pessoa no ATINA' : ' pessoas no ATINA');
+      counter.textContent = '● ' + total + (total === 1 ? ' jogador online' : ' jogadores online');
       counter.dataset.count = String(total);
     } catch (error) {
       console.warn('ATINA: não foi possível atualizar a presença online.', error);
