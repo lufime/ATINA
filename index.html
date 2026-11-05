@@ -1886,7 +1886,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  target.dataset.solutionKey=key;target.replaceChildren();target.classList.add('hidden');
  if(!cleanAnswer)return;
 
- const isNumericSolution=/^[+-]?(?:\\d+|\\d{1,3}(?:[ .\\u00a0]\\d{3})+)(?:[,.]\\d+)?$/.test(cleanAnswer);
+ const isNumericSolution=/^[+-]?(?:\d+|\d{1,3}(?:[ .\u00a0]\d{3})+)(?:[,.]\d+)?$/.test(cleanAnswer);
  if(isNumericSolution){
   const numberHeading=document.createElement('strong');numberHeading.textContent='🔢 A solução em número';
   const numberDisplay=document.createElement('div');numberDisplay.textContent=cleanAnswer;
