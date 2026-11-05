@@ -1539,7 +1539,9 @@ async function atinaSolutionImageAliases(answer){
   'abelha melifera':['honey bee','honeybee','Apis mellifera','western honey bee']
  };
  const knownScienceNames={
-  'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock']
+  'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock'],
+  'regua':['ruler','measuring ruler','straightedge','measuring scale'],
+  'regua de medir':['ruler','measuring ruler','measuring scale','straightedge']
  };
  const knownMythologicalNames={
   'o fio de ariadne':['Ariadne thread','Thread of Ariadne','Ariadnes thread','Ariadne Greek mythology','Ariadne Theseus labyrinth golden thread'],
@@ -1607,7 +1609,7 @@ function atinaSolutionImageVisualContexts(answer){
 }
 function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is']);
- const aliases={'tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'o tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
+ const aliases={'regua':['ruler','measuring ruler','straightedge','measuring scale'],'regua de medir':['ruler','measuring ruler','straightedge','measuring scale'],'tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'o tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
  const normalized=atinaSolutionImageText(answer);
  const isDetectiveCategory=/detetive|detective|investigacao|investigation/.test(atinaSolutionImageText(category));
  const isSingleName=/^[a-z]+$/.test(normalized);
@@ -1620,6 +1622,10 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const title=atinaSolutionImageText(item.title);
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const searchableText=title+' '+description;
+ // «Régua» pode ser o topónimo português; neste desafio procuramos o instrumento de medição, nunca uma paisagem urbana.
+ if(normalized==='regua'||normalized==='regua de medir'){
+  if(/\\b(bridge|river|railway|station|town|city|village|landscape|portugal|douro|ponte|rio|estacao|cidade|vila|paisagem|municipality|municipio)\\b/.test(searchableText))return null;
+ }
  // Em desafios de Detetive, um nome próprio curto não pode validar uma fotografia de um lugar ou objeto homónimo (ex.: estação Lara). Exigir indícios de pessoa/personagem e rejeitar explicitamente infraestruturas.
  if(isDetectiveCategory&&isSingleName){
   const nonPersonSubject=/\b(station|railway|train|railroad|platform|tram|metro|airport|harbour|port|bridge|road|street|building|factory|industrial|vehicle|locomotive|estacao|comboio|ferrovia|plataforma|aeroporto|porto|ponte|estrada|rua|edificio|fabrica)\b/.test(searchableText);
@@ -1968,9 +1974,9 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const visualContexts=[...new Set([...tagContexts,...descriptionParts,...atinaSolutionImageVisualContexts(cleanAnswer)])].slice(0,14);
    // Primeiro, fontes ligadas a uma entidade identificada exatamente.
    // Isto evita que uma fotografia apenas parecida ultrapasse a imagem da entidade certa.
-   try{const semantic=await atinaWikidataSolutionImage(cleanAnswer,cleanCategory);item=semantic.item;}catch(e){item=null;}
+   try{const semantic=atinaSolutionImageText(cleanAnswer)==='regua'?{item:null}:await atinaWikidataSolutionImage(cleanAnswer,cleanCategory);item=semantic.item;}catch(e){item=null;}
    // Segunda opção: imagem da página exata da Wikipédia, validada pelo título.
-   if(!item){try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}}
+   if(!item&&atinaSolutionImageText(cleanAnswer)!=='regua'){try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}}
    // Só depois recorrer à pesquisa aberta, com licença e relevância verificadas.
    try{if(!item)item=await atinaOpenverseSolutionImage(cleanAnswer,cleanCategory,semanticAliases,visualContexts);}catch(e){item=null;}
    // Catálogo do Metropolitan Museum: objetos com imagem e direitos de domínio público,
