@@ -8,18 +8,26 @@ const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf
 const serverClient = await readFile(new URL('../atina-server-client.js', import.meta.url), 'utf8');
 
 const server = createServer((request, response) => {
-  if (request.url === '/' || request.url === '/index.html') {
+  // O index carrega o cliente com query string de versão
+  // (atina-server-client.js?v=...). Comparar apenas o pathname.
+  const pathname = new URL(request.url || '/', 'http://127.0.0.1').pathname;
+  if (pathname === '/' || pathname === '/index.html') {
     response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     response.end(indexHtml);
     return;
   }
-  if (request.url === '/atina-server-client.js') {
+  if (pathname === '/atina-server-client.js') {
     response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' });
     response.end(serverClient);
     return;
   }
+  if (pathname === '/favicon.ico') {
+    response.writeHead(204);
+    response.end();
+    return;
+  }
   response.writeHead(404);
-  response.end('Not found');
+  response.end('Not found: ' + pathname);
 });
 
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -27,6 +35,7 @@ const address = server.address();
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 const pageErrors = [];
+const consoleErrors = [];
 
 await page.addInitScript(() => {
   Object.defineProperty(navigator, 'clipboard', {
@@ -35,6 +44,7 @@ await page.addInitScript(() => {
   });
 });
 page.on('pageerror', error => pageErrors.push({ message: error.message, stack: error.stack }));
+page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 await page.route('https://commons.wikimedia.org/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{\"query\":{\"pages\":{}}}' }));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
   status: 200,
@@ -78,12 +88,29 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
 
 try {
   await page.goto(`http://127.0.0.1:${address.port}/`, { waitUntil: 'load' });
+  // The cloud profile lives on the profile page; navigate there before testing its controls.
+  await page.evaluate(() => showHomePage('profile'));
   await page.locator('#atinaCloudRegister').waitFor({ state: 'visible' });
   assert.equal(await page.title(), 'ATINA — Pensa. Descobre. Atina.');
 
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaCloudRegister').click();
-  await page.getByText('Pseudónimo guardado. A progressão está sincronizada.').waitFor();
+  await page.waitForFunction(() => {
+    const status = document.querySelector('#atinaCloudStatus')?.textContent || '';
+    return status === 'Pseudónimo guardado. A progressão está sincronizada.'
+      || (status && status !== 'A sincronizar pseudónimo…');
+  }, null, { timeout: 10000 }).catch(async () => {
+    const status = await page.locator('#atinaCloudStatus').textContent().catch(() => '(sem painel de estado)');
+    throw new Error('O registo não terminou. Estado: ' + status
+      + '\\nErros da página: ' + JSON.stringify(pageErrors)
+      + '\\nErros da consola: ' + JSON.stringify(consoleErrors));
+  });
+  const registerStatus = await page.locator('#atinaCloudStatus').textContent();
+  assert.equal(registerStatus, 'Pseudónimo guardado. A progressão está sincronizada.',
+    'Falha ao registar pseudónimo. Estado: ' + registerStatus
+    + '\\nChamadas RPC: ' + JSON.stringify(await page.evaluate(() => window.__mockRpcCalls))
+    + '\\nErros da página: ' + JSON.stringify(pageErrors)
+    + '\\nErros da consola: ' + JSON.stringify(consoleErrors));
   const deviceToken = await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1'));
   assert.match(deviceToken, /^[0-9a-f]{64}$/);
   await page.locator('#atinaCloudCopyRecovery').click();
@@ -93,6 +120,9 @@ try {
   // Losing localStorage must not silently create a different cloud identity.
   await page.evaluate(() => localStorage.removeItem('atinaProgressDeviceTokenV1'));
   await page.reload({ waitUntil: 'load' });
+  // Reload returns to the home screen; reveal the profile before checking its status.
+  await page.evaluate(() => showHomePage('profile'));
+  await page.locator('#atinaCloudStatus').waitFor({ state: 'visible' });
   await page.getByText(/A chave deste pseudónimo não está neste dispositivo/).waitFor();
   assert.equal(await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1')), null);
   await page.locator('#atinaCloudRecoveryCode').fill(deviceToken);
@@ -154,9 +184,8 @@ try {
   assert.equal(claims[0].args.p_position, 1);
   assert.equal(claims[0].args.p_session_token, 'a'.repeat(64));
 
-  await page.locator('button[data-home-target="online"]').click();
-  await page.locator('#openRanking').click();
-  await page.locator('#rankingPage').waitFor({ state: 'visible' });
+  await page.locator('button.home-nav-btn[data-home-target="ranking"]').click();
+  await page.locator('[data-home-page="ranking"]').waitFor({ state: 'visible' });
   await page.locator('#atinaCloudLeaderboardRefresh').click();
   await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
 
