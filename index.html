@@ -1262,9 +1262,9 @@ function atinaBuildSolutionVisualDescription(game){
  const categoryContext=atinaSolutionImageCategoryContext(category);
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','que','sou','estou','quem','onde','the','of','and','in','on','is','was','were','with','from','this','that']);
  const meaningful=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
- const generic=/^(?:é|e|foi|era|tem|tinha|ficou|ficou conhecido|nasceu|morreu|também|conhecido por|famoso por|uma pessoa|um objeto|uma coisa|algo|parte de|relacionado com)\\b/i;
+ const generic=/^(?:é|e|foi|era|tem|tinha|ficou|ficou conhecido|nasceu|morreu|também|conhecido por|famoso por|uma pessoa|um objeto|uma coisa|algo|parte de|relacionado com)\b/i;
  const distinctive=[...new Set([...tags,...clues].filter(value=>!generic.test(value)))].sort((a,b)=>{
-  const score=value=>meaningful(value).length+(/\\b(?:capital|inventou|inventor|escritor|pintor|ator|atriz|compositor|animal|mamifero|ave|instrumento|monumento|rio|montanha|pais|cidade|planeta|elemento|especie|molecula|formula|nobel|olimpicos|pirâmides|piramides)\\b/i.test(value)?3:0);
+  const score=value=>meaningful(value).length+(/\b(?:capital|inventou|inventor|escritor|pintor|ator|atriz|compositor|animal|mamifero|ave|instrumento|monumento|rio|montanha|pais|cidade|planeta|elemento|especie|molecula|formula|nobel|olimpicos|pirâmides|piramides)\b/i.test(value)?3:0);
   return score(b)-score(a);
  }).slice(0,5);
  const subjectRules=[
@@ -1617,8 +1617,8 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const searchableText=title+' '+description;
  // Em desafios de Detetive, um nome próprio curto não pode validar uma fotografia de um lugar ou objeto homónimo (ex.: estação Lara). Exigir indícios de pessoa/personagem e rejeitar explicitamente infraestruturas.
  if(isDetectiveCategory&&isSingleName){
-  const nonPersonSubject=/\\b(station|railway|train|railroad|platform|tram|metro|airport|harbour|port|bridge|road|street|building|factory|industrial|vehicle|locomotive|estacao|comboio|ferrovia|plataforma|aeroporto|porto|ponte|estrada|rua|edificio|fabrica)\\b/.test(searchableText);
-  const personEvidence=/\\b(person|people|woman|women|girl|man|men|portrait|face|actor|actress|character|fictional|detective|investigator|author|writer|singer|athlete|pessoa|mulher|rapariga|homem|retrato|rosto|personagem|atriz|ator)\\b/.test(searchableText);
+  const nonPersonSubject=/\b(station|railway|train|railroad|platform|tram|metro|airport|harbour|port|bridge|road|street|building|factory|industrial|vehicle|locomotive|estacao|comboio|ferrovia|plataforma|aeroporto|porto|ponte|estrada|rua|edificio|fabrica)\b/.test(searchableText);
+  const personEvidence=/\b(person|people|woman|women|girl|man|men|portrait|face|actor|actress|character|fictional|detective|investigator|author|writer|singer|athlete|pessoa|mulher|rapariga|homem|retrato|rosto|personagem|atriz|ator)\b/.test(searchableText);
   if(nonPersonSubject||!personEvidence)return null;
  }
  // «Tangram» exige evidência visual específica; uma menção incidental nos metadados não basta.
