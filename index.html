@@ -1538,10 +1538,13 @@ async function atinaSolutionImageAliases(answer){
  const knownScienceNames={
   'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock']
  };
+ const knownHistoricalNames={
+  'batalha das termopilas':['Battle of Thermopylae','Battle of Thermopylae (480 BC)','Thermopylae']
+ };
  const normalizedAnswer=atinaSolutionImageText(raw);
- const knownTerms=[...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])];
+ const knownTerms=[...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[]),...(knownHistoricalNames[normalizedAnswer]||[])];
  for(const known of knownTerms)variants.push(known);
- for(const known of [...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])])aliases.add(known);
+ for(const known of [...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[]),...(knownHistoricalNames[normalizedAnswer]||[])])aliases.add(known);
  // Many film/book titles include a subtitle after a dash or colon.
  // Search the principal title too, but only accept an exact Wikidata label.
  const principal=raw.split(/\\s+[–—-]\\s+|:/)[0].trim();
