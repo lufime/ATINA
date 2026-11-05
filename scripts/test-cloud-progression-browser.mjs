@@ -184,9 +184,8 @@ try {
   assert.equal(claims[0].args.p_position, 1);
   assert.equal(claims[0].args.p_session_token, 'a'.repeat(64));
 
-  await page.locator('button.home-nav-btn[data-home-target="online"]').click();
-  await page.locator('#openRanking').click();
-  await page.locator('#rankingPage').waitFor({ state: 'visible' });
+  await page.locator('button.home-nav-btn[data-home-target="ranking"]').click();
+  await page.locator('[data-home-page="ranking"]').waitFor({ state: 'visible' });
   await page.locator('#atinaCloudLeaderboardRefresh').click();
   await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
 
