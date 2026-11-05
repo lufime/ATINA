@@ -1204,14 +1204,19 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  if(!name){status.textContent='Escreve um pseudónimo antes de guardar.';return;}
  if(!Number.isInteger(points)||points<0){status.textContent='Pontuação inválida.';return;}
  if(!supabaseClient){status.textContent='Não foi possível ligar ao ranking.';return;}
- if(button)button.disabled=true;status.textContent='A guardar pontuação…';
+ const submissionKey=[atinaRunId||'run-indisponivel',gameMode,norm(name)].join(':');
+ if(button?.dataset.saving==='1')return;
+ if(button){button.dataset.saving='1';button.disabled=true;}
+ status.textContent='A guardar pontuação…';
  try{
-  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode});
-  if(error)throw error;
-  status.textContent='Pontuação guardada no ranking de pontos!';
+  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey});
+  if(error&&error.code==='23505'){
+   status.textContent='Esta pontuação desta partida já foi registada.';
+  }else if(error)throw error;
+  else status.textContent='Pontuação guardada no ranking de pontos!';
   await loadOnlineRanking();
  }catch(e){status.textContent='Não foi possível guardar a pontuação. Tenta novamente.';}
- finally{if(button)button.disabled=false;}
+ finally{if(button){button.dataset.saving='0';button.disabled=false;}}
 }
 async function loadOnlineRanking(){
  const list=$('rankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';const m=$('rankingMode')?.value||'solo';
