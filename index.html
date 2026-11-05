@@ -1604,6 +1604,8 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is']);
  const aliases={'tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'o tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
  const normalized=atinaSolutionImageText(answer);
+ const isDetectiveCategory=/detetive|detective|investigacao|investigation/.test(atinaSolutionImageText(category));
+ const isSingleName=/^[a-z]+$/.test(normalized);
  const conciseAliases=(Array.isArray(extraAliases)?extraAliases:[]).map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&atinaSolutionImageText(value).split(/\s+/).filter(token=>token.length>2&&!stop.has(token)).length<=5).map(atinaSolutionImageText);
  const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...conciseAliases])];
  const answerTokenSets=answerTerms.map(term=>atinaSolutionImageText(term).split(/\s+/).filter(token=>token.length>1&&!stop.has(token)));
@@ -1613,6 +1615,12 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const title=atinaSolutionImageText(item.title);
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const searchableText=title+' '+description;
+ // Em desafios de Detetive, um nome próprio curto não pode validar uma fotografia de um lugar ou objeto homónimo (ex.: estação Lara). Exigir indícios de pessoa/personagem e rejeitar explicitamente infraestruturas.
+ if(isDetectiveCategory&&isSingleName){
+  const nonPersonSubject=/\\b(station|railway|train|railroad|platform|tram|metro|airport|harbour|port|bridge|road|street|building|factory|industrial|vehicle|locomotive|estacao|comboio|ferrovia|plataforma|aeroporto|porto|ponte|estrada|rua|edificio|fabrica)\\b/.test(searchableText);
+  const personEvidence=/\\b(person|people|woman|women|girl|man|men|portrait|face|actor|actress|character|fictional|detective|investigator|author|writer|singer|athlete|pessoa|mulher|rapariga|homem|retrato|rosto|personagem|atriz|ator)\\b/.test(searchableText);
+  if(nonPersonSubject||!personEvidence)return null;
+ }
  // «Tangram» exige evidência visual específica; uma menção incidental nos metadados não basta.
  if(normalized==='tangram'||normalized==='o tangram'){
   const visualEvidence=/\b(tangram|dissection puzzle|geometric puzzle|seven tans|seven piece puzzle|seven pieces|puzzle pieces|silhouette puzzle|chinese puzzle)\b/.test(searchableText);
@@ -1802,6 +1810,7 @@ function atinaSolutionImageCategoryContext(category){
   [/arte|pintura|escultura/,'art artwork painting sculpture artist museum'],
   [/culinaria|comida|alimento/,'food cuisine dish ingredient cooking'],
   [/tecnologia|inventor|invencao/,'technology invention machine device engineering'],
+  [/detetive|detective|investigacao|investigation/,'detective investigator sleuth mystery crime investigation person portrait fictional character suspect evidence'],
   [/mimicas/,'object animal profession activity famous person']
  ];
  const match=rules.find(([pattern])=>pattern.test(value));
