@@ -1563,7 +1563,7 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  // Em «Onde estou?», exigir sempre evidência de uma vista urbana identificável.
  // Uma menção à cidade em fotos de transportes não é evidência visual suficiente.
  if(categoryText==='onde estou'){
-  const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|historic center|old town|city centre|city center|cityscape|skyline|panorama|panoramic|aerial view|town hall|square|plaza|architecture|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|panoramica|vista aerea|praca|arquitetura|fachada|bairro historico|ruas antigas)\b/.test(searchableText);
+  const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|historic center|old town|city centre|city center|cityscape|skyline|town hall|square|plaza|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|praca|fachada|bairro historico|ruas antigas)\b/.test(searchableText);
   if(!cityEvidence)return null;
  }
  const categoryAliases={'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],'musica e sons':['music','musical','instrument','instruments','sound']};
@@ -1742,7 +1742,7 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
     // Exigir confirmação temática também na pesquisa aberta, em qualquer categoria.
     if(categoryTokens.length&&categoryCoverage===0)continue;
     if(atinaSolutionImageText(category)==='onde estou'){
-     const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|historic center|old town|city centre|city center|cityscape|skyline|panorama|panoramic|aerial view|town hall|square|plaza|architecture|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|panoramica|vista aerea|praca|arquitetura|fachada|bairro historico|ruas antigas)\b/.test(searchable);
+     const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|historic center|old town|city centre|city center|cityscape|skyline|town hall|square|plaza|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|praca|fachada|bairro historico|ruas antigas)\b/.test(searchable);
      if(!cityEvidence)continue;
     }
     const queryTokens=clean(query);
