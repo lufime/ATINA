@@ -8,18 +8,26 @@ const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf
 const serverClient = await readFile(new URL('../atina-server-client.js', import.meta.url), 'utf8');
 
 const server = createServer((request, response) => {
-  if (request.url === '/' || request.url === '/index.html') {
+  // O index carrega o cliente com query string de versão
+  // (atina-server-client.js?v=...). Comparar apenas o pathname.
+  const pathname = new URL(request.url || '/', 'http://127.0.0.1').pathname;
+  if (pathname === '/' || pathname === '/index.html') {
     response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     response.end(indexHtml);
     return;
   }
-  if (request.url === '/atina-server-client.js') {
+  if (pathname === '/atina-server-client.js') {
     response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' });
     response.end(serverClient);
     return;
   }
+  if (pathname === '/favicon.ico') {
+    response.writeHead(204);
+    response.end();
+    return;
+  }
   response.writeHead(404);
-  response.end('Not found');
+  response.end('Not found: ' + pathname);
 });
 
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
