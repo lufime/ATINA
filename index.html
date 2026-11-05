@@ -1551,9 +1551,17 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const categoryTokens=genericCategories.has(categoryText)?[]:categoryText.split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
  const title=atinaSolutionImageText(item.title);
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
- const words=new Set((title+' '+description).split(/\s+/));
+ const searchableText=title+' '+description;
+ const words=new Set(searchableText.split(/\s+/));
  const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
+ // For city-location challenges, a city name in a caption alone is insufficient.
+ // Reject transport photos unless the metadata also identifies a recognizable city view.
+ if(categoryText==='onde estou'){
+  const transportOnly=/\b(train|railway|railroad|locomotive|freight|passenger train|tram|subway|metro|bus|aircraft|airplane|airport|ship|boat|ferry|highway|motorway|carriage|wagon|comboio|ferrovia|locomotiva|autocarro|aviao|aeroporto|navio|barco)\b/.test(searchableText);
+  const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|old town|city centre|cityscape|skyline|panorama|panoramic|aerial view|town hall|square|plaza|architecture|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|panoramica|vista aerea|praca|arquitetura)\b/.test(searchableText);
+  if(transportOnly&&!cityEvidence)return null;
+ }
  const categoryAliases={'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],'musica e sons':['music','musical','instrument','instruments','sound']};
  const categoryTerms=categoryAliases[categoryText]||categoryTokens;
  const categoryCoverage=categoryTerms.length?categoryTerms.filter(token=>words.has(token)).length/categoryTerms.length:0;
