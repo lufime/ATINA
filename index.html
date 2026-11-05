@@ -1624,7 +1624,7 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const searchableText=title+' '+description;
  // «Régua» pode ser o topónimo português; neste desafio procuramos o instrumento de medição, nunca uma paisagem urbana.
  if(normalized==='regua'||normalized==='regua de medir'){
-  if(/\\b(bridge|river|railway|station|town|city|village|landscape|portugal|douro|ponte|rio|estacao|cidade|vila|paisagem|municipality|municipio)\\b/.test(searchableText))return null;
+  if(/\b(bridge|river|railway|station|town|city|village|landscape|portugal|douro|ponte|rio|estacao|cidade|vila|paisagem|municipality|municipio)\b/.test(searchableText))return null;
  }
  // Em desafios de Detetive, um nome próprio curto não pode validar uma fotografia de um lugar ou objeto homónimo (ex.: estação Lara). Exigir indícios de pessoa/personagem e rejeitar explicitamente infraestruturas.
  if(isDetectiveCategory&&isSingleName){
