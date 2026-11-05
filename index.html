@@ -1539,7 +1539,9 @@ async function atinaSolutionImageAliases(answer){
   'abelha melifera':['honey bee','honeybee','Apis mellifera','western honey bee']
  };
  const knownScienceNames={
-  'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock']
+  'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock'],
+  'regua':['ruler','measuring ruler','straightedge','measuring scale'],
+  'regua de medir':['ruler','measuring ruler','measuring scale','straightedge']
  };
  const knownMythologicalNames={
   'o fio de ariadne':['Ariadne thread','Thread of Ariadne','Ariadnes thread','Ariadne Greek mythology','Ariadne Theseus labyrinth golden thread'],
@@ -1607,7 +1609,7 @@ function atinaSolutionImageVisualContexts(answer){
 }
 function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is']);
- const aliases={'tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'o tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
+ const aliases={'regua':['ruler','measuring ruler','straightedge','measuring scale'],'regua de medir':['ruler','measuring ruler','measuring scale','straightedge'],'tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'o tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
  const normalized=atinaSolutionImageText(answer);
  const isDetectiveCategory=/detetive|detective|investigacao|investigation/.test(atinaSolutionImageText(category));
  const isSingleName=/^[a-z]+$/.test(normalized);
