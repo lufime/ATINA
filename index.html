@@ -1810,16 +1810,17 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    }
    // Se Wikidata/Art Institute não fornecerem imagem segura, tentar Commons.
    if(!item){
-    const conciseClues=tagContexts.filter(value=>value.length<=90);
-    const visualTerms=atinaSolutionImageVisualContexts(cleanAnswer).filter(value=>value.length<=90);
-    const searchTerms=[...new Set([...semanticAliases,...conciseClues,...visualTerms])];
-    const queries=[...searchTerms,cleanAnswer].filter((q,i,a)=>q&&a.indexOf(q)===i).slice(0,10);
+    // Pesquisar apenas a resposta e os seus aliases semânticos.
+    // As pistas podem melhorar a pesquisa aberta, mas nunca devem gerar
+    // pesquisas autónomas que devolvam imagens de objetos apenas relacionados.
+    const searchTerms=[...new Set(semanticAliases.map(value=>String(value||'').trim()).filter(Boolean))];
+    const queries=[...searchTerms,cleanAnswer].filter((q,i,a)=>q&&a.indexOf(q)===i).slice(0,8);
     for(const query of queries){
      const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|mime|size|extmetadata&iiurlwidth=1000&format=json&origin=*';
      const response=await fetch(url,{headers:{Accept:'application/json'}});
      if(!response.ok)throw new Error('Pesquisa indisponível');
      const data=await response.json();
-     const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(atinaSolutionImageUsable).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate,[...semanticAliases,...visualContexts])})).filter(result=>result.match);
+     const candidates=Object.values(data.query?.pages||{}).map(page=>({title:page.title,...(page.imageinfo?.[0]||{})})).filter(atinaSolutionImageUsable).map(candidate=>({candidate,match:atinaSolutionImageMatch(cleanAnswer,cleanCategory,candidate,semanticAliases)})).filter(result=>result.match);
      candidates.sort((a,b)=>b.match.answerCoverage-a.match.answerCoverage||b.match.categoryCoverage-a.match.categoryCoverage);
      if(candidates.length){item=candidates[0].candidate;break;}
     }
