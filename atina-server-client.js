@@ -276,6 +276,48 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
   target.querySelector('[data-solution-wikipedia]')?.remove();
 }
 
+const atinaImageCreditCache = new Map();
+async function atinaRenderChallengeImageCredit(challengeId) {
+  const target = $('challengeImageCredit');
+  if (!target) return;
+  const id = Number(challengeId);
+  if (!Number.isInteger(id) || id <= 0) { target.classList.add('hidden'); return; }
+  target.dataset.challengeId = String(id);
+  target.classList.remove('hidden');
+  target.textContent = 'A carregar créditos da imagem…';
+  try {
+    let credit = atinaImageCreditCache.get(id);
+    if (credit === undefined) {
+      const { data, error } = await supabaseClient.rpc('atina_image_credit', { p_challenge_id: id });
+      if (error) throw error;
+      credit = data || null;
+      atinaImageCreditCache.set(id, credit);
+    }
+    if (target.dataset.challengeId !== String(id)) return;
+    target.replaceChildren();
+    if (!credit) { target.classList.add('hidden'); return; }
+    const attribution = String(credit.attribution || '').trim();
+    const author = String(credit.author || '').trim();
+    target.textContent = attribution || (author ? 'Fotografia: ' + author : '');
+    const links = [];
+    if (credit.source_url) links.push(['Ver imagem original', credit.source_url]);
+    if (credit.license_url) links.push(['Licença ' + String(credit.license || '').trim(), credit.license_url]);
+    for (const [label, url] of links) {
+      if (!/^https:\/\//i.test(url)) continue;
+      const link = document.createElement('a');
+      link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      link.textContent = label;
+      link.style.marginLeft = '8px';
+      target.append(link);
+    }
+    target.classList.toggle('hidden', !target.textContent.trim() && !links.length);
+  } catch (error) {
+    if (target.dataset.challengeId === String(id)) {
+      target.textContent = 'Não foi possível carregar os créditos desta imagem.';
+    }
+  }
+}
+
 function atinaServerApplyState(state, announce = false) {
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
   const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
@@ -293,6 +335,7 @@ function atinaServerApplyState(state, announce = false) {
   answeredCount = Number(state.answered_count || 0);
   difficultyMode = state.difficulty || difficultyMode;
   const challenge = state.challenge;
+  atinaRenderChallengeImageCredit(challenge.id);
   const total = Number(challenge.total_clues || (challenge.image_url ? 6 : 5));
   $('category').textContent = (challenge.emoji || '') + ' ' + (challenge.category || 'Desafio');
   $('level').textContent = 'DESAFIO ' + (pos + 1) + ' / ' + queue.length + ' · ' + difficultyLabel(difficultyMode);
@@ -666,6 +709,7 @@ networkRenderGameState = function() {
   const remaining = deadline ? Math.max(0, Math.ceil((deadline - Date.now()) / 1000)) : 0;
   $('timerDisplay').textContent = deadline ? String(Math.floor(remaining / 60)).padStart(2, '0') + ':' + String(remaining % 60).padStart(2, '0') : 'Sem limite';
   $('visualWrap').classList.toggle('hidden', !st.image_url);
+  atinaRenderChallengeImageCredit(st.challenge_id);
   if (st.image_url) {
     $('mysteryImage').src = st.image_url;
     $('mysteryImage').style.setProperty('--blur', st.locked ? '0px' : Math.max(0, 24 - Number(st.revealed || 1) * 4) + 'px');
