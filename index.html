@@ -1791,13 +1791,23 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   frame.append(image);
   const provenance=document.createElement('p');provenance.className='muted small';provenance.style.cssText='margin:8px 0 0;line-height:1.5;overflow-wrap:anywhere';
   const sourceName=item.sourceName||'Wikimedia Commons';
-  const sourceUrl=item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_')));
-  const author=item.author||item.extmetadata?.Artist?.value?.replace(/<[^>]*>/g,'').trim()||'Autor não identificado';
-  const license=item.license||atinaSolutionImageLicense(item)||'Domínio Público / CC0';
-  const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
-  provenance.textContent='Autor: '+author+' · Fonte: '+sourceName+' · Licença: '+license+' · ';
-  const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Ver imagem original';
-  sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Abrir imagem original';
+  let sourceUrl=item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_')));
+  let author=item.author||item.extmetadata?.Artist?.value?.replace(/<[^>]*>/g,'').trim()||'Autor não identificado';
+  let license=item.license||atinaSolutionImageLicense(item)||'Domínio Público / CC0';
+  let licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
+  let requiredAttribution='';
+  const imageUrl=String(preGeneratedUrl||'');
+  if(imageUrl.includes('Plains_Zebra%2C_SA.JPG')){
+   sourceUrl='https://commons.wikimedia.org/wiki/File:Plains_Zebra,_SA.JPG';
+   author='Melissa Petford';license='CC BY-SA 4.0';licenseUrl='https://creativecommons.org/licenses/by-sa/4.0/';
+   requiredAttribution='Photo: Melissa Petford / CC BY-SA 4.0';
+  }else if(imageUrl.includes('African_bush_elephant_')){
+   sourceUrl='https://commons.wikimedia.org/wiki/File:African_bush_elephant_(Loxodonta_africana),_Lisbon_Zoo,_Portugal_julesvernex2.jpg';
+   author='Jules Verne Times Two';license='CC BY-SA 4.0';licenseUrl='https://creativecommons.org/licenses/by-sa/4.0/';
+   requiredAttribution='Photo: Jules Verne Times Two / julesvernex2.com / CC BY-SA 4.0';
+  }
+  provenance.textContent=(requiredAttribution?requiredAttribution+' · ':'')+'Autor: '+author+' · Fonte: '+sourceName+' · Licença: '+license+' · ';
+  const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Abrir imagem original';
   provenance.append(sourceLink);
   if(licenseUrl&&/^https:\/\//i.test(licenseUrl)){
    const licenseLink=document.createElement('a');licenseLink.href=licenseUrl;licenseLink.target='_blank';licenseLink.rel='noopener noreferrer';licenseLink.textContent='Consultar licença';
