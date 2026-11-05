@@ -27,6 +27,7 @@ const address = server.address();
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 const pageErrors = [];
+const consoleErrors = [];
 
 await page.addInitScript(() => {
   Object.defineProperty(navigator, 'clipboard', {
@@ -35,6 +36,7 @@ await page.addInitScript(() => {
   });
 });
 page.on('pageerror', error => pageErrors.push({ message: error.message, stack: error.stack }));
+page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 await page.route('https://commons.wikimedia.org/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{\"query\":{\"pages\":{}}}' }));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
   status: 200,
@@ -85,7 +87,22 @@ try {
 
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaCloudRegister').click();
-  await page.getByText('Pseudónimo guardado. A progressão está sincronizada.').waitFor();
+  await page.waitForFunction(() => {
+    const status = document.querySelector('#atinaCloudStatus')?.textContent || '';
+    return status === 'Pseudónimo guardado. A progressão está sincronizada.'
+      || (status && status !== 'A sincronizar pseudónimo…');
+  }, null, { timeout: 10000 }).catch(async () => {
+    const status = await page.locator('#atinaCloudStatus').textContent().catch(() => '(sem painel de estado)');
+    throw new Error('O registo não terminou. Estado: ' + status
+      + '\\nErros da página: ' + JSON.stringify(pageErrors)
+      + '\\nErros da consola: ' + JSON.stringify(consoleErrors));
+  });
+  const registerStatus = await page.locator('#atinaCloudStatus').textContent();
+  assert.equal(registerStatus, 'Pseudónimo guardado. A progressão está sincronizada.',
+    'Falha ao registar pseudónimo. Estado: ' + registerStatus
+    + '\\nChamadas RPC: ' + JSON.stringify(await page.evaluate(() => window.__mockRpcCalls))
+    + '\\nErros da página: ' + JSON.stringify(pageErrors)
+    + '\\nErros da consola: ' + JSON.stringify(consoleErrors));
   const deviceToken = await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1'));
   assert.match(deviceToken, /^[0-9a-f]{64}$/);
   await page.locator('#atinaCloudCopyRecovery').click();
