@@ -1484,6 +1484,9 @@ async function atinaSolutionImageAliases(answer){
  const aliases=new Set([String(answer||'').trim()]);
  const raw=String(answer||'').trim();
  const variants=[raw];
+ if(['tangram','o tangram'].includes(atinaSolutionImageText(raw))){
+  for(const term of ['tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces','quebra-cabecas geometrico de sete pecas']){aliases.add(term);variants.push(term);}
+ }
  const knownFilmTitles={
   'e.t. o extraterrestre':['E.T. the Extra-Terrestrial','ET the Extra-Terrestrial','E.T. (1982 film)'],
   'alien o oitavo passageiro':['Alien (1979 film)','Alien (film)']
@@ -1556,7 +1559,7 @@ function atinaSolutionImageVisualContexts(answer){
 }
 function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is']);
- const aliases={'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
+ const aliases={'tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'o tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
  const normalized=atinaSolutionImageText(answer);
  const conciseAliases=(Array.isArray(extraAliases)?extraAliases:[]).map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&atinaSolutionImageText(value).split(/\s+/).filter(token=>token.length>2&&!stop.has(token)).length<=5).map(atinaSolutionImageText);
  const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...conciseAliases])];
@@ -1567,6 +1570,12 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const title=atinaSolutionImageText(item.title);
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const searchableText=title+' '+description;
+ // «Tangram» exige evidência visual específica; uma menção incidental nos metadados não basta.
+ if(normalized==='tangram'||normalized==='o tangram'){
+  const visualEvidence=/\b(tangram|dissection puzzle|geometric puzzle|seven tans|seven piece puzzle|seven pieces|puzzle pieces|silhouette puzzle|chinese puzzle)\b/.test(searchableText);
+  const unrelatedSubject=/\b(dj|disc jockey|nightclub|concert|keyboardist|musician|music performance|stage lighting)\b/.test(title);
+  if(!visualEvidence||unrelatedSubject)return null;
+ }
  const words=new Set(searchableText.split(/\s+/));
  const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
