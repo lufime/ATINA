@@ -1538,8 +1538,13 @@ async function atinaSolutionImageAliases(answer){
  const knownScienceNames={
   'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock']
  };
+ const knownHistoricalNames={
+  'batalha das termopilas':['Battle of Thermopylae','Thermopylae battle','Battle of Thermopylae Spartans and Persians','Leonidas at Thermopylae'],
+  'batalha de termopilas':['Battle of Thermopylae','Thermopylae battle','Battle of Thermopylae Spartans and Persians','Leonidas at Thermopylae'],
+  'termopilas':['Thermopylae','Battle of Thermopylae','Thermopylae battle']
+ };
  const normalizedAnswer=atinaSolutionImageText(raw);
- const knownTerms=[...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])];
+ const knownTerms=[...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[]),...(knownHistoricalNames[normalizedAnswer]||[])];
  for(const known of knownTerms)variants.push(known);
  for(const known of [...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])])aliases.add(known);
  // Many film/book titles include a subtitle after a dash or colon.
@@ -1617,6 +1622,8 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  // Aplicar validação temática em todas as categorias: a resposta exata não
  // basta se os metadados não confirmarem também o tipo de assunto procurado.
  const categoryContext=atinaSolutionImageCategoryContext(category);
+ // Em desafios históricos, títulos como «Battle of Thermopylae» são evidência
+ // suficiente mesmo sem conter literalmente «history» ou «historical».
  const categoryEvidenceTokens=atinaSolutionImageText(categoryContext).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
  if(categoryEvidenceTokens.length&&!categoryEvidenceTokens.some(token=>words.has(token)))return null;
  // Em «Onde estou?», exigir sempre evidência de uma vista urbana identificável.
@@ -1788,7 +1795,7 @@ function atinaSolutionImageCategoryContext(category){
   [/musica|sons|instrument/,'music musical instrument musician orchestra concert'],
   [/desporto|esporte|sport|atleta/,'sport sports athlete competition match equipment'],
   [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology geology geological earth science volcano volcanic magma lava rock mineral mineralogy mammal mammalia carnivore canid canine vulpes species fauna vertebrate bird reptile fish insect animalia'],
-  [/historia|misterio|historico/,'history historical person event artifact ancient'],
+  [/historia|misterio|historico/,'history historical person event artifact ancient battle war battlefield warfare military soldier army armies ancient greek spartan persian leonidas thermopylae'],
   [/arte|pintura|escultura/,'art artwork painting sculpture artist museum'],
   [/culinaria|comida|alimento/,'food cuisine dish ingredient cooking'],
   [/tecnologia|inventor|invencao/,'technology invention machine device engineering'],
