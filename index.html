@@ -1254,18 +1254,53 @@ function atinaBuildSolutionVisualDescription(game){
  if(!game)return '';
  const answer=String(game[3]||'').trim();
  const category=String(game[0]||'').trim();
- const strip=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\s+/g,' ').trim();
- const clues=Array.isArray(game[2])?game[2].map(strip).filter(value=>value.length>=3&&value.length<=110):[];
- const tags=Array.isArray(game[4])?game[4].map(strip).filter(value=>value.length>=3&&value.length<=90):[];
+ const strip=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\\s+/g,' ').trim();
+ const clues=Array.isArray(game[2])?game[2].map(strip).filter(value=>value.length>=3&&value.length<=150):[];
+ const tags=Array.isArray(game[4])?game[4].map(strip).filter(value=>value.length>=3&&value.length<=100):[];
+ const normalizedAnswer=atinaSolutionImageText(answer);
+ const normalizedCategory=atinaSolutionImageText(category);
  const categoryContext=atinaSolutionImageCategoryContext(category);
- const all=[...new Set([...tags,...clues])];
- const generic=/^(?:é|e|foi|era|tem|tinha|ficou|ficou conhecido|nasceu|morreu|também|conhecido por|famoso por|uma pessoa|um objeto|uma coisa|algo|parte de|relacionado com)\b/i;
- const distinguishing=all.filter(value=>!generic.test(value)).sort((a,b)=>{
-  const specificity=v=>Math.min(5,v.split(/\s+/).length)+(/\b(?:capital|inventou|inventor|escritor|pintor|ator|atriz|compositor|animal|mamifero|ave|instrumento|monumento|rio|montanha|pais|cidade|planeta|elemento|especie)\b/i.test(v)?3:0);
-  return specificity(b)-specificity(a);
- }).slice(0,6);
- const subjectType=categoryContext||'identify the exact named subject; do not substitute related objects, people or places';
- return ['EXACT ANSWER: '+answer,'IDENTIFY AS: '+subjectType,'CATEGORY: '+category,'VISUAL EVIDENCE: '+distinguishing.join('; '),'SEARCH RULE: image must depict the exact answer, not merely a related clue'].filter(Boolean).join('. ').slice(0,520);
+ const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','que','sou','estou','quem','onde','the','of','and','in','on','is','was','were','with','from','this','that']);
+ const meaningful=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
+ const generic=/^(?:é|e|foi|era|tem|tinha|ficou|ficou conhecido|nasceu|morreu|também|conhecido por|famoso por|uma pessoa|um objeto|uma coisa|algo|parte de|relacionado com)\\b/i;
+ const distinctive=[...new Set([...tags,...clues].filter(value=>!generic.test(value)))].sort((a,b)=>{
+  const score=value=>meaningful(value).length+(/\\b(?:capital|inventou|inventor|escritor|pintor|ator|atriz|compositor|animal|mamifero|ave|instrumento|monumento|rio|montanha|pais|cidade|planeta|elemento|especie|molecula|formula|nobel|olimpicos|pirâmides|piramides)\\b/i.test(value)?3:0);
+  return score(b)-score(a);
+ }).slice(0,5);
+ const subjectRules=[
+  [/quem sou eu|pessoa|biografia/,'photographic portrait of the exact named person, recognizable face, historically accurate appearance'],
+  [/onde estou|geografia|cidade|capital|localizacao|monumento|lugar/,'recognizable real-world place, wide establishing photograph showing its defining landmark, architecture and surroundings'],
+  [/ciencia|natureza|animal|fauna|flora|ambiente/,'realistic documentary photograph of the exact scientific or natural subject in its authentic environment'],
+  [/historia|misterio|historico/,'historically accurate photograph or museum-quality depiction of the exact historical subject, artifact or event'],
+  [/musica|sons|instrument/,'clear photograph of the exact musical instrument or musician, with the instrument visibly identifiable'],
+  [/cinema|televisao|filme|series/,'official or documentary-style image of the exact film, production or subject; avoid unrelated actors and fan art'],
+  [/desporto|esporte|sport|atleta/,'photograph of the exact sport, athlete or equipment in its real sporting context'],
+  [/arte|pintura|escultura/,'photograph of the exact artwork or artist, showing the identifiable work rather than a generic art scene'],
+  [/culinaria|comida|alimento/,'close-up documentary food photograph of the exact dish or ingredient'],
+  [/tecnologia|inventor|invencao/,'clear product or documentary photograph of the exact invention, device or technology'],
+  [/logica|numeros|ilusoes|palavras|desafio surpresa/,'clean explanatory photograph or diagram of the exact answer, with no unrelated objects']
+ ];
+ const matchedRule=subjectRules.find(([pattern])=>pattern.test(normalizedCategory));
+ let visualType=matchedRule?.[1]||categoryContext||'clear documentary photograph of the exact named answer, not a loosely related concept';
+ const answerVisuals={
+  'magma':'molten silicate rock beneath the Earth surface, glowing orange-red, geological cross-section or magma chamber; not lava fountains or unrelated fire',
+  'tangram':'seven flat geometric puzzle pieces arranged into a recognizable silhouette, seven tans, Chinese dissection puzzle',
+  'agua':'clear liquid water in a glass, river, lake or ocean; show water itself rather than chemical diagrams',
+  'paz':'white dove, olive branch or a recognizable peaceful scene',
+  'chave':'single metal door key with a toothed blade, close-up on a plain background',
+  'lisboa':'panoramic Lisbon cityscape with historic buildings and the Tagus river',
+  'torre eiffel':'full view of the Eiffel Tower in Paris, iron lattice structure clearly visible'
+ };
+ const visualEvidence=answerVisuals[normalizedAnswer]||'';
+ const clueEvidence=distinctive.join('; ');
+ return [
+  'EXACT ANSWER: '+answer,
+  'SUBJECT TYPE: '+visualType,
+  visualEvidence?'VISUAL DESCRIPTION: '+visualEvidence:'',
+  'CATEGORY: '+category,
+  clueEvidence?'DISTINGUISHING EVIDENCE: '+clueEvidence:'',
+  'SEARCH RULE: show the exact answer itself; clues may refine the scene but must never replace the answer with a related object, person or place'
+ ].filter(Boolean).join('. ').slice(0,700);
 }
 async function next(){if(raceFinished)return;const previousIndex=queue[pos];pos++;if(pos>=queue.length){queue=shuffle(queue);pos=0;}const nextIndex=queue[pos];const nextGame=games[nextIndex];if(nextGame){const visualDescription=atinaBuildSolutionVisualDescription(nextGame);atinaPrepareSolutionImage(nextGame[3],nextGame[0],nextGame[4]||[],visualDescription);}const sameCategory=games[previousIndex]?.[0]===games[nextIndex]?.[0];if(mode==='duel'||mode==='party')player=1-player;else player=0;if(sameCategory)await challengePause(difficultyLabel(classifyChallenge(nextIndex)),games[nextIndex]?.[1]||'');else await challengePause();await mixDraw();load();saveLocalProgress();}
 async function activateLandscapePresentation(){if(!document.fullscreenElement)await document.documentElement.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock('landscape');}
@@ -1484,6 +1519,9 @@ async function atinaSolutionImageAliases(answer){
  const aliases=new Set([String(answer||'').trim()]);
  const raw=String(answer||'').trim();
  const variants=[raw];
+ if(['tangram','o tangram'].includes(atinaSolutionImageText(raw))){
+  for(const term of ['tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces','quebra-cabecas geometrico de sete pecas']){aliases.add(term);variants.push(term);}
+ }
  const knownFilmTitles={
   'e.t. o extraterrestre':['E.T. the Extra-Terrestrial','ET the Extra-Terrestrial','E.T. (1982 film)'],
   'alien o oitavo passageiro':['Alien (1979 film)','Alien (film)']
@@ -1497,9 +1535,13 @@ async function atinaSolutionImageAliases(answer){
   'urso pardo':['brown bear','Ursus arctos'],
   'aguia real':['golden eagle','Aquila chrysaetos']
  };
+ const knownScienceNames={
+  'magma':['molten rock','molten silicate rock','magma chamber','subsurface molten rock']
+ };
  const normalizedAnswer=atinaSolutionImageText(raw);
- for(const known of [...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[])])variants.push(known);
- for(const known of (knownAnimalNames[normalizedAnswer]||[]))aliases.add(known);
+ const knownTerms=[...(knownFilmTitles[normalizedAnswer]||[]),...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])];
+ for(const known of knownTerms)variants.push(known);
+ for(const known of [...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[])])aliases.add(known);
  // Many film/book titles include a subtitle after a dash or colon.
  // Search the principal title too, but only accept an exact Wikidata label.
  const principal=raw.split(/\\s+[–—-]\\s+|:/)[0].trim();
@@ -1545,13 +1587,14 @@ function atinaSolutionImageVisualContexts(answer){
   'felicidade':['happiness','joy','people celebrating','person smiling'],
   'medo':['fear','person afraid','dark corridor'],
   'curiosidade':['curiosity','person exploring','scientist observing'],
-  'confianca':['trust','confidence','person helping another climb']
+  'confianca':['trust','confidence','person helping another climb'],
+  'magma':['magma','molten rock','molten silicate rock','magma chamber','molten material beneath earth crust','volcanic geology']
  };
  return contexts[normalized]||[];
 }
 function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma','que','sou','estou','quem','onde','what','who','where','is']);
- const aliases={'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
+ const aliases={'tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'o tangram':['tangram','tangram puzzle','seven-piece dissection puzzle','Chinese geometric puzzle','seven tans','puzzle pieces'],'esponja':['esponja','sponge','cleaning sponge'],'lupa':['lupa','magnifying glass','hand lens','loupe','magnifier'],'canoagem':['canoagem','canoeing','canoe','kayak','kayaking'],'contrabaixo':['contrabaixo','double bass','contrabass'],'escalada desportiva':['escalada desportiva','sport climbing','competition climbing','lead climbing','speed climbing','bouldering']};
  const normalized=atinaSolutionImageText(answer);
  const conciseAliases=(Array.isArray(extraAliases)?extraAliases:[]).map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&atinaSolutionImageText(value).split(/\s+/).filter(token=>token.length>2&&!stop.has(token)).length<=5).map(atinaSolutionImageText);
  const answerTerms=[...new Set([...(aliases[normalized]||[normalized]),...conciseAliases])];
@@ -1562,6 +1605,12 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const title=atinaSolutionImageText(item.title);
  const description=atinaSolutionImageText(item.extmetadata?.ImageDescription?.value||'');
  const searchableText=title+' '+description;
+ // «Tangram» exige evidência visual específica; uma menção incidental nos metadados não basta.
+ if(normalized==='tangram'||normalized==='o tangram'){
+  const visualEvidence=/\b(tangram|dissection puzzle|geometric puzzle|seven tans|seven piece puzzle|seven pieces|puzzle pieces|silhouette puzzle|chinese puzzle)\b/.test(searchableText);
+  const unrelatedSubject=/\b(dj|disc jockey|nightclub|concert|keyboardist|musician|music performance|stage lighting)\b/.test(title);
+  if(!visualEvidence||unrelatedSubject)return null;
+ }
  const words=new Set(searchableText.split(/\s+/));
  const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
@@ -1637,6 +1686,41 @@ function atinaArtInstituteCategoryMatch(category,item){
  // Sem contexto reconhecível não aceitar uma obra apenas pelo título.
  return terms.length>0&&terms.some(term=>context.split(/\s+/).includes(term));
 }
+async function atinaMetMuseumSolutionImage(answer,category){
+ const query=atinaSolutionImageCoreText(answer);
+ if(!query)return null;
+ const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
+ const tokens=query.split(/\\s+/).filter(token=>token.length>1&&!stop.has(token));
+ if(!tokens.length)return null;
+ const searchResponse=await fetch('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q='+encodeURIComponent(query),{headers:{Accept:'application/json'}});
+ if(!searchResponse.ok)return null;
+ const searchData=await searchResponse.json();
+ const ids=(searchData.objectIDs||[]).slice(0,16);
+ for(const id of ids){
+  try{
+   const response=await fetch('https://collectionapi.metmuseum.org/public/collection/v1/objects/'+id,{headers:{Accept:'application/json'}});
+   if(!response.ok)continue;
+   const object=await response.json();
+   if(object.isPublicDomain!==true||!object.primaryImageSmall)continue;
+   const title=atinaSolutionImageText(object.title||'');
+   const searchable=atinaSolutionImageText([object.title,object.objectName,object.classification,object.department,object.culture,object.period,object.medium,object.tags?.map(tag=>tag.term).join(' ')].filter(Boolean).join(' '));
+   const words=new Set(searchable.split(/\\s+/));
+   if(!tokens.every(token=>words.has(token)))continue;
+   const categoryContext=atinaSolutionImageText(atinaSolutionImageCategoryContext(category));
+   const categoryTokens=categoryContext.split(/\\s+/).filter(token=>token.length>3&&!stop.has(token));
+   if(categoryTokens.length&&!categoryTokens.some(token=>words.has(token)))continue;
+   if(!atinaSolutionImageMatch(answer,category,{title:object.title,extmetadata:{ImageDescription:{value:searchable}}}))continue;
+   return {
+    title:object.title,thumburl:object.primaryImageSmall,mime:'image/jpeg',
+    width:Math.max(400,Number(object.measurements?.[0]?.elementMeasurements?.Width)||800),height:Math.max(300,Number(object.measurements?.[0]?.elementMeasurements?.Height)||600),
+    sourceName:'The Metropolitan Museum of Art',sourceUrl:object.objectURL,
+    author:object.artistDisplayName||'Autor não identificado',
+    license:'CC0 / Domínio Público',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'
+   };
+  }catch(error){}
+ }
+ return null;
+}
 async function atinaArtInstituteSolutionImage(answer,category){
  const query=atinaSolutionImageCoreText(answer);
  if(!query)return null;
@@ -1703,7 +1787,7 @@ function atinaSolutionImageCategoryContext(category){
   [/cinema|televisao|filme|series/,'film cinema movie actor actress movie character'],
   [/musica|sons|instrument/,'music musical instrument musician orchestra concert'],
   [/desporto|esporte|sport|atleta/,'sport sports athlete competition match equipment'],
-  [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology mammal mammalia carnivore canid canine vulpes species fauna vertebrate bird reptile fish insect animalia'],
+  [/ciencia|natureza|animal|fauna|flora|ambiente/,'science nature wildlife animal plant biology geology geological earth science volcano volcanic magma lava rock mineral mineralogy mammal mammalia carnivore canid canine vulpes species fauna vertebrate bird reptile fish insect animalia'],
   [/historia|misterio|historico/,'history historical person event artifact ancient'],
   [/arte|pintura|escultura/,'art artwork painting sculpture artist museum'],
   [/culinaria|comida|alimento/,'food cuisine dish ingredient cooking'],
@@ -1822,7 +1906,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
    const tagContexts=(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()).filter(value=>value.length>=3&&value.length<=90);
    const descriptionContext=String(visualDescription||'').trim();
-   const descriptionParts=descriptionContext.split(/[.;\n]/).map(value=>value.replace(/^(EXACT ANSWER|IDENTIFY AS|CATEGORY|VISUAL EVIDENCE|EXACT SUBJECT|SUBJECT TYPE|GAME CATEGORY|DISTINGUISHING CLUES):\s*/i,'').trim()).filter(value=>value.length>=3&&value.length<=90&&!/^search rule:/i.test(value));
+   const descriptionParts=descriptionContext.split(/[.;\n]/).map(value=>value.replace(/^(EXACT ANSWER|IDENTIFY AS|CATEGORY|VISUAL EVIDENCE|EXACT SUBJECT|SUBJECT TYPE|GAME CATEGORY|DISTINGUISHING CLUES|VISUAL DESCRIPTION|DISTINGUISHING EVIDENCE):\s*/i,'').trim()).filter(value=>value.length>=3&&value.length<=90&&!/^search rule:/i.test(value));
    const visualContexts=[...new Set([...tagContexts,...descriptionParts,...atinaSolutionImageVisualContexts(cleanAnswer)])].slice(0,14);
    // Primeiro, fontes ligadas a uma entidade identificada exatamente.
    // Isto evita que uma fotografia apenas parecida ultrapasse a imagem da entidade certa.
@@ -1831,8 +1915,12 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    if(!item){try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}}
    // Só depois recorrer à pesquisa aberta, com licença e relevância verificadas.
    try{if(!item)item=await atinaOpenverseSolutionImage(cleanAnswer,cleanCategory,semanticAliases,visualContexts);}catch(e){item=null;}
-   // Fonte institucional adicional: aceitar apenas obras CC0/domínio público
-   // cuja ficha também confirme o contexto temático da categoria.
+   // Catálogo do Metropolitan Museum: objetos com imagem e direitos de domínio público,
+   // apenas quando o título e os metadados confirmam a resposta e a categoria.
+   if(!item){
+    try{item=await atinaMetMuseumSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
+   }
+   // Catálogo do Art Institute of Chicago: obras CC0 com contexto temático confirmado.
    if(!item){
     try{item=await atinaArtInstituteSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}
    }
