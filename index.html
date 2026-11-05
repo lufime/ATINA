@@ -1254,18 +1254,53 @@ function atinaBuildSolutionVisualDescription(game){
  if(!game)return '';
  const answer=String(game[3]||'').trim();
  const category=String(game[0]||'').trim();
- const strip=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\s+/g,' ').trim();
- const clues=Array.isArray(game[2])?game[2].map(strip).filter(value=>value.length>=3&&value.length<=110):[];
- const tags=Array.isArray(game[4])?game[4].map(strip).filter(value=>value.length>=3&&value.length<=90):[];
+ const strip=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\\s+/g,' ').trim();
+ const clues=Array.isArray(game[2])?game[2].map(strip).filter(value=>value.length>=3&&value.length<=150):[];
+ const tags=Array.isArray(game[4])?game[4].map(strip).filter(value=>value.length>=3&&value.length<=100):[];
+ const normalizedAnswer=atinaSolutionImageText(answer);
+ const normalizedCategory=atinaSolutionImageText(category);
  const categoryContext=atinaSolutionImageCategoryContext(category);
- const all=[...new Set([...tags,...clues])];
- const generic=/^(?:é|e|foi|era|tem|tinha|ficou|ficou conhecido|nasceu|morreu|também|conhecido por|famoso por|uma pessoa|um objeto|uma coisa|algo|parte de|relacionado com)\b/i;
- const distinguishing=all.filter(value=>!generic.test(value)).sort((a,b)=>{
-  const specificity=v=>Math.min(5,v.split(/\s+/).length)+(/\b(?:capital|inventou|inventor|escritor|pintor|ator|atriz|compositor|animal|mamifero|ave|instrumento|monumento|rio|montanha|pais|cidade|planeta|elemento|especie)\b/i.test(v)?3:0);
-  return specificity(b)-specificity(a);
- }).slice(0,6);
- const subjectType=categoryContext||'identify the exact named subject; do not substitute related objects, people or places';
- return ['EXACT ANSWER: '+answer,'IDENTIFY AS: '+subjectType,'CATEGORY: '+category,'VISUAL EVIDENCE: '+distinguishing.join('; '),'SEARCH RULE: image must depict the exact answer, not merely a related clue'].filter(Boolean).join('. ').slice(0,520);
+ const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','que','sou','estou','quem','onde','the','of','and','in','on','is','was','were','with','from','this','that']);
+ const meaningful=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
+ const generic=/^(?:é|e|foi|era|tem|tinha|ficou|ficou conhecido|nasceu|morreu|também|conhecido por|famoso por|uma pessoa|um objeto|uma coisa|algo|parte de|relacionado com)\\b/i;
+ const distinctive=[...new Set([...tags,...clues].filter(value=>!generic.test(value)))].sort((a,b)=>{
+  const score=value=>meaningful(value).length+(/\\b(?:capital|inventou|inventor|escritor|pintor|ator|atriz|compositor|animal|mamifero|ave|instrumento|monumento|rio|montanha|pais|cidade|planeta|elemento|especie|molecula|formula|nobel|olimpicos|pirâmides|piramides)\\b/i.test(value)?3:0);
+  return score(b)-score(a);
+ }).slice(0,5);
+ const subjectRules=[
+  [/quem sou eu|pessoa|biografia/,'photographic portrait of the exact named person, recognizable face, historically accurate appearance'],
+  [/onde estou|geografia|cidade|capital|localizacao|monumento|lugar/,'recognizable real-world place, wide establishing photograph showing its defining landmark, architecture and surroundings'],
+  [/ciencia|natureza|animal|fauna|flora|ambiente/,'realistic documentary photograph of the exact scientific or natural subject in its authentic environment'],
+  [/historia|misterio|historico/,'historically accurate photograph or museum-quality depiction of the exact historical subject, artifact or event'],
+  [/musica|sons|instrument/,'clear photograph of the exact musical instrument or musician, with the instrument visibly identifiable'],
+  [/cinema|televisao|filme|series/,'official or documentary-style image of the exact film, production or subject; avoid unrelated actors and fan art'],
+  [/desporto|esporte|sport|atleta/,'photograph of the exact sport, athlete or equipment in its real sporting context'],
+  [/arte|pintura|escultura/,'photograph of the exact artwork or artist, showing the identifiable work rather than a generic art scene'],
+  [/culinaria|comida|alimento/,'close-up documentary food photograph of the exact dish or ingredient'],
+  [/tecnologia|inventor|invencao/,'clear product or documentary photograph of the exact invention, device or technology'],
+  [/logica|numeros|ilusoes|palavras|desafio surpresa/,'clean explanatory photograph or diagram of the exact answer, with no unrelated objects']
+ ];
+ const matchedRule=subjectRules.find(([pattern])=>pattern.test(normalizedCategory));
+ let visualType=matchedRule?.[1]||categoryContext||'clear documentary photograph of the exact named answer, not a loosely related concept';
+ const answerVisuals={
+  'magma':'molten silicate rock beneath the Earth surface, glowing orange-red, geological cross-section or magma chamber; not lava fountains or unrelated fire',
+  'tangram':'seven flat geometric puzzle pieces arranged into a recognizable silhouette, seven tans, Chinese dissection puzzle',
+  'agua':'clear liquid water in a glass, river, lake or ocean; show water itself rather than chemical diagrams',
+  'paz':'white dove, olive branch or a recognizable peaceful scene',
+  'chave':'single metal door key with a toothed blade, close-up on a plain background',
+  'lisboa':'panoramic Lisbon cityscape with historic buildings and the Tagus river',
+  'torre eiffel':'full view of the Eiffel Tower in Paris, iron lattice structure clearly visible'
+ };
+ const visualEvidence=answerVisuals[normalizedAnswer]||'';
+ const clueEvidence=distinctive.join('; ');
+ return [
+  'EXACT ANSWER: '+answer,
+  'SUBJECT TYPE: '+visualType,
+  visualEvidence?'VISUAL DESCRIPTION: '+visualEvidence:'',
+  'CATEGORY: '+category,
+  clueEvidence?'DISTINGUISHING EVIDENCE: '+clueEvidence:'',
+  'SEARCH RULE: show the exact answer itself; clues may refine the scene but must never replace the answer with a related object, person or place'
+ ].filter(Boolean).join('. ').slice(0,700);
 }
 async function next(){if(raceFinished)return;const previousIndex=queue[pos];pos++;if(pos>=queue.length){queue=shuffle(queue);pos=0;}const nextIndex=queue[pos];const nextGame=games[nextIndex];if(nextGame){const visualDescription=atinaBuildSolutionVisualDescription(nextGame);atinaPrepareSolutionImage(nextGame[3],nextGame[0],nextGame[4]||[],visualDescription);}const sameCategory=games[previousIndex]?.[0]===games[nextIndex]?.[0];if(mode==='duel'||mode==='party')player=1-player;else player=0;if(sameCategory)await challengePause(difficultyLabel(classifyChallenge(nextIndex)),games[nextIndex]?.[1]||'');else await challengePause();await mixDraw();load();saveLocalProgress();}
 async function activateLandscapePresentation(){if(!document.fullscreenElement)await document.documentElement.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock('landscape');}
