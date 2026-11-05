@@ -1821,7 +1821,15 @@ function atinaSolutionImageCategoryContext(category){
  const match=rules.find(([pattern])=>pattern.test(value));
  return match?match[1]:'';
 }
-async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[]){
+async function atinaTranslateImageSearchText(value){
+ const text=String(value||'').trim();if(!text)return '';
+ try{
+  const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=pt&tl=en&dt=t&q='+encodeURIComponent(text);
+  const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)return '';
+  const data=await response.json();return Array.isArray(data?.[0])?data[0].map(part=>part?.[0]||'').join('').trim():'';
+ }catch(error){return '';}
+}
+async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[],allowEnglishFallback=true){
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','uns','umas','the','of','and','in','on','for','with','what','who','where']);
  const clean=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
  const answerVariants=[answer,...aliases].map(value=>String(value||'').trim()).filter(Boolean);
@@ -1886,7 +1894,27 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
    }
   }catch(error){}
  }
- return bestScore>=6.0?best:null;
+ if(bestScore>=6.0)return best;
+ // Primeiro pesquisa os metadados originais em português. Só sem uma
+ // correspondência suficientemente forte traduz resposta, tags e contexto
+ // para inglês e repete a pesquisa, mantendo os mesmos critérios de relevância.
+ if(allowEnglishFallback){
+  const translated=await Promise.all([
+   atinaTranslateImageSearchText(answer),
+   atinaTranslateImageSearchText(category),
+   ...aliases.slice(0,10).map(atinaTranslateImageSearchText),
+   ...contexts.slice(0,8).map(atinaTranslateImageSearchText)
+  ]);
+  const englishAnswer=translated[0]||answer;
+  const englishCategory=translated[1]||category;
+  const englishAliases=translated.slice(2,2+Math.min(aliases.length,10)).filter(Boolean);
+  const englishContexts=translated.slice(2+Math.min(aliases.length,10)).filter(Boolean);
+  if(englishAnswer!==answer||englishAliases.length||englishContexts.length){
+   const englishResult=await atinaOpenverseSolutionImage(englishAnswer,englishCategory,[...aliases,...englishAliases],[...contexts,...englishContexts],false);
+   if(englishResult)return englishResult;
+  }
+ }
+ return null;
 }
 async function atinaWikipediaSolutionExcerpt(answer){
  const title=String(answer||'').trim();
