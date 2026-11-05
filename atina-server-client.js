@@ -758,42 +758,58 @@ function atinaOnlineCountBoot() {
 
   const presenceKey = 'atinaSitePresenceSessionV1';
   const getSessionId = () => {
-    let id = localStorage.getItem(presenceKey) || '';
+    let id = '';
+    try { id = window.localStorage.getItem(presenceKey) || ''; } catch (_) {}
     if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return id;
-    if (window.crypto?.randomUUID) id = window.crypto.randomUUID();
-    else {
-      const bytes = new Uint8Array(16);
-      window.crypto.getRandomValues(bytes);
-      bytes[6] = (bytes[6] & 15) | 64;
-      bytes[8] = (bytes[8] & 63) | 128;
-      const hex = Array.from(bytes, value => value.toString(16).padStart(2, '0')).join('');
-      id = hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20);
+
+    try {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        id = window.crypto.randomUUID();
+      } else if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+        const bytes = new Uint8Array(16);
+        window.crypto.getRandomValues(bytes);
+        bytes[6] = (bytes[6] & 15) | 64;
+        bytes[8] = (bytes[8] & 63) | 128;
+        const hex = Array.from(bytes, value => value.toString(16).padStart(2, '0')).join('');
+        id = hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20);
+      }
+    } catch (_) {}
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.floor(Math.random() * 16);
+        return (c === 'x' ? r : (r & 3) | 8).toString(16);
+      });
     }
-    localStorage.setItem(presenceKey, id);
+    try { window.localStorage.setItem(presenceKey, id); } catch (_) {}
     return id;
   };
-  const sessionId = getSessionId();
 
-  const heartbeat = async () => {
-    await atinaServerRpc('atina_site_presence_heartbeat', { p_session_id: sessionId });
-  };
+  const sessionId = getSessionId();
+  let inFlight = false;
   const refresh = async () => {
+    if (inFlight) return;
+    inFlight = true;
     try {
-      await heartbeat();
+      await atinaServerRpc('atina_site_presence_heartbeat', { p_session_id: sessionId });
       const count = await atinaServerRpc('atina_online_player_count', {});
       const total = Math.max(0, Number(count) || 0);
       counter.textContent = '● ' + total + (total === 1 ? ' pessoa no ATINA' : ' pessoas no ATINA');
       counter.dataset.count = String(total);
-    } catch (_) {
+    } catch (error) {
+      console.warn('ATINA: não foi possível atualizar a presença online.', error);
       counter.textContent = '● Presença online indisponível';
       delete counter.dataset.count;
+    } finally {
+      inFlight = false;
     }
   };
-  refresh();
-  window.setInterval(heartbeat, 25000);
-  window.setInterval(refresh, 15000);
-}
 
+  refresh();
+  window.setInterval(refresh, 15000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) refresh();
+  });
+}
 
 // Aviso global de manutenção/alterações, controlado pela administração.
 async function atinaNoticeRefresh() {
