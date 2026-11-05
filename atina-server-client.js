@@ -300,6 +300,7 @@ async function atinaRenderChallengeImageCredit(challengeId) {
     const author = String(credit.author || '').trim();
     target.textContent = attribution || (author ? 'Fotografia: ' + author : '');
     const links = [];
+    if (author === 'Jules Verne Times Two') links.push(['Site do autor', 'https://julesvernex2.com']);
     if (credit.source_url) links.push(['Ver imagem original', credit.source_url]);
     if (credit.license_url) links.push(['Licença ' + String(credit.license || '').trim(), credit.license_url]);
     for (const [label, url] of links) {
