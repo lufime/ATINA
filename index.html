@@ -1254,18 +1254,12 @@ function atinaBuildSolutionVisualDescription(game){
  if(!game)return '';
  const answer=String(game[3]||'').trim();
  const category=String(game[0]||'').trim();
- const clues=Array.isArray(game[2])?game[2].map(v=>String(v||'').replace(/<[^>]+>/g,' ').trim()).filter(Boolean).slice(0,8):[];
- const tags=Array.isArray(game[4])?game[4].map(v=>String(v||'').trim()).filter(Boolean).slice(0,8):[];
+ const clues=Array.isArray(game[2])?game[2].map(v=>String(v||'').replace(/<[^>]+>/g,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean).slice(0,8):[];
+ const tags=Array.isArray(game[4])?game[4].map(v=>String(v||'').replace(/\s+/g,' ').trim()).filter(Boolean).slice(0,8):[];
  const categoryContext=atinaSolutionImageCategoryContext(category);
- const clueText=clues.slice(0,5).join('; ');
- const tagText=tags.slice(0,5).join('; ');
- return 'ALVO OBRIGATÓRIO: '+answer+'. '+ 
- 'TIPO DE ALVO: '+categoryContext+'. CATEGORIA DO JOGO: '+category+'. '+
- 'PESQUISA: encontrar fotografias reais do próprio alvo identificado por "'+answer+'"; combinar o nome exato com o tipo de alvo e os detalhes distintivos. '+
- 'CONTEXTO PARA DESAMBIGUAR: '+[clueText,tagText].filter(Boolean).join('; ')+'. '+
- 'CRITÉRIO DE ACEITAÇÃO: a imagem, o título ou a legenda têm de identificar visualmente ou nominalmente "'+answer+'". A categoria nunca substitui o alvo. '+
- 'PRIORIDADE: espécie/objeto/pessoa/local exatos, modelo ou variante corretos, contexto histórico e geográfico coerentes com as pistas. '+
- 'REJEITAR: homónimos, palavras apenas relacionadas, resultados que só partilham uma pista, fotografias de outra espécie/modelo/local, imagens genéricas, ilustrações, ícones, logótipos, cartazes, colagens e imagens sem identificação verificável.';
+ // Keep this compact: downstream image-search providers reject long, paragraph-like queries.
+ const distinguishing=[...new Set([...tags,...clues].filter(value=>value.length>=3&&value.length<=65))].slice(0,4);
+ return ['EXACT SUBJECT: '+answer,'SUBJECT TYPE: '+categoryContext,'GAME CATEGORY: '+category,'DISTINGUISHING CLUES: '+distinguishing.join('; ')].filter(Boolean).join('. ').slice(0,360);
 }
 async function next(){if(raceFinished)return;const previousIndex=queue[pos];pos++;if(pos>=queue.length){queue=shuffle(queue);pos=0;}const nextIndex=queue[pos];const nextGame=games[nextIndex];if(nextGame){const visualDescription=atinaBuildSolutionVisualDescription(nextGame);atinaPrepareSolutionImage(nextGame[3],nextGame[0],nextGame[4]||[],visualDescription);}const sameCategory=games[previousIndex]?.[0]===games[nextIndex]?.[0];if(mode==='duel'||mode==='party')player=1-player;else player=0;if(sameCategory)await challengePause(difficultyLabel(classifyChallenge(nextIndex)),games[nextIndex]?.[1]||'');else await challengePause();await mixDraw();load();saveLocalProgress();}
 async function activateLandscapePresentation(){if(!document.fullscreenElement)await document.documentElement.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock('landscape');}
@@ -1792,9 +1786,10 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   let item=atinaSolutionImageCache.get(key);
   if(item===undefined){
    const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
-   const tagContexts=(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').trim()).filter(Boolean);
+   const tagContexts=(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()).filter(value=>value.length>=3&&value.length<=90);
    const descriptionContext=String(visualDescription||'').trim();
-   const visualContexts=[...new Set([...tagContexts,...atinaSolutionImageVisualContexts(cleanAnswer),...(descriptionContext?[descriptionContext]:[])])].slice(0,14);
+   const descriptionParts=descriptionContext.split(/[.;\n]/).map(value=>value.replace(/^(EXACT SUBJECT|SUBJECT TYPE|GAME CATEGORY|DISTINGUISHING CLUES):\s*/i,'').trim()).filter(value=>value.length>=3&&value.length<=90);
+   const visualContexts=[...new Set([...tagContexts,...descriptionParts,...atinaSolutionImageVisualContexts(cleanAnswer)])].slice(0,14);
    // Primeiro, fontes ligadas a uma entidade identificada exatamente.
    // Isto evita que uma fotografia apenas parecida ultrapasse a imagem da entidade certa.
    try{const semantic=await atinaWikidataSolutionImage(cleanAnswer);item=semantic.item;}catch(e){item=null;}
