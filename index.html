@@ -1257,13 +1257,15 @@ function atinaBuildSolutionVisualDescription(game){
  const clues=Array.isArray(game[2])?game[2].map(v=>String(v||'').replace(/<[^>]+>/g,' ').trim()).filter(Boolean).slice(0,8):[];
  const tags=Array.isArray(game[4])?game[4].map(v=>String(v||'').trim()).filter(Boolean).slice(0,8):[];
  const categoryContext=atinaSolutionImageCategoryContext(category);
- return 'RESPOSTA EXATA: '+answer+'. CATEGORIA: '+category+'. '+
- 'DESCRIÇÃO VISUAL INDIVIDUAL: procurar uma fotografia documental do elemento específico que corresponde à resposta, não uma imagem genérica da categoria. '+
- 'PISTAS PARA CONFIRMAR A IDENTIDADE: '+clues.concat(tags).join('; ')+'. '+
- 'ENQUADRAMENTO: '+categoryContext+'. '+
- 'ASPETO: assunto principal nítido, reconhecível, bem iluminado e suficientemente grande; mostrar os traços, formas, cores, componentes, localização ou época que o distinguem de elementos semelhantes. '+
- 'VALIDAÇÃO: o título, legenda ou descrição da imagem deve apoiar diretamente a resposta exata; usar as pistas e a categoria apenas para confirmar. '+
- 'EXCLUIR: imagens simbólicas, genéricas, desenhos, ícones, cartazes, logótipos, montagens, texto sobreposto e resultados de identidade incerta.';
+ const clueText=clues.slice(0,5).join('; ');
+ const tagText=tags.slice(0,5).join('; ');
+ return 'ALVO OBRIGATÓRIO: '+answer+'. '+ 
+ 'TIPO DE ALVO: '+categoryContext+'. CATEGORIA DO JOGO: '+category+'. '+
+ 'PESQUISA: encontrar fotografias reais do próprio alvo identificado por "'+answer+'"; combinar o nome exato com o tipo de alvo e os detalhes distintivos. '+
+ 'CONTEXTO PARA DESAMBIGUAR: '+[clueText,tagText].filter(Boolean).join('; ')+'. '+
+ 'CRITÉRIO DE ACEITAÇÃO: a imagem, o título ou a legenda têm de identificar visualmente ou nominalmente "'+answer+'". A categoria nunca substitui o alvo. '+
+ 'PRIORIDADE: espécie/objeto/pessoa/local exatos, modelo ou variante corretos, contexto histórico e geográfico coerentes com as pistas. '+
+ 'REJEITAR: homónimos, palavras apenas relacionadas, resultados que só partilham uma pista, fotografias de outra espécie/modelo/local, imagens genéricas, ilustrações, ícones, logótipos, cartazes, colagens e imagens sem identificação verificável.';
 }
 async function next(){if(raceFinished)return;const previousIndex=queue[pos];pos++;if(pos>=queue.length){queue=shuffle(queue);pos=0;}const nextIndex=queue[pos];const nextGame=games[nextIndex];if(nextGame){const visualDescription=atinaBuildSolutionVisualDescription(nextGame);atinaPrepareSolutionImage(nextGame[3],nextGame[0],nextGame[4]||[],visualDescription);}const sameCategory=games[previousIndex]?.[0]===games[nextIndex]?.[0];if(mode==='duel'||mode==='party')player=1-player;else player=0;if(sameCategory)await challengePause(difficultyLabel(classifyChallenge(nextIndex)),games[nextIndex]?.[1]||'');else await challengePause();await mixDraw();load();saveLocalProgress();}
 async function activateLandscapePresentation(){if(!document.fullscreenElement)await document.documentElement.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock('landscape');}
@@ -1701,9 +1703,9 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
  // Construir a pesquisa com os três elementos: categoria, solução e contexto.
  // A categoria orienta a pesquisa, mas a solução continua a ser o critério principal.
  const queries=[
-  ...answerVariants.slice(0,8),
-  ...contextQueries.map(value=>answer+' '+value)
- ].map(value=>String(value||'').trim()).filter((value,index,array)=>value&&array.findIndex(other=>atinaSolutionImageText(other)===atinaSolutionImageText(value))===index).slice(0,18);
+  ...answerVariants.slice(0,5).map(value=>'"'+value+'" '+categoryContext),
+  ...contextQueries.map(value=>'"'+answer+'" '+value+' '+categoryContext)
+ ].map(value=>String(value||'').trim()).filter((value,index,array)=>value&&array.findIndex(other=>atinaSolutionImageText(other)===atinaSolutionImageText(value))===index).slice(0,14);
  let best=null,bestScore=-1;
  for(const query of queries){
   try{
@@ -1728,8 +1730,11 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
     const queryTokens=clean(query);
     const queryCoverage=coverageFor(queryTokens);
     // Resposta e título dominam a pontuação; categoria e contexto refinam.
-    const score=answerCoverage*7+titleCoverage*3+categoryCoverage*1.25+queryCoverage*0.75;
-    if(answerCoverage<0.34&&titleCoverage===0&&queryCoverage<0.5)continue;
+    const score=answerCoverage*5+titleCoverage*5+categoryCoverage*1.0+queryCoverage*0.5;
+    // Não aceitar uma imagem apenas por estar relacionada com a categoria:
+    // o título tem de mencionar a resposta ou a descrição tem de a identificar quase por completo.
+    if(titleCoverage<0.5&&answerCoverage<0.75)continue;
+    if(answerCoverage<0.5&&titleCoverage<0.75)continue;
     if(score<=bestScore)continue;
     const licenseLabel=license==='cc0'?'CC0':license==='pdm'?'Domínio Público (PDM)':license==='by-sa'?'CC BY-SA':'CC BY';
     const licenseUrl=result.license_url||('https://creativecommons.org/licenses/'+license+'/'+(result.license_version||'4.0')+'/');
@@ -1745,7 +1750,7 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
    }
   }catch(error){}
  }
- return bestScore>=2.0?best:null;
+ return bestScore>=6.0?best:null;
 }
 async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],preGeneratedUrl=null,visualDescription=''){
  const target=$(targetId);if(!target)return;
