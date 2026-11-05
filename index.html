@@ -1254,7 +1254,7 @@ function atinaBuildSolutionVisualDescription(game){
  if(!game)return '';
  const answer=String(game[3]||'').trim();
  const category=String(game[0]||'').trim();
- const strip=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\\s+/g,' ').trim();
+ const strip=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\s+/g,' ').trim();
  const clues=Array.isArray(game[2])?game[2].map(strip).filter(value=>value.length>=3&&value.length<=150):[];
  const tags=Array.isArray(game[4])?game[4].map(strip).filter(value=>value.length>=3&&value.length<=100):[];
  const normalizedAnswer=atinaSolutionImageText(answer);
@@ -1557,7 +1557,7 @@ async function atinaSolutionImageAliases(answer){
  for(const known of [...(knownAnimalNames[normalizedAnswer]||[]),...(knownScienceNames[normalizedAnswer]||[]),...(knownHistoricalNames[normalizedAnswer]||[]),...(knownMythologicalNames[normalizedAnswer]||[])])aliases.add(known);
  // Many film/book titles include a subtitle after a dash or colon.
  // Search the principal title too, but only accept an exact Wikidata label.
- const principal=raw.split(/\\s+[–—-]\\s+|:/)[0].trim();
+ const principal=raw.split(/\s+[–—-]\s+|:/)[0].trim();
  if(principal&&principal!==raw)variants.push(principal);
  const normalizedVariants=new Set(variants.map(atinaSolutionImageText).filter(Boolean));
  for(const language of ['pt','en']){
@@ -1686,7 +1686,7 @@ async function atinaWikidataSolutionImage(answer,category){
  return {entityFound:false,item:null};
 }
 function atinaSolutionImageCoreText(value){
- return atinaSolutionImageText(value).replace(/^(?:um|uma|uns|umas|o|a|os|as)\\s+/,'').trim();
+ return atinaSolutionImageText(value).replace(/^(?:um|uma|uns|umas|o|a|os|as)\s+/,'').trim();
 }
 function atinaArtInstituteCategoryMatch(category,item){
  const categoryText=atinaSolutionImageText(category);
@@ -1713,7 +1713,7 @@ async function atinaMetMuseumSolutionImage(answer,category){
  const query=atinaSolutionImageCoreText(answer);
  if(!query)return null;
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
- const tokens=query.split(/\\s+/).filter(token=>token.length>1&&!stop.has(token));
+ const tokens=query.split(/\s+/).filter(token=>token.length>1&&!stop.has(token));
  if(!tokens.length)return null;
  const searchResponse=await fetch('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q='+encodeURIComponent(query),{headers:{Accept:'application/json'}});
  if(!searchResponse.ok)return null;
@@ -1727,10 +1727,10 @@ async function atinaMetMuseumSolutionImage(answer,category){
    if(object.isPublicDomain!==true||!object.primaryImageSmall)continue;
    const title=atinaSolutionImageText(object.title||'');
    const searchable=atinaSolutionImageText([object.title,object.objectName,object.classification,object.department,object.culture,object.period,object.medium,object.tags?.map(tag=>tag.term).join(' ')].filter(Boolean).join(' '));
-   const words=new Set(searchable.split(/\\s+/));
+   const words=new Set(searchable.split(/\s+/));
    if(!tokens.every(token=>words.has(token)))continue;
    const categoryContext=atinaSolutionImageText(atinaSolutionImageCategoryContext(category));
-   const categoryTokens=categoryContext.split(/\\s+/).filter(token=>token.length>3&&!stop.has(token));
+   const categoryTokens=categoryContext.split(/\s+/).filter(token=>token.length>3&&!stop.has(token));
    if(categoryTokens.length&&!categoryTokens.some(token=>words.has(token)))continue;
    if(!atinaSolutionImageMatch(answer,category,{title:object.title,extmetadata:{ImageDescription:{value:searchable}}}))continue;
    return {
@@ -1829,7 +1829,7 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
  if(!answerTokenSets.length)return null;
  const categoryContext=atinaSolutionImageCategoryContext(category);
  const categoryTokens=clean(category+' '+categoryContext);
- const contextQueries=contexts.map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&value.split(/\\s+/).length<=10).slice(0,6);
+ const contextQueries=contexts.map(value=>String(value||'').trim()).filter(value=>value&&value.length<=90&&value.split(/\s+/).length<=10).slice(0,6);
  // Construir a pesquisa com os três elementos: categoria, solução e contexto.
  // A categoria orienta a pesquisa, mas a solução continua a ser o critério principal.
  const queries=[
