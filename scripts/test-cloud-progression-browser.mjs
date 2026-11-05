@@ -120,6 +120,9 @@ try {
   // Losing localStorage must not silently create a different cloud identity.
   await page.evaluate(() => localStorage.removeItem('atinaProgressDeviceTokenV1'));
   await page.reload({ waitUntil: 'load' });
+  // Reload returns to the home screen; reveal the profile before checking its status.
+  await page.evaluate(() => showHomePage('profile'));
+  await page.locator('#atinaCloudStatus').waitFor({ state: 'visible' });
   await page.getByText(/A chave deste pseudónimo não está neste dispositivo/).waitFor();
   assert.equal(await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1')), null);
   await page.locator('#atinaCloudRecoveryCode').fill(deviceToken);
