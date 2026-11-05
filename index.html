@@ -1794,7 +1794,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const semanticAliases=await atinaSolutionImageAliases(cleanAnswer);
    const tagContexts=(Array.isArray(hiddenTags)?hiddenTags:[]).map(tag=>String(tag||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()).filter(value=>value.length>=3&&value.length<=90);
    const descriptionContext=String(visualDescription||'').trim();
-   const descriptionParts=descriptionContext.split(/[.;\n]/).map(value=>value.replace(/^(EXACT SUBJECT|SUBJECT TYPE|GAME CATEGORY|DISTINGUISHING CLUES):\s*/i,'').trim()).filter(value=>value.length>=3&&value.length<=90);
+   const descriptionParts=descriptionContext.split(/[.;\n]/).map(value=>value.replace(/^(EXACT ANSWER|IDENTIFY AS|CATEGORY|VISUAL EVIDENCE|EXACT SUBJECT|SUBJECT TYPE|GAME CATEGORY|DISTINGUISHING CLUES):\s*/i,'').trim()).filter(value=>value.length>=3&&value.length<=90&&!/^search rule:/i.test(value));
    const visualContexts=[...new Set([...tagContexts,...descriptionParts,...atinaSolutionImageVisualContexts(cleanAnswer)])].slice(0,14);
    // Primeiro, fontes ligadas a uma entidade identificada exatamente.
    // Isto evita que uma fotografia apenas parecida ultrapasse a imagem da entidade certa.
