@@ -791,13 +791,17 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 const SUPABASE_URL='https://qwuxwiurqwfjizkwpmjp.supabase.co';
 const SUPABASE_KEY='sb_publishable_3xyuEMoF9iyotRLyjl9ArA_TYe9VPFm';
 
-const supabaseClient=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+const ATINA_GAME_SUPABASE_URL='https://qvvlqrgbtjujsejvenld.supabase.co';
+const ATINA_GAME_SUPABASE_KEY='sb_publishable_hNav9TfG49in13UfflVdUw_O-_s2-0t';
+const supabaseClient=window.supabase?.createClient?window.supabase.createClient(ATINA_GAME_SUPABASE_URL,ATINA_GAME_SUPABASE_KEY):null;
+// Manter autenticação/perfis antigos isolados do backend do jogo.
+const supabaseAuthClient=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 let atinaUser=null,atinaProfile=null;
 function authMessage(message){$('authStatus').textContent=message;}
 async function refreshAtinaSession(){
- const {data}=await supabaseClient.auth.getSession();atinaUser=data.session?.user||null;
+ const {data}=await supabaseAuthClient.auth.getSession();atinaUser=data.session?.user||null;
  atinaProfile=null;
- if(atinaUser){const {data:profile}=await supabaseClient.from('atina_profiles').select('nickname').eq('user_id',atinaUser.id).maybeSingle();atinaProfile=profile||null;}
+ if(atinaUser){const {data:profile}=await supabaseAuthClient.from('atina_profiles').select('nickname').eq('user_id',atinaUser.id).maybeSingle();atinaProfile=profile||null;}
  const signedIn=!!atinaUser;
  const adminButton=$('adminOnlineButton');if(adminButton)adminButton.classList.toggle('hidden',!signedIn||String(atinaUser.email||'').toLowerCase()!=='lufime@gmail.com');
 
@@ -812,7 +816,7 @@ async function loadAdminOnline(){
  const refresh=$('adminOnlineRefresh'),errorEl=$('adminOnlineError'),roomList=$('adminOnlineRoomList');
  if(refresh)refresh.disabled=true;if(errorEl)errorEl.textContent='';
  try{
-  const {data,error}=await supabaseClient.rpc('atina_admin_online_overview');
+  const {data,error}=await supabaseAuthClient.rpc('atina_admin_online_overview');
   if(error)throw error;
   $('adminOnlinePlayers').textContent=String(data?.online_players??0);
   $('adminOnlineRooms').textContent=String(data?.active_rooms??0);
@@ -842,7 +846,7 @@ async function createAtinaAccount(){
  if(!email||!password){authMessage('Preenche o email e a palavra-passe.');return;}
  if(!$('acceptTerms').checked||!$('acceptPrivacy').checked){authMessage('Para criar conta, tens de aceitar os Termos de Utilização e confirmar a leitura da Política de Privacidade.');return;}
  $('authSignup').disabled=true;authMessage('A criar conta…');
- try{const acceptedAt=new Date().toISOString();const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{nickname,terms_accepted_at:acceptedAt,terms_version:'1.0',privacy_acknowledged_at:acceptedAt,privacy_version:'1.0'},emailRedirectTo:location.origin+location.pathname}});
+ try{const acceptedAt=new Date().toISOString();const {data,error}=await supabaseAuthClient.auth.signUp({email,password,options:{data:{nickname,terms_accepted_at:acceptedAt,terms_version:'1.0',privacy_acknowledged_at:acceptedAt,privacy_version:'1.0'},emailRedirectTo:location.origin+location.pathname}});
  if(error)throw error;
  if(data.session){await refreshAtinaSession();authMessage('Conta criada e sessão iniciada!');}
  else authMessage('Conta criada. Confirma o email que te enviámos antes de iniciares sessão.');
@@ -853,14 +857,14 @@ async function loginAtina(){
  const email=$('authEmail').value.trim(),password=$('authPassword').value;
  if(!email||!password){authMessage('Preenche o email e a palavra-passe.');return;}
  $('authLogin').disabled=true;authMessage('A entrar…');
- try{const {error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;await refreshAtinaSession();authMessage('Sessão iniciada com sucesso!');}
+ try{const {error}=await supabaseAuthClient.auth.signInWithPassword({email,password});if(error)throw error;await refreshAtinaSession();authMessage('Sessão iniciada com sucesso!');}
  catch(e){authMessage(e.message||'Não foi possível iniciar sessão.');}
  finally{$('authLogin').disabled=false;}
 }
 async function sendAtinaRecovery(){
  const email=$('authEmail').value.trim();if(!email){authMessage('Escreve primeiro o email da tua conta.');return;}
  authMessage('A enviar email de recuperação…');
- const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+ const {error}=await supabaseAuthClient.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
  authMessage(error?(error.message||'Não foi possível enviar o email.'):'Se existir uma conta para esse email, receberás uma ligação para definir uma nova palavra-passe.');
 }
 async function deleteAtinaAccount(){
@@ -871,9 +875,9 @@ async function deleteAtinaAccount(){
  if(typed!=='APAGAR'){authMessage('Eliminação cancelada.');return;}
  const btn=$('deleteAccountBtn');btn.disabled=true;btn.textContent='A apagar a conta…';authMessage('A processar o pedido…');
  try{
-  const {error}=await supabaseClient.functions.invoke('delete-atina-account',{body:{}});
+  const {error}=await supabaseAuthClient.functions.invoke('delete-atina-account',{body:{}});
   if(error)throw error;
-  await supabaseClient.auth.signOut({scope:'local'});
+  await supabaseAuthClient.auth.signOut({scope:'local'});
   atinaUser=null;atinaProfile=null;
   await refreshAtinaSession();
   $('deleteAccountArea').classList.add('hidden');
@@ -884,11 +888,11 @@ async function deleteAtinaAccount(){
 }
 async function updateAtinaPassword(){
  const password=$('authNewPassword').value;if(password.length<8){authMessage('A nova palavra-passe deve ter pelo menos 8 caracteres.');return;}
- const {error}=await supabaseClient.auth.updateUser({password});
+ const {error}=await supabaseAuthClient.auth.updateUser({password});
  if(error){authMessage(error.message||'Não foi possível alterar a palavra-passe.');return;}
  $('authReset').classList.add('hidden');$('authForms').classList.remove('hidden');$('authNewPassword').value='';authMessage('Palavra-passe alterada com sucesso.');
 }
-if(supabaseClient){supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){$('authForms').classList.add('hidden');$('authReset').classList.remove('hidden');screen('authPage');authMessage('Define a tua nova palavra-passe.');} if(event==='SIGNED_OUT'||event==='SIGNED_IN')refreshAtinaSession();});}
+if(supabaseClient){supabaseAuthClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){$('authForms').classList.add('hidden');$('authReset').classList.remove('hidden');screen('authPage');authMessage('Define a tua nova palavra-passe.');} if(event==='SIGNED_OUT'||event==='SIGNED_IN')refreshAtinaSession();});}
 
 let networkRoom=null, networkPollHandle=null, networkLobbyData=null, networkFinalizedResults=null, networkLastRefreshError=null;
 let networkRoomRefreshInFlight=false, networkRoomRefreshPromise=null;
