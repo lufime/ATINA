@@ -1254,12 +1254,18 @@ function atinaBuildSolutionVisualDescription(game){
  if(!game)return '';
  const answer=String(game[3]||'').trim();
  const category=String(game[0]||'').trim();
- const clues=Array.isArray(game[2])?game[2].map(v=>String(v||'').replace(/<[^>]+>/g,' ').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean).slice(0,8):[];
- const tags=Array.isArray(game[4])?game[4].map(v=>String(v||'').replace(/\s+/g,' ').trim()).filter(Boolean).slice(0,8):[];
+ const strip=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\s+/g,' ').trim();
+ const clues=Array.isArray(game[2])?game[2].map(strip).filter(value=>value.length>=3&&value.length<=110):[];
+ const tags=Array.isArray(game[4])?game[4].map(strip).filter(value=>value.length>=3&&value.length<=90):[];
  const categoryContext=atinaSolutionImageCategoryContext(category);
- // Keep this compact: downstream image-search providers reject long, paragraph-like queries.
- const distinguishing=[...new Set([...tags,...clues].filter(value=>value.length>=3&&value.length<=65))].slice(0,4);
- return ['EXACT SUBJECT: '+answer,'SUBJECT TYPE: '+categoryContext,'GAME CATEGORY: '+category,'DISTINGUISHING CLUES: '+distinguishing.join('; ')].filter(Boolean).join('. ').slice(0,360);
+ const all=[...new Set([...tags,...clues])];
+ const generic=/^(?:é|e|foi|era|tem|tinha|ficou|ficou conhecido|nasceu|morreu|também|conhecido por|famoso por|uma pessoa|um objeto|uma coisa|algo|parte de|relacionado com)\b/i;
+ const distinguishing=all.filter(value=>!generic.test(value)).sort((a,b)=>{
+  const specificity=v=>Math.min(5,v.split(/\s+/).length)+(/\b(?:capital|inventou|inventor|escritor|pintor|ator|atriz|compositor|animal|mamifero|ave|instrumento|monumento|rio|montanha|pais|cidade|planeta|elemento|especie)\b/i.test(v)?3:0);
+  return specificity(b)-specificity(a);
+ }).slice(0,6);
+ const subjectType=categoryContext||'identify the exact named subject; do not substitute related objects, people or places';
+ return ['EXACT ANSWER: '+answer,'IDENTIFY AS: '+subjectType,'CATEGORY: '+category,'VISUAL EVIDENCE: '+distinguishing.join('; '),'SEARCH RULE: image must depict the exact answer, not merely a related clue'].filter(Boolean).join('. ').slice(0,520);
 }
 async function next(){if(raceFinished)return;const previousIndex=queue[pos];pos++;if(pos>=queue.length){queue=shuffle(queue);pos=0;}const nextIndex=queue[pos];const nextGame=games[nextIndex];if(nextGame){const visualDescription=atinaBuildSolutionVisualDescription(nextGame);atinaPrepareSolutionImage(nextGame[3],nextGame[0],nextGame[4]||[],visualDescription);}const sameCategory=games[previousIndex]?.[0]===games[nextIndex]?.[0];if(mode==='duel'||mode==='party')player=1-player;else player=0;if(sameCategory)await challengePause(difficultyLabel(classifyChallenge(nextIndex)),games[nextIndex]?.[1]||'');else await challengePause();await mixDraw();load();saveLocalProgress();}
 async function activateLandscapePresentation(){if(!document.fullscreenElement)await document.documentElement.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock('landscape');}
