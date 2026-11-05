@@ -1555,19 +1555,23 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  const words=new Set(searchableText.split(/\s+/));
  const matchedSet=answerTokenSets.find(tokens=>tokens.length&&tokens.every(token=>words.has(token)));
  if(!matchedSet)return null;
- // For city-location challenges, a city name in a caption alone is insufficient.
- // Reject transport photos unless the metadata also identifies a recognizable city view.
+ // Aplicar validação temática em todas as categorias: a resposta exata não
+ // basta se os metadados não confirmarem também o tipo de assunto procurado.
+ const categoryContext=atinaSolutionImageCategoryContext(category);
+ const categoryEvidenceTokens=atinaSolutionImageText(categoryContext).split(/\s+/).filter(token=>token.length>2&&!stop.has(token));
+ if(categoryEvidenceTokens.length&&!categoryEvidenceTokens.some(token=>words.has(token)))return null;
+ // Em «Onde estou?», exigir sempre evidência de uma vista urbana identificável.
+ // Uma menção à cidade em fotos de transportes não é evidência visual suficiente.
  if(categoryText==='onde estou'){
-  const transportOnly=/\b(train|railway|railroad|locomotive|freight|passenger train|tram|subway|metro|bus|aircraft|airplane|airport|ship|boat|ferry|highway|motorway|carriage|wagon|comboio|ferrovia|locomotiva|autocarro|aviao|aeroporto|navio|barco)\b/.test(searchableText);
-  const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|old town|city centre|cityscape|skyline|panorama|panoramic|aerial view|town hall|square|plaza|architecture|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|panoramica|vista aerea|praca|arquitetura)\b/.test(searchableText);
-  if(transportOnly&&!cityEvidence)return null;
+  const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|historic center|old town|city centre|city center|cityscape|skyline|panorama|panoramic|aerial view|town hall|square|plaza|architecture|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|panoramica|vista aerea|praca|arquitetura|fachada|bairro historico|ruas antigas)\b/.test(searchableText);
+  if(!cityEvidence)return null;
  }
  const categoryAliases={'desporto':['desporto','sport','sports','canoe','canoeing','kayak','kayaking','climbing','climber'],'musica e sons':['music','musical','instrument','instruments','sound']};
  const categoryTerms=categoryAliases[categoryText]||categoryTokens;
  const categoryCoverage=categoryTerms.length?categoryTerms.filter(token=>words.has(token)).length/categoryTerms.length:0;
  return {answerCoverage:1,categoryCoverage};
 }
-async function atinaWikidataSolutionImage(answer){
+async function atinaWikidataSolutionImage(answer,category){
  const normalizedAnswer=atinaSolutionImageText(answer);
  if(!normalizedAnswer)return {entityFound:false,item:null};
  for(const language of ['pt','en']){
@@ -1591,7 +1595,7 @@ async function atinaWikidataSolutionImage(answer){
    const commonsData=await commonsResponse.json();
    const page=Object.values(commonsData.query?.pages||{})[0];
    const candidate={title:page?.title,...(page?.imageinfo?.[0]||{})};
-   if(atinaSolutionImageUsable(candidate)&&atinaSolutionImageMatch(answer,'',candidate))return {entityFound:true,item:candidate};
+   if(atinaSolutionImageUsable(candidate)&&atinaSolutionImageMatch(answer,category,candidate))return {entityFound:true,item:candidate};
   }
   // A entidade é exata, mas não tem imagem representativa com licença e
   // qualidade adequadas. Não recorrer a uma pesquisa textual ambígua.
@@ -1735,6 +1739,12 @@ async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[
     const answerCoverage=Math.max(...answerTokenSets.map(coverageFor));
     const titleCoverage=Math.max(...answerTokenSets.map(tokens=>coverageFor(title.split(' ').filter(Boolean))));
     const categoryCoverage=coverageFor(categoryTokens);
+    // Exigir confirmação temática também na pesquisa aberta, em qualquer categoria.
+    if(categoryTokens.length&&categoryCoverage===0)continue;
+    if(atinaSolutionImageText(category)==='onde estou'){
+     const cityEvidence=/\b(landmark|monument|palace|cathedral|basilica|church|castle|historic centre|historic center|old town|city centre|city center|cityscape|skyline|panorama|panoramic|aerial view|town hall|square|plaza|architecture|monumento|palacio|catedral|basilica|igreja|castelo|centro historico|centro da cidade|paisagem urbana|panoramica|vista aerea|praca|arquitetura|fachada|bairro historico|ruas antigas)\b/.test(searchable);
+     if(!cityEvidence)continue;
+    }
     const queryTokens=clean(query);
     const queryCoverage=coverageFor(queryTokens);
     // Resposta e título dominam a pontuação; categoria e contexto refinam.
@@ -1806,7 +1816,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const visualContexts=[...new Set([...tagContexts,...descriptionParts,...atinaSolutionImageVisualContexts(cleanAnswer)])].slice(0,14);
    // Primeiro, fontes ligadas a uma entidade identificada exatamente.
    // Isto evita que uma fotografia apenas parecida ultrapasse a imagem da entidade certa.
-   try{const semantic=await atinaWikidataSolutionImage(cleanAnswer);item=semantic.item;}catch(e){item=null;}
+   try{const semantic=await atinaWikidataSolutionImage(cleanAnswer,cleanCategory);item=semantic.item;}catch(e){item=null;}
    // Segunda opção: imagem da página exata da Wikipédia, validada pelo título.
    if(!item){try{item=await atinaWikipediaSolutionImage(cleanAnswer,cleanCategory);}catch(e){item=null;}}
    // Só depois recorrer à pesquisa aberta, com licença e relevância verificadas.
