@@ -44,6 +44,12 @@ BEGIN
   END IF;
 
   PERFORM pg_advisory_xact_lock(hashtextextended('atina-v2-quick-match', 0));
+  DELETE FROM public.atina_v2_rooms r
+  WHERE r.status = 'waiting'
+    AND r.id IN (
+      SELECT q.room_id FROM private.atina_v2_matchmaking_queue q
+      WHERE q.status = 'waiting' AND q.created_at <= clock_timestamp() - interval '90 seconds'
+    );
   v_hash := extensions.digest(p_ticket, 'sha256');
 
   SELECT * INTO v_existing
@@ -87,7 +93,7 @@ BEGIN
 
   v_token := encode(extensions.gen_random_bytes(32), 'hex');
   LOOP
-    v_code := upper(substr(replace(extensions.gen_random_uuid()::text, '-', ''), 1, 10));
+    v_code := upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 10));
     BEGIN
       INSERT INTO public.atina_v2_rooms(code, max_players)
       VALUES (v_code, 2)
