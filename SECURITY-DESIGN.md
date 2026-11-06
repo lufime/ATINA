@@ -1,81 +1,62 @@
 # ATINA — desenho de segurança
 
-## Âmbito desta branch
+## Âmbito e estado
 
-Esta documentação descreve a branch `security/server-side-validation`. As alterações aqui presentes não foram integradas em `main`, publicadas nem aplicadas em produção.
+Este documento descreve a arquitetura de segurança atualmente integrada na branch `main`. A publicação de cada versão deve ser confirmada pelo resultado do workflow GitHub Pages; a presença do código em `main`, por si só, não prova que uma versão específica esteja publicada.
 
 **É necessária ligação à Internet para iniciar e jogar qualquer modo. Não existe fallback de validação offline.** Sem acesso ao Supabase, a partida não pode começar nem aceitar respostas.
 
 ## Catálogo público e dados privados
 
-O `index.html` contém apenas os dados necessários à apresentação inicial:
-- identificador/posição histórica preservada;
-- modalidade e emoji;
-- URL de imagem, quando aplicável.
+O cliente recebe apenas os dados necessários à apresentação dos desafios, mantendo os identificadores/posições históricas. As respostas principais e alternativas não devem ser incluídas no HTML ou JavaScript servido ao browser.
 
-As pistas também não são enviadas antecipadamente: o browser recebe apenas as pistas já reveladas pela RPC de estado.
+As pistas são entregues à medida que são reveladas pelo servidor. O catálogo público mantém as posições históricas, incluindo slots vazios, para não alterar os IDs. A classificação de dificuldade por índice não contém respostas.
 
-As 753 respostas principais e as respetivas alternativas foram removidas do cliente. O catálogo mantém os 802 slots históricos, incluindo 49 posições vazias, para não alterar os IDs. A classificação de dificuldade por índice é pré-calculada e não contém respostas.
-
-O array local de cartões de Mímicas está vazio. Palavras, cartões e pistas de Mímicas são mantidos no schema privado do Supabase. Os scripts de validação/seed que necessitam das respostas originais recebem a fonte através de `ATINA_PRIVATE_SOURCE`, apontando para uma cópia guardada fora do repositório; o HTML publicado não é usado como fonte privada. A palavra secreta só é devolvida por `atina_get_mime_secret` ao representante da ronda.
+Palavras, cartões e pistas de Mímicas são mantidos no schema privado do Supabase. A palavra secreta só deve ser devolvida ao representante autorizado da ronda através da RPC própria.
 
 ## Modos de desafios
 
-Individual, Duelo, Mix e Party usam sessões locais autoritativas:
-- `atina_start_local_game`
-- `atina_local_game_state`
-- `atina_local_reveal_clue`
-- `atina_local_submit_answer`
-- `atina_local_pass_challenge`
-- `atina_local_next_challenge`
+Individual, Duelo, Mix e Party usam sessões locais autoritativas no servidor, através das RPCs de início, estado, revelação de pistas, submissão de resposta, passagem e avanço.
 
-O browser envia apenas o texto da resposta. O servidor compara a resposta com a chave privada, aplica penalizações, bónus, cartas especiais, alternância de jogadores e pontuação. Os tokens de sessão são aleatórios e apenas o respetivo hash é guardado na base de dados.
+O browser envia o texto da resposta. O servidor compara-o com a chave privada e aplica penalizações, bónus, alternância de jogadores e pontuação. Os tokens de sessão são aleatórios e apenas o respetivo hash é guardado na base de dados.
 
 Party limita a fila a 10 desafios, alterna entre as duas equipas e aplica o bónus final no servidor.
 
+A dificuldade adaptativa usa o histórico recente de resultados de jogadores registados. A qualificação exige um mínimo de observações; mais erros podem elevar a dificuldade e poucos erros podem reduzi-la. A rotação tenta evitar desafios apresentados recentemente quando o conjunto disponível o permite. A alteração aplica-se à seleção de uma nova partida, não altera uma ronda em curso. O perfil Admin é excluído da aprendizagem através do nome apresentado, o que não equivale a uma autorização baseada em papel/identidade autenticada.
+
 ## Multiplayer e equipas
 
-As salas são autenticadas por tokens bearer aleatórios, guardados como hashes. O estado público é projetado pelo servidor e não inclui a fila completa nem respostas durante uma ronda ativa.
+As salas usam tokens bearer aleatórios, guardados como hashes. O estado público é projetado pelo servidor e não deve incluir a fila completa nem respostas durante uma ronda ativa.
 
-- `atina_submit_room_answer` recebe apenas `p_answer`; não aceita `p_correct` nem `p_points`.
-- `atina_submit_team_proposal` recebe a resposta textual proposta.
-- `atina_vote_team_proposal` recebe apenas a decisão de cada membro.
-- O servidor valida unanimidade, correção, prazo e pontuação.
-- Submissões individuais por membros de uma equipa são bloqueadas.
-
-## Mímicas
-
-Mímicas usa salas multiplayer. O anfitrião escolhe o representante e faz a avaliação humana do gesto — não existe reconhecimento semântico automático da mímica.
-
-- A palavra secreta é obtida apenas pelo representante.
-- O servidor controla o relógio, as pistas reveladas, o fecho da ronda e os resultados.
-- `p_points` é ignorado pela função de resolução; os pontos são calculados no servidor com base na pista e no tempo restante.
-- `p_correct` representa a decisão humana do anfitrião, necessária neste formato de jogo.
+As RPCs de respostas, propostas e votos validam o token da sala, o jogador/equipa, o desafio, o prazo e as regras de pontuação no servidor. As propostas de equipa são submetidas como texto e a votação é validada no servidor. A decisão de correção em Mímicas é humana, tomada pelo anfitrião; não existe reconhecimento semântico automático do gesto.
 
 ## Proteções transversais
 
-- RLS ativo nas tabelas privadas, sem permissões diretas para `anon`/`authenticated`.
-- RPCs `SECURITY DEFINER` com `search_path` controlado e autenticação por token.
-- Rate limiting PostgREST por IP e RPC, com hash do IP, quotas e resposta HTTP 429.
-- O frontend não publica estados arbitrários de jogo. A publicação usada em Mímicas só permite transições estreitas (início do relógio e revelação de uma pista).
-- O cliente não decide se uma resposta está correta nem calcula pontuação.
+- RLS está ativo nas tabelas privadas; o acesso é feito através de RPCs controladas.
+- As funções privilegiadas devem usar `search_path` controlado e validar os tokens e os parâmetros relevantes.
+- Rate limiting está implementado no acesso RPC do ATINA. Não substitui WAF/DDoS nem limites por conta/token; utilizadores atrás do mesmo NAT podem partilhar quota.
+- O frontend não deve publicar estados arbitrários de jogo. As operações de Mímicas são limitadas às transições previstas pelo fluxo.
+- O cliente não decide se uma resposta textual está correta nem calcula pontuação.
 
-## Verificações automáticas
+### Notas de auditoria
 
-O workflow de validação verifica:
-- integridade do catálogo público (753 desafios, sem pistas não reveladas nem campos de resposta);
-- sintaxe JavaScript inline e do cliente separado;
-- ausência de respostas e alternativas no array enviado ao browser;
-- ausência de cartões secretos de Mímicas no browser;
-- ligação das submissões às RPCs server-authoritative.
+Os advisors do Supabase assinalaram funções `SECURITY DEFINER` executáveis por `anon` e/ou `authenticated`, tabelas sem políticas RLS e a extensão `pg_net` no schema `public`. Estes avisos exigem revisão função a função e tabela a tabela: algumas RPCs são endpoints intencionais para sessões anónimas autenticadas por token, e tabelas no schema privado podem não precisar de acesso direto pela API. Não se deve aplicar revogações globais ou políticas genéricas sem verificar o contrato de cada fluxo.
 
-O workflow de replay cria uma instância Supabase local descartável, aplica as migrations desde uma base vazia e executa a suite pgTAP. Não utiliza o projeto Supabase de produção.
+O advisor de performance também identificou índices em falta para chaves estrangeiras da fila de matchmaking e recomenda otimizar duas políticas de `atina_site_notice` para evitar reavaliações de funções de autenticação. Estas otimizações devem ser aplicadas por migration versionada e verificadas com os advisors e testes, sem remover índices apenas por aparecerem como pouco utilizados.
 
-## Limites conhecidos antes de qualquer publicação
+A proteção de palavras-passe comprometidas do Supabase Auth está desativada no projeto auditado. A relevância depende dos métodos de autenticação efetivamente usados; deve ser revista antes de introduzir autenticação por palavra-passe.
 
-- A integração precisa de testes funcionais num browser real, incluindo dispositivos móveis, reconexão, salas, votação por equipa, deadlines e Mímicas.
-- O rate limiting por IP não substitui WAF/DDoS nem limites por conta/token; utilizadores atrás do mesmo NAT partilham quota.
-- O cliente requer ligação à Internet e acesso ao Supabase.
-- Mímicas continua a depender da avaliação humana do anfitrião.
-- O cliente antigo e as novas RPCs não devem ser misturados: a versão antiga enviava correção e pontos do browser e é deliberadamente desativada nesta branch.
-- Não publicar, fazer merge, criar PR, alterar produção ou aplicar migrations em produção sem autorização explícita.
+## Verificações automáticas e limites
+
+Os workflows existentes verificam o catálogo público, a sintaxe JavaScript, a ausência de respostas/alternativas e segredos de Mímicas no cliente, a ligação das submissões às RPCs server-side e o replay de migrations com testes pgTAP.
+
+Estas verificações não equivalem a uma suite E2E completa. Continuam por cobrir de forma abrangente testes em browser real, dispositivos móveis, reconexão, salas multiplayer, votação por equipa, deadlines e Mímicas.
+
+A auditoria de advisors é indicativa e não prova, por si só, a existência ou ausência de uma vulnerabilidade explorável. Cada função exposta e cada tabela sem política devem ser avaliadas de acordo com as permissões efetivas, o corpo da função e o modelo de tokens.
+
+## Operação segura
+
+- Aplicar alterações de schema através de migrations versionadas e rever o diff antes de produção.
+- Não expor chaves `service_role` no cliente ou no repositório; usar secrets do GitHub Actions.
+- Confirmar os workflows de validação e deploy após cada alteração.
+- Não revogar permissões, alterar políticas RLS ou mover extensões sem testar os fluxos que dependem delas.

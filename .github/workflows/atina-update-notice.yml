@@ -29,7 +29,7 @@ jobs:
 
       - name: Ativar aviso público
         run: |
-          cat > atina-update-status.json <<'JSON'
+          cat > atina-update-status.json <<JSON
           {
             "active": true,
             "message": "🛠️ Estamos a atualizar o ATINA. Poderão ocorrer interrupções temporárias. Obrigado pela paciência!",
@@ -48,7 +48,7 @@ jobs:
       - name: Desativar aviso após a atualização
         if: success()
         run: |
-          cat > atina-update-status.json <<'JSON'
+          cat > atina-update-status.json <<JSON
           {
             "active": false,
             "message": "",

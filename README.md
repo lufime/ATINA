@@ -11,36 +11,34 @@ Jogo de desafios em português europeu (pt-PT), com 15 modalidades e 753 desafio
 - **Multiplayer** — salas online com código, jogadores, equipas, propostas e votação.
 - **Mímicas** — salas online, representante por ronda e palavra secreta visível apenas no dispositivo do representante.
 
-## Ligação obrigatória
+## Ligação e validação
 
-**Todos os modos exigem ligação à Internet e validação pelo Supabase. Não existe modo offline nem fallback de validação no browser.**
+Todos os modos exigem ligação à Internet e validação pelo Supabase. Não existe modo offline nem fallback de validação no browser.
 
-O cliente envia apenas a resposta textual. A correção, penalizações, pontuação, bónus, prazos, pistas reveladas e transições são controlados pelo servidor. As respostas principais, alternativas aceites e palavras secretas de Mímicas não são incluídas no HTML ou no JavaScript servido ao browser.
-
-Em Mímicas, a decisão de que o gesto foi corretamente adivinhado continua a ser humana e é registada pelo anfitrião; os pontos e o relógio são calculados pelo servidor.
+Nos modos com respostas textuais, o cliente envia a resposta e o servidor valida-a e calcula pontuação, penalizações, bónus, prazos, pistas reveladas e transições. Em Mímicas, a decisão de que o gesto foi corretamente adivinhado continua a ser humana e é registada pelo anfitrião; os pontos e o relógio são calculados pelo servidor.
 
 ## Segurança e testes
 
-- Dados de desafios e Mímicas guardados em tabelas privadas, sem leitura direta por clientes.
-- Sessões e salas autenticadas por tokens aleatórios; apenas hashes dos tokens são guardados.
-- RPCs específicas para submissão de respostas, pistas, propostas, votos e transições.
-- Rate limiting no acesso RPC do ATINA.
-- O workflow de validação verifica o catálogo público, a sintaxe JavaScript e a ausência de respostas, alternativas, pistas não reveladas e palavras secretas no cliente.
-- O workflow de replay aplica as migrations numa instância Supabase local descartável e executa os testes pgTAP.
+- Dados privados de desafios e Mímicas não são disponibilizados como catálogo de respostas no cliente.
+- Sessões e salas usam tokens aleatórios; os fluxos server-side guardam hashes dos tokens.
+- RPCs específicas tratam submissões de respostas, pistas, propostas, votos e transições.
+- Rate limiting está implementado no acesso RPC do ATINA.
+- A validação automática verifica o catálogo público, a sintaxe JavaScript e a ausência de respostas, alternativas, pistas não reveladas e palavras secretas no cliente.
+- O workflow de replay aplica as migrations numa instância Supabase local descartável e executa testes pgTAP.
 
-Ver [SECURITY-DESIGN.md](SECURITY-DESIGN.md) para os detalhes, decisões e limitações conhecidas.
+A validação automática não substitui testes funcionais completos em browser real. Continuam relevantes testes em telemóveis, reconexão, salas multiplayer, votação por equipa, prazos e Mímicas.
 
-## Estado desta branch
+Ver [SECURITY-DESIGN.md](SECURITY-DESIGN.md) para a arquitetura, decisões e limitações conhecidas.
 
-Este trabalho está isolado em `security/server-side-validation`. Não foi feito merge para `main`, deploy nem alteração da base de dados de produção. A integração ainda precisa de testes funcionais num browser real, incluindo telemóveis, reconexão, salas multiplayer, votação por equipa, prazos e Mímicas.
+## Estado e publicação
 
-## Publicação
+O código de validação server-side e a adaptação/rotação de desafios estão integrados na branch `main`. A publicação é feita através do GitHub Pages e as alterações à base de dados devem seguir migrations versionadas.
 
-Não publicar esta branch diretamente. Qualquer merge, PR, deploy ou alteração em produção exige autorização explícita.
+Não assumir que uma alteração está em produção apenas por existir em `main`: confirmar sempre o resultado do workflow de deploy e, para alterações de base de dados, o estado das migrations no projeto Supabase.
 
 ## Avisos automáticos de atualização
 
-O workflow `.github/workflows/atina-update-notice.yml` ativa o aviso global no início de alterações publicadas na branch `main` que afetem o jogo, os recursos ou as migrations. Aguarda 120 segundos para a publicação do GitHub Pages e desativa o aviso se os passos terminarem com sucesso. Se o workflow falhar, o aviso fica ativo para não deixar os jogadores sem informação.
+O workflow `.github/workflows/atina-update-notice.yml` ativa um aviso global no início de alterações publicadas na branch `main` que afetem o jogo, os recursos, as migrations ou os próprios workflows. Aguarda 180 segundos para a publicação do GitHub Pages e desativa o aviso se os passos terminarem com sucesso. Se o workflow falhar antes da desativação, o aviso poderá permanecer ativo e deverá ser verificado.
 
 ### Configuração obrigatória (uma vez)
 
@@ -51,4 +49,4 @@ No GitHub, abre **Settings → Secrets and variables → Actions → New reposit
 
 Esta chave é confidencial: guarda-a apenas como GitHub Actions secret. Nunca a coloques no HTML, JavaScript ou neste repositório.
 
-O workflow cobre commits na branch `main`, incluindo alterações em `supabase/migrations/**`. Alterações feitas manualmente no Dashboard do Supabase, fora de um workflow/migration commit, não geram um evento GitHub e não são detetadas por este mecanismo; para garantir avisos também nesses casos, as alterações de produção devem ser aplicadas através do processo de migrations versionadas no repositório.
+O workflow cobre commits na branch `main`, incluindo alterações em `supabase/migrations/**`. Alterações feitas manualmente no Dashboard do Supabase, fora de um workflow/migration commit, não geram um evento GitHub e não são detetadas por este mecanismo.
