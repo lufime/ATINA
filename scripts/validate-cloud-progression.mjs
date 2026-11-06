@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 
 const sql = readFileSync(
-  new URL('../supabase/proposals/pseudonym-xp-cloud-progression.sql', import.meta.url),
+  new URL('../supabase/archive/proposals/pseudonym-xp-cloud-progression.sql', import.meta.url),
   'utf8'
 );
 
