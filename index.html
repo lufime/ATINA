@@ -732,6 +732,13 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  #atinaMainNav .home-nav-btn{font-size:10px!important;min-height:38px;padding:6px 2px!important}
 }
 </style>
+
+<style id="atina-strict-page-visibility">
+/* A página selecionada é a única área de conteúdo visível.
+   Esta regra sobrepõe estilos antigos que forçavam o dashboard a display:grid. */
+#home [data-home-page].hidden{display:none!important}
+#home [data-home-page="dashboard"]:not(.hidden){display:grid!important}
+</style>
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div><button type="button" id="adminOnlineButton" class="btn secondary hidden" onclick="openAdminOnlinePage()" style="margin-top:10px">📊 Administração · Online</button>
