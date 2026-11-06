@@ -2168,42 +2168,44 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
 
 
 
-/* Lembretes locais ATINA: 48 h sem atividade.
-   O aviso é verificado quando a página está aberta ou volta a ganhar foco.
-   Push com a página totalmente fechada exige subscrição Push, Service Worker e servidor. */
+/* Lembretes Push ATINA: 48 h sem atividade, mesmo com o navegador fechado.
+   Requer HTTPS, permissões do navegador e configuração VAPID no Supabase. */
 (function(){
- const KEY='atinaReminderActivityV1',SENT='atinaReminderSentV1',LIMIT=48*60*60*1000;
+ const KEY='atinaReminderActivityV2',LIMIT=48*60*60*1000;
+ const PUBLIC_KEY='BN-3wrVt_DrACsrzChqisMbB1e9QOFVqYtn5EWzP3g1fYPqn61qmEUCGc3Mn1Lj3hFZSbBMzN_LBRvebKBCzjUo';
+ const URL='https://qvvlqrgbtjujsejvenld.supabase.co/functions/v1/atina-push-reminders';
+ const API_KEY='sb_publishable_hNav9TfG49in13UfflVdUw_O-_s2-0t';
  const statusEl=()=>document.getElementById('atinaReminderStatus');
  const button=()=>document.getElementById('atinaEnableReminders');
- function read(k){try{return Number(localStorage.getItem(k))||0}catch(e){return 0}}
- function write(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
- function setStatus(t){const e=statusEl();if(e)e.textContent=t}
- function identity(){try{return window.atinaUser?.id?'account:'+window.atinaUser.id:'device'}catch(e){return'device'}}
- function activityKey(){return KEY+':'+identity()}
- function sentKey(){return SENT+':'+identity()}
- function check(){
-  if(!('Notification'in window)){setStatus('Este navegador não suporta notificações.');return}
-  const last=read(activityKey()),now=Date.now();
-  if(!last){write(activityKey(),now);setStatus(Notification.permission==='granted'?'Lembretes ativos: aviso após 48 horas sem jogar.':'Ativa os lembretes para receber um aviso após 48 horas.');return}
-  if(now-last>=LIMIT&&read(sentKey())<last&&Notification.permission==='granted'){
-   try{const n=new Notification('O ATINA tem novos desafios! 🎮',{body:'Já passaram 48 horas. Volta ao ATINA e põe a mente à prova.',tag:'atina-48h'});n.onclick=()=>{window.focus();n.close()};write(sentKey(),last);setStatus('Enviámos um lembrete. Diverte-te no ATINA!')}catch(e){}
-  }else if(Notification.permission==='granted')setStatus('Lembretes ativos: aviso após 48 horas sem jogar.')
+ function status(t){if(statusEl())statusEl().textContent=t}
+ function base64ToBytes(v){const p='='.repeat((4-v.length%4)%4);return Uint8Array.from(atob((v+p).replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0))}
+ async function call(body){const r=await fetch(URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Falha ao comunicar com o servidor de lembretes.');return d}
+ async function register(){
+  if(!('serviceWorker'in navigator)||!('PushManager'in window)||!('Notification'in window))throw new Error('Este navegador não suporta notificações Push.');
+  if(!window.isSecureContext)throw new Error('As notificações Push exigem uma ligação HTTPS.');
+  const permission=await Notification.requestPermission();if(permission!=='granted')throw new Error('Permite as notificações nas definições do navegador.');
+  const reg=await navigator.serviceWorker.register('./sw.js');
+  await navigator.serviceWorker.ready;
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:base64ToBytes(PUBLIC_KEY)});
+  await call({action:'subscribe',subscription:sub.toJSON(),last_activity:new Date().toISOString()});
+  localStorage.setItem(KEY,String(Date.now()));
+  status('Lembretes Push ativos. Receberás uma notificação após 48 horas sem jogar, mesmo com o navegador fechado.');
  }
- async function enable(){
-  if(!('Notification'in window)){setStatus('Este navegador não suporta notificações.');return}
-  try{const p=await Notification.requestPermission();if(p==='granted'){if(!read(activityKey()))write(activityKey(),Date.now());setStatus('Lembretes ativados. Avisamos após 48 horas sem jogar.');check()}else setStatus('As notificações não foram autorizadas no navegador.')}catch(e){setStatus('Não foi possível ativar as notificações neste navegador.')}
+ let lastSent=0;
+ async function activity(){
+  const now=Date.now();localStorage.setItem(KEY,String(now));
+  if(now-lastSent<60000)return;lastSent=now;
+  try{await call({action:'activity'});}catch(e){/* A atividade local continua guardada; tenta novamente mais tarde. */}
  }
- function activity(){write(activityKey(),Date.now());check()}
  document.addEventListener('DOMContentLoaded',()=>{
-  const b=button();if(b)b.addEventListener('click',enable);
-  check();
-  document.addEventListener('pointerdown',activity,{passive:true});
-  document.addEventListener('keydown',activity);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
-  window.addEventListener('focus',check);
+  const b=button();if(b)b.addEventListener('click',async()=>{b.disabled=true;status('A ativar notificações Push…');try{await register()}catch(e){status(e.message||'Não foi possível ativar os lembretes.')}finally{b.disabled=false}});
+  if('serviceWorker'in navigator&&window.isSecureContext)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  if(Notification.permission==='granted')status('Notificações autorizadas. Se ainda não ativaste o Push, toca em Ativar lembretes.');
+  document.addEventListener('pointerdown',activity,{passive:true});document.addEventListener('keydown',activity,{passive:true});
+  window.addEventListener('focus',activity);document.addEventListener('visibilitychange',()=>{if(!document.hidden)activity()});
  });
-})();
-</script><style id="atina-professional-overhaul">
+})();</script><style id="atina-professional-overhaul">
 /* ATINA PROFESSIONAL UI — final override */
 :root{--bg:#081522!important;--panel:#10243a!important;--panel2:#18334e!important;--gold:#efc77d!important;--text:#f4f7fb!important;--muted:#b5c4d3!important;--line:#304d68!important}
 html{scroll-behavior:smooth}
