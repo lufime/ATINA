@@ -2189,6 +2189,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   let sub=await reg.pushManager.getSubscription();
   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:base64ToBytes(PUBLIC_KEY)});
   await call({action:'subscribe',subscription:sub.toJSON(),last_activity:new Date().toISOString()});
+  localStorage.setItem('atinaPushEndpointV1',sub.endpoint);
   localStorage.setItem(KEY,String(Date.now()));
   status('Lembretes Push ativos. Receberás uma notificação após 48 horas sem jogar, mesmo com o navegador fechado.');
  }
@@ -2196,7 +2197,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  async function activity(){
   const now=Date.now();localStorage.setItem(KEY,String(now));
   if(now-lastSent<60000)return;lastSent=now;
-  try{await call({action:'activity'});}catch(e){/* A atividade local continua guardada; tenta novamente mais tarde. */}
+  try{const endpoint=localStorage.getItem('atinaPushEndpointV1');if(endpoint)await call({action:'activity',endpoint});}catch(e){/* A atividade local continua guardada; tenta novamente mais tarde. */}
  }
  document.addEventListener('DOMContentLoaded',()=>{
   const b=button();if(b)b.addEventListener('click',async()=>{b.disabled=true;status('A ativar notificações Push…');try{await register()}catch(e){status(e.message||'Não foi possível ativar os lembretes.')}finally{b.disabled=false}});
