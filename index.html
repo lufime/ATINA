@@ -720,6 +720,22 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 .network-room-options{margin-top:14px;padding:12px;border:1px solid #3b5670;border-radius:14px;background:#0b1d30}
 .network-room-options>summary{cursor:pointer;list-style:none;font-weight:800;color:#f0d49a;padding:4px 2px}
 .network-room-options>summary::-webkit-details-marker{display:none}
+
+/* Igualar o botão de criar sala ao botão de partida rápida */
+#home [data-home-page="online"] .network-room-options>summary{
+ display:flex;align-items:center;justify-content:center;min-height:58px;
+ padding:14px 18px;border:0;border-radius:15px;
+ background:linear-gradient(110deg,#ffe08a,#f5a943);
+ color:#172536;font-size:clamp(15px,3.8vw,18px);font-weight:850;
+ text-align:center;line-height:1.35;box-shadow:0 8px 22px #0004;
+}
+#home [data-home-page="online"] .network-room-options[open]>summary{
+ margin-bottom:12px;padding-bottom:14px;border-bottom:0;
+}
+#home [data-home-page="online"] .network-room-options>summary:focus-visible{
+ outline:3px solid #f3ca70;outline-offset:3px;
+}
+
 .network-room-options[open]>summary{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #344c64}
 .network-room-options .divider{margin:14px 0}
 #home [data-home-page="online"] .quick-match-panel{margin-top:12px}
