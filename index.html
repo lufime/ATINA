@@ -234,6 +234,9 @@ body{font-size:17px}
 #home .network-block>.btn{min-height:49px;margin-top:4px}
 #home .network-block .divider{margin:15px 0}
 #home .network-block .feedback{overflow-wrap:anywhere}
+ #home .quick-match-panel{margin:12px 0;padding:13px;border:1px solid #3d668e;border-radius:14px;background:linear-gradient(135deg,#132d49,#18213c)}
+ #home .quick-match-panel h3{margin:0 0 6px;color:#f3ce7b}
+ #home .quick-match-panel .btn{margin-top:7px}
 @media(min-width:520px){
  #home .modes{grid-template-columns:repeat(3,minmax(0,1fr))}
  #home .tile{min-height:100px!important}
@@ -687,6 +690,13 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 <p class="muted small" id="networkModeHint">Cada pessoa joga no seu próprio telemóvel. Cria uma sala ou entra com um código. Para Mímicas, escolhe a categoria Mímicas e o anfitrião inicia a ronda na sala.</p>
 <label class="section" for="networkNickname">O teu pseudónimo</label>
 <input id="networkNickname" class="answer" maxlength="20" placeholder="Pseudónimo">
+<div class="quick-match-panel">
+ <h3>⚡ Partida rápida</h3>
+ <p class="muted small">Encontra automaticamente outro jogador para um duelo online.</p>
+ <button type="button" class="btn full" id="quickMatchStart">Encontrar adversário</button>
+ <button type="button" class="btn secondary full hidden" id="quickMatchCancel">Cancelar procura</button>
+ <p class="feedback" id="quickMatchStatus" aria-live="polite"></p>
+</div>
 <label class="section" for="networkMaxPlayers">Limite de jogadores</label>
 <select id="networkMaxPlayers" class="answer"><option value="12">Até 12 jogadores</option><option value="10">Até 10 jogadores</option><option value="8">Até 8 jogadores</option><option value="6">Até 6 jogadores</option><option value="4">Até 4 jogadores</option><option value="2">Até 2 jogadores</option></select>
 <button type="button" class="btn full" id="createNetworkRoom">Criar sala</button>
@@ -1120,6 +1130,14 @@ function renderNetworkTimeoutPanel(){
  if(networkLobbyData.team)add('Pausa da equipa · 15 min','team',team);
 }
 function networkMessage(id,msg){const el=$(id);if(el)el.textContent=msg;}
+let quickMatchTicket=null,quickMatchPoll=null,quickMatchBusy=false;
+function quickMatchStopPolling(){if(quickMatchPoll!==null)clearInterval(quickMatchPoll);quickMatchPoll=null;}
+function quickMatchSetBusy(busy,message){quickMatchBusy=busy;const start=$('quickMatchStart'),cancel=$('quickMatchCancel');if(start){start.disabled=busy;start.textContent=busy?'À procura de adversário…':'Encontrar adversário';}if(cancel)cancel.classList.toggle('hidden',!busy);if(message)$('quickMatchStatus').textContent=message;}
+function quickMatchNewTicket(){if(!window.crypto?.getRandomValues)throw new Error('Este navegador não permite criar um pedido seguro.');const bytes=new Uint8Array(32);window.crypto.getRandomValues(bytes);return Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('');}
+async function quickMatchEnterRoom(data){quickMatchStopPolling();quickMatchTicket=null;quickMatchSetBusy(false,'Adversário encontrado! A abrir a sala…');networkRoom={room_id:data.room_id,token:data.token};localStorage.setItem('atinaNetworkRoom',JSON.stringify(networkRoom));screen('networkLobby');await networkRefreshRoom();networkStartPolling();quickMatchSetBusy(false,'Partida encontrada. Boa sorte!');}
+async function quickMatchCheck(){if(!quickMatchTicket||quickMatchBusy===false)return;try{const {data,error}=await supabaseClient.rpc('atina_v2_matchmake_status',{p_ticket:quickMatchTicket});if(error)throw error;if(data?.status==='matched'){await quickMatchEnterRoom(data);return;}if(data?.status==='cancelled'){quickMatchStopPolling();quickMatchTicket=null;quickMatchSetBusy(false,'A procura foi cancelada.');}}catch(e){quickMatchStopPolling();quickMatchTicket=null;quickMatchSetBusy(false,e.message||'Não foi possível verificar a procura.');}}
+async function quickMatchStart(){const nickname=$('networkNickname').value.trim();if(!nickname){$('quickMatchStatus').textContent='Escreve primeiro o teu pseudónimo.';return;}if(quickMatchBusy)return;try{quickMatchTicket=quickMatchNewTicket();quickMatchSetBusy(true,'À procura de um adversário…');const {data,error}=await supabaseClient.rpc('atina_v2_matchmake',{p_nickname:nickname,p_ticket:quickMatchTicket});if(error)throw error;if(data?.status==='matched'){await quickMatchEnterRoom(data);return;}quickMatchPoll=setInterval(quickMatchCheck,1800);await quickMatchCheck();}catch(e){quickMatchStopPolling();quickMatchTicket=null;quickMatchSetBusy(false,e.message||'Não foi possível iniciar a procura.');}}
+async function quickMatchCancel(){if(!quickMatchTicket)return;const ticket=quickMatchTicket;quickMatchStopPolling();quickMatchTicket=null;quickMatchSetBusy(false,'A cancelar a procura…');try{const {error}=await supabaseClient.rpc('atina_v2_cancel_matchmake',{p_ticket:ticket});if(error)throw error;$('quickMatchStatus').textContent='Procura cancelada.';}catch(e){$('quickMatchStatus').textContent=e.message||'Não foi possível cancelar a procura.';}}
 async function networkCreateRoom(){const nickname=$('networkNickname').value.trim(),maxPlayers=Number($('networkMaxPlayers').value);if(!nickname){networkMessage('networkStatus','Escreve primeiro o teu pseudónimo.');return;}networkMessage('networkStatus','A criar sala…');try{const {data,error}=await supabaseClient.rpc('atina_v2_create_room',{p_nickname:nickname,p_max_players:maxPlayers});if(error)throw error;networkRoom=data;localStorage.setItem('atinaNetworkRoom',JSON.stringify(data));$('networkLobbyCode').textContent=data.code;screen('networkLobby');await networkRefreshRoom();networkStartPolling();}catch(e){networkMessage('networkStatus',e.message||'Não foi possível criar a sala.');}}
 async function networkJoinRoom(){const nickname=$('networkNickname').value.trim(),code=$('networkRoomCode').value.trim().toUpperCase();if(!nickname||!/^[A-Z0-9]{10}$/.test(code)){networkMessage('networkStatus','Indica o pseudónimo e um código de 10 letras ou números.');return;}networkMessage('networkStatus','A entrar na sala…');try{const {data,error}=await supabaseClient.rpc('atina_v2_join_room',{p_nickname:nickname,p_code:code});if(error)throw error;networkRoom=data;localStorage.setItem('atinaNetworkRoom',JSON.stringify(data));$('networkLobbyCode').textContent=data.code;screen('networkLobby');await networkRefreshRoom();networkStartPolling();}catch(e){networkMessage('networkStatus',e.message||'Não foi possível entrar na sala.');}}
 async function networkCall(name,args){const {data,error}=await supabaseClient.rpc(name,args);if(error)throw error;return data;}
@@ -1357,7 +1375,7 @@ $('shareMonitorGame').addEventListener('click',openScreenShareHelp);
 $('closeScreenShare').addEventListener('click',closeScreenShareHelp);
 $('fullscreenAtina').addEventListener('click',async()=>{try{if(!document.fullscreenElement){await activateLandscapePresentation();$('screenShareTitle').textContent='📺 ATINA pronto para partilhar na TV';}else{await document.exitFullscreen();try{screen.orientation?.unlock?.();}catch(e){}}}catch(e){$('screenShareTitle').textContent='Não foi possível bloquear a orientação neste dispositivo. O ATINA adapta-se automaticamente quando o Android roda o ecrã.';}});
 $('soundToggle').addEventListener('click',()=>{unlockTimerAudio();atinaSoundEnabled=!atinaSoundEnabled;try{localStorage.setItem('atinaSoundEnabled',String(atinaSoundEnabled));}catch(e){}syncSoundToggle();if(atinaSoundEnabled)playAtinaSound('correct');});syncSoundToggle();$('submit').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkSubmitAnswer();}},true);$('answer').addEventListener('keydown',e=>{if(networkGameActive&&e.key==='Enter'){e.preventDefault();networkSubmitAnswer();}},true);$('nextClue').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkHostReveal();}},true);$('pass').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkHostPass();}},true);$('continue').addEventListener('click',e=>{if(networkGameActive){e.stopImmediatePropagation();networkHostNext();}},true);async function networkRestoreSession(){let saved;try{saved=JSON.parse(localStorage.getItem('atinaNetworkRoom')||'null');}catch(e){localStorage.removeItem('atinaNetworkRoom');return;}if(!saved?.room_id||!saved?.token)return;networkRoom=saved;networkLastRefreshError=null;networkMessage('networkStatus','A recuperar a tua sala…');await networkRefreshRoom();if(!networkLobbyData){const e=networkLastRefreshError;const invalid=e?.code==='28000'||/Sessão da sala inválida/i.test(e?.message||'');networkGameActive=false;if(invalid){networkRoom=null;localStorage.removeItem('atinaNetworkRoom');networkMessage('networkStatus','A sessão da sala expirou ou deixou de ser válida. Podes voltar a entrar com o código.');}else{networkMessage('networkStatus','Não foi possível recuperar a sala devido a uma falha de ligação. A sessão foi preservada; verifica a Internet e atualiza a página para tentar novamente.');}return;}screen(networkLobbyData.status==='playing'||networkLobbyData.status==='completed'?'game':'networkLobby');networkStartPolling();networkMessage('networkStatus','Ligação à sala recuperada.');}
-$('createNetworkRoom').onclick=networkCreateRoom;$('joinNetworkRoom').onclick=networkJoinRoom;$('leaveNetworkRoom').onclick=networkLeaveRoom;$('networkReady').onclick=()=>networkSetReady(!networkLobbyData?.ready);$('networkAutoTeams').onclick=networkAutoTeams;$('networkStartGame').onclick=networkStartGame;$('networkStartMimicas').onclick=networkStartMimicas;
+$('quickMatchStart').onclick=quickMatchStart;$('quickMatchCancel').onclick=quickMatchCancel;$('createNetworkRoom').onclick=networkCreateRoom;$('joinNetworkRoom').onclick=networkJoinRoom;$('leaveNetworkRoom').onclick=networkLeaveRoom;$('networkReady').onclick=()=>networkSetReady(!networkLobbyData?.ready);$('networkAutoTeams').onclick=networkAutoTeams;$('networkStartGame').onclick=networkStartGame;$('networkStartMimicas').onclick=networkStartMimicas;
 $('mimeNext').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'){e.preventDefault();e.stopImmediatePropagation();networkMimeNext();}},true);
 $('mimeReveal').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'){e.preventDefault();e.stopImmediatePropagation();networkMimeReveal();}},true);
 $('mimeCorrect').addEventListener('click',e=>{if(networkGameState?.mode==='mimicas'){e.preventDefault();e.stopImmediatePropagation();networkMimeResolveRound(true,'correct');}},true);
@@ -2223,4 +2241,239 @@ body{margin:0!important;background:#071321!important;background-image:radial-gra
 @media(max-width:360px){.home-nav-btn{font-size:10px!important}.wrap{width:calc(100% - 16px)!important}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 </style>
+
+<style id="atina-quiz-show-identity">
+/* ATINA — identidade visual de concurso televisivo */
+:root{
+  --bg:#080a18!important;
+  --panel:#11152b!important;
+  --panel2:#1c2040!important;
+  --gold:#ffc96b!important;
+  --text:#f8f7ff!important;
+  --muted:#b9bdd4!important;
+  --line:#3b3c67!important;
+  --atina-violet:#8b5cf6;
+  --atina-cyan:#45e0e8;
+}
+html{background:#080a18!important}
+body{
+  background:
+    radial-gradient(ellipse at 50% -12%,#47317a 0%,#171936 32%,#090b1b 72%,#060713 100%)!important;
+  color:#f8f7ff!important;
+}
+.wrap{max-width:1080px!important}
+.brand{
+  isolation:isolate!important;
+  min-height:220px!important;
+  padding:clamp(24px,5vw,48px)!important;
+  border:1px solid #7764b4!important;
+  border-radius:26px!important;
+  background:
+    radial-gradient(ellipse at 50% -35%,#fff7d633 0,transparent 42%),
+    linear-gradient(115deg,#17152f 0%,#28204f 48%,#111b38 100%)!important;
+  box-shadow:0 24px 70px #03030d99, inset 0 1px #ffffff25!important;
+}
+.brand:before{
+  content:""!important;position:absolute!important;z-index:-1!important;inset:-35% 12% 20%!important;
+  background:conic-gradient(from 250deg at 50% 0%,transparent 0 18%,#a78bfa22 22%,transparent 28% 48%,#45e0e822 54%,transparent 61% 100%)!important;
+  filter:blur(18px)!important;pointer-events:none!important;
+}
+.brand:after{
+  content:""!important;position:absolute!important;z-index:-1!important;left:50%!important;top:-110px!important;
+  width:min(70vw,680px)!important;height:300px!important;transform:translateX(-50%)!important;
+  background:radial-gradient(ellipse,#fff3c51c 0%,#9b7aff12 35%,transparent 72%)!important;
+  pointer-events:none!important;
+}
+.brand .logo{
+  color:#fff!important;
+  font-size:clamp(42px,8vw,68px)!important;
+  letter-spacing:.2em!important;
+  font-weight:950!important;
+  text-shadow:0 0 18px #a78bfa66,0 4px 0 #17132e!important;
+}
+.brand .eyebrow,.home-welcome-kicker,.section,.daily-kicker{
+  color:#f6c96d!important;
+}
+.brand .tag{color:#d8d5f2!important;letter-spacing:.12em!important}
+.brand .stats>*{
+  border-color:#ffffff2e!important;background:#080a1c88!important;
+  box-shadow:inset 0 1px #ffffff12!important;
+}
+.home-page-nav{
+  border-color:#51477d!important;background:#0b0d20ed!important;
+  box-shadow:0 12px 34px #03030d88!important;
+}
+.home-nav-btn{color:#c8c7e2!important}
+.home-nav-btn.active{
+  color:#fff!important;border-color:#9d86f7!important;
+  background:linear-gradient(135deg,#6045a8,#30265f)!important;
+  box-shadow:0 0 22px #8b5cf644,inset 0 1px #ffffff35!important;
+}
+.home-welcome{
+  position:relative!important;overflow:hidden!important;
+  border-color:#62528f!important;
+  background:linear-gradient(125deg,#201a43,#151a35 60%,#12263c)!important;
+  box-shadow:0 18px 42px #03030d66!important;
+}
+.home-welcome:after{
+  content:""!important;position:absolute!important;right:-75px!important;top:-100px!important;
+  width:260px!important;height:260px!important;border-radius:50%!important;
+  border:1px solid #a78bfa55!important;
+  box-shadow:0 0 0 22px #a78bfa0c,0 0 0 48px #45e0e80a,0 0 70px #8b5cf633!important;
+  pointer-events:none!important;
+}
+.card,.tile,.atina-quickstart,.atina-howto,.daily-mission{
+  border-color:#39385f!important;
+  background:linear-gradient(155deg,#191c39,#10152c)!important;
+  box-shadow:0 12px 32px #03030d66,inset 0 1px #ffffff0b!important;
+}
+.tile{
+  position:relative!important;overflow:hidden!important;
+  border-radius:18px!important;min-height:116px!important;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+}
+.tile:before{
+  content:""!important;position:absolute!important;left:0!important;top:14px!important;bottom:14px!important;
+  width:3px!important;border-radius:0 4px 4px 0!important;
+  background:linear-gradient(#a78bfa,#45e0e8)!important;opacity:.8!important;
+}
+.tile:hover{
+  transform:translateY(-4px)!important;border-color:#8b78d1!important;
+  box-shadow:0 16px 34px #05051099,0 0 22px #8b5cf622!important;
+}
+.tile b{color:#fff!important}
+.tile small{color:#b9bdd4!important}
+.btn{
+  color:#171329!important;
+  background:linear-gradient(115deg,#ffe09a,#ffc15e 55%,#f2a94e)!important;
+  box-shadow:0 7px 22px #f3b95730,inset 0 1px #ffffff9c!important;
+}
+.btn.secondary{
+  color:#f3f0ff!important;border-color:#5a4c89!important;
+  background:linear-gradient(135deg,#302858,#1c2442)!important;
+}
+.btn.danger{background:linear-gradient(135deg,#71374d,#48243d)!important;color:#ffe5ed!important}
+.answer,select,input,textarea{
+  border-color:#514b7c!important;background:#0b1025!important;color:#fbfaff!important;
+}
+.answer:focus,select:focus,input:focus,textarea:focus{
+  outline:3px solid #8b5cf655!important;border-color:#a78bfa!important;
+}
+#game>.card{
+  border-color:#6a5798!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,#6b4cb51c,transparent 58%),
+    linear-gradient(155deg,#1b1d3d,#10152b)!important;
+  box-shadow:0 20px 55px #02030b99,0 0 32px #8b5cf61a!important;
+}
+#question{color:#fff!important;text-shadow:0 0 22px #a78bfa33!important}
+#timerDisplay,.timer-display{
+  color:#ffe09a!important;border-color:#f6c96d!important;
+  background:linear-gradient(145deg,#211b3d,#10152b)!important;
+  box-shadow:0 0 0 5px #f6c96d12,0 0 26px #f6c96d25!important;
+}
+.visual{border-color:#67558f!important;box-shadow:0 12px 30px #02030b66!important}
+.pill{border-color:#514b7c!important;background:#121832!important;color:#d8d5f2!important}
+.clue{background:#252044!important;border-left-color:#45e0e8!important}
+.feedback{color:#e7e4fa!important}
+.footer{border-color:#34345b!important;color:#969ab9!important}
+@media(max-width:700px){
+  .brand{min-height:185px!important;padding:24px 18px!important}
+  .brand .logo{letter-spacing:.14em!important}
+  .tile{min-height:102px!important}
+}
+@media(prefers-reduced-motion:no-preference){
+  .brand .logo{animation:atina-stage-glow 4s ease-in-out infinite alternate}
+  @keyframes atina-stage-glow{
+    from{text-shadow:0 0 12px #a78bfa44,0 4px 0 #17132e}
+    to{text-shadow:0 0 26px #a78bfa99,0 0 42px #45e0e822,0 4px 0 #17132e}
+  }
+}
+</style>
+
+
+<style id="atina-quiz-show-home">
+/* Palco de abertura — hierarquia do ecrã inicial */
+#home [data-home-page="dashboard"]{display:grid!important;gap:18px!important}
+#home .home-welcome{
+  min-height:clamp(300px,42vw,390px)!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;
+  padding:clamp(25px,5vw,54px)!important;
+  border:1px solid #7761b5!important;border-radius:26px!important;
+  background:
+    radial-gradient(ellipse at 50% -5%,#fff0c52b 0,transparent 43%),
+    radial-gradient(ellipse at 0% 100%,#45e0e81c 0,transparent 38%),
+    linear-gradient(125deg,#211746 0%,#171b3a 52%,#10283e 100%)!important;
+  box-shadow:0 24px 65px #03030f99, inset 0 1px #ffffff25!important;
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+}
+#home .home-welcome:before{
+  content:""!important;position:absolute!important;z-index:-1!important;inset:-35% -12% 15%!important;
+  background:conic-gradient(from 245deg at 50% 0%,transparent 0 15%,#a78bfa28 20%,transparent 29% 43%,#45e0e822 51%,transparent 62% 100%)!important;
+  filter:blur(16px)!important;pointer-events:none!important;
+}
+#home .home-welcome:after{
+  content:""!important;position:absolute!important;z-index:-1!important;left:50%!important;top:-155px!important;
+  width:min(78vw,760px)!important;height:360px!important;transform:translateX(-50%)!important;
+  background:radial-gradient(ellipse,#ffe5a52b 0%,#9b7aff16 35%,transparent 72%)!important;
+  pointer-events:none!important;
+}
+#home .home-welcome-kicker{
+  display:inline-flex!important;align-items:center!important;gap:9px!important;
+  padding:7px 11px!important;border:1px solid #f6c96d66!important;border-radius:999px!important;
+  background:#080a1c88!important;color:#ffdb8a!important;
+}
+#home .home-welcome-kicker:before{
+  content:""!important;width:7px!important;height:7px!important;border-radius:50%!important;
+  background:#ffcf6b!important;box-shadow:0 0 12px #ffcf6b!important;
+}
+#home .home-welcome h2{
+  max-width:760px!important;margin:18px 0 12px!important;
+  font-size:clamp(32px,6.2vw,58px)!important;line-height:1.02!important;
+  letter-spacing:-.045em!important;color:#fff!important;
+  text-shadow:0 5px 28px #08071399!important;
+}
+#home .home-welcome p{max-width:610px!important;font-size:clamp(14px,1.8vw,17px)!important;line-height:1.6!important;color:#d1d0e9!important}
+#home .home-welcome>.btn{
+  width:auto!important;min-width:min(100%,245px)!important;min-height:58px!important;
+  margin-top:14px!important;padding:15px 24px!important;border-radius:14px!important;
+  font-size:16px!important;letter-spacing:.01em!important;
+  box-shadow:0 8px 28px #f3b9573b,0 0 0 1px #fff4!important;
+}
+#home .atina-quickstart{
+  padding:22px!important;border-color:#51477d!important;
+  background:linear-gradient(145deg,#191b3a,#10172d)!important;
+  box-shadow:0 16px 38px #03030d66!important;
+}
+#home .atina-quickstart-head h3{font-size:clamp(20px,3vw,26px)!important;margin:5px 0!important;color:#fff!important}
+#home .atina-quickstart-head p{color:#bfc3df!important}
+#home .atina-quickstart-icon{
+  display:grid!important;place-items:center!important;width:52px!important;height:52px!important;
+  border:1px solid #7665ad!important;border-radius:16px!important;
+  background:linear-gradient(145deg,#3b2e70,#182744)!important;
+  box-shadow:0 0 25px #8b5cf633!important;font-size:25px!important;
+}
+#home .atina-quickstart-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;margin-top:15px!important}
+#home .atina-quickstart-actions .btn{min-height:58px!important;padding:12px!important;font-size:14px!important}
+#home .atina-quickstart-info{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin-top:15px!important}
+#home .atina-quickstart-info span{
+  padding:6px 10px!important;border:1px solid #48466f!important;border-radius:999px!important;
+  background:#0c1228!important;color:#d6d4ec!important;font-size:11px!important;
+}
+#home .atina-howto{border-color:#38375d!important;background:linear-gradient(145deg,#141a34,#101629)!important}
+#home .daily-mission{border-color:#6b5793!important;background:linear-gradient(145deg,#201b3d,#111a30)!important}
+@media(max-width:620px){
+ #home .home-welcome{min-height:315px!important;padding:25px 21px!important;border-radius:21px!important}
+ #home .home-welcome h2{font-size:clamp(32px,9vw,43px)!important}
+ #home .atina-quickstart{padding:17px!important}
+ #home .atina-quickstart-actions{grid-template-columns:1fr!important}
+ #home .atina-quickstart-actions .btn{min-height:52px!important}
+ #home .atina-quickstart-icon{width:44px!important;height:44px!important;flex:0 0 44px!important}
+}
+@media(prefers-reduced-motion:no-preference){
+ #home .home-welcome>.btn{transition:transform .18s ease,box-shadow .18s ease!important}
+ #home .home-welcome>.btn:hover{transform:translateY(-2px)!important;box-shadow:0 12px 34px #f3b95755,0 0 0 1px #fff7!important}
+}
+</style>
+
 </body></html>
