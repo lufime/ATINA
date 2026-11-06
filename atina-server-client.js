@@ -432,6 +432,15 @@ async function atinaServerRefresh() {
       p_token: atinaServerSession.token
     });
     atinaServerApplyState(state);
+  } catch (error) {
+    if (atinaServerIsInvalidSession(error)) {
+      atinaServerStopTimers();
+      atinaServerSession = null;
+      atinaServerState = null;
+      localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
+      screen('home');
+      atinaServerMessage('A partida expirou. Inicia uma nova partida.');
+    }
   } finally {
     atinaServerBusy = false;
   }
