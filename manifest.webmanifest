@@ -1,0 +1,19 @@
+{
+  "id": "./",
+  "name": "ATINA — Pensa, descobre, atina",
+  "short_name": "ATINA",
+  "description": "Desafios, pistas e jogos para pôr a mente à prova.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14243a",
+  "theme_color": "#14243a",
+  "icons": [
+    {
+      "src": "./assets/atina-logo-alentejo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
