@@ -1,4 +1,54 @@
 {
   "version": 1,
-  "images": []
+  "images": [
+    {
+      "answer": "Abelha",
+      "aliases": [
+        "bee",
+        "honey bee",
+        "honeybee",
+        "Apis mellifera"
+      ],
+      "image": "./assets/solution-images/abelha.svg",
+      "title": "Ilustração esquemática de uma abelha",
+      "width": 960,
+      "height": 640,
+      "author": "Ilustração original gerada para o ATINA",
+      "license": "Ilustração original — uso no projeto ATINA",
+      "licenseUrl": "https://github.com/lufime/ATINA/blob/main/assets/solution-images/README.md",
+      "sourceUrl": "https://github.com/lufime/ATINA/blob/main/assets/solution-images/README.md"
+    },
+    {
+      "answer": "Régua",
+      "aliases": [
+        "Regua",
+        "ruler",
+        "régua de medir"
+      ],
+      "image": "./assets/solution-images/regua.svg",
+      "title": "Ilustração esquemática de uma régua graduada",
+      "width": 960,
+      "height": 640,
+      "author": "Ilustração original gerada para o ATINA",
+      "license": "Ilustração original — uso no projeto ATINA",
+      "licenseUrl": "https://github.com/lufime/ATINA/blob/main/assets/solution-images/README.md",
+      "sourceUrl": "https://github.com/lufime/ATINA/blob/main/assets/solution-images/README.md"
+    },
+    {
+      "answer": "O fio de Ariadne",
+      "aliases": [
+        "Fio de Ariadne",
+        "Ariadne's thread",
+        "Thread of Ariadne"
+      ],
+      "image": "./assets/solution-images/fio-de-ariadne.svg",
+      "title": "Representação simbólica do fio de Ariadne num labirinto",
+      "width": 960,
+      "height": 640,
+      "author": "Ilustração original gerada para o ATINA",
+      "license": "Ilustração original — uso no projeto ATINA",
+      "licenseUrl": "https://github.com/lufime/ATINA/blob/main/assets/solution-images/README.md",
+      "sourceUrl": "https://github.com/lufime/ATINA/blob/main/assets/solution-images/README.md"
+    }
+  ]
 }
