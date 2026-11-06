@@ -47,7 +47,7 @@ if (isInsideRepo(sourcePath)) {
   process.exit(2);
 }
 const source = readFileSync(sourcePath, 'utf8');
-const publicCatalog = JSON.parse(readFileSync(resolve(repoRoot, 'supabase/proposals/public-challenges.json'), 'utf8'));
+const publicCatalog = JSON.parse(readFileSync(resolve(repoRoot, 'supabase/archive/proposals/public-challenges.json'), 'utf8'));
 const marker = 'const games=[';
 const markerAt = source.indexOf(marker);
 if (markerAt < 0) throw new Error('Não foi encontrada a declaração original const games=[.');
