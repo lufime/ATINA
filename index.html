@@ -988,7 +988,41 @@ function networkDrawClock(){
 function ensureNetworkClock(){if(networkClockHandle!==null)return;networkClockHandle=setInterval(networkDrawClock,100);networkDrawClock();}
 function networkReceiveState(st){if(!st||(!st.queue&&st.mode!=='mimicas')||(networkGameState&&st.revision<=networkLastRevision))return;const sameChallenge=!!(networkGameState&&networkGameState.pos===st.pos&&networkGameState.queue?.[st.pos]===st.queue?.[st.pos]);networkGameState=st;networkLastRevision=st.revision||0;networkGameActive=!st.finished;if(!sameChallenge)networkAnsweredThisChallenge=false;networkGameHost=!!networkLobbyData?.is_host;if(st.mode==='mimicas'){if(networkClockHandle!==null&&st.finished){clearInterval(networkClockHandle);networkClockHandle=null;}networkRenderMimeState();if(!st.finished)ensureNetworkClock();return;}if($('game').classList.contains('hidden'))screen('game');networkRenderGameState();ensureNetworkClock();}
 function renderTeamProposal(){const host=$('teamVotePanel');if(!host)return;host.replaceChildren();host.classList.add('hidden');const p=networkLobbyData?.team_proposal;if(!networkLobbyData?.team||!p)return;host.classList.remove('hidden');const title=document.createElement('strong');title.textContent='Votação da '+p.team;host.appendChild(title);const answer=document.createElement('p');answer.textContent=p.proposer+' propôs: «'+p.answer+'»';host.appendChild(answer);const votes=p.votes||[];const mine=votes.find(v=>v.player_id===networkLobbyData.player_id);const summary=document.createElement('p');summary.className='muted small';summary.textContent='Votos: '+votes.length+' · '+votes.filter(v=>v.agrees).length+' concordam · '+votes.filter(v=>!v.agrees).length+' não concordam';host.appendChild(summary);const status=document.createElement('p');status.textContent=p.status==='accepted'?'✓ Todos concordaram. Resposta aceite.':p.status==='rejected'?'✕ A proposta foi rejeitada.':p.proposer_id===networkLobbyData.player_id?'A aguardar os votos dos teus colegas.':mine?'Voto registado. A aguardar os restantes colegas.':'Concordas com esta resposta?';host.appendChild(status);if(p.status==='pending'&&p.proposer_id!==networkLobbyData.player_id&&!mine){for(const [label,agrees,cls] of [['Concordo',true,'btn full'],['Não concordo',false,'btn secondary full']]){const b=document.createElement('button');b.className=cls;b.textContent=label;b.style.marginTop='7px';b.onclick=async()=>{b.disabled=true;try{await networkCall('atina_v2_vote_team_proposal',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_proposal_id:p.id,p_agrees:agrees});await networkRefreshRoom();}catch(e){b.disabled=false;status.textContent=e.message;}};host.appendChild(b);}}if(p.status==='accepted'){networkAnsweredThisChallenge=true;$('answer').disabled=true;$('submit').disabled=true;}else if(p.status==='rejected'){networkAnsweredThisChallenge=false;const paused=!!networkGameState?.pause;$('answer').disabled=paused;$('submit').disabled=paused;$('answer').value='';}}
-async function networkSubmitAnswer(){throw new Error('A validação multiplayer requer o servidor ATINA.');}
+async function networkSubmitAnswer(){
+ if(!networkRoom||!networkGameActive||!networkGameState||networkGameState.mode==='mimicas')return;
+ const answer=$('answer').value.trim();
+ if(!answer){networkMessage('feedback','Escreve primeiro a resposta da tua equipa.');$('answer').focus();return;}
+ if(networkAnsweredThisChallenge){networkMessage('feedback','A tua equipa já confirmou uma resposta neste desafio.');return;}
+ if(!networkLobbyData?.team){networkMessage('feedback','Ainda não tens equipa atribuída. Pede ao anfitrião para te distribuir.');return;}
+ if((networkLobbyData.players||[]).filter(p=>p.team===networkLobbyData.team).length<2){networkMessage('feedback','Esta equipa precisa de pelo menos duas pessoas para validar respostas.');return;}
+ $('submit').disabled=true;
+ try{
+  const result=await networkCall('atina_v2_submit_team_proposal',{
+   p_room_id:networkRoom.room_id,p_token:networkRoom.token,
+   p_challenge:Number(networkGameState.pos),p_answer:answer
+  });
+  if(result?.status==='pending'){
+   networkMessage('feedback','Resposta proposta! Aguarda a votação dos restantes membros da tua equipa.');
+  }else if(result?.status==='accepted'){
+   networkAnsweredThisChallenge=true;
+   networkMessage('feedback','Resposta aceite e pontuação atribuída à equipa!');
+  }else if(result?.status==='rejected'){
+   networkMessage('feedback','A proposta foi rejeitada. A equipa pode discutir e propor outra resposta.');
+  }else if(result?.status==='already_correct'){
+   networkAnsweredThisChallenge=true;
+   networkMessage('feedback','A tua equipa já acertou neste desafio.');
+  }else if(result?.status==='locked'){
+   networkMessage('feedback','O tempo terminou. A ronda foi fechada.');
+  }
+  await networkRefreshRoom();
+ }catch(e){
+  networkMessage('feedback',e.message||'Não foi possível enviar a resposta da equipa.');
+ }finally{
+  const locked=!!networkGameState?.locked||!!networkAnsweredThisChallenge;
+  $('submit').disabled=locked;
+  $('answer').disabled=locked;
+ }
+}
 function networkRenderMimeScores(){
  const players=networkLobbyData?.players||[];
  const teams={};players.forEach(p=>{if(p.team)teams[p.team]=(teams[p.team]||0)+Number(p.score||0);});
