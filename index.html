@@ -645,7 +645,7 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div><button type="button" id="adminOnlineButton" class="btn secondary hidden" onclick="openAdminOnlinePage()" style="margin-top:10px">📊 Administração · Online</button>
-<button type="button" id="adminImagesButton" class="btn secondary" onclick="openAdminImagesPage()" style="margin-top:8px">🖼️ Gestão de imagens</button></header>
+</header>
 <nav class="home-page-nav" id="atinaMainNav" aria-label="Navegação principal">
 <button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
 <button type="button" class="home-nav-btn" data-home-target="play">🎮 Jogar</button>
@@ -657,15 +657,7 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  <div style="display:flex;gap:10px;align-items:flex-start"><span aria-hidden="true">🛠️</span><div><strong>AVISO AOS JOGADORES</strong><div id="atinaUpdateNoticeMessage" style="font-weight:500;margin-top:4px"></div></div></div>
 </div>
 <section id="home"><div class="sound-control home-page-panel" data-home-page="dashboard"><div class="home-welcome"><div class="home-welcome-kicker">BEM-VINDO AO ATINA</div><h2>Está na hora de pôr a mente à prova.</h2><p>Escolhe um modo de jogo, descobre pistas e soma pontos. Podes jogar sozinho, em equipa ou com amigos à distância.</p><button type="button" class="btn full" data-home-target="play">Começar a jogar →</button></div>
-<section class="atina-quickstart" aria-label="Começar a jogar">
-  <div class="atina-quickstart-head"><div><span class="atina-quickstart-kicker">ENTRA EM JOGO</span><h3>O que te apetece jogar?</h3><p>Escolhe uma opção e começa sem complicações.</p></div><span aria-hidden="true" class="atina-quickstart-icon">🎮</span></div>
-  <div class="atina-quickstart-actions">
-    <button type="button" class="btn" data-home-target="play">🎯 Jogar sozinho</button>
-    <button type="button" class="btn secondary" data-home-target="online">🌐 Jogar em rede</button>
-    <button type="button" class="btn secondary" data-home-target="play">🧩 Explorar categorias</button>
-  </div>
-  <div class="atina-quickstart-info"><span>⭐ Fácil 10 pts</span><span>🟠 Médio 15 pts</span><span>🔴 Difícil 20 pts</span></div>
-</section>
+
 <section class="atina-howto" aria-label="Como jogar ATINA">
 <div class="atina-howto-title"><span>🧭</span><div><strong>Como começar</strong><small>Em três passos simples</small></div></div>
 <div class="atina-howto-steps">
@@ -800,47 +792,7 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  <button class="btn full" id="fullscreenAtina" type="button">⛶ Abrir ATINA em ecrã inteiro</button>
 </section>
 
-<section id="adminImagesPage" class="card hidden" aria-labelledby="adminImagesTitle" style="margin-top:16px">
- <div class="row" style="align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-  <h2 id="adminImagesTitle">🖼️ Gestão de imagens</h2>
-  <button type="button" class="btn secondary" onclick="screen('home')">← Voltar</button>
- </div>
- <p class="muted small">Área administrativa separada da conta de jogador. A sessão é validada pelo servidor antes de qualquer envio.</p>
- <div id="adminImagesLogin">
-  <label class="section" for="adminImagesEmail">Email de administrador</label>
-  <input id="adminImagesEmail" class="answer" type="email" autocomplete="username" placeholder="Email">
-  <label class="section" for="adminImagesPassword">Palavra-passe</label>
-  <input id="adminImagesPassword" class="answer" type="password" autocomplete="current-password" placeholder="Palavra-passe">
-  <button type="button" class="btn full" id="adminImagesSignIn">Entrar na gestão de imagens</button>
- </div>
- <div id="adminImagesWorkspace" class="hidden">
-  <div class="row" style="align-items:center;justify-content:space-between;gap:8px">
-   <span id="adminImagesSignedIn" class="muted small"></span>
-   <button type="button" class="btn secondary" id="adminImagesSignOut">Terminar sessão</button>
-  </div>
-  <form id="adminImageUploadForm" style="margin-top:14px">
-   <label class="section" for="adminImageChallengeId">ID do desafio</label>
-   <input id="adminImageChallengeId" class="answer" type="number" min="0" step="1" required placeholder="Ex.: 37">
-   <label class="section" for="adminImageFile">Ficheiro de imagem (JPEG, PNG ou WebP; máximo 10 MiB)</label>
-   <input id="adminImageFile" class="answer" type="file" accept="image/jpeg,image/png,image/webp" required>
-   <label class="section" for="adminImageSource">Fonte</label>
-   <input id="adminImageSource" class="answer" required placeholder="Ex.: Wikimedia Commons">
-   <label class="section" for="adminImageSourceUrl">Página original da imagem</label>
-   <input id="adminImageSourceUrl" class="answer" type="url" required placeholder="https://…">
-   <label class="section" for="adminImageAuthor">Autor</label>
-   <input id="adminImageAuthor" class="answer" required placeholder="Nome do autor ou titular">
-   <label class="section" for="adminImageLicense">Licença</label>
-   <input id="adminImageLicense" class="answer" required placeholder="Ex.: CC BY-SA 4.0 ou CC0">
-   <label class="section" for="adminImageLicenseUrl">URL da licença (quando aplicável)</label>
-   <input id="adminImageLicenseUrl" class="answer" type="url" placeholder="https://…">
-   <label class="section" for="adminImageAttribution">Atribuição a apresentar</label>
-   <input id="adminImageAttribution" class="answer" required placeholder="Texto de atribuição">
-   <button type="submit" class="btn full" id="adminImageUploadSubmit">Enviar imagem para revisão</button>
-  </form>
- </div>
- <p id="adminImagesStatus" class="feedback" aria-live="polite"></p>
- <p class="muted small">Os envios ficam com estado pendente de revisão. O formulário não aprova imagens nem altera respostas ou pistas.</p>
-</section>
+
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1235,7 +1187,7 @@ const ATINA_PROGRESS_KEY='atinaProgressV1';
 function saveLocalProgress(){if(networkRoom||!queue.length||!['solo','duel'].includes(mode))return;try{localStorage.setItem(ATINA_PROGRESS_KEY,JSON.stringify({mode,scores,player,queue,pos,revealed,locked,answeredCount,timedMode,timeLeft,difficultyMode,correctStreak,raceElapsed,feedback:$('feedback').textContent,answer:$('answer').value,updatedAt:Date.now()}));}catch(e){}}
 function restoreLocalProgress(){if(networkRoom)return;let p;try{p=JSON.parse(localStorage.getItem(ATINA_PROGRESS_KEY)||'null');}catch(e){localStorage.removeItem(ATINA_PROGRESS_KEY);return;}if(!p||!Array.isArray(p.queue)||!p.queue.length||!['solo','duel'].includes(p.mode)||!Number.isInteger(p.pos)||p.pos<0||p.pos>=p.queue.length||p.queue.some(n=>!Number.isInteger(n)||!games[n]))return false;mode=p.mode;scores=Array.isArray(p.scores)?p.scores:[0,0];player=p.player||0;raceElapsed=Array.isArray(p.raceElapsed)?p.raceElapsed:[0,0];raceStartedAt=0;raceFinished=false;queue=p.queue;pos=p.pos;difficultyMode=p.difficultyMode||'medium';correctStreak=p.correctStreak||0;answeredCount=p.answeredCount||0;timedMode=p.timedMode||0;timeLeft=Math.max(0,p.timeLeft||0);revealed=Math.max(1,Math.min(p.revealed||1,isImageChallenge(queue[pos])?6:5));locked=false;screen('game');load();for(let n=1;n<revealed;n++)reveal();$('answer').value=p.answer||'';if(p.locked)end(p.feedback||'Desafio concluído.');else{$('feedback').textContent=p.feedback||'';stopTimer();timeLeft=Math.max(0,(p.timeLeft||0)-Math.floor((Date.now()-(p.updatedAt||Date.now()))/1000));if(timedMode&&timeLeft===0){scores[player]-=10;answeredCount++;end('⏰ O tempo terminou enquanto a página estava fechada. A resposta correta era: '+games[queue[pos]][3]+'.');}else startTimer(true);}update();board();return true;}
 const ATINA_SCREEN_KEY='atinaLastScreen';
-function screen(id){['home','game','mimicaGame','result','rankingPage','authPage','networkLobby','adminOnlinePage','adminImagesPage'].forEach(x=>$(x).classList.toggle('hidden',x!==id));const nav=$('atinaMainNav');if(nav)nav.classList.toggle('hidden',id!=='home');try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}}
+function screen(id){['home','game','mimicaGame','result','rankingPage','authPage','networkLobby','adminOnlinePage'].forEach(x=>$(x).classList.toggle('hidden',x!==id));const nav=$('atinaMainNav');if(nav)nav.classList.toggle('hidden',id!=='home');try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}}
 function restoreLastScreen(){if(networkRoom)return;let id='home';try{id=localStorage.getItem(ATINA_SCREEN_KEY)||'home';}catch(e){}if(!['home','game','result','rankingPage','authPage','networkLobby'].includes(id))id='home';if(id==='game'&&!queue.length)id='home';screen(id);if(id==='rankingPage')loadMenuRanking();update();}
 
 function update(){ $('totalScore').textContent=(mode==='duel'||mode==='party')?'Equipa 1: '+scores[0]+' · Equipa 2: '+scores[1]:'⭐ '+scores[0]+' pontos';$('progress').textContent=answeredCount+' / '+queue.length+' desafios concluídos';const score=$('atinaRoundScore'),streak=$('atinaRoundStreak'),round=$('atinaRoundNumber'),total=$('atinaRoundTotal');if(score)score.textContent=String(scores[mode==='duel'||mode==='party'?player:0]||0);if(streak)streak.textContent=String(correctStreak||0);if(round)round.textContent=String(Math.min(pos+1,queue.length||1));if(total)total.textContent=String(queue.length||1);const fill=$('atinaGameProgressFill');if(fill)fill.style.width=(queue.length?Math.min(100,answeredCount/queue.length*100):0)+'%';}
@@ -2135,60 +2087,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
 }
 
 </script><script src="./atina-server-client.js?v=20261105-04">
-const ATINA_IMAGE_UPLOAD_URL=ATINA_GAME_SUPABASE_URL+'/functions/v1/atina-image-upload';
-function adminImagesMessage(message,isError=false){const el=$('adminImagesStatus');if(el){el.textContent=message;el.style.color=isError?'#e58b83':'';}}
-async function openAdminImagesPage(){
- screen('adminImagesPage');
- const {data}=await supabaseImageAdminClient.auth.getSession();
- const session=data?.session;
- $('adminImagesLogin').classList.toggle('hidden',!!session);
- $('adminImagesWorkspace').classList.toggle('hidden',!session);
- $('adminImagesSignedIn').textContent=session?.user?.email||'';
- adminImagesMessage(session?'Sessão administrativa pronta.':'Entra com a conta de administrador do projeto ATINA.');
-}
-async function signInAdminImages(){
- adminImagesMessage('A validar a sessão…');
- const email=$('adminImagesEmail').value.trim(),password=$('adminImagesPassword').value;
- const {data,error}=await supabaseImageAdminClient.auth.signInWithPassword({email,password});
- if(error){adminImagesMessage('Não foi possível iniciar sessão: '+error.message,true);return;}
- $('adminImagesLogin').classList.add('hidden');$('adminImagesWorkspace').classList.remove('hidden');
- $('adminImagesSignedIn').textContent=data.user?.email||email;$('adminImagesPassword').value='';
- adminImagesMessage('Sessão iniciada. O servidor confirma as permissões de administrador no momento do envio.');
-}
-async function signOutAdminImages(){
- await supabaseImageAdminClient.auth.signOut();
- $('adminImagesLogin').classList.remove('hidden');$('adminImagesWorkspace').classList.add('hidden');
- $('adminImagesSignedIn').textContent='';adminImagesMessage('Sessão terminada.');
-}
-async function submitAdminImageUpload(event){
- event.preventDefault();
- const {data}=await supabaseImageAdminClient.auth.getSession();
- const token=data?.session?.access_token;
- if(!token){adminImagesMessage('A sessão expirou. Entra novamente.',true);return;}
- const challengeId=Number($('adminImageChallengeId').value),file=$('adminImageFile').files?.[0];
- if(!Number.isSafeInteger(challengeId)||challengeId<0||!file){adminImagesMessage('Indica um ID válido e escolhe uma imagem.',true);return;}
- const form=new FormData();
- form.append('challenge_id',String(challengeId));form.append('file',file);
- form.append('source',$('adminImageSource').value.trim());
- form.append('source_url',$('adminImageSourceUrl').value.trim());
- form.append('author',$('adminImageAuthor').value.trim());
- form.append('license',$('adminImageLicense').value.trim());
- form.append('license_url',$('adminImageLicenseUrl').value.trim());
- form.append('attribution',$('adminImageAttribution').value.trim());
- const submit=$('adminImageUploadSubmit');submit.disabled=true;submit.textContent='A enviar…';
- adminImagesMessage('A enviar a imagem e a registar os metadados…');
- try{
-  const response=await fetch(ATINA_IMAGE_UPLOAD_URL,{method:'POST',headers:{Authorization:'Bearer '+token,apikey:ATINA_GAME_SUPABASE_KEY},body:form});
-  const result=await response.json().catch(()=>({error:'Resposta inválida do servidor.'}));
-  if(!response.ok||!result.success)throw new Error(result.error||('Erro HTTP '+response.status));
-  adminImagesMessage('Imagem enviada. Desafio #'+result.challenge_id+' · estado: pendente de revisão · ficheiro: '+result.storage_path);
-  $('adminImageUploadForm').reset();
- }catch(error){adminImagesMessage('Falha no envio: '+(error?.message||'erro desconhecido'),true);}
- finally{submit.disabled=false;submit.textContent='Enviar imagem para revisão';}
-}
-$('adminImagesSignIn')?.addEventListener('click',signInAdminImages);
-$('adminImagesSignOut')?.addEventListener('click',signOutAdminImages);
-$('adminImageUploadForm')?.addEventListener('submit',submitAdminImageUpload);
+
 
 </script><style id="atina-professional-overhaul">
 /* ATINA PROFESSIONAL UI — final override */
@@ -2479,4 +2378,27 @@ body{
 
 
 
+
+<style id="atina-clean-home-layout">
+.wrap{width:min(100% - 28px,920px)!important;max-width:920px!important;margin-inline:auto!important}
+.brand{width:min(100%,760px);margin:0 auto 12px;padding:18px 22px!important;min-height:0!important;border-radius:18px!important}
+.brand .logo-image{max-height:72px!important;width:auto!important;max-width:min(100%,300px)!important}
+.brand .tag{margin-top:4px}
+.brand .stats{margin-top:10px!important;padding-top:8px!important}
+.brand #adminOnlineButton{max-width:260px}
+.home-page-nav{width:min(100%,920px);margin:0 auto 14px}
+#home{gap:12px}
+#home .home-welcome{max-width:760px;margin:0 auto 14px!important;padding:18px 20px!important;border-radius:16px!important}
+#home .home-welcome h2{font-size:clamp(23px,4vw,30px)!important;max-width:24ch}
+#home .home-welcome p{max-width:58ch;margin-bottom:12px!important}
+#home .home-welcome .btn{width:auto!important;max-width:260px;min-width:210px}
+#home .daily-mission,#home #atinaCloudProgressPanel{max-width:760px;margin-left:auto!important;margin-right:auto!important}
+#home .card,#home .settings-block,#home .play-block,#home .account-block,#home .network-block,#home .categories-block{max-width:100%;min-width:0}
+@media(max-width:620px){
+ .wrap{width:calc(100% - 20px)!important;padding:12px 0 30px!important}
+ .brand{padding:14px 14px!important}
+ #home .home-welcome{padding:15px!important}
+ #home .home-welcome .btn{width:100%!important;max-width:100%}
+}
+</style>
 </body></html>
