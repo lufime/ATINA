@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const catalog = JSON.parse(readFileSync(resolve('supabase/proposals/public-challenges.json'), 'utf8'));
+const catalog = JSON.parse(readFileSync(resolve('supabase/archive/proposals/public-challenges.json'), 'utf8'));
 const errors = [];
 if (catalog.challenge_count !== catalog.challenges.length) errors.push('Contagem declarada diferente da contagem real.');
 if (catalog.challenges.length !== 753) errors.push(`Esperados 753 desafios válidos; encontrados ${catalog.challenges.length}.`);
