@@ -756,6 +756,22 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 </style>
 
 <style id="atina-reminder-style">.atina-reminder-settings{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:0 auto 10px;border:1px solid var(--line);border-radius:14px;background:#14243acc}.atina-reminder-settings strong{font-size:14px}.atina-reminder-settings p{margin:3px 0 0;color:var(--muted);font-size:12px;line-height:1.35}.atina-reminder-settings .btn{flex:0 0 auto;min-height:38px;padding:8px 12px;font-size:12px}@media(max-width:520px){.atina-reminder-settings{align-items:stretch;flex-direction:column}.atina-reminder-settings .btn{width:100%}}</style>
+
+<style id="atina-larger-revealed-answer">
+/* Tornar a solução apresentada mais legível e destacada. */
+#game .feedback.solution-revealed{font-size:19px!important;line-height:1.55!important}
+#game .feedback.solution-revealed .solution-answer{
+ display:inline-block;
+ margin-top:8px;
+ font-size:clamp(34px,9vw,44px)!important;
+ font-weight:950!important;
+ line-height:1.18!important;
+ letter-spacing:.01em;
+}
+@media(max-width:420px){
+ #game .feedback.solution-revealed .solution-answer{font-size:clamp(32px,10vw,40px)!important}
+}
+</style>
 </head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina."><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
