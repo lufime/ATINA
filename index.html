@@ -1972,11 +1972,11 @@ async function atinaFindCuratedSolutionImage(answer,aliases=[]){
   const licenseUrl=String(entry.licenseUrl||'').trim();
   const author=String(entry.author||'').trim();
   if(!license||!/^https:\/\//i.test(licenseUrl)||!author)continue;
-  if(!/^\.\/(?:assets\/)?solution-images\/[a-z0-9._/-]+\.(?:jpe?g|png|webp)$/i.test(entry.image))continue;
+  if(!/^\.\/(?:assets\/)?solution-images\/[a-z0-9._/-]+\.(?:jpe?g|png|webp|svg)$/i.test(entry.image))continue;
   return {
    title:entry.title||entry.answer,
    thumburl:entry.image,
-   mime:/\.png$/i.test(entry.image)?'image/png':/\.webp$/i.test(entry.image)?'image/webp':'image/jpeg',
+   mime:/\.svg$/i.test(entry.image)?'image/svg+xml':/\.png$/i.test(entry.image)?'image/png':/\.webp$/i.test(entry.image)?'image/webp':'image/jpeg',
    width:Number(entry.width)||800,height:Number(entry.height)||600,
    author,license,licenseUrl,sourceName:'Biblioteca própria do ATINA',
    sourceUrl:entry.sourceUrl||entry.image
