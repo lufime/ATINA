@@ -40,5 +40,5 @@ jobs:
       - name: Run the complete pgTAP suite on the clean database
         run: |
           mkdir -p supabase/tests
-          cp supabase/proposals/*.test.sql supabase/tests/
+          cp supabase/archive/proposals/*.test.sql supabase/tests/
           supabase test db --local
