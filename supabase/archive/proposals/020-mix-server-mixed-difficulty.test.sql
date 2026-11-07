@@ -78,7 +78,7 @@ SELECT is(
 );
 
 SELECT is(
-  (SELECT (result->'state'->'last_result'->>'base_points')::integer FROM atina_mix_test_answer),
+  (SELECT (result->'last_result'->>'base_points')::integer FROM atina_mix_test_answer),
   (SELECT CASE challenge.difficulty WHEN 'easy' THEN 10 WHEN 'hard' THEN 20 ELSE 15 END
      FROM private.atina_v2_local_sessions session
      JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid
