@@ -1231,11 +1231,13 @@ function atinaRecordChallengeCompletion(key){if(!key)return;const data=atinaRead
 const ATINA_HOME_PAGES=['dashboard','play','categories','online','profile','ranking','settings'];
 function showHomePage(page,restore=false){
  if(!ATINA_HOME_PAGES.includes(page))page='dashboard';
- document.querySelectorAll('[data-home-page]').forEach(el=>{
+ // Cada separador mostra exclusivamente o seu painel.
+ document.querySelectorAll('#home [data-home-page]').forEach(el=>{
   const visible=el.dataset.homePage===page;
   el.classList.toggle('hidden',!visible);
   el.hidden=!visible;
   el.setAttribute('aria-hidden',visible?'false':'true');
+  el.style.setProperty('display',visible?'block':'none','important');
  });
  document.querySelectorAll('.home-nav-btn').forEach(el=>{
   const active=el.dataset.homeTarget===page;
@@ -1244,12 +1246,16 @@ function showHomePage(page,restore=false){
  });
  try{localStorage.setItem('atinaHomePage',page);}catch(e){}
  try{sessionStorage.setItem('atinaHomePage',page);}catch(e){}
+ if(location.hash!=='#'+page){
+  try{history.replaceState(null,'','#'+page);}catch(e){}
+ }
  if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
+window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
 let atinaInitialPage='dashboard';
-try{atinaInitialPage=localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';}catch(e){}
+try{atinaInitialPage=location.hash.slice(1)||localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';}catch(e){}
 showHomePage(atinaInitialPage,true);
 let raceElapsed=[0,0],raceStartedAt=0,raceTickHandle=null,raceFinished=false;let difficultyMode='medium',correctStreak=0;const difficultyPoints={easy:10,medium:15,hard:20};let atinaSoundEnabled=true;try{atinaSoundEnabled=localStorage.getItem('atinaSoundEnabled')!=='false';}catch(e){}let mode='solo',scores=[0,0],player=0,queue=[],pos=0,revealed=0,locked=false,answeredCount=0,timedMode=60,timeLeft=60,timerInterval=null,timerDeadline=0,lastTimerBeepAt=0,timePenaltyApplied=false,autoNextTimeout=null;
 let activeSpecialCard=null,activeSurprise=null;
