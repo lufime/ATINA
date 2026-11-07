@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: legacy-schema-upgrade-${{ github.ref }}
-  cancel-in-progress: true
+  group: supabase-local-stack-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   legacy-upgrade:

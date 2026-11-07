@@ -12,6 +12,10 @@ on:
       - 'supabase/**'
       - '.github/workflows/replay-supabase-migrations.yml'
 
+concurrency:
+  group: supabase-local-stack-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   replay-migrations:
     runs-on: ubuntu-latest
