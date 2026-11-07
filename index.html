@@ -1228,19 +1228,29 @@ function atinaReadEngagement(){try{const v=JSON.parse(localStorage.getItem(ATINA
 function atinaDailyCategory(){const categories=[...new Set(games.map(g=>g[0]))].filter(Boolean);if(!categories.length)return null;const seed=Number(atinaLocalDate().replace(/-/g,''));return categories[(seed+Math.floor(seed/7))%categories.length];}
 function atinaRenderDailyMission(){const data=atinaReadEngagement(),today=atinaLocalDate(),count=data.dailyDate===today?data.dailyCount:0;const fill=$('dailyMissionFill'),bar=$('dailyMissionBar');if(!fill||!bar)return;const cloudProfile=window.atinaCloudProfile||null,xp=cloudProfile?Math.max(0,Number(cloudProfile.xp)||0):data.total*10+data.missions*50,level=Math.floor(xp/250)+1,into=xp%250;fill.style.width=Math.min(100,count/3*100)+'%';bar.setAttribute('aria-valuenow',String(Math.min(3,count)));$('dailyMissionProgress').textContent=Math.min(3,count)+' de 3 desafios';$('dailyMissionStatus').textContent=count>=3?'✓ Missão concluída':count===0?'Missão por começar':'Continua assim!';$('dailyMissionCopy').textContent=count>=3?'Missão concluída: +50 XP. Amanhã há um novo objetivo!':'Completa três desafios em qualquer modalidade. Cada desafio vale 10 XP e a missão diária dá mais 50 XP.';$('dailyStreak').textContent=data.streak+' '+(data.streak===1?'dia':'dias');$('dailyTotal').textContent=String(data.total);$('dailyMissionStart').textContent='Jogar desafio do dia · '+(atinaDailyCategory()||'Mix')+' →';const xpEl=$('atinaXpValue'),levelEl=$('atinaLevelValue'),xpFill=$('atinaXpFill'),xpMeta=$('atinaXpMeta');if(xpEl)xpEl.textContent=xp+' XP';if(levelEl)levelEl.textContent='Nível '+level;if(xpFill)xpFill.style.width=(into/250*100)+'%';if(xpMeta)xpMeta.textContent=into+' / 250 XP para o próximo nível';const badges=[{at:1,icon:'🌱',name:'Primeiros passos'},{at:10,icon:'🧠',name:'Mente ativa'},{at:25,icon:'🔥',name:'Persistente'},{at:50,icon:'🏅',name:'Veterano'},{at:100,icon:'👑',name:'Lenda ATINA'}];const badgeEl=$('atinaBadges');if(badgeEl)badgeEl.innerHTML=badges.map(b=>'<span class="atina-badge '+((cloudProfile?Number(cloudProfile.total_challenges)||0:data.total)>=b.at?'earned':'')+'" title="'+b.name+'">'+b.icon+' '+b.name+'</span>').join('');}
 function atinaRecordChallengeCompletion(key){if(!key)return;const data=atinaReadEngagement();if(data.keys.includes(key))return;const today=atinaLocalDate();if(data.dailyDate!==today){data.dailyDate=today;data.dailyCount=0;}data.dailyCount++;data.total++;if(data.dailyCount>=3&&data.rewardedDate!==today){data.missions++;data.rewardedDate=today;}if(data.lastDate!==today){data.streak=data.lastDate===atinaYesterday()?data.streak+1:1;data.lastDate=today;}data.keys.push(key);if(data.keys.length>500)data.keys=data.keys.slice(-500);try{localStorage.setItem(ATINA_ENGAGEMENT_KEY,JSON.stringify(data));}catch(e){}atinaRenderDailyMission();}
-function showHomePage(page){
+const ATINA_HOME_PAGES=['dashboard','play','categories','online','profile','ranking','settings'];
+function showHomePage(page,restore=false){
+ if(!ATINA_HOME_PAGES.includes(page))page='dashboard';
  document.querySelectorAll('[data-home-page]').forEach(el=>{
-  const section=el.dataset.homePage;
-  const visible=section===page;
+  const visible=el.dataset.homePage===page;
   el.classList.toggle('hidden',!visible);
   el.hidden=!visible;
+  el.setAttribute('aria-hidden',visible?'false':'true');
  });
- document.querySelectorAll('.home-nav-btn').forEach(el=>el.classList.toggle('active',el.dataset.homeTarget===page));
- if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
+ document.querySelectorAll('.home-nav-btn').forEach(el=>{
+  const active=el.dataset.homeTarget===page;
+  el.classList.toggle('active',active);
+  el.setAttribute('aria-current',active?'page':'false');
+ });
+ try{localStorage.setItem('atinaHomePage',page);}catch(e){}
  try{sessionStorage.setItem('atinaHomePage',page);}catch(e){}
- window.scrollTo({top:0,behavior:'smooth'});
+ if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
+ if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
+let atinaInitialPage='dashboard';
+try{atinaInitialPage=localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';}catch(e){}
+showHomePage(atinaInitialPage,true);
 let raceElapsed=[0,0],raceStartedAt=0,raceTickHandle=null,raceFinished=false;let difficultyMode='medium',correctStreak=0;const difficultyPoints={easy:10,medium:15,hard:20};let atinaSoundEnabled=true;try{atinaSoundEnabled=localStorage.getItem('atinaSoundEnabled')!=='false';}catch(e){}let mode='solo',scores=[0,0],player=0,queue=[],pos=0,revealed=0,locked=false,answeredCount=0,timedMode=60,timeLeft=60,timerInterval=null,timerDeadline=0,lastTimerBeepAt=0,timePenaltyApplied=false,autoNextTimeout=null;
 let activeSpecialCard=null,activeSurprise=null;
 const norm=s=>s.toLocaleLowerCase('pt-PT').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,'').trim();
