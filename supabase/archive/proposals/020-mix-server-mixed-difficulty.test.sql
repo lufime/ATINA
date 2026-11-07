@@ -1,6 +1,32 @@
 BEGIN;
 SELECT plan(7);
 
+-- The clean migration replay intentionally has no production challenge seed.
+-- Build a deterministic, isolated fixture with three categories and all levels.
+INSERT INTO private.atina_challenges (
+  challenge_id, category, emoji, clues, answer, accepted_answers, difficulty, active
+)
+SELECT
+  fixture.challenge_id,
+  fixture.category,
+  '🧪',
+  '["Pista 1","Pista 2","Pista 3","Pista 4","Pista 5"]'::jsonb,
+  'resposta de teste',
+  '["resposta de teste"]'::jsonb,
+  fixture.difficulty,
+  true
+FROM (VALUES
+  (-991001, '__mix_test_a__', 'easy'),
+  (-991002, '__mix_test_a__', 'medium'),
+  (-991003, '__mix_test_a__', 'hard'),
+  (-991004, '__mix_test_b__', 'easy'),
+  (-991005, '__mix_test_b__', 'medium'),
+  (-991006, '__mix_test_b__', 'hard'),
+  (-991007, '__mix_test_c__', 'easy'),
+  (-991008, '__mix_test_c__', 'medium'),
+  (-991009, '__mix_test_c__', 'hard')
+) AS fixture(challenge_id, category, difficulty);
+
 CREATE TEMP TABLE atina_mix_test_run AS
 SELECT public.atina_v2_start_local_game('mix','medium',NULL,0) AS result;
 
