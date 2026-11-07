@@ -128,6 +128,37 @@ begin
                when ordered.category_number <= floor(2*ordered.category_count::numeric/3) then 'medium'
                else 'hard'
              end
+             and (
+               v_player_id is null or not exists (
+                 select 1 from (
+                   select h.challenge_id
+                     from private.atina_difficulty_history h
+                    where h.player_id=v_player_id
+                    order by h.created_at desc,h.id desc
+                    limit 30
+                 ) recent
+                 where recent.challenge_id=c.challenge_id
+               )
+             )
+           order by random()
+           limit 1
+        ),
+        (
+          select c.challenge_id
+            from private.atina_challenges c
+           where c.active and c.category=ordered.category
+             and (
+               v_player_id is null or not exists (
+                 select 1 from (
+                   select h.challenge_id
+                     from private.atina_difficulty_history h
+                    where h.player_id=v_player_id
+                    order by h.created_at desc,h.id desc
+                    limit 30
+                 ) recent
+                 where recent.challenge_id=c.challenge_id
+               )
+             )
            order by random()
            limit 1
         ),
@@ -146,12 +177,34 @@ begin
       from selected
      where selected.challenge_id is not null;
   else
+    -- Rotate the last 30 challenges for registered players in both Solo and Mix.
+    -- If the available pool is exhausted, fall back gracefully rather than blocking a game.
     select array_agg(c.challenge_id order by random())
       into v_queue
       from private.atina_challenges c
      where c.active
        and c.difficulty=p_difficulty
-       and (p_category is null or c.category=p_category);
+       and (p_category is null or c.category=p_category)
+       and (
+         v_player_id is null or not exists (
+           select 1 from (
+             select h.challenge_id
+               from private.atina_difficulty_history h
+              where h.player_id=v_player_id
+              order by h.created_at desc,h.id desc
+              limit 30
+           ) recent
+           where recent.challenge_id=c.challenge_id
+         )
+       );
+    if coalesce(cardinality(v_queue),0)=0 then
+      select array_agg(c.challenge_id order by random())
+        into v_queue
+        from private.atina_challenges c
+       where c.active
+         and c.difficulty=p_difficulty
+         and (p_category is null or c.category=p_category);
+    end if;
   end if;
 
   if coalesce(cardinality(v_queue),0)=0 then
