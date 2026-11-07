@@ -1,8 +1,8 @@
 BEGIN;
-SELECT plan(7);
+SELECT plan(9);
 
 -- The clean migration replay intentionally has no production challenge seed.
--- Build a deterministic, isolated fixture with three categories and all levels.
+-- Build a deterministic, isolated fixture with six categories and all levels.
 INSERT INTO private.atina_challenges (
   challenge_id, category, emoji, clues, answer, accepted_answers, difficulty, active
 )
@@ -24,11 +24,62 @@ FROM (VALUES
   (-991006, '__mix_test_b__', 'hard'),
   (-991007, '__mix_test_c__', 'easy'),
   (-991008, '__mix_test_c__', 'medium'),
-  (-991009, '__mix_test_c__', 'hard')
+  (-991009, '__mix_test_c__', 'hard'),
+  (-991010, '__mix_test_d__', 'easy'),
+  (-991011, '__mix_test_d__', 'medium'),
+  (-991012, '__mix_test_d__', 'hard'),
+  (-991013, '__mix_test_e__', 'easy'),
+  (-991014, '__mix_test_e__', 'medium'),
+  (-991015, '__mix_test_e__', 'hard'),
+  (-991016, '__mix_test_f__', 'easy'),
+  (-991017, '__mix_test_f__', 'medium'),
+  (-991018, '__mix_test_f__', 'hard')
 ) AS fixture(challenge_id, category, difficulty);
 
+-- Register a disposable test profile and mark three medium cards as recently seen.
+-- Both modes must avoid these IDs while other cards remain available.
+CREATE TEMP TABLE atina_mix_test_player AS
+WITH inserted AS (
+  INSERT INTO private.atina_players (device_token_hash,nickname)
+  VALUES (
+    extensions.digest(convert_to(repeat('a',64),'UTF8'),'sha256'),
+    'mix-rotation-test'
+  )
+  RETURNING id
+)
+SELECT id FROM inserted;
+
+CREATE TEMP TABLE atina_mix_test_seed AS
+SELECT public.atina_v2_start_local_game(
+  'mix','medium',NULL,0,repeat('a',64)
+) AS result;
+
+INSERT INTO private.atina_difficulty_history
+  (player_id,session_id,challenge_position,challenge_id,difficulty,outcome)
+SELECT
+  player.id,
+  (seed.result->'state'->>'session_id')::uuid,
+  recent.position,
+  recent.challenge_id,
+  'medium',
+  'correct'
+FROM atina_mix_test_player player
+CROSS JOIN atina_mix_test_seed seed
+CROSS JOIN (VALUES
+  (1,-991002),
+  (2,-991005),
+  (3,-991008)
+) AS recent(position,challenge_id);
+
 CREATE TEMP TABLE atina_mix_test_run AS
-SELECT public.atina_v2_start_local_game('mix','medium',NULL,0) AS result;
+SELECT public.atina_v2_start_local_game(
+  'mix','medium',NULL,0,repeat('a',64)
+) AS result;
+
+CREATE TEMP TABLE atina_solo_test_run AS
+SELECT public.atina_v2_start_local_game(
+  'solo','medium',NULL,0,repeat('a',64)
+) AS result;
 
 CREATE TEMP TABLE atina_mix_test_answer AS
 SELECT public.atina_v2_local_submit_answer(
@@ -65,6 +116,26 @@ SELECT is(
      JOIN private.atina_challenges challenge ON challenge.challenge_id=q.challenge_id),
   3,
   'Mix contains easy, medium and hard challenges'
+);
+
+SELECT is(
+  (SELECT count(*)::integer
+     FROM private.atina_v2_local_sessions session
+     JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid
+     CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)
+     WHERE q.challenge_id IN (-991002,-991005,-991008)),
+  0,
+  'Mix avoids the player recent challenge history'
+);
+
+SELECT is(
+  (SELECT count(*)::integer
+     FROM private.atina_v2_local_sessions session
+     JOIN atina_solo_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid
+     CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)
+     WHERE q.challenge_id IN (-991002,-991005,-991008)),
+  0,
+  'Solo avoids the player recent challenge history'
 );
 
 SELECT is(
