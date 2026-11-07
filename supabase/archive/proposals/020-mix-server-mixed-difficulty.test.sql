@@ -71,6 +71,13 @@ CROSS JOIN (VALUES
   (3,-991008)
 ) AS recent(position,challenge_id);
 
+-- Check level distribution in a separate unregistered session so the recent-
+-- history fixture cannot legitimately force a category to use its fallback.
+CREATE TEMP TABLE atina_mix_distribution_run AS
+SELECT public.atina_v2_start_local_game(
+  'mix','medium',NULL,0,NULL
+) AS result;
+
 CREATE TEMP TABLE atina_mix_test_run AS
 SELECT public.atina_v2_start_local_game(
   'mix','medium',NULL,0,repeat('a',64)
@@ -111,7 +118,7 @@ SELECT is(
 SELECT is(
   (SELECT count(DISTINCT challenge.difficulty)::integer
      FROM private.atina_v2_local_sessions session
-     JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid
+     JOIN atina_mix_distribution_run run ON session.id=(run.result->'state'->>'session_id')::uuid
      CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)
      JOIN private.atina_challenges challenge ON challenge.challenge_id=q.challenge_id),
   3,
