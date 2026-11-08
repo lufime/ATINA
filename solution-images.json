@@ -1625,6 +1625,122 @@
       "title": "Retrato fotográfico de Florence Nightingale por Henry Hering, cerca de 1860"
     },
     {
+      "challengeId": 324,
+      "answer": "Amelia Earhart",
+      "aliases": [
+        "Amelia Mary Earhart"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/42/AmeliaEarhart.jpg",
+      "author": "Morburre",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:AmeliaEarhart.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1633,
+      "height": 2408,
+      "title": "Retrato de Amelia Earhart, pioneira da aviação"
+    },
+    {
+      "challengeId": 325,
+      "answer": "Santos Dumont",
+      "aliases": [
+        "Alberto Santos-Dumont"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Alberto_Santos-Dumont_portrait.jpg",
+      "author": "Zaida Ben-Yusuf",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Alberto_Santos-Dumont_portrait.jpg",
+      "sourceName": "Wikimedia Commons / Library of Congress",
+      "width": 2412,
+      "height": 3164,
+      "title": "Retrato fotográfico de Alberto Santos-Dumont, pioneiro da aviação, 1902"
+    },
+    {
+      "challengeId": 326,
+      "answer": "Vasco da Gama",
+      "aliases": [
+        "Vasco da Gama, navegador português"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Vasco_da_Gama%2C_1655.png",
+      "author": "Autor desconhecido",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vasco_da_Gama,_1655.png",
+      "sourceName": "Wikimedia Commons / Cabral Moncada Leilões",
+      "width": 672,
+      "height": 1106,
+      "title": "Retrato litográfico de Vasco da Gama publicado numa edição de Os Lusíadas em 1655"
+    },
+    {
+      "challengeId": 327,
+      "answer": "Fernão de Magalhães",
+      "aliases": [
+        "Ferdinand Magellan",
+        "Fernão Magalhães"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Ferdinand_Magellan.jpg",
+      "author": "Autor desconhecido",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ferdinand_Magellan.jpg",
+      "sourceName": "Wikimedia Commons / The Mariners' Museum",
+      "width": 562,
+      "height": 693,
+      "title": "Retrato anónimo de Fernão de Magalhães, dos séculos XVI ou XVII"
+    },
+    {
+      "challengeId": 328,
+      "answer": "D. Afonso Henriques",
+      "aliases": [
+        "Afonso Henriques",
+        "D. Afonso I"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Estatua_de_Afonso_Henriques.jpg",
+      "author": "michell zappa",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Estatua_de_Afonso_Henriques.jpg",
+      "sourceName": "Wikimedia Commons / Flickr",
+      "width": 2816,
+      "height": 1584,
+      "title": "Estátua de D. Afonso Henriques no Castelo de Guimarães, Portugal"
+    },
+    {
+      "challengeId": 329,
+      "answer": "Luís de Camões",
+      "aliases": [
+        "Camões",
+        "Luís Vaz de Camões"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/70/Cam%C3%B5es_por_Fern%C3%A3o_Gomes.jpg",
+      "author": "Fernão Gomes",
+      "license": "Domínio público (dedicação do carregador)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Camões_por_Fernão_Gomes.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2287,
+      "height": 3298,
+      "title": "Retrato de Luís de Camões em sanguínea, atribuído a Fernão Gomes, cerca de 1573–1575"
+    },
+    {
+      "challengeId": 332,
+      "answer": "Eça de Queirós",
+      "aliases": [
+        "Eça",
+        "José Maria de Eça de Queirós"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Retrato_de_E%C3%A7a_de_Queir%C3%B3s_%28transparente%29.png",
+      "author": "Fotografia Guedes/Porto",
+      "license": "Domínio público em Portugal (fotografia de cerca de 1895)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Retrato_de_Eça_de_Queirós_(transparente).png",
+      "sourceName": "Wikimedia Commons / Gallica",
+      "width": 614,
+      "height": 776,
+      "title": "Retrato fotográfico de Eça de Queirós, cerca de 1895"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
