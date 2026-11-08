@@ -451,7 +451,8 @@ async function atinaServerStart(gameMode, category = null) {
   atinaServerMessage('A preparar uma partida segura no servidor…');
   try {
     const duration = Number($('timerMode')?.value ?? 60);
-    const difficulty = $('difficultyMode')?.value || 'medium';
+    const selectedDifficulty = $('difficultyMode')?.value || 'medium';
+    const difficulty = ['easy', 'medium', 'hard'].includes(selectedDifficulty) ? selectedDifficulty : 'medium';
     if (['solo', 'mix'].includes(gameMode) && !atinaCloudProfile) {
       const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
       if (savedNickname && atinaProgressDeviceToken(false)) {
@@ -662,7 +663,8 @@ networkStartGame = async function() {
   try {
     await networkCall('atina_v2_start_room', { p_room_id: networkRoom.room_id, p_token: networkRoom.token });
     const duration = Number($('timerMode')?.value ?? 60);
-    const difficulty = $('difficultyMode')?.value || 'medium';
+    const selectedDifficulty = $('difficultyMode')?.value || 'medium';
+    const difficulty = ['easy', 'medium', 'hard'].includes(selectedDifficulty) ? selectedDifficulty : 'medium';
     await networkCall('atina_v2_start_room_challenges', {
       p_room_id: networkRoom.room_id, p_token: networkRoom.token,
       p_difficulty: difficulty, p_duration_seconds: Number.isFinite(duration) ? duration : 60,
