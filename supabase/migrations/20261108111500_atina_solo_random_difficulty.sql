@@ -275,3 +275,12 @@ begin
 end;
 $function$;
 
+
+
+-- Permit the 'mixed' marker on a Solo session; each challenge still exposes
+-- its actual easy/medium/hard level through atina_v2_local_public_state.
+alter table private.atina_v2_local_sessions
+  drop constraint if exists atina_v2_local_sessions_difficulty_check;
+alter table private.atina_v2_local_sessions
+  add constraint atina_v2_local_sessions_difficulty_check
+  check (difficulty in ('easy','medium','hard','mixed'));
