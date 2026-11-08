@@ -1226,6 +1226,122 @@
       "title": "Vista frontal do complexo de templos de Angkor Wat, no Camboja"
     },
     {
+      "challengeId": 205,
+      "answer": "Monte Fuji",
+      "aliases": [
+        "Monte Fuji",
+        "Mount Fuji",
+        "Fujiyama"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/48/Mount._Fuji.JPG",
+      "author": "Tokumeigakarinoaoshima",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mount._Fuji.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 2466,
+      "height": 1788,
+      "title": "Vista do Monte Fuji, no Japão, fotografado em fevereiro de 2016"
+    },
+    {
+      "challengeId": 213,
+      "answer": "Granada",
+      "aliases": [
+        "Granada, Espanha",
+        "Alhambra"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Granada%2C_Alhambra.jpg",
+      "author": "Rosa-Maria Rinkl",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Granada,_Alhambra.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Vista da Alhambra, em Granada, Espanha"
+    },
+    {
+      "challengeId": 214,
+      "answer": "Arco-íris",
+      "aliases": [
+        "Rainbow"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Rainbow_image.jpg",
+      "author": "DavidConstantinescu",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rainbow_image.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4032,
+      "height": 3024,
+      "title": "Fotografia de um arco-íris"
+    },
+    {
+      "challengeId": 215,
+      "answer": "Machu Picchu",
+      "aliases": [
+        "Machu Picchu, Peru"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Machu_Picchu_August_2025.jpg",
+      "author": "Kline",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Machu_Picchu_August_2025.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5184,
+      "height": 3456,
+      "title": "Vista panorâmica de Machu Picchu fotografada em agosto de 2025"
+    },
+    {
+      "challengeId": 217,
+      "answer": "ADN",
+      "aliases": [
+        "DNA",
+        "Ácido desoxirribonucleico"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/21/Computer_DNA_molecule.jpg",
+      "author": "Dr. Richard Feldmann (fotógrafo), National Cancer Institute",
+      "license": "Domínio público (libertação do autor e trabalho do NIH)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Computer_DNA_molecule.jpg",
+      "sourceName": "Wikimedia Commons / National Cancer Institute",
+      "width": 2700,
+      "height": 1800,
+      "title": "Representação molecular tridimensional de uma molécula de ADN"
+    },
+    {
+      "challengeId": 219,
+      "answer": "Ponte Vecchio",
+      "aliases": [
+        "Ponte Vecchio, Florença"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Ponte_Vecchio%2C_Florence%2C_Italie.jpg",
+      "author": "Clément Bardot",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ponte_Vecchio,_Florence,_Italie.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5561,
+      "height": 3253,
+      "title": "Vista da Ponte Vecchio sobre o rio Arno, em Florença"
+    },
+    {
+      "challengeId": 229,
+      "answer": "Microscópio",
+      "aliases": [
+        "Microscope"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/76/A_microscope.jpg",
+      "author": "Stephanie cheks",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_microscope.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3492,
+      "height": 4656,
+      "title": "Fotografia de um microscópio utilizado em investigação científica"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
