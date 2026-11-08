@@ -1493,6 +1493,170 @@
       "title": "Pirâmide de Kukulcán no sítio arqueológico de Chichén Itzá, México"
     },
     {
+      "challengeId": 254,
+      "answer": "Girafa",
+      "aliases": [
+        "Giraffe"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Giraffe_in_the_wild.jpg",
+      "author": "Furaha girl",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Giraffe_in_the_wild.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3024,
+      "height": 4032,
+      "title": "Girafa no seu habitat natural, no Quénia"
+    },
+    {
+      "challengeId": 255,
+      "answer": "Panda-gigante",
+      "aliases": [
+        "Panda gigante",
+        "Giant panda"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/41/Panda_g%C3%A9ant.jpg",
+      "author": "Dinkum",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Panda_g%C3%A9ant.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4928,
+      "height": 3264,
+      "title": "Panda-gigante no Zoo de Beauval, França"
+    },
+    {
+      "challengeId": 256,
+      "answer": "Flamingo",
+      "aliases": [
+        "Flamingo",
+        "Flamingos"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/35/Flamingo%28l%29.jpg",
+      "author": "Lohith1091",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Flamingo(l).jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5184,
+      "height": 2912,
+      "title": "Flamingo fotografado com teleobjetiva"
+    },
+    {
+      "challengeId": 257,
+      "answer": "Pavão",
+      "aliases": [
+        "Peacock"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/07/Peacock_photography.jpg",
+      "author": "Immanuvel Arokiyadass",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Peacock_photography.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3456,
+      "height": 5184,
+      "title": "Pavão fotografado com a plumagem em destaque"
+    },
+    {
+      "challengeId": 258,
+      "answer": "Coala",
+      "aliases": [
+        "Koala"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ac/KOALA.jpg",
+      "author": "Yi ZHANG",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:KOALA.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3359,
+      "height": 3456,
+      "title": "Coala a dormir, fotografado numa árvore"
+    },
+    {
+      "challengeId": 259,
+      "answer": "Pinguim",
+      "aliases": [
+        "Penguin"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/8a/A_penguin.jpg",
+      "author": "Abumuslimjalingo",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_penguin.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3456,
+      "height": 4608,
+      "title": "Pinguim fotografado no âmbito do concurso Wiki Loves Earth 2024"
+    },
+    {
+      "challengeId": 260,
+      "answer": "Urso-polar",
+      "aliases": [
+        "Urso polar",
+        "Polar bear"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/24/A_polar_bear.jpg",
+      "author": "KylePiira",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_polar_bear.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5184,
+      "height": 2912,
+      "title": "Urso-polar junto à costa perto de Churchill, Manitoba, Canadá"
+    },
+    {
+      "challengeId": 261,
+      "answer": "Tartaruga-marinha",
+      "aliases": [
+        "Tartaruga marinha",
+        "Sea turtle"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Sea_Turtle.jpg",
+      "author": "NASA (imagem de origem NASA)",
+      "license": "Domínio público nos EUA — material criado pela NASA",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sea_Turtle.jpg",
+      "sourceName": "Wikimedia Commons / NASA",
+      "width": 1050,
+      "height": 688,
+      "title": "Tartaruga marinha fotografada em material de origem NASA"
+    },
+    {
+      "challengeId": 262,
+      "answer": "Polvo",
+      "aliases": [
+        "Octopus"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Common_Octopus.jpg",
+      "author": "Lee Vilenski",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Common_Octopus.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4000,
+      "height": 3000,
+      "title": "Polvo-comum fotografado no National Marine Aquarium, em Plymouth"
+    },
+    {
+      "challengeId": 263,
+      "answer": "Camaleão",
+      "aliases": [
+        "Chameleon"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a1/A_Photo_of_a_Chameleon.jpg",
+      "author": "ABilal2022",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_Photo_of_a_Chameleon.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 6000,
+      "height": 4000,
+      "title": "Fotografia de um camaleão em ambiente natural"
+    },
+    {
       "challengeId": 312,
       "answer": "Aristóteles",
       "aliases": [
