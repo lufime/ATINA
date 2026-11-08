@@ -34,6 +34,22 @@
       "title": "Panorama de Lisboa visto da margem sul do Tejo"
     },
     {
+      "challengeId": 2,
+      "answer": "Chave",
+      "aliases": [
+        "Chave de fechadura"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Standard-lock-key.jpg",
+      "author": "Evan-Amos",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Standard-lock-key.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1600,
+      "height": 740,
+      "title": "Fotografia de uma chave metálica comum para fechaduras"
+    },
+    {
       "challengeId": 3,
       "answer": "Civilização do Antigo Egito",
       "aliases": [
@@ -354,6 +370,38 @@
       "width": 640,
       "height": 480,
       "title": "Fotografia de um livro aberto"
+    },
+    {
+      "challengeId": 32,
+      "answer": "Guitarra",
+      "aliases": [
+        "Guitarra acústica"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Acoustic_guitar.jpg",
+      "author": "Massimo Giuliani",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Acoustic_guitar.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1600,
+      "height": 1200,
+      "title": "Fotografia de uma guitarra acústica"
+    },
+    {
+      "challengeId": 33,
+      "answer": "Mozart",
+      "aliases": [
+        "Wolfgang Amadeus Mozart"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Mozartportrait.jpg",
+      "author": "Johann Nepomuk della Croce (pintura, c. 1780)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mozartportrait.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 762,
+      "height": 1132,
+      "title": "Retrato de Wolfgang Amadeus Mozart, cerca de 1780"
     },
     {
       "challengeId": 802,
