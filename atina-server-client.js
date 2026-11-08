@@ -82,6 +82,7 @@ async function atinaProgressRegister(nickname, quiet = false, personalCode = '')
     p_nickname: clean,
     p_device_token: deviceToken
   });
+  localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, deviceToken);
   atinaCloudProfile = data;
   window.atinaCloudProfile = data;
   localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, clean);
