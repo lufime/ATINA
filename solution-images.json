@@ -372,6 +372,23 @@
       "title": "Forma geométrica de um triângulo"
     },
     {
+      "challengeId": 30,
+      "answer": "Bússola",
+      "aliases": [
+        "Compass",
+        "Bússola magnética"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d2/A_compass.jpg",
+      "author": "Shadow Ayush",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_compass.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4000,
+      "height": 6000,
+      "title": "Fotografia de uma bússola magnética"
+    },
+    {
       "challengeId": 31,
       "answer": "Livro",
       "aliases": [
@@ -436,6 +453,23 @@
       "width": 4608,
       "height": 3456,
       "title": "Campos de ténis num centro comunitário na Florida"
+    },
+    {
+      "challengeId": 37,
+      "answer": "Maratona",
+      "aliases": [
+        "Marathon",
+        "Corrida de maratona"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Marathon_Runners.jpg",
+      "author": "Chris Brown",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Marathon_Runners.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3504,
+      "height": 2336,
+      "title": "Atletas a participar na Maratona de Zurique"
     },
     {
       "challengeId": 40,
@@ -573,6 +607,23 @@
       "title": "Fotografia da Grande Pirâmide de Gizé"
     },
     {
+      "challengeId": 48,
+      "answer": "Cristiano Ronaldo",
+      "aliases": [
+        "CR7",
+        "Ronaldo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ed/C_Ronaldo.jpg",
+      "author": "Gordon Flood",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:C_Ronaldo.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 426,
+      "height": 640,
+      "title": "Fotografia de Cristiano Ronaldo durante a sua carreira no Manchester United"
+    },
+    {
       "challengeId": 49,
       "answer": "Istambul",
       "aliases": [
@@ -588,6 +639,23 @@
       "width": 5184,
       "height": 1835,
       "title": "Panorama urbano de Istambul"
+    },
+    {
+      "challengeId": 50,
+      "answer": "Fotografia",
+      "aliases": [
+        "Câmara fotográfica",
+        "Photography"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Photography_Camera.jpg",
+      "author": "Deezboyz29",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Photography_Camera.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 6000,
+      "height": 4000,
+      "title": "Pessoa a utilizar uma câmara fotográfica"
     },
     {
       "challengeId": 51,
