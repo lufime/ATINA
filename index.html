@@ -383,6 +383,58 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 /* A descrição editorial da imagem da solução não deve aparecer no jogo. */
 #solutionImage [data-solution-wikipedia]{display:none!important}
+
+/* ATINA — reduzir scroll sem sacrificar legibilidade */
+@media(max-width:700px){
+  .wrap{padding-top:7px!important;padding-bottom:14px!important}
+  .brand{padding:11px 13px!important;margin-bottom:6px!important;border-radius:14px!important}
+  .brand .logo-image{max-height:44px!important}
+  .brand .tag{margin-top:2px!important;font-size:12px!important}
+  .brand .stats{margin-top:7px!important;padding-top:7px!important;gap:5px 10px!important;font-size:10px!important}
+  .home-page-nav,#atinaMainNav{margin:5px 0 8px!important;padding:4px!important;gap:4px!important}
+  .home-nav-btn,#atinaMainNav .home-nav-btn{min-height:39px!important;padding:5px 2px!important;font-size:10px!important}
+  #home [data-home-page]:not(.hidden){gap:8px!important}
+  #home .home-welcome{padding:11px 12px!important;margin:0 0 8px!important}
+  #home .home-welcome h2{font-size:19px!important;margin:0 0 4px!important}
+  #home .home-welcome p{font-size:12px!important;line-height:1.35!important;margin:0 0 7px!important}
+  #home .home-welcome .btn{min-height:40px!important}
+  #home .home-block,#home .settings-block,#home .play-block,#home .account-block,
+  #home .network-block,#home .categories-block{padding:10px!important;border-radius:13px!important}
+  #home .section,.home-page-panel .section{font-size:15px!important;margin:0 0 7px!important}
+  #home .home-hint{font-size:12px!important;line-height:1.35!important;margin:0 0 7px!important}
+  #home .actions{gap:6px!important}
+  #home .actions .btn,#home .home-tools .btn{min-height:43px!important;padding:8px 7px!important;font-size:13px!important}
+  #home .modes,#categories.modes,.modes#categories{gap:6px!important}
+  #home .tile{min-height:72px!important;padding:8px!important;border-radius:10px!important;gap:2px!important}
+  #home .tile span{font-size:19px!important}
+  #home .tile b{font-size:12px!important;line-height:1.2!important;margin:1px 0 0!important}
+  #home .tile small{font-size:10px!important;line-height:1.2!important}
+  #home .daily-mission{padding:10px!important;border-radius:13px!important}
+  #home .daily-mission h3{font-size:15px!important;margin:2px 0!important}
+  #home .daily-mission p{font-size:12px!important;line-height:1.35!important;margin:4px 0 6px!important}
+  #home .daily-stats{gap:5px!important;margin:6px 0!important}
+  #home .daily-stat{padding:7px 8px!important}
+  #home .atina-xp-panel{margin-top:6px!important;padding:8px!important}
+  #home .card,.home-page-panel .card{padding:11px!important;margin-bottom:8px!important;border-radius:13px!important}
+  #home [data-home-page="ranking"] ol{line-height:1.45!important;padding-left:21px!important}
+  #home [data-home-page="ranking"] ol li{padding:3px 0!important}
+  #home [data-home-page="settings"] .card h3{font-size:15px!important;margin-bottom:6px!important}
+  #home [data-home-page="settings"] .card h3:not(:first-child){margin-top:11px!important}
+  #home [data-home-page="settings"] .card p{font-size:12px!important;line-height:1.35!important;margin:6px 0!important}
+  #home .answer,#home input,#home select,#home textarea{min-height:43px!important;padding:9px 11px!important}
+  #home .feedback{margin:5px 0!important;min-height:0!important;font-size:12px!important}
+  #home .network-block>p{font-size:12px!important;line-height:1.35!important;margin:5px 0!important}
+  #home .network-block label.section{margin:8px 0 4px!important}
+  #home .network-block .divider{margin:9px 0!important}
+  #home .footer,.footer{margin-top:10px!important;padding-top:9px!important}
+}
+@media(max-width:380px){
+  .brand .stats{font-size:9px!important}
+  #home .tile{min-height:68px!important}
+  #home .home-block,#home .settings-block,#home .play-block,#home .account-block,
+  #home .network-block,#home .categories-block{padding:9px!important}
+}
+
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
