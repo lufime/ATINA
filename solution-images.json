@@ -404,6 +404,124 @@
       "title": "Retrato de Wolfgang Amadeus Mozart, cerca de 1780"
     },
     {
+      "challengeId": 36,
+      "answer": "Ténis",
+      "aliases": [
+        "Tênis",
+        "Tennis"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Tennis_courts.jpg",
+      "author": "Kurt Kaiser",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tennis_courts.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4608,
+      "height": 3456,
+      "title": "Campos de ténis num centro comunitário na Florida"
+    },
+    {
+      "challengeId": 40,
+      "answer": "Big Ben",
+      "aliases": [
+        "Elizabeth Tower",
+        "Torre do relógio de Westminster"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Big-Ben-London.jpg",
+      "author": "Pinguinguy",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Big-Ben-London.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3120,
+      "height": 4160,
+      "title": "Fotografia da torre do Big Ben em Londres"
+    },
+    {
+      "challengeId": 41,
+      "answer": "Coliseu",
+      "aliases": [
+        "Colosseum",
+        "Anfiteatro Flaviano"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Colosseum_-_Rome.jpg/1920px-Colosseum_-_Rome.jpg",
+      "author": "Mattia.masala",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Colosseum_-_Rome.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1920,
+      "height": 2560,
+      "title": "Vista exterior do Coliseu de Roma"
+    },
+    {
+      "challengeId": 42,
+      "answer": "Taj Mahal",
+      "aliases": [
+        "Tajmahal"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/40/Tajmahal.jpg",
+      "author": "Ariyavineeth",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tajmahal.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1824,
+      "height": 3648,
+      "title": "Fotografia do Taj Mahal em Agra, Índia"
+    },
+    {
+      "challengeId": 43,
+      "answer": "Aurora boreal",
+      "aliases": [
+        "Aurora polar",
+        "Northern lights"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Aurora_Borealis_NO.JPG",
+      "author": "Rafal Konieczny",
+      "license": "CC BY 2.5 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Aurora_Borealis_NO.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 3456,
+      "height": 2304,
+      "title": "Aurora boreal observada na Noruega em 28 de outubro de 2006"
+    },
+    {
+      "challengeId": 46,
+      "answer": "Baleia",
+      "aliases": [
+        "Baleia-de-bossa",
+        "Humpback whale"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/41/Humpback_Whale.jpg",
+      "author": "Susanne Steen",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Humpback_Whale.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3072,
+      "height": 2304,
+      "title": "Baleia-de-bossa curiosa junto à superfície do mar"
+    },
+    {
+      "challengeId": 47,
+      "answer": "Grande Pirâmide de Gizé",
+      "aliases": [
+        "Pirâmide de Quéops",
+        "Great Pyramid of Giza"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e9/The_great_pyramid_of_Giza.jpg",
+      "author": "Joyce Humphrey",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_great_pyramid_of_Giza.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Fotografia da Grande Pirâmide de Gizé"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
