@@ -1385,23 +1385,25 @@ function atinaRenderRevealedAnswer(targetId,message){const el=$(targetId);if(!el
 function end(message){stopTimer();raceStop();locked=true;atinaRecordChallengeCompletion('local:'+atinaRunId+':'+pos);atinaShowSolutionImage(games[queue[pos]]?.[3],games[queue[pos]]?.[0],'solutionImage',games[queue[pos]]?.[2],null,atinaBuildSolutionVisualDescription(games[queue[pos]]));atinaRenderRevealedAnswer('feedback',message);const isCorrect=message.startsWith('Certo!'),isTimeout=message.includes('Tempo esgotado');$('feedback').classList.remove('is-correct','is-wrong','is-info');$('feedback').classList.add(isCorrect?'is-correct':isTimeout?'is-wrong':'is-info');$('feedback').classList.toggle('solution-revealed',!isCorrect);const card=$('game').querySelector('.card');card.classList.remove('round-success','round-failure','round-neutral');card.classList.add(isCorrect?'round-success':isTimeout?'round-failure':'round-neutral');$('answer').disabled=true;$('submit').disabled=true;$('nextClue').disabled=true;$('pass').disabled=true;$('continue').classList.remove('hidden');$('listenAnswer').classList.remove('hidden');update();board();saveLocalProgress();}
 function submit(){throw new Error('A validação de respostas requer o servidor ATINA.');}
 async function saveOnlineScore(nickname,score,gameMode,buttonId){
- const status=$('saveStatus'),button=$(buttonId),name=String(nickname||'').trim(),points=Number(score);
- if(!name){status.textContent='Escreve um pseudónimo antes de guardar.';return;}
- if(!Number.isInteger(points)||points<0){status.textContent='Pontuação inválida.';return;}
- if(!supabaseClient){status.textContent='Não foi possível ligar ao ranking.';return;}
- const submissionKey=[atinaRunId||'run-indisponivel',gameMode,norm(name)].join(':');
- if(button?.dataset.saving==='1')return;
+ const status=$('saveStatus'),feedback=$('feedback'),button=$(buttonId),name=String(nickname||'').trim(),points=Number(score);
+ const report=message=>{if(status)status.textContent=message;if(feedback)feedback.textContent=message;};
+ if(!name){report('Falta indicar um pseudónimo para guardar os pontos.');return false;}
+ if(!Number.isInteger(points)||points<0){report('Pontuação inválida.');return false;}
+ if(!supabaseClient){report('Sem ligação ao ranking. Verifica a internet e tenta novamente.');return false;}
+ const playerNumber=buttonId==='saveP2Btn'?2:1;
+ const submissionKey=[atinaRunId||'run-indisponivel',gameMode,playerNumber,norm(name)].join(':');
+ if(button?.dataset.saving==='1')return false;
  if(button){button.dataset.saving='1';button.disabled=true;}
- status.textContent='A guardar pontuação…';
+ report('A guardar pontuação…');
  try{
-  const matchSessionId=atinaServerSession?.session_id||null;const playerNumber=buttonId==='saveP2Btn'?2:1;
+  const matchSessionId=atinaServerSession?.session_id||null;
   const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey,session_id:matchSessionId,player_number:matchSessionId?playerNumber:null});
-  if(error&&error.code==='23505'){
-   status.textContent='Esta pontuação desta partida já foi registada.';
-  }else if(error)throw error;
-  else status.textContent='Pontuação guardada no ranking de pontos!';
+  if(error&&error.code==='23505'){report('Esta pontuação desta partida já estava guardada.');}
+  else if(error)throw error;
+  else report('Pontuação guardada no ranking!');
   await loadOnlineRanking();
- }catch(e){status.textContent='Não foi possível guardar a pontuação. Tenta novamente.';}
+  return true;
+ }catch(e){report('Não foi possível guardar a pontuação. Tenta novamente.');return false;}
  finally{if(button){button.dataset.saving='0';button.disabled=false;}}
 }
 async function atinaShowMatchDetails(rankingId,container){
@@ -1607,7 +1609,30 @@ $('mimeNext').onclick=async()=>{
  mimeShowNext();mimeStartClock();
 };
 $('categories').addEventListener('click',e=>{let b=e.target.closest('[data-category]');if(!b)return;if(b.dataset.category==='Mímicas'){showHomePage('online');$('networkModeHint').textContent='🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.';return;}start('solo',b.dataset.category);});
-$('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>start('duel');$('party').onclick=()=>{start('party');$('player').textContent='🎉 Vez da Equipa 1';$('feedback').textContent='Modo Festa: duas equipas alternam. A última ronda vale pontos a dobrar!';};$('back').onclick=()=>{stopTimer();raceStop();screen('home');};$('nextClue').onclick=reveal;$('submit').onclick=submit;
+$('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>start('duel');$('party').onclick=()=>{start('party');$('player').textContent='🎉 Vez da Equipa 1';$('feedback').textContent='Modo Festa: duas equipas alternam. A última ronda vale pontos a dobrar!';};$('back').onclick=async()=>{
+ if(networkGameActive){networkLeaveRoom();return;}
+ const askExitName=(inputId,label)=>{
+  const input=$(inputId);let name=String(input?.value||'').trim();
+  if(!name){name=window.prompt('Para guardar os pontos desta partida, indica o pseudónimo de '+label+':','');if(name===null)return null;name=String(name).trim();if(input)input.value=name;}
+  return name;
+ };
+ const showExitStatus=message=>{const feedback=$('feedback');if(feedback)feedback.textContent=message;};
+ try{
+  let saved=true;
+  if(mode==='solo'||mode==='mix'){
+   const name=askExitName('nickSolo','jogador');
+   if(name===null)return;
+   if(name)saved=await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
+  }else if(mode==='duel'||mode==='party'){
+   const name1=askExitName('nickP1','Jogador 1');if(name1===null)return;
+   const name2=askExitName('nickP2','Jogador 2');if(name2===null)return;
+   if(name1)saved=await saveOnlineScore(name1,scores[0],'duel','saveP1Btn')&&saved;
+   if(name2)saved=await saveOnlineScore(name2,scores[1],'duel','saveP2Btn')&&saved;
+  }
+  if(!saved){showExitStatus('Não foi possível guardar os pontos. A partida continua aberta — tenta novamente.');return;}
+  stopTimer();raceStop();screen('home');update();
+ }catch(error){showExitStatus('Erro ao guardar os pontos. A partida continua aberta para tentares novamente.');}
+};$('nextClue').onclick=reveal;$('submit').onclick=submit;
 $('voice').onclick=()=>{
  if(locked)return;
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
