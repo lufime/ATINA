@@ -1394,7 +1394,8 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  if(button){button.dataset.saving='1';button.disabled=true;}
  status.textContent='A guardar pontuação…';
  try{
-  const matchSessionId=atinaServerSession?.session_id||null;const playerNumber=buttonId==='saveP2Btn'?2:1;\n  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey,session_id:matchSessionId,player_number:matchSessionId?playerNumber:null});
+  const matchSessionId=atinaServerSession?.session_id||null;const playerNumber=buttonId==='saveP2Btn'?2:1;
+  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey,session_id:matchSessionId,player_number:matchSessionId?playerNumber:null});
   if(error&&error.code==='23505'){
    status.textContent='Esta pontuação desta partida já foi registada.';
   }else if(error)throw error;
