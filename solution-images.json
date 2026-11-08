@@ -1,4 +1,167 @@
 {
-  "version": 1,
-  "images": []
+  "version": 2,
+  "images": [
+    {
+      "challengeId": 802,
+      "answer": "Axolote",
+      "aliases": [
+        "Axolotl",
+        "Ajolote"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e7/TheAxolotl.jpg",
+      "author": "Opouy",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:TheAxolotl.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2324,
+      "height": 2629,
+      "title": "Fotografia de um axolote (Ambystoma mexicanum)"
+    },
+    {
+      "challengeId": 5,
+      "answer": "Água",
+      "aliases": [
+        "H2O"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/60/Water_drops.jpg",
+      "author": "che (fotografia), Li-sung (ajuste)",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Water_drops.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1358,
+      "height": 2001,
+      "title": "Água corrente e gotas a sair de uma torneira"
+    },
+    {
+      "challengeId": 1102,
+      "answer": "Coração",
+      "aliases": [
+        "Coração humano"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Anatomy_Heart_Portuguese_Tiesworks.png",
+      "author": "Tvanbr",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Anatomy_Heart_Portuguese_Tiesworks.png",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 669,
+      "title": "Ilustração anatómica do coração em português"
+    },
+    {
+      "challengeId": 852,
+      "answer": "Bacalhau à Brás",
+      "aliases": [
+        "Bacalhau a Brás"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Bacalhau_a_Bras.jpg",
+      "author": "Fpenteado",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bacalhau_a_Bras.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1758,
+      "height": 1080,
+      "title": "Fotografia de um prato de bacalhau à Brás"
+    },
+    {
+      "challengeId": 1152,
+      "answer": "Imprensa de tipos móveis",
+      "aliases": [
+        "Prensa de Gutenberg",
+        "Imprensa de Gutenberg"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c3/PrintMus_038.jpg",
+      "author": "vlasta2",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:PrintMus_038.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1778,
+      "height": 2240,
+      "title": "Prensa de Gutenberg em demonstração no International Printing Museum"
+    },
+    {
+      "challengeId": 1002,
+      "answer": "Os Lusíadas",
+      "aliases": [
+        "Os Lusiadas"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Os_Lus%C3%ADadas.jpg",
+      "author": "Luís de Camões (obra original); digitalização histórica, carregada por Giro720",
+      "license": "Public Domain Mark 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Os_Lus%C3%ADadas.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 735,
+      "height": 1110,
+      "title": "Página de rosto da edição de 1572 de Os Lusíadas"
+    },
+    {
+      "challengeId": 952,
+      "answer": "Zeus",
+      "aliases": [
+        "Júpiter"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Statue_of_Zeus.jpg",
+      "author": "Maarten van Heemskerck",
+      "license": "Public Domain Mark 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Statue_of_Zeus.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 700,
+      "height": 570,
+      "title": "Representação histórica da estátua de Zeus em Olímpia"
+    },
+    {
+      "challengeId": 10,
+      "answer": "Beethoven",
+      "aliases": [
+        "Ludwig van Beethoven"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/be/Beethoven_1820.jpg",
+      "author": "Joseph Karl Stieler",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beethoven_1820.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1062,
+      "height": 1321,
+      "title": "Retrato de Ludwig van Beethoven pintado por Joseph Karl Stieler em 1820"
+    },
+    {
+      "challengeId": 1,
+      "answer": "Lisboa",
+      "aliases": [
+        "Lisbon"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Lisboa-lisbon-_panorama.jpg",
+      "author": "Galak76",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lisboa-lisbon-_panorama.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 6983,
+      "height": 846,
+      "title": "Panorama de Lisboa visto da margem sul do Tejo"
+    },
+    {
+      "challengeId": 902,
+      "answer": "Transístor",
+      "aliases": [
+        "Transistor"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Transistor-photo.JPG",
+      "author": "Honina (fotografia original); versão de alta resolução carregada por Mister rf",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Transistor-photo.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 6718,
+      "height": 4478,
+      "title": "Fotografia de vários tipos de transístores"
+    }
+  ]
 }
