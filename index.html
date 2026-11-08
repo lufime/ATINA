@@ -2378,8 +2378,8 @@ document.addEventListener('click',function(event){
   });
  }
  back.addEventListener('click',async function(e){
-  if(networkGameActive){return;}
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+  if(networkGameActive){networkLeaveRoom();return;}
   if(exiting)return;
   exiting=true;back.disabled=true;
   try{
@@ -2388,7 +2388,8 @@ document.addEventListener('click',function(event){
     const name=(input&&input.value.trim())||await askNickname();
     if(!name)return;
     if(input)input.value=name;
-    const ok=await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
+    const finalScore=Math.max(0,Math.trunc(Number(scores[0])||0));
+     const ok=await saveOnlineScore(name,finalScore,'solo','saveSoloBtn');
     if(!ok){const fb=document.getElementById('feedback');if(fb)fb.textContent='Não foi possível guardar. A partida continua aberta para tentares novamente.';return;}
    }else if(mode==='duel'||mode==='party'){
     const input1=document.getElementById('nickP1'),input2=document.getElementById('nickP2');
