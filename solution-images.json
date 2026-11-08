@@ -253,6 +253,41 @@
       "title": "Ruínas de Pompeia com o Vesúvio ao fundo"
     },
     {
+      "challengeId": 23,
+      "answer": "Lua",
+      "aliases": [
+        "Moon",
+        "Satélite natural da Terra"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Photo_of_the_full_moon.jpg",
+      "author": "Emholt1",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Photo_of_the_full_moon.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2197,
+      "height": 2209,
+      "title": "Fotografia da Lua cheia obtida com telescópio"
+    },
+    {
+      "challengeId": 24,
+      "answer": "Oxigénio",
+      "aliases": [
+        "Oxygen",
+        "O2",
+        "Molécula de oxigénio"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Oxygen_O2.png",
+      "author": "Christinelmiller",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Oxygen_O2.png",
+      "sourceName": "Wikimedia Commons",
+      "width": 1400,
+      "height": 1000,
+      "title": "Modelo molecular do oxigénio O₂"
+    },
+    {
       "challengeId": 25,
       "answer": "Pele",
       "aliases": [
@@ -285,6 +320,40 @@
       "width": 3072,
       "height": 2304,
       "title": "Sede das Nações Unidas em Nova Iorque"
+    },
+    {
+      "challengeId": 29,
+      "answer": "Triângulo",
+      "aliases": [
+        "Triangle",
+        "Figura geométrica triangular"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Triangle_Shape.svg/1280px-Triangle_Shape.svg.png",
+      "author": "Jlanssie",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Triangle_Shape.svg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1280,
+      "height": 1107,
+      "title": "Forma geométrica de um triângulo"
+    },
+    {
+      "challengeId": 31,
+      "answer": "Livro",
+      "aliases": [
+        "Book",
+        "Livro aberto"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ef/OpenBook.jpg",
+      "author": "Doug Coldwell",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:OpenBook.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 640,
+      "height": 480,
+      "title": "Fotografia de um livro aberto"
     },
     {
       "challengeId": 802,
