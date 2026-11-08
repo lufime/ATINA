@@ -35,10 +35,8 @@ function atinaProgressDeviceToken(createIfMissing = true) {
 }
 
 function atinaProgressRender(profile) {
-  const signedIn = $('atinaSignedInUser');
   const signedInName = $('atinaSignedInUserName');
-  if (signedIn) signedIn.classList.toggle('hidden', !profile);
-  if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : '';
+  if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
   if (!profile) return;
   const xp = Math.max(0, Number(profile.xp) || 0);
   const level = Math.max(1, Number(profile.level) || Math.floor(xp / 250) + 1);
