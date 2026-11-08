@@ -1657,6 +1657,171 @@
       "title": "Fotografia de um camaleão em ambiente natural"
     },
     {
+      "challengeId": 264,
+      "answer": "Zebra",
+      "aliases": [
+        "Zebra"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Zebra_at_the_zoo.jpg",
+      "author": "Rivadavia.vila",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Zebra_at_the_zoo.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4608,
+      "height": 3456,
+      "title": "Zebra fotografada num jardim zoológico"
+    },
+    {
+      "challengeId": 265,
+      "answer": "Guaxinim",
+      "aliases": [
+        "Raccoon"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/61/Raccoon.jpg",
+      "author": "MorrisS",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Raccoon.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 691,
+      "height": 945,
+      "title": "Guaxinim-comum fotografado num quintal"
+    },
+    {
+      "challengeId": 266,
+      "answer": "Elefante",
+      "aliases": [
+        "Elephant"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/ca/An_elephant.jpg",
+      "author": "User.ani2074",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:An_elephant.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3120,
+      "height": 4160,
+      "title": "Elefante fotografado no Parque Nacional de Chitwan, Nepal"
+    },
+    {
+      "challengeId": 267,
+      "answer": "Leopardo",
+      "aliases": [
+        "Leopard"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ad/A_work_depicting_a_leopard.jpg",
+      "author": "BigDareLibrary",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_work_depicting_a_leopard.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4608,
+      "height": 3456,
+      "title": "Fotografia de um leopardo"
+    },
+    {
+      "challengeId": 268,
+      "answer": "Iceberg",
+      "aliases": [
+        "Bloco de gelo",
+        "Iceberg antártico"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/75/Iceberg_Antarctica.jpg",
+      "author": "Ben Stephenson",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Iceberg_Antarctica.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3456,
+      "height": 2304,
+      "title": "Iceberg nas águas da Antártida"
+    },
+    {
+      "challengeId": 269,
+      "answer": "Raposa-vermelha",
+      "aliases": [
+        "Raposa vermelha",
+        "Red fox"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Red_Fox.jpg",
+      "author": "RaniaFadil",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Red_Fox.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3872,
+      "height": 2592,
+      "title": "Raposa-vermelha fotografada num jardim zoológico em Rabat, Marrocos"
+    },
+    {
+      "challengeId": 270,
+      "answer": "Tucano",
+      "aliases": [
+        "Toucan",
+        "Tucano-toco"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/75/Toucan.jpg",
+      "author": "Ankit Kadam",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Toucan.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5184,
+      "height": 3456,
+      "title": "Tucano-toco fotografado na Índia"
+    },
+    {
+      "challengeId": 271,
+      "answer": "Camelo",
+      "aliases": [
+        "Camel"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0f/01_camel.jpg",
+      "author": "Jeffmugendi",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:01_camel.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5184,
+      "height": 3456,
+      "title": "Camelo acompanhado por um tratador no Quénia"
+    },
+    {
+      "challengeId": 272,
+      "answer": "Baobá",
+      "aliases": [
+        "Baobab",
+        "Árvore baobá"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b7/The_Baobab_Tree.jpg",
+      "author": "Namibaxab",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Baobab_Tree.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3024,
+      "height": 4032,
+      "title": "Baobá conhecido como árvore da vida, na Namíbia"
+    },
+    {
+      "challengeId": 273,
+      "answer": "Medusa",
+      "aliases": [
+        "Água-viva",
+        "Jellyfish"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Jellyfish_001.jpg",
+      "author": "claralieu",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jellyfish_001.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4000,
+      "height": 4716,
+      "title": "Fotografia de uma medusa"
+    },
+    {
       "challengeId": 312,
       "answer": "Aristóteles",
       "aliases": [
