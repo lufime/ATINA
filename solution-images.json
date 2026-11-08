@@ -2401,6 +2401,23 @@
       "title": "Par de luvas brancas"
     },
     {
+      "challengeId": 402,
+      "answer": "Clipe",
+      "aliases": [
+        "Paper clip",
+        "Clips de papel"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/21/Paperclips.jpg",
+      "author": "Tdlnx",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Paperclips.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Conjunto de clipes metálicos de papel"
+    },
+    {
       "challengeId": 403,
       "answer": "Tambor",
       "aliases": [
@@ -2416,6 +2433,241 @@
       "width": 811,
       "height": 970,
       "title": "Fotografia de um tambor tradicional, instrumento de percussão"
+    },
+    {
+      "challengeId": 404,
+      "answer": "Frigorífico",
+      "aliases": [
+        "Refrigerador",
+        "Fridge",
+        "Refrigerator"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Refrigerators.jpg",
+      "author": "Adbh266",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Refrigerators.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4000,
+      "height": 1800,
+      "title": "Vários frigoríficos expostos numa loja de eletrodomésticos"
+    },
+    {
+      "challengeId": 405,
+      "answer": "Régua",
+      "aliases": [
+        "Ruler",
+        "Régua graduada"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/12/Ruler.jpg",
+      "author": "EdoardoRamalli",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ruler.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1440,
+      "height": 1920,
+      "title": "Régua azul graduada em centímetros"
+    },
+    {
+      "challengeId": 406,
+      "answer": "Bicicleta",
+      "aliases": [
+        "Bicycle"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/07/Bicycle.JPG",
+      "author": "Pramod Kumar T.K.",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bicycle.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 1920,
+      "height": 1080,
+      "title": "Fotografia de uma bicicleta"
+    },
+    {
+      "challengeId": 407,
+      "answer": "Pedra",
+      "aliases": [
+        "Rock",
+        "Rocha"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/22/Stone_rock.jpg",
+      "author": "Titus Tscharntke",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stone_rock.jpg",
+      "sourceName": "Wikimedia Commons / Public Domain Images",
+      "width": 1024,
+      "height": 768,
+      "title": "Fotografia de uma pedra natural isolada"
+    },
+    {
+      "challengeId": 408,
+      "answer": "Osso",
+      "aliases": [
+        "Bone",
+        "Osso humano"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Human_bone.jpg",
+      "author": "Stephanie cheks",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Human_bone.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4032,
+      "height": 2683,
+      "title": "Fotografia de um osso humano"
+    },
+    {
+      "challengeId": 410,
+      "answer": "Relâmpago",
+      "aliases": [
+        "Lightning",
+        "Raio"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Lightning_bolt.jpg",
+      "author": "Ayorinde Ogundele",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lightning_bolt.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 6000,
+      "height": 4000,
+      "title": "Fotografia de um relâmpago durante uma tempestade"
+    },
+    {
+      "challengeId": 411,
+      "answer": "Guarda-chuva",
+      "aliases": [
+        "Umbrella"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/36/Umbrella.JPG",
+      "author": "Bhaskaranaidu",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Umbrella.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 2592,
+      "height": 1944,
+      "title": "Fotografia de um guarda-chuva aberto"
+    },
+    {
+      "challengeId": 412,
+      "answer": "Campainha",
+      "aliases": [
+        "Doorbell",
+        "Campainha de porta"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Doorbell.JPG",
+      "author": "Albert Jankowski (Albertyanks)",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Doorbell.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 1419,
+      "height": 1747,
+      "title": "Fotografia de uma campainha de porta"
+    },
+    {
+      "challengeId": 413,
+      "answer": "Tijolo",
+      "aliases": [
+        "Brick"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/01/Brick.jpg",
+      "author": "Andrewlister",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Brick.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3456,
+      "height": 2304,
+      "title": "Fotografia de um tijolo de construção"
+    },
+    {
+      "challengeId": 414,
+      "answer": "Escova de dentes",
+      "aliases": [
+        "Toothbrush"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/02/Toothbrush.jpg",
+      "author": "Lead holder",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Toothbrush.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 692,
+      "height": 1324,
+      "title": "Escova de dentes de cerdas naturais num copo"
+    },
+    {
+      "challengeId": 415,
+      "answer": "Faca",
+      "aliases": [
+        "Knife",
+        "Faca utilitária"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Utility_knife.jpg",
+      "author": "Matěj Baťha",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Utility_knife.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1800,
+      "height": 1350,
+      "title": "Fotografia de uma faca utilitária retrátil"
+    },
+    {
+      "challengeId": 416,
+      "answer": "Teclado",
+      "aliases": [
+        "Computer keyboard",
+        "Teclado de computador"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Computer_Keyboard.jpg",
+      "author": "Srini297",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Computer_Keyboard.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4640,
+      "height": 2140,
+      "title": "Fotografia de um teclado de computador"
+    },
+    {
+      "challengeId": 417,
+      "answer": "Rato de computador",
+      "aliases": [
+        "Mouse",
+        "Computer mouse"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/08/A_computer_mouse.jpg",
+      "author": "CAPTAIN MEDUSA",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_computer_mouse.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3504,
+      "height": 2336,
+      "title": "Fotografia de um rato de computador"
+    },
+    {
+      "challengeId": 425,
+      "answer": "Ampulheta",
+      "aliases": [
+        "Hourglass",
+        "Relógio de areia"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Hour_Glass.jpg",
+      "author": "Autor desconhecido (imagem da Library of Congress)",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hour_Glass.jpg",
+      "sourceName": "Wikimedia Commons / Library of Congress",
+      "width": 2330,
+      "height": 2350,
+      "title": "Ilustração histórica de uma ampulheta, publicada em 1888"
     },
     {
       "challengeId": 802,
