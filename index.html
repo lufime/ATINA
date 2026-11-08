@@ -2206,9 +2206,14 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   if(item===undefined){
    const aliases=await atinaSolutionImageAliases(cleanAnswer);
    // Primeiro: imagens previamente verificadas e guardadas no próprio projeto.
-   item=await atinaFindCuratedSolutionImage(cleanAnswer,aliases);
-   // Complemento: Wikimedia Commons, apenas se não existir imagem no catálogo.
-   if(!item)item=await atinaFindCommonsSolutionImage(cleanAnswer,cleanCategory,aliases);
+   const curatedItem=await atinaFindCuratedSolutionImage(cleanAnswer,aliases);
+   // Em jogo online, aceitar o URL enviado pelo servidor apenas quando coincide
+   // com a imagem curada e os respetivos créditos do catálogo.
+   item=preGeneratedUrl
+    ?(curatedItem&&curatedItem.thumburl===preGeneratedUrl?curatedItem:null)
+    :curatedItem;
+   // Sem URL explícito do servidor, procurar uma alternativa verificada.
+   if(!item&&!preGeneratedUrl)item=await atinaFindCommonsSolutionImage(cleanAnswer,cleanCategory,aliases);
    atinaSolutionImageCache.set(key,item||null);
   }
   if(target.dataset.solutionKey!==key)return;
@@ -2224,7 +2229,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   image.onerror=()=>{
    frame.remove();status.textContent='A imagem não está disponível. Não vamos substituí-la por outra sem verificar a resposta.';
    const retry=document.createElement('button');retry.type='button';retry.className='btn secondary';retry.textContent='Tentar novamente';
-   retry.onclick=()=>{atinaSolutionImageCache.delete(key);delete target.dataset.solutionKey;atinaShowSolutionImage(cleanAnswer,cleanCategory,targetId,hiddenTags,null,visualDescription);};
+   retry.onclick=()=>{atinaSolutionImageCache.delete(key);delete target.dataset.solutionKey;atinaShowSolutionImage(cleanAnswer,cleanCategory,targetId,hiddenTags,preGeneratedUrl,visualDescription);};
    target.append(retry);
   };
   frame.append(image);
