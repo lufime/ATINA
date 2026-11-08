@@ -60,13 +60,23 @@ function atinaProgressRender(profile) {
   }
 }
 
-async function atinaProgressRegister(nickname, quiet = false) {
+async function atinaProgressCodeToken(code) {
+  const clean = String(code || '').trim().normalize('NFKC');
+  if (clean.length < 8 || clean.length > 64) throw new Error('O código pessoal deve ter entre 8 e 64 caracteres.');
+  if (/^[0-9a-f]{64}$/i.test(clean)) return clean.toLowerCase(); // compatibilidade com códigos antigos
+  if (!window.crypto?.subtle) throw new Error('Este navegador não suporta a criação segura do código. Atualiza o navegador.');
+  const material = await window.crypto.subtle.importKey('raw', new TextEncoder().encode(clean), 'PBKDF2', false, ['deriveBits']);
+  const bits = await window.crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode('ATINA-player-access-v1'),iterations:310000,hash:'SHA-256'}, material, 256);
+  return Array.from(new Uint8Array(bits), value => value.toString(16).padStart(2, '0')).join('');
+}
+
+async function atinaProgressRegister(nickname, quiet = false, personalCode = '') {
   const clean = String(nickname || '').trim();
   if (!clean || clean.length > 20) throw new Error('Escolhe um pseudónimo entre 1 e 20 caracteres.');
   const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
-  const deviceToken = atinaProgressDeviceToken(!savedNickname);
+  const deviceToken = personalCode ? await atinaProgressCodeToken(personalCode) : atinaProgressDeviceToken(!savedNickname);
   if (!deviceToken) {
-    throw new Error('A chave deste pseudónimo não está neste dispositivo. Recupera primeiro com o código de 64 caracteres; não será criada uma progressão nova.');
+    throw new Error('O código pessoal não está neste dispositivo. Introduz o teu código para recuperar o perfil.');
   }
   const data = await atinaServerRpc('atina_progress_register', {
     p_nickname: clean,
@@ -171,28 +181,22 @@ async function atinaProgressCopyRecovery() {
 }
 
 async function atinaProgressRestoreFromCode() {
-  const code = String($('atinaCloudRecoveryCode')?.value || '').trim().toLowerCase();
-  if (!/^[0-9a-f]{64}$/.test(code)) {
-    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'O código de recuperação deve ter 64 caracteres hexadecimais.';
-    return;
-  }
+  const code = String($('atinaCloudRecoveryCode')?.value || '').trim();
   const nickname = String($('atinaCloudNickname')?.value || localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '').trim();
   if (!nickname || nickname.length > 20) {
-    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Indica primeiro o pseudónimo associado ao código de recuperação.';
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Indica o pseudónimo associado ao teu código pessoal.';
     return;
   }
   try {
-    const data = await atinaServerRpc('atina_progress_register', {
-      p_nickname: nickname,
-      p_device_token: code
-    });
-    localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, code);
+    const deviceToken = await atinaProgressCodeToken(code);
+    const data = await atinaServerRpc('atina_progress_register', {p_nickname:nickname,p_device_token:deviceToken});
+    localStorage.setItem(ATINA_PROGRESS_DEVICE_KEY, deviceToken);
     localStorage.setItem(ATINA_PROGRESS_NICKNAME_KEY, nickname);
     atinaCloudProfile = data;
     window.atinaCloudProfile = data;
     atinaProgressRender(data);
     atinaRenderDailyMission();
-    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Pseudónimo guardado. A progressão está sincronizada.';
+    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Perfil recuperado. O pseudónimo e a progressão estão sincronizados neste dispositivo.';
   } catch (error) {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = error.message || 'Não foi possível recuperar o perfil.';
   }
@@ -205,7 +209,7 @@ function atinaProgressBoot() {
     const button = $('atinaCloudRegister');
     button.disabled = true;
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'A sincronizar pseudónimo…';
-    try { await atinaProgressRegister($('atinaCloudNickname')?.value); }
+    try { await atinaProgressRegister($('atinaCloudNickname')?.value, false, $('atinaCloudRecoveryCode')?.value); }
     catch (error) { if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = error.message || 'Não foi possível registar o pseudónimo.'; }
     finally { button.disabled = false; }
   });
