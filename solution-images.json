@@ -1477,6 +1477,39 @@
       "title": "Fotografia de um pente de cabelo"
     },
     {
+      "challengeId": 227,
+      "answer": "Frida Kahlo",
+      "aliases": [
+        "Frida"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/99/Frida_Kahlo_-_1926.jpg",
+      "author": "Carl Wilhelm Kahlo Kauffmann (pai de Frida Kahlo)",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Frida_Kahlo_-_1926.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 526,
+      "height": 784,
+      "title": "Retrato fotográfico de Frida Kahlo aos 18 anos, em 1926"
+    },
+    {
+      "challengeId": 228,
+      "answer": "Hatsukaichi",
+      "aliases": [
+        "Miyajima",
+        "Santuário de Itsukushima"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Japan_-_Miyajima_-_Itsukushima_Shrine.jpg",
+      "author": "Vanvelthem Cédric",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Japan_-_Miyajima_-_Itsukushima_Shrine.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1280,
+      "height": 853,
+      "title": "Santuário de Itsukushima, na ilha de Miyajima, município de Hatsukaichi, Japão"
+    },
+    {
       "challengeId": 229,
       "answer": "Microscópio",
       "aliases": [
@@ -1524,6 +1557,54 @@
       "width": 6000,
       "height": 4000,
       "title": "Fotografia de um violino para assinalar o Dia Mundial da Música"
+    },
+    {
+      "challengeId": 242,
+      "answer": "Alan Turing",
+      "aliases": [
+        "Alan Mathison Turing"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Alan_Turing_at_age_16.jpg",
+      "author": "Possivelmente Arthur Reginald Chaffin",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Alan_Turing_at_age_16.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 864,
+      "height": 1194,
+      "title": "Fotografia de Alan Turing aos 16 anos, cerca de 1928–1929"
+    },
+    {
+      "challengeId": 243,
+      "answer": "Stonehenge",
+      "aliases": [
+        "Monumento de Stonehenge"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/be/The_Stonehenge.JPG",
+      "author": "Sanjay Nair",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Stonehenge.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 4031,
+      "height": 2500,
+      "title": "Vista de Stonehenge, o monumento pré-histórico em Salisbury, Inglaterra"
+    },
+    {
+      "challengeId": 244,
+      "answer": "Machu Picchu",
+      "aliases": [
+        "Machu Picchu, Peru"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Machu_Picchu_August_2025.jpg",
+      "author": "Kline",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Machu_Picchu_August_2025.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5184,
+      "height": 3456,
+      "title": "Vista panorâmica de Machu Picchu fotografada em agosto de 2025"
     },
     {
       "challengeId": 245,
@@ -1642,6 +1723,39 @@
       "width": 3956,
       "height": 2967,
       "title": "Pirâmide de Kukulcán no sítio arqueológico de Chichén Itzá, México"
+    },
+    {
+      "challengeId": 252,
+      "answer": "Praia da Marinha",
+      "aliases": [
+        "Praia da Marinha, Algarve"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Praia_da_Marinha_%281%29.JPG",
+      "author": "Joseolgon",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Praia_da_Marinha_(1).JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 4288,
+      "height": 2848,
+      "title": "Vista da Praia da Marinha, em Lagoa, Algarve"
+    },
+    {
+      "challengeId": 253,
+      "answer": "Etna",
+      "aliases": [
+        "Monte Etna",
+        "Mount Etna"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/02/Mount_Etna.jpg",
+      "author": "Fenners",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mount_Etna.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1172,
+      "height": 784,
+      "title": "Vista do Monte Etna, vulcão ativo na Sicília"
     },
     {
       "challengeId": 254,
