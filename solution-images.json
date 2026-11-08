@@ -1076,6 +1076,22 @@
       "title": "Vista da antiga cidade de Petra, na Jordânia"
     },
     {
+      "challengeId": 180,
+      "answer": "Polo aquático",
+      "aliases": [
+        "Water polo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e5/WaterPolo.JPG",
+      "author": "Massimo Finizio",
+      "license": "CC BY-SA 2.0 Itália",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/it/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:WaterPolo.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 1556,
+      "height": 1166,
+      "title": "Jogo de polo aquático entre as seleções da Grécia e da Hungria"
+    },
+    {
       "challengeId": 183,
       "answer": "Ada Lovelace",
       "aliases": [
@@ -1143,6 +1159,22 @@
       "title": "Troço da Grande Muralha da China serpenteando pelas montanhas"
     },
     {
+      "challengeId": 188,
+      "answer": "Coração",
+      "aliases": [
+        "Coração humano"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Anatomy_Heart_Portuguese_Tiesworks.png",
+      "author": "Tvanbr",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Anatomy_Heart_Portuguese_Tiesworks.png",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 669,
+      "title": "Ilustração anatómica do coração em português"
+    },
+    {
       "challengeId": 190,
       "answer": "Stari Most",
       "aliases": [
@@ -1158,6 +1190,23 @@
       "width": 3024,
       "height": 4032,
       "title": "Stari Most, a ponte histórica de Mostar, na Bósnia e Herzegovina"
+    },
+    {
+      "challengeId": 195,
+      "answer": "Atletismo",
+      "aliases": [
+        "Athletics",
+        "Atletismo de pista"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Athletics_track.jpg",
+      "author": "Elaron",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Athletics_track.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 731,
+      "height": 1024,
+      "title": "Pista de atletismo para provas de corrida"
     },
     {
       "challengeId": 198,
@@ -1226,6 +1275,40 @@
       "title": "Vista frontal do complexo de templos de Angkor Wat, no Camboja"
     },
     {
+      "challengeId": 203,
+      "answer": "Célula",
+      "aliases": [
+        "Célula biológica",
+        "Cell"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Cells_under_a_microscope.jpg",
+      "author": "Natalieconstancehall",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cells_under_a_microscope.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 912,
+      "height": 912,
+      "title": "Células observadas ao microscópio"
+    },
+    {
+      "challengeId": 204,
+      "answer": "Biblioteca Nacional de Portugal",
+      "aliases": [
+        "BNP",
+        "Biblioteca Nacional"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/97/Fachada_da_Biblioteca_Nacional_de_Portugal.jpg",
+      "author": "Girassolei",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fachada_da_Biblioteca_Nacional_de_Portugal.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3060,
+      "height": 4080,
+      "title": "Fachada da Biblioteca Nacional de Portugal, em Lisboa, iluminada à noite"
+    },
+    {
       "challengeId": 205,
       "answer": "Monte Fuji",
       "aliases": [
@@ -1242,6 +1325,40 @@
       "width": 2466,
       "height": 1788,
       "title": "Vista do Monte Fuji, no Japão, fotografado em fevereiro de 2016"
+    },
+    {
+      "challengeId": 207,
+      "answer": "Garrafa",
+      "aliases": [
+        "Bottle",
+        "Garrafa de vidro"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Glass_bottle.jpg",
+      "author": "Yesseruser",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Glass_bottle.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1627,
+      "height": 2090,
+      "title": "Garrafa de vidro fotografada sobre uma mesa decorada"
+    },
+    {
+      "challengeId": 210,
+      "answer": "Ciclismo",
+      "aliases": [
+        "Cycling",
+        "Corrida de bicicletas"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Bike_race.jpg",
+      "author": "Fcocycle",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bike_race.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3072,
+      "height": 2048,
+      "title": "Prova de ciclismo em estrada"
     },
     {
       "challengeId": 213,
@@ -1293,6 +1410,23 @@
       "title": "Vista panorâmica de Machu Picchu fotografada em agosto de 2025"
     },
     {
+      "challengeId": 216,
+      "answer": "Biblioteca",
+      "aliases": [
+        "Library",
+        "Interior de biblioteca"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/41/Interior_of_library.jpg",
+      "author": "Sushmita Fernandes",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Interior_of_library.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4128,
+      "height": 3096,
+      "title": "Interior de uma biblioteca com estantes de livros"
+    },
+    {
       "challengeId": 217,
       "answer": "ADN",
       "aliases": [
@@ -1324,6 +1458,23 @@
       "width": 5561,
       "height": 3253,
       "title": "Vista da Ponte Vecchio sobre o rio Arno, em Florença"
+    },
+    {
+      "challengeId": 221,
+      "answer": "Pente",
+      "aliases": [
+        "Comb",
+        "Pente de cabelo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Comb_for_hair.jpg",
+      "author": "MrBeastRapper",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Comb_for_hair.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3024,
+      "height": 4032,
+      "title": "Fotografia de um pente de cabelo"
     },
     {
       "challengeId": 229,
