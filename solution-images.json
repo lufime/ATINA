@@ -3549,6 +3549,171 @@
       "title": "Porta dos Leões em Hattusa, antiga capital dos hititas"
     },
     {
+      "challengeId": 431,
+      "answer": "Mohenjo-daro",
+      "aliases": [
+        "Moenjodaro",
+        "Mohenjo Daro"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Moen_jo_daro_ruins.jpg",
+      "author": "Solophar",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Moen_jo_daro_ruins.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Ruínas arqueológicas de Mohenjo-daro, antiga cidade da civilização do Vale do Indo"
+    },
+    {
+      "challengeId": 437,
+      "answer": "Viagem de circum-navegação de Fernão de Magalhães",
+      "aliases": [
+        "Circum-navegação de Magalhães",
+        "Magellan–Elcano expedition"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c9/The_World_as_Known_Before_Columbus%2C_1492%E2%80%931498.gif",
+      "author": "William Swinton",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_World_as_Known_Before_Columbus,_1492%E2%80%931498.gif",
+      "sourceName": "Wikimedia Commons",
+      "width": 860,
+      "height": 900,
+      "title": "Mapa histórico de 1894 que inclui a rota de circum-navegação de Fernão de Magalhães, 1519–1522"
+    },
+    {
+      "challengeId": 438,
+      "answer": "Titanic",
+      "aliases": [
+        "RMS Titanic"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/92/Titanic.jpg",
+      "author": "Autor desconhecido",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Titanic.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1571,
+      "height": 1600,
+      "title": "RMS Titanic preparado para zarpar do porto de Southampton, em abril de 1912"
+    },
+    {
+      "challengeId": 440,
+      "answer": "Pedra de Roseta",
+      "aliases": [
+        "Rosetta Stone"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/33/The_Rosetta_Stone.jpg",
+      "author": "Donald Macbeth (fotógrafo); Sir Ernest Alfred Wallis (autor do livro)",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Rosetta_Stone.jpg",
+      "sourceName": "Wikimedia Commons / British Museum",
+      "width": 4911,
+      "height": 6000,
+      "title": "Fotografia da Pedra de Roseta publicada num livro do British Museum em 1922"
+    },
+    {
+      "challengeId": 442,
+      "answer": "Exército de Terracota",
+      "aliases": [
+        "Terracotta Army",
+        "Guerreiros de Terracota"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/41/Terracotta_army.jpg",
+      "author": "Ideophagous",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Terracotta_army.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4080,
+      "height": 3060,
+      "title": "Fileiras de figuras do Exército de Terracota, em Xi'an, China"
+    },
+    {
+      "challengeId": 443,
+      "answer": "Torre de Londres",
+      "aliases": [
+        "Tower of London"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Tower_of_London.JPG",
+      "author": "Pilise Gábor (Pilgab)",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Tower_of_London.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 768,
+      "title": "Vista da histórica Torre de Londres, junto ao rio Tamisa"
+    },
+    {
+      "challengeId": 445,
+      "answer": "Magna Carta",
+      "aliases": [
+        "Magna Carta Libertatum",
+        "Grande Carta das Liberdades"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Magna_Carta_%28British_Library_Cotton_MS_Augustus_II.106%29.jpg",
+      "author": "Barões ingleses e João de Inglaterra (documento original; reprodução fornecida pela British Library)",
+      "license": "Domínio público (PD-Art 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Magna_Carta_(British_Library_Cotton_MS_Augustus_II.106).jpg",
+      "sourceName": "Wikimedia Commons / British Library",
+      "width": 7200,
+      "height": 4800,
+      "title": "Uma das quatro cópias sobreviventes de 1215 da Magna Carta, conservada na British Library"
+    },
+    {
+      "challengeId": 453,
+      "answer": "Muro de Berlim",
+      "aliases": [
+        "Berlin Wall"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/50/BerlinWall.jpg",
+      "author": "Stefan Richter",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:BerlinWall.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1946,
+      "height": 1248,
+      "title": "Muro de Berlim parcialmente destruído, com polícias de fronteira e a Porta de Brandemburgo ao fundo, novembro de 1989"
+    },
+    {
+      "challengeId": 455,
+      "answer": "Apollo 11",
+      "aliases": [
+        "Missão Apollo 11",
+        "Alunagem da Apollo 11"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Apollo-11_nasa_536.jpg",
+      "author": "Equipa NASA Apollo 11",
+      "license": "Domínio público (NASA)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Apollo-11_nasa_536.jpg",
+      "sourceName": "Wikimedia Commons / NASA",
+      "width": 4126,
+      "height": 4126,
+      "title": "Fotografia da missão Apollo 11 durante a primeira alunagem tripulada, em julho de 1969"
+    },
+    {
+      "challengeId": 456,
+      "answer": "Neil Armstrong",
+      "aliases": [
+        "Neil Alden Armstrong"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Portrait_of_Neil_Armstrong.jpg",
+      "author": "NASA",
+      "license": "Domínio público (NASA)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Portrait_of_Neil_Armstrong.jpg",
+      "sourceName": "Wikimedia Commons / NASA",
+      "width": 2122,
+      "height": 2644,
+      "title": "Retrato oficial do astronauta Neil Armstrong, de 1969"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
