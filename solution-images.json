@@ -1822,6 +1822,22 @@
       "title": "Fotografia de uma medusa"
     },
     {
+      "challengeId": 274,
+      "answer": "Grande Barreira de Coral",
+      "aliases": [
+        "Great Barrier Reef"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Great-barrier-reef.jpg",
+      "author": "Tonny Watanebe",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Great-barrier-reef.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1280,
+      "height": 960,
+      "title": "Vista da Grande Barreira de Coral, na Austrália"
+    },
+    {
       "challengeId": 312,
       "answer": "Aristóteles",
       "aliases": [
@@ -2068,6 +2084,54 @@
       "width": 614,
       "height": 776,
       "title": "Retrato fotográfico de Eça de Queirós, cerca de 1895"
+    },
+    {
+      "challengeId": 334,
+      "answer": "Vincent van Gogh",
+      "aliases": [
+        "Van Gogh"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Self-portrait_-_Vincent_van_Gogh.jpg",
+      "author": "Vincent van Gogh (obra; reprodução publicada por GoldenArtists)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Self-portrait_-_Vincent_van_Gogh.jpg",
+      "sourceName": "Wikimedia Commons / Kröller-Müller Museum",
+      "width": 4248,
+      "height": 5808,
+      "title": "Autorretrato de Vincent van Gogh, pintado em 1887"
+    },
+    {
+      "challengeId": 335,
+      "answer": "Claude Monet",
+      "aliases": [
+        "Monet"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/52/Portrait_of_Claude_Monet.jpg",
+      "author": "Adolf de Meyer",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Portrait_of_Claude_Monet.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 473,
+      "height": 655,
+      "title": "Retrato fotográfico de Claude Monet por Adolf de Meyer"
+    },
+    {
+      "challengeId": 336,
+      "answer": "Wolfgang Amadeus Mozart",
+      "aliases": [
+        "Mozart"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/70/Portrait_of_Wolfgang_Amadeus_Mozart.jpg",
+      "author": "T. G. Mansfield",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Portrait_of_Wolfgang_Amadeus_Mozart.jpg",
+      "sourceName": "Wikimedia Commons / The Outlook",
+      "width": 1425,
+      "height": 2297,
+      "title": "Retrato histórico de Wolfgang Amadeus Mozart publicado até 1904"
     },
     {
       "challengeId": 350,
