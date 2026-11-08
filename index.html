@@ -1398,6 +1398,7 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  try{
   const matchSessionId=atinaServerSession?.session_id||null;
   const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey,session_id:matchSessionId,player_number:matchSessionId?playerNumber:null});
+  if(error&&error.code==='23505'&&String(error.message||'').includes('atina_points_ranking_nickname_unique_idx')){report('Este pseudónimo já está a ser utilizado. Escolhe outro.');return false;}
   if(error&&error.code==='23505'){report('Esta pontuação desta partida já estava guardada.');}
   else if(error)throw error;
   else report('Pontuação guardada no ranking!');
