@@ -1887,6 +1887,22 @@
       "title": "Panorama de Oslo visto do mar, com a Ópera e o Museu Munch"
     },
     {
+      "challengeId": 361,
+      "answer": "Estocolmo",
+      "aliases": [
+        "Stockholm"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Stockholm_skyline_%285476040010%29.jpg",
+      "author": "Håkan Dahlström",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stockholm_skyline_(5476040010).jpg",
+      "sourceName": "Wikimedia Commons / Flickr",
+      "width": 5315,
+      "height": 3544,
+      "title": "Panorama de Estocolmo visto da Stadsgårdsleden"
+    },
+    {
       "challengeId": 362,
       "answer": "Copenhaga",
       "aliases": [
@@ -1934,6 +1950,155 @@
       "width": 5100,
       "height": 3140,
       "title": "Vista matinal da cidade velha e das muralhas de Dubrovnik"
+    },
+    {
+      "challengeId": 366,
+      "answer": "Sevilha",
+      "aliases": [
+        "Seville",
+        "Sevilla"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Seville_skyline_%284259354402%29.jpg",
+      "author": "Weldon Kennedy",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Seville_skyline_(4259354402).jpg",
+      "sourceName": "Wikimedia Commons / Flickr",
+      "width": 3456,
+      "height": 2304,
+      "title": "Panorama urbano de Sevilha, Espanha"
+    },
+    {
+      "challengeId": 367,
+      "answer": "Valência",
+      "aliases": [
+        "Valencia"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Old_city_of_Valencia_Skyline_from_Serrans_Towers.JPG",
+      "author": "Carlesmari",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Old_city_of_Valencia_Skyline_from_Serrans_Towers.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 943,
+      "title": "Panorama da cidade velha de Valência visto das Torres de Serranos"
+    },
+    {
+      "challengeId": 368,
+      "answer": "Marselha",
+      "aliases": [
+        "Marseille"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Marseille_skyline_.jpeg",
+      "author": "Rberchie",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Marseille_skyline_.jpeg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4032,
+      "height": 3024,
+      "title": "Panorama de Marselha visto da basílica de Notre-Dame de la Garde"
+    },
+    {
+      "challengeId": 369,
+      "answer": "Lyon",
+      "aliases": [
+        "Lião"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Lyon_skyline_from_Gratte-Ciel.jpg",
+      "author": "SashiRolls",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lyon_skyline_from_Gratte-Ciel.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2276,
+      "height": 3840,
+      "title": "Panorama de Lyon visto de um edifício do bairro Gratte-Ciel"
+    },
+    {
+      "challengeId": 370,
+      "answer": "Bruxelas",
+      "aliases": [
+        "Brussels",
+        "Bruxelas, Bélgica"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Brussels_skyline.jpg",
+      "author": "James Cridland",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Brussels_skyline.jpg",
+      "sourceName": "Wikimedia Commons / Flickr",
+      "width": 2136,
+      "height": 1702,
+      "title": "Panorama de Bruxelas, Bélgica"
+    },
+    {
+      "challengeId": 371,
+      "answer": "Genebra",
+      "aliases": [
+        "Geneva",
+        "Genève"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Gen%C3%A8ve_skyline.jpg",
+      "author": "Ben Newton",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Genève_skyline.jpg",
+      "sourceName": "Wikimedia Commons / Flickr",
+      "width": 1536,
+      "height": 1024,
+      "title": "Panorama de Genebra com o jato de água Jet d'Eau"
+    },
+    {
+      "challengeId": 372,
+      "answer": "Zurique",
+      "aliases": [
+        "Zurich",
+        "Zürich"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/92/Zurich_Skyline.jpg",
+      "author": "Schuetze75",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Zurich_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Panorama de Zurique, Suíça"
+    },
+    {
+      "challengeId": 373,
+      "answer": "Munique",
+      "aliases": [
+        "Munich",
+        "München"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Munich_skyline_1.jpg",
+      "author": "Mwinog2777",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Munich_skyline_1.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2166,
+      "height": 1005,
+      "title": "Panorama de Munique com as torres da Frauenkirche"
+    },
+    {
+      "challengeId": 374,
+      "answer": "Frankfurt",
+      "aliases": [
+        "Frankfurt am Main"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/21/Frankfurt_skyline_from_Alte_Br%C3%BCcke.jpg",
+      "author": "Gerda Arendt",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Frankfurt_skyline_from_Alte_Brücke.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3874,
+      "height": 2905,
+      "title": "Panorama de Frankfurt e do rio Meno visto da Alte Brücke"
     },
     {
       "challengeId": 802,
