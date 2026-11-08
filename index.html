@@ -1628,6 +1628,11 @@ $('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').
    const name2=askExitName('nickP2','Jogador 2');if(name2===null)return;
    if(name1)saved=await saveOnlineScore(name1,scores[0],'duel','saveP1Btn')&&saved;
    if(name2)saved=await saveOnlineScore(name2,scores[1],'duel','saveP2Btn')&&saved;
+  }else{
+   // Qualquer modo local não reconhecido guarda a pontuação individual.
+   const name=askExitName('nickSolo','jogador');
+   if(name===null)return;
+   if(name)saved=await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
   }
   if(!saved){showExitStatus('Não foi possível guardar os pontos. A partida continua aberta — tenta novamente.');return;}
   stopTimer();raceStop();screen('home');update();
