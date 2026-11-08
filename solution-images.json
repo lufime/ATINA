@@ -219,6 +219,74 @@
       "title": "Vista do Grande Canal de Veneza"
     },
     {
+      "challengeId": 19,
+      "answer": "Termómetro",
+      "aliases": [
+        "Thermometer",
+        "Termómetro clínico"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/26/Fieberthermometer_clinical_thermometer_01.jpg",
+      "author": "Iswoar",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fieberthermometer_clinical_thermometer_01.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4864,
+      "height": 3648,
+      "title": "Termómetros clínicos de mercúrio em vidro"
+    },
+    {
+      "challengeId": 20,
+      "answer": "Pompeia",
+      "aliases": [
+        "Pompeii",
+        "Ruínas de Pompeia"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/da/View_of_vesuvius_over_the_ruins_of_pompeii.jpg",
+      "author": "Valentin Popescu",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:View_of_vesuvius_over_the_ruins_of_pompeii.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2346,
+      "height": 1239,
+      "title": "Ruínas de Pompeia com o Vesúvio ao fundo"
+    },
+    {
+      "challengeId": 25,
+      "answer": "Pele",
+      "aliases": [
+        "Human skin",
+        "Textura da pele"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Human_Skin.jpg/960px-Human_Skin.jpg",
+      "author": "Bot1036",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Human_Skin.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 960,
+      "height": 978,
+      "title": "Textura da pele humana"
+    },
+    {
+      "challengeId": 27,
+      "answer": "ONU",
+      "aliases": [
+        "Organização das Nações Unidas",
+        "United Nations"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/73/United_Nations_HQ.jpg",
+      "author": "Dendodge",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:United_Nations_HQ.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3072,
+      "height": 2304,
+      "title": "Sede das Nações Unidas em Nova Iorque"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
