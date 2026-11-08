@@ -1657,7 +1657,7 @@ $('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo
   return name;
  };
  try{
-  if(mode==='solo'){
+  if(mode==='solo'||mode==='mix'){
    const name=askName('nickSolo','jogador');
    if(name)await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
   }else if(mode==='duel'||mode==='party'){
