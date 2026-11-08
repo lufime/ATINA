@@ -235,6 +235,23 @@
       "title": "Vista do Grande Canal de Veneza"
     },
     {
+      "challengeId": 18,
+      "answer": "Satélite",
+      "aliases": [
+        "Satélite artificial",
+        "Ohsumi"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/06/Ohsumi_Artificial_Satellite.jpg",
+      "author": "Momotarou2012",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ohsumi_Artificial_Satellite.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1200,
+      "height": 1600,
+      "title": "Modelo de teste do satélite artificial japonês Ōsumi, exposto num museu em Tóquio"
+    },
+    {
       "challengeId": 19,
       "answer": "Termómetro",
       "aliases": [
@@ -488,6 +505,40 @@
       "title": "Aurora boreal observada na Noruega em 28 de outubro de 2006"
     },
     {
+      "challengeId": 44,
+      "answer": "Leão",
+      "aliases": [
+        "Lion",
+        "Panthera leo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Panthera_leo_leo.jpg",
+      "author": "Hans Hillewaert",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Panthera_leo_leo.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2848,
+      "height": 3797,
+      "title": "Leão-da-Barbária fotografado no Port Lympne Wild Animal Park, Reino Unido"
+    },
+    {
+      "challengeId": 45,
+      "answer": "Cascata",
+      "aliases": [
+        "Queda de água",
+        "Waterfall"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Long_shot_of_a_waterfall.jpg",
+      "author": "WXchaser",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Long_shot_of_a_waterfall.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4608,
+      "height": 3456,
+      "title": "Vista ampla de uma cascata"
+    },
+    {
       "challengeId": 46,
       "answer": "Baleia",
       "aliases": [
@@ -520,6 +571,91 @@
       "width": 3264,
       "height": 2448,
       "title": "Fotografia da Grande Pirâmide de Gizé"
+    },
+    {
+      "challengeId": 49,
+      "answer": "Istambul",
+      "aliases": [
+        "Istanbul",
+        "Constantinopla"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Istanbul_Skyline.jpg",
+      "author": "Ben Morlok",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Istanbul_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5184,
+      "height": 1835,
+      "title": "Panorama urbano de Istambul"
+    },
+    {
+      "challengeId": 51,
+      "answer": "Atenas",
+      "aliases": [
+        "Athens",
+        "Acrópole de Atenas"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/ce/The_Parthenon_at_the_Acropolis_of_Athens.jpg",
+      "author": "Ceylnbirol",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Parthenon_at_the_Acropolis_of_Athens.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3213,
+      "height": 5712,
+      "title": "Vista do Parténon na Acrópole de Atenas"
+    },
+    {
+      "challengeId": 55,
+      "answer": "Ponte D. Luís I",
+      "aliases": [
+        "Ponte Dom Luís I",
+        "Ponte Luís I"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Ponte_Dom_Luis_I.jpg",
+      "author": "Małgorzata Kaczor",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ponte_Dom_Luis_I.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3008,
+      "height": 2000,
+      "title": "Ponte D. Luís I sobre o rio Douro, no Porto"
+    },
+    {
+      "challengeId": 57,
+      "answer": "Mapa topográfico",
+      "aliases": [
+        "Carta topográfica",
+        "Topographic map"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/96/Topographic_map_of_Central_Europe.png",
+      "author": "Hans Braxmeier",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Topographic_map_of_Central_Europe.png",
+      "sourceName": "Wikimedia Commons",
+      "width": 553,
+      "height": 634,
+      "title": "Mapa topográfico da Europa Central"
+    },
+    {
+      "challengeId": 58,
+      "answer": "Piano",
+      "aliases": [
+        "Piano de cauda",
+        "Grand piano"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Grand_Piano.jpg",
+      "author": "unforth (Flickr)",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Grand_Piano.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1600,
+      "height": 1200,
+      "title": "Piano de cauda Érard, fabricado em Londres no século XIX"
     },
     {
       "challengeId": 802,
