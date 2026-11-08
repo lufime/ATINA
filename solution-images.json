@@ -1493,6 +1493,138 @@
       "title": "Pirâmide de Kukulcán no sítio arqueológico de Chichén Itzá, México"
     },
     {
+      "challengeId": 312,
+      "answer": "Aristóteles",
+      "aliases": [
+        "Aristotle"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Aristotle_bust.jpg",
+      "author": "Ktrepas",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Aristotle_bust.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 750,
+      "height": 1235,
+      "title": "Busto de Aristóteles, filósofo da Grécia Antiga"
+    },
+    {
+      "challengeId": 314,
+      "answer": "Joana d'Arc",
+      "aliases": [
+        "Jeanne d'Arc",
+        "Joan of Arc"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e5/JoanOfArcLarge.jpeg",
+      "author": "Jules Bastien-Lepage",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:JoanOfArcLarge.jpeg",
+      "sourceName": "Wikimedia Commons / The Metropolitan Museum of Art",
+      "width": 3612,
+      "height": 3250,
+      "title": "Pintura de Jules Bastien-Lepage que representa Joana d'Arc a receber a sua visão, 1879"
+    },
+    {
+      "challengeId": 315,
+      "answer": "Galileu Galilei",
+      "aliases": [
+        "Galileo Galilei",
+        "Galileu"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Justus_Sustermans_-_Portrait_of_Galileo_Galilei_%28Uffizi%29.jpg",
+      "author": "Justus Sustermans",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Justus_Sustermans_-_Portrait_of_Galileo_Galilei_(Uffizi).jpg",
+      "sourceName": "Wikimedia Commons / Galleria degli Uffizi",
+      "width": 2113,
+      "height": 2500,
+      "title": "Retrato de Galileu Galilei pintado por Justus Sustermans"
+    },
+    {
+      "challengeId": 316,
+      "answer": "Isaac Newton",
+      "aliases": [
+        "Newton",
+        "Sir Isaac Newton"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/67/Isaac_Newton_by_Sir_Godfrey_Kneller.jpg",
+      "author": "Sir Godfrey Kneller",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Isaac_Newton_by_Sir_Godfrey_Kneller.jpg",
+      "sourceName": "Wikimedia Commons / National Portrait Gallery",
+      "width": 4284,
+      "height": 5712,
+      "title": "Retrato de Sir Isaac Newton pintado por Godfrey Kneller em 1702"
+    },
+    {
+      "challengeId": 317,
+      "answer": "Nikola Tesla",
+      "aliases": [
+        "Tesla"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Nikola_Tesla_by_Sarony_c1893.jpg",
+      "author": "Napoleon Sarony",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nikola_Tesla_by_Sarony_c1893.jpg",
+      "sourceName": "Wikimedia Commons / Harvard Art Museums",
+      "width": 585,
+      "height": 885,
+      "title": "Retrato fotográfico de Nikola Tesla por Napoleon Sarony, cerca de 1893"
+    },
+    {
+      "challengeId": 318,
+      "answer": "Thomas Edison",
+      "aliases": [
+        "Edison",
+        "Thomas Alva Edison"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/92/Portrait_of_Thomas_A._Edison.jpg",
+      "author": "Arthur Radclyffe Dugmore",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Portrait_of_Thomas_A._Edison.jpg",
+      "sourceName": "Wikimedia Commons / The World's Work",
+      "width": 2105,
+      "height": 3057,
+      "title": "Retrato de Thomas Alva Edison, publicado até 1905"
+    },
+    {
+      "challengeId": 319,
+      "answer": "Louis Pasteur",
+      "aliases": [
+        "Pasteur"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/94/Louis_Pasteur-portrait.jpg",
+      "author": "Autor desconhecido; gravura publicada por Victor Fraitot",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Louis_Pasteur-portrait.jpg",
+      "sourceName": "Wikimedia Commons / Gallica, Bibliothèque nationale de France",
+      "width": 4510,
+      "height": 4686,
+      "title": "Gravura de Louis Pasteur publicada em 1905"
+    },
+    {
+      "challengeId": 320,
+      "answer": "Florence Nightingale",
+      "aliases": [
+        "Nightingale"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Florence_Nightingale_%28H_Hering_NPG_x82368%29.jpg",
+      "author": "Henry Hering",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Florence_Nightingale_(H_Hering_NPG_x82368).jpg",
+      "sourceName": "Wikimedia Commons / National Portrait Gallery, London",
+      "width": 1105,
+      "height": 1536,
+      "title": "Retrato fotográfico de Florence Nightingale por Henry Hering, cerca de 1860"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
