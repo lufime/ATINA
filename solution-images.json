@@ -286,6 +286,23 @@
       "title": "Ruínas de Pompeia com o Vesúvio ao fundo"
     },
     {
+      "challengeId": 21,
+      "answer": "Rota da Seda",
+      "aliases": [
+        "Silk Road",
+        "Rota das Sedas"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/14/Silk_Road-pt.svg",
+      "author": "Belsky",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Silk_Road-pt.svg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1103,
+      "height": 578,
+      "title": "Mapa em português da histórica Rota da Seda"
+    },
+    {
       "challengeId": 23,
       "answer": "Lua",
       "aliases": [
@@ -675,6 +692,23 @@
       "title": "Vista do Parténon na Acrópole de Atenas"
     },
     {
+      "challengeId": 54,
+      "answer": "Hino nacional",
+      "aliases": [
+        "A Portuguesa",
+        "Hino nacional de Portugal"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/18/A_Portuguesa_sheet_music.jpg",
+      "author": "Alfredo Keil e Henrique Lopes de Mendonça",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_Portuguesa_sheet_music.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 400,
+      "height": 861,
+      "title": "Partitura histórica de A Portuguesa, o hino nacional de Portugal"
+    },
+    {
       "challengeId": 55,
       "answer": "Ponte D. Luís I",
       "aliases": [
@@ -724,6 +758,22 @@
       "width": 1600,
       "height": 1200,
       "title": "Piano de cauda Érard, fabricado em Londres no século XIX"
+    },
+    {
+      "challengeId": 60,
+      "answer": "Triatlo",
+      "aliases": [
+        "Triathlon"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/87/Triathlon_Race.jpg",
+      "author": "Bruno Cordioli",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Triathlon_Race.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 683,
+      "title": "Atletas durante a etapa de natação de uma prova de triatlo"
     },
     {
       "challengeId": 802,
