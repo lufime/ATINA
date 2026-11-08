@@ -875,6 +875,173 @@
       "title": "Fotografia de um barómetro analógico antigo"
     },
     {
+      "challengeId": 134,
+      "answer": "Stonehenge",
+      "aliases": [
+        "Monumento de Stonehenge"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/be/The_Stonehenge.JPG",
+      "author": "Sanjay Nair",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Stonehenge.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 4031,
+      "height": 2500,
+      "title": "Vista de Stonehenge, o monumento pré-histórico em Salisbury, Inglaterra"
+    },
+    {
+      "challengeId": 141,
+      "answer": "Dom Quixote",
+      "aliases": [
+        "Don Quixote",
+        "Dom Quixote de La Mancha"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/16/Don_Quijote_illustrated_by_Gustav_Dore_IV.jpg",
+      "author": "Gustave Doré",
+      "license": "Domínio público (obra de 1863)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Don_Quijote_illustrated_by_Gustav_Dore_IV.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1153,
+      "height": 1461,
+      "title": "Ilustração de Gustave Doré para Dom Quixote, edição de 1863"
+    },
+    {
+      "challengeId": 145,
+      "answer": "Cataratas do Niágara",
+      "aliases": [
+        "Niagara Falls",
+        "Cataratas de Niágara"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Niagara_Falls.JPG",
+      "author": "Sir John Alexander Macdonald (atribuição do carregador no Commons)",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Niagara_Falls.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 2560,
+      "height": 1920,
+      "title": "Vista das Cataratas do Niágara a partir do lado canadiano"
+    },
+    {
+      "challengeId": 146,
+      "answer": "Moais da Ilha da Páscoa",
+      "aliases": [
+        "Moai",
+        "Estátuas Moai",
+        "Rapa Nui"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Easter-island-moai.jpg",
+      "author": "Chmouel",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Easter-island-moai.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 586,
+      "height": 391,
+      "title": "Um dos moais da Ilha da Páscoa, em Ahu Hotake, junto ao porto de Hanga Roa"
+    },
+    {
+      "challengeId": 154,
+      "answer": "Frédéric Chopin",
+      "aliases": [
+        "Chopin",
+        "Frederic Chopin"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/76/Frederic_Chopin.jpg",
+      "author": "Autor desconhecido",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Frederic_Chopin.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 508,
+      "height": 640,
+      "title": "Retrato histórico de Frédéric Chopin"
+    },
+    {
+      "challengeId": 155,
+      "answer": "Saxofone",
+      "aliases": [
+        "Saxophone"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Saxophone.JPG",
+      "author": "AJ Naddell",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Saxophone.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 1131,
+      "height": 941,
+      "title": "Fotografia de um saxofone"
+    },
+    {
+      "challengeId": 168,
+      "answer": "Charles Darwin",
+      "aliases": [
+        "Darwin"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Charles_Darwin_portrait.jpg",
+      "author": "Herbert Rose Barraud",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Charles_Darwin_portrait.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 630,
+      "height": 885,
+      "title": "Retrato fotográfico de Charles Darwin por Herbert Rose Barraud, 1881"
+    },
+    {
+      "challengeId": 183,
+      "answer": "Ada Lovelace",
+      "aliases": [
+        "Augusta Ada King",
+        "Condessa de Lovelace"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Ada_Lovelace_portrait.jpg",
+      "author": "Alfred Edward Chalon (atribuição provável)",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ada_Lovelace_portrait.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2439,
+      "height": 3504,
+      "title": "Retrato em aguarela de Ada Lovelace, atribuído a Alfred Edward Chalon"
+    },
+    {
+      "challengeId": 184,
+      "answer": "Porto",
+      "aliases": [
+        "Cidade do Porto",
+        "Oporto"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/06/Porto_skyline.jpg",
+      "author": "Bernt Rostad",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Porto_skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1296,
+      "height": 972,
+      "title": "Panorama do centro histórico do Porto visto de Vila Nova de Gaia"
+    },
+    {
+      "challengeId": 185,
+      "answer": "Binóculos",
+      "aliases": [
+        "Binoculars"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/be/BINOCULARS.jpg",
+      "author": "BORNTHISWAYMEDIA",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:BINOCULARS.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1255,
+      "height": 706,
+      "title": "Fotografia de binóculos"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
