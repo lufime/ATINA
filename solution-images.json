@@ -3826,6 +3826,56 @@
       "width": 1778,
       "height": 2240,
       "title": "Prensa de Gutenberg em demonstração no International Printing Museum"
+    },
+    {
+      "challengeId": 602,
+      "answer": "A constelação",
+      "aliases": [
+        "Constelação de Orion",
+        "Orion"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/00/ConstellationOrion.svg",
+      "author": "Dirk Hünniger",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:ConstellationOrion.svg",
+      "sourceName": "Wikimedia Commons",
+      "width": 200,
+      "height": 200,
+      "title": "Mapa estelar da constelação de Orion"
+    },
+    {
+      "challengeId": 912,
+      "answer": "Realidade aumentada",
+      "aliases": [
+        "Wikitude"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/73/Wikitude.jpg",
+      "author": "Mr3641",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wikitude.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1690,
+      "height": 1022,
+      "title": "iPhone a executar a aplicação Wikitude, demonstrando realidade aumentada"
+    },
+    {
+      "challengeId": 1058,
+      "answer": "Nova Zelândia",
+      "aliases": [
+        "Milford Sound",
+        "Fiorde de Milford"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Milford_Sound.jpg",
+      "author": "Donovan Govan",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Milford_Sound.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 15456,
+      "height": 1768,
+      "title": "Panorama de Milford Sound, na Nova Zelândia, com Bowen Falls à direita"
     }
   ]
 }
