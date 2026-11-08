@@ -2101,6 +2101,152 @@
       "title": "Panorama de Frankfurt e do rio Meno visto da Alte Brücke"
     },
     {
+      "challengeId": 375,
+      "answer": "Quioto",
+      "aliases": [
+        "Kyoto"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/73/Kyoto_Skyline.jpg",
+      "author": "Juan Manuel Garcia",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kyoto_Skyline.jpg",
+      "sourceName": "Wikimedia Commons / Flickr",
+      "width": 3072,
+      "height": 2048,
+      "title": "Panorama noturno de Quioto junto ao rio"
+    },
+    {
+      "challengeId": 377,
+      "answer": "Banguecoque",
+      "aliases": [
+        "Bangkok"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Bangkok_skyline%2C_Bangkok%2C_Thailand.jpg",
+      "author": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bangkok_skyline,_Bangkok,_Thailand.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3072,
+      "height": 2048,
+      "title": "Panorama do centro de Banguecoque, Tailândia"
+    },
+    {
+      "challengeId": 378,
+      "answer": "Singapura",
+      "aliases": [
+        "Singapore"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/01/Singapore_Skyline.jpg",
+      "author": "JeCCo",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Singapore_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4272,
+      "height": 2848,
+      "title": "Vista noturna do horizonte de Singapura"
+    },
+    {
+      "challengeId": 379,
+      "answer": "Hanói",
+      "aliases": [
+        "Hanoi"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Hanoi_Skyline.jpg",
+      "author": "Minhvuong308hn",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hanoi_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Panorama de Hanói visto do Hanoi Business Center"
+    },
+    {
+      "challengeId": 382,
+      "answer": "Cidade do Cabo",
+      "aliases": [
+        "Cape Town"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Cape_Town_Skyline.jpg",
+      "author": "Bernard303",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cape_Town_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 7872,
+      "height": 2492,
+      "title": "Panorama da Cidade do Cabo durante o festival de arte urbana Infecting the City"
+    },
+    {
+      "challengeId": 383,
+      "answer": "Nairobi",
+      "aliases": [
+        "Nairobi, Quénia"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Nairobiskyline.jpg",
+      "author": "Will Ochieng'",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nairobiskyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4160,
+      "height": 2354,
+      "title": "Panorama de Nairobi visto da Universidade Técnica do Quénia"
+    },
+    {
+      "challengeId": 384,
+      "answer": "Marrakech",
+      "aliases": [
+        "Marraquexe",
+        "Marrakesh"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Marrakech_skyline_view.jpg",
+      "author": "hichamaarkoubi",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Marrakech_skyline_view.jpg",
+      "sourceName": "Wikimedia Commons / Pixabay",
+      "width": 1920,
+      "height": 1440,
+      "title": "Vista panorâmica de Marrakech com minaretes e telhados da cidade"
+    },
+    {
+      "challengeId": 386,
+      "answer": "Buenos Aires",
+      "aliases": [
+        "Buenos Aires, Argentina"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/60/Buenos-aires-skyline.jpg",
+      "author": "Dan DeLuca",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Buenos-aires-skyline.jpg",
+      "sourceName": "Wikimedia Commons / Flickr",
+      "width": 1680,
+      "height": 1082,
+      "title": "Panorama do centro financeiro Catalinas Norte, em Buenos Aires"
+    },
+    {
+      "challengeId": 387,
+      "answer": "Santiago",
+      "aliases": [
+        "Santiago do Chile",
+        "Santiago de Chile"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Stog_skyline_wikipedai.jpg",
+      "author": "Wikiditions",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stog_skyline_wikipedai.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 750,
+      "height": 422,
+      "title": "Panorama urbano de Santiago do Chile"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
