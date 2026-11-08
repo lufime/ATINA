@@ -908,6 +908,23 @@
       "title": "Ilustração de Gustave Doré para Dom Quixote, edição de 1863"
     },
     {
+      "challengeId": 144,
+      "answer": "Esfinge de Gizé",
+      "aliases": [
+        "Grande Esfinge de Gizé",
+        "Great Sphinx"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Great_Sphinx_of_Giza_%281%29.jpg",
+      "author": "Hamerani",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Great_Sphinx_of_Giza_(1).jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 6016,
+      "height": 4016,
+      "title": "Vista da Grande Esfinge de Gizé, no Egito"
+    },
+    {
       "challengeId": 145,
       "answer": "Cataratas do Niágara",
       "aliases": [
@@ -976,6 +993,22 @@
       "title": "Fotografia de um saxofone"
     },
     {
+      "challengeId": 159,
+      "answer": "Basquetebol",
+      "aliases": [
+        "Basketball"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/GMU_basketball_game.jpg",
+      "author": "Mak7912",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:GMU_basketball_game.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2592,
+      "height": 1944,
+      "title": "Jogo universitário de basquetebol entre as equipas da George Mason University"
+    },
+    {
       "challengeId": 168,
       "answer": "Charles Darwin",
       "aliases": [
@@ -990,6 +1023,40 @@
       "width": 630,
       "height": 885,
       "title": "Retrato fotográfico de Charles Darwin por Herbert Rose Barraud, 1881"
+    },
+    {
+      "challengeId": 169,
+      "answer": "Cairo",
+      "aliases": [
+        "Cairo, Egito",
+        "Cidade do Cairo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Cairo_Skyline.jpg",
+      "author": "Maher Najm",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cairo_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 7186,
+      "height": 3556,
+      "title": "Panorama do Cairo visto a partir da Torre do Cairo"
+    },
+    {
+      "challengeId": 175,
+      "answer": "Petra",
+      "aliases": [
+        "Cidade de Petra",
+        "Al-Khazneh"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Petra%2C_Jordan.jpg",
+      "author": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Petra,_Jordan.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3072,
+      "height": 2048,
+      "title": "Vista da antiga cidade de Petra, na Jordânia"
     },
     {
       "challengeId": 183,
