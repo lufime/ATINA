@@ -1526,6 +1526,40 @@
       "title": "Fotografia de um microscópio utilizado em investigação científica"
     },
     {
+      "challengeId": 230,
+      "answer": "Qhapaq Ñan",
+      "aliases": [
+        "Caminho Inca",
+        "Sistema viário andino"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Qhapaq_%C3%B1an.jpg",
+      "author": "Alejandraveliz18",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Qhapaq_%C3%B1an.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3072,
+      "height": 4080,
+      "title": "Fotografia de uma exposição sobre o histórico caminho inca Qhapaq Ñan"
+    },
+    {
+      "challengeId": 232,
+      "answer": "Núcleo celular",
+      "aliases": [
+        "Núcleo da célula",
+        "Cell nucleus"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Fluorescently_labeled%2C_DAPI-stained_cell_nuclei_in_a_mouse_coronal_brain_section.jpg",
+      "author": "Syed07",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fluorescently_labeled,_DAPI-stained_cell_nuclei_in_a_mouse_coronal_brain_section.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 13590,
+      "height": 7560,
+      "title": "Núcleos celulares corados com DAPI numa secção de cérebro de rato, observados por microscopia de fluorescência"
+    },
+    {
       "challengeId": 234,
       "answer": "Hagia Sophia",
       "aliases": [
@@ -1543,6 +1577,22 @@
       "title": "Vista exterior de Hagia Sophia, em Istambul"
     },
     {
+      "challengeId": 236,
+      "answer": "Calendário",
+      "aliases": [
+        "Calendar"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Calendario_2025.jpg",
+      "author": "Giuseppe Concas",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Calendario_2025.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2570,
+      "height": 3423,
+      "title": "Calendário ilustrado de 2025"
+    },
+    {
       "challengeId": 237,
       "answer": "Violino",
       "aliases": [
@@ -1557,6 +1607,40 @@
       "width": 6000,
       "height": 4000,
       "title": "Fotografia de um violino para assinalar o Dia Mundial da Música"
+    },
+    {
+      "challengeId": 239,
+      "answer": "Patinagem de velocidade no gelo",
+      "aliases": [
+        "Speed skating",
+        "Patinagem de velocidade"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Speed_Skating_Foto-_Doliner_%2833726455201%29.jpg",
+      "author": "Special Olympics 2017",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Speed_Skating_Foto-_Doliner_(33726455201).jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1136,
+      "height": 1701,
+      "title": "Atleta a competir numa prova de patinagem de velocidade no gelo"
+    },
+    {
+      "challengeId": 240,
+      "answer": "O fósforo",
+      "aliases": [
+        "Fósforo",
+        "Matchstick"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Matchstick.jpg",
+      "author": "George Shuklin",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Matchstick.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2864,
+      "height": 1260,
+      "title": "Fotografia de um fósforo isolado"
     },
     {
       "challengeId": 242,
