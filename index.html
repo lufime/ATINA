@@ -641,6 +641,69 @@ label.section{font-size:13px!important;color:#52645b!important}
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
+
+/* ATINA — correcção de consistência visual nas páginas interiores */
+#home [data-home-page="profile"] .home-welcome,
+#home [data-home-page="ranking"] .home-welcome,
+#home [data-home-page="settings"] .home-welcome{
+  background:linear-gradient(125deg,#f4c66f 0%,#f6d99e 58%,#f8e7c6 100%)!important;
+  color:#19372e!important;border:0!important;border-radius:24px!important;
+  box-shadow:0 12px 28px #b58a4220!important;
+}
+#home [data-home-page="profile"] .home-welcome h2,
+#home [data-home-page="ranking"] .home-welcome h2,
+#home [data-home-page="settings"] .home-welcome h2{
+  color:#19372e!important;font-size:clamp(27px,4.5vw,38px)!important;
+  line-height:1.08!important;letter-spacing:-.04em!important;
+}
+#home [data-home-page="profile"] .home-welcome p,
+#home [data-home-page="ranking"] .home-welcome p,
+#home [data-home-page="settings"] .home-welcome p{
+  color:#4e5b4e!important;font-size:15px!important;line-height:1.55!important;
+}
+#home [data-home-page="profile"] .home-welcome-kicker,
+#home [data-home-page="ranking"] .home-welcome-kicker,
+#home [data-home-page="settings"] .home-welcome-kicker{color:#73501e!important}
+#home [data-home-page="profile"] .card h3,
+#home [data-home-page="ranking"] .card h3,
+#home [data-home-page="settings"] .card h3{
+  color:#1c4a39!important;font-size:20px!important;font-weight:850!important;
+}
+#home [data-home-page="profile"] .card .btn,
+#home [data-home-page="ranking"] .card .btn,
+#home [data-home-page="settings"] .card .btn{
+  background:#e9a83e!important;color:#20352e!important;border:1px solid transparent!important;
+  box-shadow:0 5px 12px #a8792a20!important;
+}
+#home [data-home-page="profile"] .card .btn.secondary,
+#home [data-home-page="ranking"] .card .btn.secondary,
+#home [data-home-page="settings"] .card .btn.secondary{
+  background:#edf2ed!important;color:#21483b!important;border:1px solid #d6e1d8!important;
+  box-shadow:none!important;
+}
+#home [data-home-page="profile"] .card p,
+#home [data-home-page="ranking"] .card p,
+#home [data-home-page="settings"] .card p{color:#687873!important}
+#atinaMainNav,.home-page-nav{
+  display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;
+  overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;
+  scrollbar-width:none!important;
+}
+#atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn{
+  display:inline-flex!important;flex:0 0 auto!important;white-space:nowrap!important;
+}
+#atinaMainNav .home-nav-btn.active,.home-page-nav .home-nav-btn.active{
+  background:#183b32!important;color:#fff!important;border:0!important;
+}
+@media(max-width:700px){
+  #home [data-home-page="profile"] .home-welcome,
+  #home [data-home-page="ranking"] .home-welcome,
+  #home [data-home-page="settings"] .home-welcome{padding:23px 20px!important}
+  #home [data-home-page="profile"] .card h3,
+  #home [data-home-page="ranking"] .card h3,
+  #home [data-home-page="settings"] .card h3{font-size:18px!important}
+}
+
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
