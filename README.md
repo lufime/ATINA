@@ -1,6 +1,6 @@
 # ATINA — Pensa. Descobre. Atina.
 
-Jogo de desafios em português europeu (pt-PT), com 15 modalidades e 753 desafios identificados por posições históricas estáveis.
+Jogo de desafios em português europeu (pt-PT), com 23 modalidades e 1.153 desafios identificados por posições históricas estáveis.
 
 ## Modos de jogo
 
