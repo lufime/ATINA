@@ -2247,6 +2247,177 @@
       "title": "Panorama urbano de Santiago do Chile"
     },
     {
+      "challengeId": 388,
+      "answer": "Esponja",
+      "aliases": [
+        "Esponja marinha",
+        "Sponge"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/54/Image_of_a_sponges.jpg",
+      "author": "Stephanie cheks",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Image_of_a_sponges.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1080,
+      "height": 1920,
+      "title": "Fotografia de esponjas marinhas, organismos com corpo poroso"
+    },
+    {
+      "challengeId": 389,
+      "answer": "Chave inglesa",
+      "aliases": [
+        "Wrench",
+        "Chave ajustável"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/32/Wrench.jpg",
+      "author": "Anton Ehrola",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wrench.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4272,
+      "height": 2848,
+      "title": "Fotografia de uma chave inglesa ajustável"
+    },
+    {
+      "challengeId": 391,
+      "answer": "Lupa",
+      "aliases": [
+        "Lente de aumento",
+        "Magnifying glass"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/80/Magnifying_glass.jpg",
+      "author": "Tomomarusan",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Magnifying_glass.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1304,
+      "height": 2067,
+      "title": "Fotografia de uma lupa de mão"
+    },
+    {
+      "challengeId": 392,
+      "answer": "Colher",
+      "aliases": [
+        "Spoon",
+        "Colheres"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Spoons.jpg",
+      "author": "Wolfgangus Mozart",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spoons.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1913,
+      "height": 1601,
+      "title": "Conjunto de colheres de diferentes tamanhos e feitios"
+    },
+    {
+      "challengeId": 393,
+      "answer": "Rádio",
+      "aliases": [
+        "Radio",
+        "Rádio antigo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Vintage_Radio.jpg",
+      "author": "Sven",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vintage_Radio.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1613,
+      "height": 1104,
+      "title": "Fotografia de um rádio antigo de válvulas"
+    },
+    {
+      "challengeId": 394,
+      "answer": "Mala de viagem",
+      "aliases": [
+        "Mala",
+        "Luggage"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/97/Luggage.jpg",
+      "author": "Reinraum",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Luggage.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2376,
+      "height": 4224,
+      "title": "Mala de cabine e sinalização de bagagem num aeroporto"
+    },
+    {
+      "challengeId": 399,
+      "answer": "Íman",
+      "aliases": [
+        "Imã",
+        "Magnet",
+        "Íman em ferradura"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/91/Horseshoe_magnet.jpg",
+      "author": "Jrs9550",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Horseshoe_magnet.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3024,
+      "height": 4032,
+      "title": "Fotografia de um íman em forma de ferradura"
+    },
+    {
+      "challengeId": 400,
+      "answer": "Vela",
+      "aliases": [
+        "Candle",
+        "Vela acesa"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Candle.jpg",
+      "author": "Paolostefano1412",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Candle.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2848,
+      "height": 4288,
+      "title": "Vela acesa num ambiente escuro"
+    },
+    {
+      "challengeId": 401,
+      "answer": "Luva",
+      "aliases": [
+        "Glove",
+        "Luvas"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/dc/The_Gloves.jpg",
+      "author": "Iwagloves",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Gloves.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 517,
+      "height": 720,
+      "title": "Par de luvas brancas"
+    },
+    {
+      "challengeId": 403,
+      "answer": "Tambor",
+      "aliases": [
+        "Drum",
+        "Instrumento de percussão"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Musical_instrument%2C_drum.jpg",
+      "author": "Owobusingye",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Musical_instrument,_drum.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 811,
+      "height": 970,
+      "title": "Fotografia de um tambor tradicional, instrumento de percussão"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
