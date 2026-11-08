@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - '*.js'
       - 'assets/**'
+      - 'solution-images.json'
       - 'supabase/migrations/**'
       - '.github/workflows/**'
   workflow_dispatch:
