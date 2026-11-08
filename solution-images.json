@@ -1741,6 +1741,201 @@
       "title": "Retrato fotográfico de Eça de Queirós, cerca de 1895"
     },
     {
+      "challengeId": 350,
+      "answer": "Londres",
+      "aliases": [
+        "London"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/19/London_Skyline.jpg",
+      "author": "Mewiki",
+      "license": "CC BY-SA 3.0 (também GFDL 1.2+)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:London_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2592,
+      "height": 1944,
+      "title": "Panorama de Londres com o rio Tamisa em primeiro plano"
+    },
+    {
+      "challengeId": 351,
+      "answer": "Roma",
+      "aliases": [
+        "Rome"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Rome_skyline_panorama.jpg",
+      "author": "Nicholas Hartmann",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rome_skyline_panorama.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5472,
+      "height": 1824,
+      "title": "Panorama urbano de Roma, Itália"
+    },
+    {
+      "challengeId": 353,
+      "answer": "Amesterdão",
+      "aliases": [
+        "Amsterdam"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/22/Amsterdam_Skyline_View.jpg",
+      "author": "pxhere photo",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Amsterdam_Skyline_View.jpg",
+      "sourceName": "Wikimedia Commons / PxHere",
+      "width": 3648,
+      "height": 2736,
+      "title": "Vista panorâmica dos canais e edifícios de Amesterdão"
+    },
+    {
+      "challengeId": 354,
+      "answer": "Berlim",
+      "aliases": [
+        "Berlin"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Berlin-SKY.jpg",
+      "author": "Sylla (Pixabay)",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Berlin-SKY.jpg",
+      "sourceName": "Wikimedia Commons / Pixabay",
+      "width": 3264,
+      "height": 2448,
+      "title": "Panorama de Berlim ao pôr do sol, com a Oberbaumbrücke e a torre de televisão"
+    },
+    {
+      "challengeId": 355,
+      "answer": "Viena",
+      "aliases": [
+        "Vienna",
+        "Wien"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Vienna_Skyline.jpg",
+      "author": "Fabian Lackner",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vienna_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4912,
+      "height": 3264,
+      "title": "Panorama de Viena visto a partir de Donaustadt"
+    },
+    {
+      "challengeId": 356,
+      "answer": "Budapeste",
+      "aliases": [
+        "Budapest"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Budapest_skyline_from_Gell%C3%A9rt_Hill_%2812%29.jpg",
+      "author": "Elekes Andor",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Budapest_skyline_from_Gellért_Hill_(12).jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4000,
+      "height": 3000,
+      "title": "Panorama de Budapeste visto da colina Gellért"
+    },
+    {
+      "challengeId": 357,
+      "answer": "Edimburgo",
+      "aliases": [
+        "Edinburgh"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Edinburgh_skyline%2C_Scotland%2C_UK.jpg",
+      "author": "CivArmy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Edinburgh_skyline,_Scotland,_UK.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Panorama de Edimburgo, Escócia, visto de Calton Hill"
+    },
+    {
+      "challengeId": 359,
+      "answer": "Reiquiavique",
+      "aliases": [
+        "Reykjavík",
+        "Reykjavik"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Reykjav%C3%ADk_skyline_-_Skuggahverfi.JPG",
+      "author": "Navaro",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Reykjavík_skyline_-_Skuggahverfi.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 4272,
+      "height": 2848,
+      "title": "Vista costeira do centro de Reiquiavique, Islândia"
+    },
+    {
+      "challengeId": 360,
+      "answer": "Oslo",
+      "aliases": [
+        "Cidade de Oslo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/53/Oslo_skyline.jpg",
+      "author": "Audun",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Oslo_skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4032,
+      "height": 2268,
+      "title": "Panorama de Oslo visto do mar, com a Ópera e o Museu Munch"
+    },
+    {
+      "challengeId": 362,
+      "answer": "Copenhaga",
+      "aliases": [
+        "Copenhagen",
+        "København"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Copenhagen_skyline%2C_Denmark.jpg",
+      "author": "CivArmy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Copenhagen_skyline,_Denmark.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3264,
+      "height": 2448,
+      "title": "Panorama urbano de Copenhaga, Dinamarca"
+    },
+    {
+      "challengeId": 363,
+      "answer": "Varsóvia",
+      "aliases": [
+        "Warsaw"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Warsaw_skyline.jpg",
+      "author": "Quintin Soloviev",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Warsaw_skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 7320,
+      "height": 4392,
+      "title": "Panorama de Varsóvia ao nascer do sol, com o Palácio da Cultura e Ciência"
+    },
+    {
+      "challengeId": 365,
+      "answer": "Dubrovnik",
+      "aliases": [
+        "Ragusa"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/70/Dubrovnik_Old_Town_1.jpg",
+      "author": "kallerna",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dubrovnik_Old_Town_1.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 5100,
+      "height": 3140,
+      "title": "Vista matinal da cidade velha e das muralhas de Dubrovnik"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
