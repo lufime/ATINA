@@ -776,6 +776,105 @@
       "title": "Atletas durante a etapa de natação de uma prova de triatlo"
     },
     {
+      "challengeId": 124,
+      "answer": "Marie Curie",
+      "aliases": [
+        "Maria Skłodowska-Curie",
+        "Marie Skłodowska Curie"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Portrait_of_Marie_Curie.jpg",
+      "author": "Wide World Photos; Underwood and Underwood, New York",
+      "license": "Domínio público (fotografia publicada em 1921; sem restrições conhecidas de copyright)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Portrait_of_Marie_Curie.jpg",
+      "sourceName": "Wikimedia Commons / Library of Congress",
+      "width": 1483,
+      "height": 1959,
+      "title": "Retrato fotográfico de Marie Curie, cerca de 1921"
+    },
+    {
+      "challengeId": 125,
+      "answer": "William Shakespeare",
+      "aliases": [
+        "Shakespeare"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e3/William_Shakespeare_Chandos.jpg",
+      "author": "Henry Thew Stephenson",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:William_Shakespeare_Chandos.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1196,
+      "height": 1546,
+      "title": "Reprodução histórica do retrato Chandos de William Shakespeare"
+    },
+    {
+      "challengeId": 126,
+      "answer": "São Francisco",
+      "aliases": [
+        "San Francisco",
+        "São Francisco, Califórnia"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/15/San_Francisco_skyline.jpg",
+      "author": "Jon Sullivan",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:San_Francisco_skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1280,
+      "height": 960,
+      "title": "Panorama urbano de São Francisco, Califórnia"
+    },
+    {
+      "challengeId": 127,
+      "answer": "Paris",
+      "aliases": [
+        "Cidade de Paris"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/83/Paris_skyline.jpg",
+      "author": "Jose Huwaidi",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Paris_skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3562,
+      "height": 2406,
+      "title": "Panorama de Paris com a Torre Eiffel em destaque"
+    },
+    {
+      "challengeId": 128,
+      "answer": "Tóquio",
+      "aliases": [
+        "Tokyo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/59/Tokyo_Skyline.jpg",
+      "author": "Ningyou",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tokyo_Skyline.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 768,
+      "title": "Panorama de Tóquio visto do edifício do Governo Metropolitano"
+    },
+    {
+      "challengeId": 130,
+      "answer": "Barómetro",
+      "aliases": [
+        "Barometer",
+        "Instrumento de pressão atmosférica"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/01/Barometer.jpg",
+      "author": "George Shuklin",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Barometer.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1392,
+      "height": 3060,
+      "title": "Fotografia de um barómetro analógico antigo"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
