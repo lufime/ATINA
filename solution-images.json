@@ -1342,6 +1342,157 @@
       "title": "Fotografia de um microscópio utilizado em investigação científica"
     },
     {
+      "challengeId": 234,
+      "answer": "Hagia Sophia",
+      "aliases": [
+        "Santa Sofia de Istambul",
+        "Ayasofya"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Hagia_Sophia_Istanbul.JPG",
+      "author": "Mattias Hill",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hagia_Sophia_Istanbul.JPG",
+      "sourceName": "Wikimedia Commons",
+      "width": 5472,
+      "height": 3648,
+      "title": "Vista exterior de Hagia Sophia, em Istambul"
+    },
+    {
+      "challengeId": 237,
+      "answer": "Violino",
+      "aliases": [
+        "Violin"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/57/A_violin.jpg",
+      "author": "Lukasz Kobus, Comissão Europeia",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_violin.jpg",
+      "sourceName": "Wikimedia Commons / Comissão Europeia",
+      "width": 6000,
+      "height": 4000,
+      "title": "Fotografia de um violino para assinalar o Dia Mundial da Música"
+    },
+    {
+      "challengeId": 245,
+      "answer": "Ponte Golden Gate",
+      "aliases": [
+        "Golden Gate Bridge",
+        "Ponte Golden Gate, São Francisco"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/17/Golden_Gate_Bridge.png",
+      "author": "Steven Pavlov",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Golden_Gate_Bridge.png",
+      "sourceName": "Wikimedia Commons",
+      "width": 1500,
+      "height": 1000,
+      "title": "Fotografia da Ponte Golden Gate, em São Francisco"
+    },
+    {
+      "challengeId": 246,
+      "answer": "Torre de Pisa",
+      "aliases": [
+        "Torre inclinada de Pisa",
+        "Leaning Tower of Pisa"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Leaning_tower_of_Pisa.jpg",
+      "author": "Samuli Lintula",
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Leaning_tower_of_Pisa.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1536,
+      "height": 2048,
+      "title": "Vista da Torre inclinada de Pisa, em Itália"
+    },
+    {
+      "challengeId": 247,
+      "answer": "Estátua da Liberdade",
+      "aliases": [
+        "Statue of Liberty",
+        "Liberty Enlightening the World"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/18/The_statue_of_liberty.jpg",
+      "author": "John Salatas",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_statue_of_liberty.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3456,
+      "height": 5184,
+      "title": "Fotografia da Estátua da Liberdade em Nova Iorque"
+    },
+    {
+      "challengeId": 248,
+      "answer": "Monte Evereste",
+      "aliases": [
+        "Everest",
+        "Mount Everest"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/10/Mount_Everest_1.jpg",
+      "author": "钉钉",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mount_Everest_1.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4128,
+      "height": 2322,
+      "title": "Vista do Monte Evereste, a montanha mais alta da Terra"
+    },
+    {
+      "challengeId": 249,
+      "answer": "Cataratas Vitória",
+      "aliases": [
+        "Victoria Falls",
+        "Mosi-oa-Tunya"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/21/Victoria_Falls_Image.jpg",
+      "author": "Ludovico Mazzocchi",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Victoria_Falls_Image.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2922,
+      "height": 1943,
+      "title": "Vista das Cataratas Vitória, na fronteira entre a Zâmbia e o Zimbabué"
+    },
+    {
+      "challengeId": 250,
+      "answer": "Ópera de Sydney",
+      "aliases": [
+        "Sydney Opera House"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Sydney_Opera_House%2CNSW.jpg",
+      "author": "Aswin.kuttykattil",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sydney_Opera_House,NSW.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 6000,
+      "height": 4000,
+      "title": "Vista da Ópera de Sydney, na Austrália"
+    },
+    {
+      "challengeId": 251,
+      "answer": "Chichén Itzá",
+      "aliases": [
+        "Chichen Itza",
+        "Pirâmide de Kukulcán"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/81/Chichen-Itza.jpg",
+      "author": "Berenice Lara Ramírez",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chichen-Itza.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3956,
+      "height": 2967,
+      "title": "Pirâmide de Kukulcán no sítio arqueológico de Chichén Itzá, México"
+    },
+    {
       "challengeId": 802,
       "answer": "Axolote",
       "aliases": [
