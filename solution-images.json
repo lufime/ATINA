@@ -1042,6 +1042,23 @@
       "title": "Panorama do Cairo visto a partir da Torre do Cairo"
     },
     {
+      "challengeId": 171,
+      "answer": "Cartago",
+      "aliases": [
+        "Carthage",
+        "Ruínas de Cartago"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Ruins_in_Carthage.jpg",
+      "author": "Safa Heraghi",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ruins_in_Carthage.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3872,
+      "height": 2207,
+      "title": "Ruínas arqueológicas de Cartago, na Tunísia"
+    },
+    {
       "challengeId": 175,
       "answer": "Petra",
       "aliases": [
@@ -1107,6 +1124,106 @@
       "width": 1255,
       "height": 706,
       "title": "Fotografia de binóculos"
+    },
+    {
+      "challengeId": 186,
+      "answer": "Grande Muralha da China",
+      "aliases": [
+        "Muralha da China",
+        "Great Wall of China"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/30/Great_wall_in_China.jpg",
+      "author": "黃景淵",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Great_wall_in_China.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2304,
+      "height": 1536,
+      "title": "Troço da Grande Muralha da China serpenteando pelas montanhas"
+    },
+    {
+      "challengeId": 190,
+      "answer": "Stari Most",
+      "aliases": [
+        "Ponte Velha de Mostar",
+        "Old Bridge of Mostar"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Stari_most.jpg",
+      "author": "8dpp4vphjm",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stari_most.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3024,
+      "height": 4032,
+      "title": "Stari Most, a ponte histórica de Mostar, na Bósnia e Herzegovina"
+    },
+    {
+      "challengeId": 198,
+      "answer": "Mahatma Gandhi",
+      "aliases": [
+        "Gandhi",
+        "Mohandas Karamchand Gandhi"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/68/Gandhi_portrait%2C_1940.jpg",
+      "author": "Autor desconhecido",
+      "license": "Domínio público na Índia (fotografia de 1940)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gandhi_portrait,_1940.jpg",
+      "sourceName": "Wikimedia Commons / Google Arts & Culture",
+      "width": 2875,
+      "height": 3650,
+      "title": "Retrato fotográfico de Mahatma Gandhi, datado de 1940"
+    },
+    {
+      "challengeId": 199,
+      "answer": "Praga",
+      "aliases": [
+        "Prague"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Prague_skyline_at_dawn.jpg",
+      "author": "Petar Milošević",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Prague_skyline_at_dawn.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4326,
+      "height": 2618,
+      "title": "Panorama de Praga ao amanhecer, visto da Ponte Carlos"
+    },
+    {
+      "challengeId": 200,
+      "answer": "Sextante",
+      "aliases": [
+        "Sextant"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/21/Sextant00.jpg",
+      "author": "Autor desconhecido (gravura publicada por Charles Knight & Co.)",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sextant00.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1637,
+      "height": 1528,
+      "title": "Ilustração histórica de um sextante, cerca de 1851"
+    },
+    {
+      "challengeId": 201,
+      "answer": "Angkor Wat",
+      "aliases": [
+        "Templo de Angkor Wat",
+        "Angkor"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/41/Angkor_Wat.jpg",
+      "author": "Bjørn Christian Tørrissen",
+      "license": "CC BY-SA 4.0 (também GFDL)",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Angkor_Wat.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2004,
+      "height": 1362,
+      "title": "Vista frontal do complexo de templos de Angkor Wat, no Camboja"
     },
     {
       "challengeId": 802,
