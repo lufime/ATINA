@@ -1623,7 +1623,26 @@ $('voice').onclick=()=>{
 $('listenAnswer').onclick=()=>{let g=games[queue[pos]];if('speechSynthesis' in window){window.speechSynthesis.cancel();let fala=new SpeechSynthesisUtterance('A resposta correta é: '+g[3]);fala.lang='pt-PT';window.speechSynthesis.speak(fala);}else{$('feedback').textContent='A leitura em voz alta não está disponível neste navegador.';}};$('pass').onclick=pass;$('continue').onclick=next;$('answer').addEventListener('input',saveLocalProgress);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});$('openRanking').onclick=()=>{screen('rankingPage');loadMenuRanking();loadXpRanking();};
 // Autenticação desativada: o ranking funciona apenas com pseudónimo.
  $('refreshMenuRanking').onclick=loadMenuRanking;$('menuRankingMode').onchange=loadMenuRanking;$('refreshXpRanking').onclick=loadXpRanking;$('rankingBack').onclick=()=>screen('home');
-$('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo','saveSoloBtn');$('saveP1Btn').onclick=()=>saveOnlineScore($('nickP1').value,scores[0],'duel','saveP1Btn');$('saveP2Btn').onclick=()=>saveOnlineScore($('nickP2').value,scores[1],'duel','saveP2Btn');$('loadRanking').onclick=loadOnlineRanking;$('rankingMode').onchange=loadOnlineRanking;$('resultHome').onclick=()=>{if(networkRoom&&networkGameState?.mode==='mimicas'){networkLeaveRoom();return;}screen('home');update();};renderCategories();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
+$('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo','saveSoloBtn');$('saveP1Btn').onclick=()=>saveOnlineScore($('nickP1').value,scores[0],'duel','saveP1Btn');$('saveP2Btn').onclick=()=>saveOnlineScore($('nickP2').value,scores[1],'duel','saveP2Btn');$('loadRanking').onclick=loadOnlineRanking;$('rankingMode').onchange=loadOnlineRanking;$('resultHome').onclick=async()=>{
+ if(networkRoom&&networkGameState?.mode==='mimicas'){networkLeaveRoom();return;}
+ const resultStatus=$('saveStatus');
+ const askName=(inputId,label)=>{
+  const input=$(inputId);let name=String(input?.value||'').trim();
+  if(!name){name=window.prompt('Escolhe um pseudónimo para guardar automaticamente a pontuação ('+label+'):','');if(name===null)return '';name=String(name).trim();if(input)input.value=name;}
+  return name;
+ };
+ try{
+  if(mode==='solo'){
+   const name=askName('nickSolo','jogador');
+   if(name)await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
+  }else if(mode==='duel'||mode==='party'){
+   const name1=askName('nickP1','Jogador 1'),name2=askName('nickP2','Jogador 2');
+   if(name1)await saveOnlineScore(name1,scores[0],'duel','saveP1Btn');
+   if(name2)await saveOnlineScore(name2,scores[1],'duel','saveP2Btn');
+  }
+ }catch(error){if(resultStatus)resultStatus.textContent='Não foi possível guardar automaticamente. Podes tentar novamente no ecrã de resultados.';return;}
+ screen('home');update();
+};renderCategories();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
 /* Sincroniza o relógio quando a página volta a estar visível */
 function refreshVisibleClock(){if(document.hidden){if(raceStartedAt)raceStop();if(mimeRaceStartedAt)mimeRaceStop();return;}if(networkGameActive){networkDrawClock();ensureNetworkClock();}else if(!$('game').classList.contains('hidden')&&!locked){raceStart();if(timerDeadline){timerTick();if(timerInterval===null&&timedMode)timerInterval=setInterval(timerTick,200);}}if(!$('mimicaGame').classList.contains('hidden')&&mimeRunning&&!mimeRaceFinished)mimeRaceStart();}
 document.addEventListener('visibilitychange',refreshVisibleClock);
