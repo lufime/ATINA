@@ -1394,7 +1394,7 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  if(button){button.dataset.saving='1';button.disabled=true;}
  status.textContent='A guardar pontuação…';
  try{
-  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey});
+  const matchSessionId=atinaServerSession?.session_id||null;const playerNumber=buttonId==='saveP2Btn'?2:1;\n  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey,session_id:matchSessionId,player_number:matchSessionId?playerNumber:null});
   if(error&&error.code==='23505'){
    status.textContent='Esta pontuação desta partida já foi registada.';
   }else if(error)throw error;
@@ -1403,24 +1403,34 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  }catch(e){status.textContent='Não foi possível guardar a pontuação. Tenta novamente.';}
  finally{if(button){button.dataset.saving='0';button.disabled=false;}}
 }
+async function atinaShowMatchDetails(rankingId,container){
+ const prior=container.querySelector('.atina-match-details');if(prior){prior.remove();return;}
+ const panel=document.createElement('div');panel.className='atina-match-details';panel.textContent='A carregar respostas…';container.appendChild(panel);
+ try{
+  const {data,error}=await supabaseClient.rpc('atina_points_ranking_match_details',{p_ranking_id:rankingId});
+  if(error)throw error;panel.replaceChildren();
+  if(!Array.isArray(data)||!data.length){panel.textContent='O histórico desta partida não está disponível (partidas antigas ou sem sessão associada).';return;}
+  data.forEach(item=>{const line=document.createElement('p');const result=item.outcome==='correct'?'Certa':item.outcome==='wrong'?'Errada':item.outcome==='timeout'?'Tempo esgotado':'Passou';const answer=item.submitted_answer?(' · Resposta: '+item.submitted_answer):'';const delta=Number(item.points_delta||0);line.textContent='Desafio '+item.round_number+' — '+result+answer+' · '+(delta>0?'+':'')+delta+' pontos · Total: '+item.score_after;panel.appendChild(line);});
+ }catch(e){panel.textContent='Não foi possível carregar as respostas desta partida.';}
+}
 async function loadOnlineRanking(){
  const list=$('rankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';const m=$('rankingMode')?.value||'solo';
  try{
   if(!supabaseClient)throw new Error('Supabase indisponível');
-  const {data:rows,error}=await supabaseClient.from('atina_points_ranking').select('nickname,score,created_at').eq('mode',m).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
+  const {data:rows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',m).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
   if(error)throw error;list.replaceChildren();
   if(!rows?.length){list.innerHTML='<li>Ainda não há pontuações nesta modalidade.</li>';return;}
-  rows.forEach(row=>{const li=document.createElement('li');li.textContent=row.nickname+' — '+row.score+' pontos';list.appendChild(li);});
+  rows.forEach(row=>{const li=document.createElement('li');const label=document.createElement('span');label.textContent=row.nickname+' — '+row.score+' pontos ';li.appendChild(label);const detail=document.createElement('button');detail.type='button';detail.textContent='Ver respostas';detail.onclick=()=>atinaShowMatchDetails(row.id,li);li.appendChild(detail);list.appendChild(li);});
  }catch(e){list.innerHTML='<li>Não foi possível carregar o ranking de pontos.</li>';}
 }
 async function loadMenuRanking(){
  const list=$('menuPointsRankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';const m=$('menuRankingMode')?.value||'solo';
  try{
   if(!supabaseClient)throw new Error('Supabase indisponível');
-  const {data:rows,error}=await supabaseClient.from('atina_points_ranking').select('nickname,score,created_at').eq('mode',m).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
+  const {data:rows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',m).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
   if(error)throw error;list.replaceChildren();
   if(!rows?.length){list.innerHTML='<li>Ranking novo: ainda sem pontuações.</li>';return;}
-  rows.forEach(row=>{const li=document.createElement('li');li.textContent=row.nickname+' — '+row.score+' pontos';list.appendChild(li);});
+  rows.forEach(row=>{const li=document.createElement('li');const label=document.createElement('span');label.textContent=row.nickname+' — '+row.score+' pontos ';li.appendChild(label);const detail=document.createElement('button');detail.type='button';detail.textContent='Ver respostas';detail.onclick=()=>atinaShowMatchDetails(row.id,li);li.appendChild(detail);list.appendChild(li);});
  }catch(e){list.innerHTML='<li>Não foi possível carregar o ranking de pontos.</li>';}
 }
 async function loadXpRanking(){
