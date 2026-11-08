@@ -2134,6 +2134,39 @@
       "title": "Retrato histórico de Wolfgang Amadeus Mozart publicado até 1904"
     },
     {
+      "challengeId": 337,
+      "answer": "Ludwig van Beethoven",
+      "aliases": [
+        "Ludwig van Beethoven"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/be/Beethoven_1820.jpg",
+      "author": "Joseph Karl Stieler",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beethoven_1820.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1062,
+      "height": 1321,
+      "title": "Retrato de Ludwig van Beethoven pintado por Joseph Karl Stieler em 1820"
+    },
+    {
+      "challengeId": 338,
+      "answer": "Frédéric Chopin",
+      "aliases": [
+        "Chopin",
+        "Frederic Chopin"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/76/Frederic_Chopin.jpg",
+      "author": "Autor desconhecido",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Frederic_Chopin.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 508,
+      "height": 640,
+      "title": "Retrato histórico de Frédéric Chopin"
+    },
+    {
       "challengeId": 350,
       "answer": "Londres",
       "aliases": [
@@ -2164,6 +2197,23 @@
       "width": 5472,
       "height": 1824,
       "title": "Panorama urbano de Roma, Itália"
+    },
+    {
+      "challengeId": 352,
+      "answer": "Atenas",
+      "aliases": [
+        "Athens",
+        "Acrópole de Atenas"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/ce/The_Parthenon_at_the_Acropolis_of_Athens.jpg",
+      "author": "Ceylnbirol",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Parthenon_at_the_Acropolis_of_Athens.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 3213,
+      "height": 5712,
+      "title": "Vista do Parténon na Acrópole de Atenas"
     },
     {
       "challengeId": 353,
@@ -3061,6 +3111,93 @@
       "width": 2330,
       "height": 2350,
       "title": "Ilustração histórica de uma ampulheta, publicada em 1888"
+    },
+    {
+      "challengeId": 426,
+      "answer": "Timgad",
+      "aliases": [
+        "Thamugadi",
+        "Ruínas de Timgad"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Timgad_Ruins.jpg",
+      "author": "Manar.melow",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Timgad_Ruins.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 4928,
+      "height": 3264,
+      "title": "Ruínas da antiga cidade romana de Timgad, na Argélia"
+    },
+    {
+      "challengeId": 427,
+      "answer": "Ilha da Páscoa",
+      "aliases": [
+        "Rapa Nui",
+        "Easter Island",
+        "Moais da Ilha da Páscoa"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/73/Easter_Island_Moai.jpg",
+      "author": "TeahutapuVoyager",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Easter_Island_Moai.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 750,
+      "height": 737,
+      "title": "Moai esculpido em pedra na Ilha da Páscoa"
+    },
+    {
+      "challengeId": 428,
+      "answer": "Babilónia",
+      "aliases": [
+        "Babylon",
+        "Porta de Ishtar"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Ishtar_Gate.jpg",
+      "author": "David Stanley",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ishtar_Gate.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 768,
+      "title": "Porta de Ishtar, associada à antiga cidade da Babilónia"
+    },
+    {
+      "challengeId": 429,
+      "answer": "Código de Hamurábi",
+      "aliases": [
+        "Código de Hammurabi",
+        "Estela de Hamurábi"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0b/CodexHammurapi.jpg",
+      "author": "Ramessos",
+      "license": "Domínio público (dedicação do autor)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:CodexHammurapi.jpg",
+      "sourceName": "Wikimedia Commons / Museu do Louvre",
+      "width": 1351,
+      "height": 3697,
+      "title": "Estela de basalto com o Código de Hamurábi, conservada no Louvre"
+    },
+    {
+      "challengeId": 430,
+      "answer": "Hititas",
+      "aliases": [
+        "Hittites",
+        "Civilização hitita",
+        "Hattusa"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/78/Hattusa_-_Lion_Gate.jpg",
+      "author": "Alena Belova / Exhibo",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hattusa_-_Lion_Gate.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 960,
+      "height": 1280,
+      "title": "Porta dos Leões em Hattusa, antiga capital dos hititas"
     },
     {
       "challengeId": 802,
