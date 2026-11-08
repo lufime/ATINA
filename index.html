@@ -3041,6 +3041,57 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
   }
 }
 
+
+/* ATINA — manter a progressão e estatísticas visíveis em todos os ecrãs */
+#home [data-home-page="dashboard"] .daily-stats{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  margin:10px 0!important;
+}
+#home [data-home-page="dashboard"] .daily-stat{
+  flex:1 1 105px!important;
+  min-width:0!important;
+  padding:9px 10px!important;
+}
+#home [data-home-page="dashboard"] .daily-stat b{
+  font-size:clamp(16px,4vw,19px)!important;
+  line-height:1.2!important;
+}
+#home [data-home-page="dashboard"] .daily-stat small{
+  display:block!important;
+  font-size:11px!important;
+  line-height:1.35!important;
+  overflow-wrap:anywhere!important;
+}
+#home [data-home-page="dashboard"] .atina-xp-panel{
+  display:block!important;
+  margin:10px 0 0!important;
+  padding:11px!important;
+}
+#home [data-home-page="dashboard"] .atina-badges{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+}
+#home [data-home-page="dashboard"] .atina-badge{
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+@media(max-width:380px){
+  #home [data-home-page="dashboard"] .daily-stats{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #home [data-home-page="dashboard"] .daily-stat{
+    min-width:0!important;
+    padding:8px!important;
+  }
+  #home [data-home-page="dashboard"] .atina-xp-panel{
+    padding:9px!important;
+  }
+}
+
 </style>
 
 </body></html>
