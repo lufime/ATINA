@@ -2378,26 +2378,26 @@ document.addEventListener('click',function(event){
   });
  }
  back.addEventListener('click',async function(e){
-  if(window.networkGameActive){return;}
+  if(networkGameActive){return;}
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
   if(exiting)return;
   exiting=true;back.disabled=true;
   try{
-   if(window.mode==='solo'||window.mode==='mix'){
+   if(mode==='solo'||mode==='mix'){
     const input=document.getElementById('nickSolo');
     const name=(input&&input.value.trim())||await askNickname();
     if(!name)return;
     if(input)input.value=name;
-    const ok=await window.saveOnlineScore(name,window.scores[0],'solo','saveSoloBtn');
+    const ok=await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
     if(!ok){const fb=document.getElementById('feedback');if(fb)fb.textContent='Não foi possível guardar. A partida continua aberta para tentares novamente.';return;}
-   }else if(window.mode==='duel'||window.mode==='party'){
+   }else if(mode==='duel'||mode==='party'){
     const input1=document.getElementById('nickP1'),input2=document.getElementById('nickP2');
     const name1=(input1&&input1.value.trim())||await askNickname();if(!name1)return;
     const name2=(input2&&input2.value.trim())||await askNickname();if(!name2)return;
-    if(!await window.saveOnlineScore(name1,window.scores[0],'duel','saveP1Btn'))return;
-    if(!await window.saveOnlineScore(name2,window.scores[1],'duel','saveP2Btn'))return;
+    if(!await saveOnlineScore(name1,scores[0],'duel','saveP1Btn'))return;
+    if(!await saveOnlineScore(name2,scores[1],'duel','saveP2Btn'))return;
    }
-   window.stopTimer();window.raceStop();window.screen('home');window.update();
+   stopTimer();raceStop();screen('home');update();
   }catch(err){
    const fb=document.getElementById('feedback');if(fb)fb.textContent='Erro ao guardar a pontuação. A partida continua aberta.';
   }finally{exiting=false;back.disabled=false;}
