@@ -2,134 +2,20 @@
   "version": 2,
   "images": [
     {
-      "challengeId": 802,
-      "answer": "Axolote",
+      "challengeId": 0,
+      "answer": "Albert Einstein",
       "aliases": [
-        "Axolotl",
-        "Ajolote"
+        "Einstein"
       ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e7/TheAxolotl.jpg",
-      "author": "Opouy",
-      "license": "CC0 1.0",
-      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:TheAxolotl.jpg",
-      "sourceName": "Wikimedia Commons",
-      "width": 2324,
-      "height": 2629,
-      "title": "Fotografia de um axolote (Ambystoma mexicanum)"
-    },
-    {
-      "challengeId": 5,
-      "answer": "Água",
-      "aliases": [
-        "H2O"
-      ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/6/60/Water_drops.jpg",
-      "author": "che (fotografia), Li-sung (ajuste)",
-      "license": "CC BY-SA 2.5",
-      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Water_drops.jpg",
-      "sourceName": "Wikimedia Commons",
-      "width": 1358,
-      "height": 2001,
-      "title": "Água corrente e gotas a sair de uma torneira"
-    },
-    {
-      "challengeId": 1102,
-      "answer": "Coração",
-      "aliases": [
-        "Coração humano"
-      ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Anatomy_Heart_Portuguese_Tiesworks.png",
-      "author": "Tvanbr",
-      "license": "CC0 1.0",
-      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Anatomy_Heart_Portuguese_Tiesworks.png",
-      "sourceName": "Wikimedia Commons",
-      "width": 1024,
-      "height": 669,
-      "title": "Ilustração anatómica do coração em português"
-    },
-    {
-      "challengeId": 852,
-      "answer": "Bacalhau à Brás",
-      "aliases": [
-        "Bacalhau a Brás"
-      ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Bacalhau_a_Bras.jpg",
-      "author": "Fpenteado",
-      "license": "CC BY-SA 3.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bacalhau_a_Bras.jpg",
-      "sourceName": "Wikimedia Commons",
-      "width": 1758,
-      "height": 1080,
-      "title": "Fotografia de um prato de bacalhau à Brás"
-    },
-    {
-      "challengeId": 1152,
-      "answer": "Imprensa de tipos móveis",
-      "aliases": [
-        "Prensa de Gutenberg",
-        "Imprensa de Gutenberg"
-      ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c3/PrintMus_038.jpg",
-      "author": "vlasta2",
-      "license": "CC BY 2.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:PrintMus_038.jpg",
-      "sourceName": "Wikimedia Commons",
-      "width": 1778,
-      "height": 2240,
-      "title": "Prensa de Gutenberg em demonstração no International Printing Museum"
-    },
-    {
-      "challengeId": 1002,
-      "answer": "Os Lusíadas",
-      "aliases": [
-        "Os Lusiadas"
-      ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Os_Lus%C3%ADadas.jpg",
-      "author": "Luís de Camões (obra original); digitalização histórica, carregada por Giro720",
-      "license": "Public Domain Mark 1.0",
-      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Os_Lus%C3%ADadas.jpg",
-      "sourceName": "Wikimedia Commons",
-      "width": 735,
-      "height": 1110,
-      "title": "Página de rosto da edição de 1572 de Os Lusíadas"
-    },
-    {
-      "challengeId": 952,
-      "answer": "Zeus",
-      "aliases": [
-        "Júpiter"
-      ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Statue_of_Zeus.jpg",
-      "author": "Maarten van Heemskerck",
-      "license": "Public Domain Mark 1.0",
-      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Statue_of_Zeus.jpg",
-      "sourceName": "Wikimedia Commons",
-      "width": 700,
-      "height": 570,
-      "title": "Representação histórica da estátua de Zeus em Olímpia"
-    },
-    {
-      "challengeId": 10,
-      "answer": "Beethoven",
-      "aliases": [
-        "Ludwig van Beethoven"
-      ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/b/be/Beethoven_1820.jpg",
-      "author": "Joseph Karl Stieler",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/10/Albert_Einstein_photo_1920.jpg",
+      "author": "Fotógrafo não identificado (publicada em 1920)",
       "license": "Domínio público",
       "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beethoven_1820.jpg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_photo_1920.jpg",
       "sourceName": "Wikimedia Commons",
-      "width": 1062,
-      "height": 1321,
-      "title": "Retrato de Ludwig van Beethoven pintado por Joseph Karl Stieler em 1820"
+      "width": 3744,
+      "height": 5480,
+      "title": "Fotografia de Albert Einstein no seu gabinete, cerca de 1920"
     },
     {
       "challengeId": 1,
@@ -148,6 +34,224 @@
       "title": "Panorama de Lisboa visto da margem sul do Tejo"
     },
     {
+      "challengeId": 3,
+      "answer": "Civilização do Antigo Egito",
+      "aliases": [
+        "Antigo Egito",
+        "Civilização egípcia",
+        "Egito antigo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Pyramids_of_Giza.jpg/1280px-Pyramids_of_Giza.jpg",
+      "author": "Ireneusz Jerzy Borysiewicz",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pyramids_of_Giza.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1280,
+      "height": 853,
+      "title": "As três grandes pirâmides de Gizé no deserto"
+    },
+    {
+      "challengeId": 5,
+      "answer": "Água",
+      "aliases": [
+        "H2O"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/60/Water_drops.jpg",
+      "author": "che (fotografia), Li-sung (ajuste)",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Water_drops.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1358,
+      "height": 2001,
+      "title": "Água corrente e gotas a sair de uma torneira"
+    },
+    {
+      "challengeId": 6,
+      "answer": "Prémio Nobel",
+      "aliases": [
+        "Nobel",
+        "Medalha Nobel"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Nobel_prize_medal.svg/1280px-Nobel_prize_medal.svg.png",
+      "author": "Gusme (versão vetorial: AhmadSherif)",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nobel_prize_medal.svg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1280,
+      "height": 1280,
+      "title": "Representação gráfica da medalha do Prémio Nobel"
+    },
+    {
+      "challengeId": 7,
+      "answer": "Torre Eiffel",
+      "aliases": [
+        "Eiffel Tower",
+        "Torre de Paris"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/The_Eiffel_Tower_in_Paris.jpg/2560px-The_Eiffel_Tower_in_Paris.jpg",
+      "author": "Jeong seolah",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Eiffel_Tower_in_Paris.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2560,
+      "height": 1920,
+      "title": "Torre Eiffel em Paris"
+    },
+    {
+      "challengeId": 9,
+      "answer": "Mapa",
+      "aliases": [
+        "Mapa-múndi",
+        "Mapa mundi",
+        "World map"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/World_map_geographical.jpg/1280px-World_map_geographical.jpg",
+      "author": "Natural Earth",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:World_map_geographical.jpg",
+      "sourceName": "Wikimedia Commons / Natural Earth",
+      "width": 1280,
+      "height": 640,
+      "title": "Mapa geográfico do mundo"
+    },
+    {
+      "challengeId": 10,
+      "answer": "Beethoven",
+      "aliases": [
+        "Ludwig van Beethoven"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/be/Beethoven_1820.jpg",
+      "author": "Joseph Karl Stieler",
+      "license": "Domínio público",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beethoven_1820.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1062,
+      "height": 1321,
+      "title": "Retrato de Ludwig van Beethoven pintado por Joseph Karl Stieler em 1820"
+    },
+    {
+      "challengeId": 12,
+      "answer": "Futebol",
+      "aliases": [
+        "Football",
+        "Soccer"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Football_ball.jpg",
+      "author": "Илья Яковлев (Ilya Yakovlev)",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Football_ball.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2560,
+      "height": 1920,
+      "title": "Bola de futebol sobre a relva"
+    },
+    {
+      "challengeId": 14,
+      "answer": "Leonardo da Vinci",
+      "aliases": [
+        "Leonardo"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Leonardo_self.jpg",
+      "author": "Leonardo da Vinci (atribuição debatida)",
+      "license": "Domínio público (PDM 1.0)",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Leonardo_self.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 420,
+      "height": 659,
+      "title": "Desenho tradicionalmente identificado como autorretrato de Leonardo da Vinci; atribuição debatida"
+    },
+    {
+      "challengeId": 15,
+      "answer": "Nelson Mandela",
+      "aliases": [
+        "Mandela"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Mandela_Nelson_en_portrait.jpg/1024px-Mandela_Nelson_en_portrait.jpg",
+      "author": "Fatimafodesylla",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mandela_Nelson_en_portrait.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 2276,
+      "title": "Retrato fotográfico de Nelson Mandela"
+    },
+    {
+      "challengeId": 16,
+      "answer": "Pequim",
+      "aliases": [
+        "Beijing",
+        "Peking"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/94/Beijing_skyline.jpg",
+      "author": "Peter Morgan",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beijing_skyline.jpg",
+      "sourceName": "Wikimedia Commons (fotografia originalmente publicada no Flickr)",
+      "width": 2048,
+      "height": 1247,
+      "title": "Panorama urbano de Pequim"
+    },
+    {
+      "challengeId": 17,
+      "answer": "Veneza",
+      "aliases": [
+        "Venice",
+        "Venezia"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Grand_Canal%2C_Venice%2C_Italy.jpg/2560px-Grand_Canal%2C_Venice%2C_Italy.jpg",
+      "author": "Mgimelfarb",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Grand_Canal,_Venice,_Italy.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2560,
+      "height": 1730,
+      "title": "Vista do Grande Canal de Veneza"
+    },
+    {
+      "challengeId": 802,
+      "answer": "Axolote",
+      "aliases": [
+        "Axolotl",
+        "Ajolote"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e7/TheAxolotl.jpg",
+      "author": "Opouy",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:TheAxolotl.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 2324,
+      "height": 2629,
+      "title": "Fotografia de um axolote (Ambystoma mexicanum)"
+    },
+    {
+      "challengeId": 852,
+      "answer": "Bacalhau à Brás",
+      "aliases": [
+        "Bacalhau a Brás"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/39/Bacalhau_a_Bras.jpg",
+      "author": "Fpenteado",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bacalhau_a_Bras.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1758,
+      "height": 1080,
+      "title": "Fotografia de um prato de bacalhau à Brás"
+    },
+    {
       "challengeId": 902,
       "answer": "Transístor",
       "aliases": [
@@ -162,6 +266,71 @@
       "width": 6718,
       "height": 4478,
       "title": "Fotografia de vários tipos de transístores"
+    },
+    {
+      "challengeId": 952,
+      "answer": "Zeus",
+      "aliases": [
+        "Júpiter"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Statue_of_Zeus.jpg",
+      "author": "Maarten van Heemskerck",
+      "license": "Public Domain Mark 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Statue_of_Zeus.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 700,
+      "height": 570,
+      "title": "Representação histórica da estátua de Zeus em Olímpia"
+    },
+    {
+      "challengeId": 1002,
+      "answer": "Os Lusíadas",
+      "aliases": [
+        "Os Lusiadas"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Os_Lus%C3%ADadas.jpg",
+      "author": "Luís de Camões (obra original); digitalização histórica, carregada por Giro720",
+      "license": "Public Domain Mark 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Os_Lus%C3%ADadas.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 735,
+      "height": 1110,
+      "title": "Página de rosto da edição de 1572 de Os Lusíadas"
+    },
+    {
+      "challengeId": 1102,
+      "answer": "Coração",
+      "aliases": [
+        "Coração humano"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Anatomy_Heart_Portuguese_Tiesworks.png",
+      "author": "Tvanbr",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Anatomy_Heart_Portuguese_Tiesworks.png",
+      "sourceName": "Wikimedia Commons",
+      "width": 1024,
+      "height": 669,
+      "title": "Ilustração anatómica do coração em português"
+    },
+    {
+      "challengeId": 1152,
+      "answer": "Imprensa de tipos móveis",
+      "aliases": [
+        "Prensa de Gutenberg",
+        "Imprensa de Gutenberg"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c3/PrintMus_038.jpg",
+      "author": "vlasta2",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:PrintMus_038.jpg",
+      "sourceName": "Wikimedia Commons",
+      "width": 1778,
+      "height": 2240,
+      "title": "Prensa de Gutenberg em demonstração no International Printing Museum"
     }
   ]
 }
