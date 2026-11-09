@@ -204,25 +204,25 @@ async function atinaProgressRestoreFromCode() {
 }
 
 function atinaProgressBoot() {
-  const savedNickname = localStorage.getItem(ATINA_PROGRESS_NICKNAME_KEY) || '';
-  if ($('atinaCloudNickname')) $('atinaCloudNickname').value = savedNickname;
-  $('atinaCloudRegister')?.addEventListener('click', async () => {
-    const button = $('atinaCloudRegister');
-    button.disabled = true;
-    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'A sincronizar pseudónimo…';
-    try { await atinaProgressRegister($('atinaCloudNickname')?.value, false, $('atinaCloudRecoveryCode')?.value); }
-    catch (error) { if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = error.message || 'Não foi possível registar o pseudónimo.'; }
-    finally { button.disabled = false; }
-  });
-  $('atinaCloudLeaderboardRefresh')?.addEventListener('click', atinaProgressLoadLeaderboard);
-  $('atinaCloudCopyRecovery')?.addEventListener('click', atinaProgressCopyRecovery);
-  $('atinaCloudRestore')?.addEventListener('click', atinaProgressRestoreFromCode);
-  if (savedNickname && !atinaProgressDeviceToken(false)) {
-    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'A chave deste pseudónimo não está neste dispositivo. Introduz o código de recuperação; não será criado outro perfil.';
-  } else if (savedNickname) atinaProgressRegister(savedNickname, true).catch(error => {
-    if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Perfil guardado neste dispositivo; sincronização pendente: ' + (error.message || 'falha de ligação');
-  });
+  // New account model: never silently recreate a legacy device-only profile.
+  const sessionToken = atinaAccountSessionToken();
+  if (!sessionToken) return;
+  atinaServerRpc('atina_account_profile', {p_session_token:sessionToken})
+    .then(profile => {
+      atinaCloudProfile = profile;
+      window.atinaCloudProfile = profile;
+      atinaProgressRender(profile);
+      atinaRenderDailyMission();
+      if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Sessão recuperada. O teu progresso está sincronizado.';
+    })
+    .catch(error => {
+      localStorage.removeItem(ATINA_ACCOUNT_SESSION_KEY);
+      atinaCloudProfile = null;
+      window.atinaCloudProfile = null;
+      if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'A sessão expirou. Entra novamente com o teu pseudónimo e palavra-passe.';
+    });
 }
+
 function atinaServerMessage(message) {
   const gameVisible = $('game') && !$('game').classList.contains('hidden');
   if (gameVisible) {
