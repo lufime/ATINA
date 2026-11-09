@@ -1318,7 +1318,18 @@ function screen(id){
  const nav=$('atinaMainNav');if(nav){nav.classList.toggle('hidden',id!=='home');nav.style.setProperty('display',id==='home'?'':'none','important');}
  try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}
 }
-function restoreLastScreen(){if(networkRoom)return;let id='home';try{id=localStorage.getItem(ATINA_SCREEN_KEY)||'home';}catch(e){}if(!['home','game','result','rankingPage','networkLobby'].includes(id))id='home';if(id==='game'&&!queue.length)id='home';screen(id);if(id==='rankingPage')loadMenuRanking();update();}
+function restoreLastScreen(){
+ // Após recarregar a página, começar sempre no menu inicial.
+ try{
+  localStorage.removeItem(ATINA_PROGRESS_KEY);
+  localStorage.setItem(ATINA_SCREEN_KEY,'home');
+  localStorage.removeItem('atinaNetworkRoom');
+ }catch(e){}
+ networkRoom=null;
+ screen('home');
+ showHomePage('dashboard',true);
+ update();
+}
 
 function update(){ $('totalScore').textContent=(mode==='duel'||mode==='party')?'Equipa 1: '+scores[0]+' · Equipa 2: '+scores[1]:'⭐ '+scores[0]+' pontos';$('progress').textContent=answeredCount+' / '+queue.length+' desafios concluídos';const score=$('atinaRoundScore'),streak=$('atinaRoundStreak'),round=$('atinaRoundNumber'),total=$('atinaRoundTotal');if(score)score.textContent=String(scores[mode==='duel'||mode==='party'?player:0]||0);if(streak)streak.textContent=String(correctStreak||0);if(round)round.textContent=String(Math.min(pos+1,queue.length||1));if(total)total.textContent=String(queue.length||1);const fill=$('atinaGameProgressFill');if(fill)fill.style.width=(queue.length?Math.min(100,answeredCount/queue.length*100):0)+'%';}
 function renderCategories(){const categories=ATINA_PUBLIC_CATEGORIES;$('categories').innerHTML=categories.map(g=>'<button type="button" class="tile" data-category="'+g.name+'"><span style="font-size:22px">'+g.emoji+'</span><b>'+g.name+'</b><small>'+g.count+' desafios · '+(g.name==='Imagem misteriosa'?6:5)+' pistas cada</small></button>').join('');const progress=$('challengeBankProgress');if(progress){const total=categories.reduce((sum,g)=>sum+g.count,0);progress.textContent='Banco atual: '+total.toLocaleString('pt-PT')+' / '+total.toLocaleString('pt-PT')+' desafios · 100% da meta · faltam 0.';}}
