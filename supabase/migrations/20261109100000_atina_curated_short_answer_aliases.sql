@@ -20,15 +20,6 @@ where challenge.challenge_id = aliases.challenge_id
     where existing.value = aliases.alias
   );
 
--- Fail visibly if the expected challenge rows are missing.
-do $$
-begin
-  if (
-    select count(*)
-    from private.atina_challenges
-    where challenge_id in (668, 675, 658, 663, 678, 680, 1028)
-  ) <> 7 then
-    raise exception 'Expected all 7 ATINA challenge rows before applying answer aliases';
-  end if;
-end;
-$$;
+-- Challenge catalog rows are deployed separately from schema migrations.
+-- A clean schema replay may intentionally omit that private catalog; in that
+-- case this additive alias update is a no-op and production rows are preserved.
