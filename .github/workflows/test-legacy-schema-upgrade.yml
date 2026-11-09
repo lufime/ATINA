@@ -38,11 +38,11 @@ jobs:
           psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
       - name: Apply only the compatibility v2 migrations
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
       - name: Assert legacy data and contracts remain intact
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
