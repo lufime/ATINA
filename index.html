@@ -2313,55 +2313,25 @@ document.addEventListener('click',function(event){
 
 </script>
 <script>
-/* Saída do jogo: captura o toque antes de qualquer outro handler e pede o pseudónimo num painel próprio para telemóveis. */
+/* Saída do jogo sem popup nem pedido obrigatório de pseudónimo. */
 (function(){
  const back=document.getElementById('back');
  if(!back)return;
  let exiting=false;
- function askNickname(){
-  return new Promise(resolve=>{
-   const overlay=document.createElement('div');
-   overlay.style.cssText='position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:#020914eF;';
-   const panel=document.createElement('div');
-   panel.style.cssText='width:min(420px,100%);padding:22px;border:1px solid #d6ad64;border-radius:18px;background:#142b43;color:#fff;box-shadow:0 18px 55px #0009;';
-   const title=document.createElement('h2');title.textContent='Guardar pontuação';
-   const desc=document.createElement('p');desc.textContent='Escolhe um pseudónimo para registar os teus pontos no ranking.';
-   const input=document.createElement('input');input.type='text';input.maxLength=20;input.autocomplete='nickname';input.placeholder='O teu pseudónimo';input.style.cssText='display:block;width:100%;box-sizing:border-box;margin:14px 0;padding:14px;border:1px solid #49637c;border-radius:12px;background:#091b2c;color:#fff;font:inherit;';
-   const actions=document.createElement('div');actions.style.cssText='display:flex;gap:10px;';
-   const cancel=document.createElement('button');cancel.type='button';cancel.textContent='Cancelar';cancel.style.cssText='flex:1;padding:13px;border-radius:11px;border:1px solid #49637c;background:#1b354e;color:#fff;font:inherit;';
-   const save=document.createElement('button');save.type='button';save.textContent='Guardar e sair';save.style.cssText='flex:1;padding:13px;border:0;border-radius:11px;background:#e9bd61;color:#17202b;font-weight:800;font:inherit;';
-   const finish=value=>{overlay.remove();resolve(value);};
-   cancel.onclick=()=>finish(null);
-   save.onclick=()=>{const name=input.value.trim();if(!name){input.focus();input.placeholder='Escreve um pseudónimo';return;}finish(name);};
-   input.addEventListener('keydown',e=>{if(e.key==='Enter')save.click();if(e.key==='Escape')cancel.click();});
-   actions.append(cancel,save);panel.append(title,desc,input,actions);overlay.append(panel);document.body.append(overlay);setTimeout(()=>input.focus(),80);
-  });
- }
- back.addEventListener('click',async function(e){
+ back.addEventListener('click',function(e){
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
   if(networkGameActive){networkLeaveRoom();return;}
   if(exiting)return;
   exiting=true;back.disabled=true;
   try{
-   if(mode==='solo'||mode==='mix'){
-    const input=document.getElementById('nickSolo');
-    const name=(input&&input.value.trim())||await askNickname();
-    if(!name)return;
-    if(input)input.value=name;
-    const finalScore=Math.max(0,Math.trunc(Number(scores[0])||0));
-     const ok=await saveOnlineScore(name,finalScore,'solo','saveSoloBtn');
-    if(!ok){const fb=document.getElementById('feedback');if(fb)fb.textContent='Não foi possível guardar. A partida continua aberta para tentares novamente.';return;}
-   }else if(mode==='duel'||mode==='party'){
-    const input1=document.getElementById('nickP1'),input2=document.getElementById('nickP2');
-    const name1=(input1&&input1.value.trim())||await askNickname();if(!name1)return;
-    const name2=(input2&&input2.value.trim())||await askNickname();if(!name2)return;
-    if(!await saveOnlineScore(name1,scores[0],'duel','saveP1Btn'))return;
-    if(!await saveOnlineScore(name2,scores[1],'duel','saveP2Btn'))return;
-   }
-   stopTimer();raceStop();screen('home');update();
-  }catch(err){
-   const fb=document.getElementById('feedback');if(fb)fb.textContent='Erro ao guardar a pontuação. A partida continua aberta.';
-  }finally{exiting=false;back.disabled=false;}
+   stopTimer();
+   if(typeof raceStop==='function')raceStop();
+   screen('home');
+   update();
+  }finally{
+   exiting=false;
+   back.disabled=false;
+  }
  },true);
 })();
 </script><style id="atina-professional-overhaul">
