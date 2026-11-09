@@ -1323,7 +1323,9 @@ function screen(id){
  // Guardar também o ecrã no URL; assim o estado não depende apenas de localStorage.
  try{history.replaceState(null,'',id==='home'?'#'+(localStorage.getItem('atinaHomePage')||'dashboard'):'#screen-'+id);}catch(e){}
 }
-window.addEventListener('beforeunload',()=>{try{sessionStorage.setItem('atinaPageReloaded','1');}catch(e){}});
+function atinaPrepareReloadToHome(){try{sessionStorage.setItem('atinaPageReloaded','1');localStorage.setItem(ATINA_SCREEN_KEY,'home');const page=localStorage.getItem('atinaHomePage')||'dashboard';history.replaceState(null,'','#'+page);}catch(e){}}
+window.addEventListener('beforeunload',atinaPrepareReloadToHome);
+window.addEventListener('pagehide',atinaPrepareReloadToHome);
 function restoreLastScreen(){
  let id='home',page='dashboard',hashPage='',wasReloaded=false;
  try{wasReloaded=sessionStorage.getItem('atinaPageReloaded')==='1';sessionStorage.removeItem('atinaPageReloaded');}catch(e){}
