@@ -1241,9 +1241,11 @@ function showHomePage(page,restore=false){
   try{history.replaceState(null,'','#'+page);}catch(e){}
  }
  if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
+ if(page==='ranking'&&typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
+document.getElementById('atinaPointsLeaderboardRefresh')?.addEventListener('click',()=>{if(typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();});
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
 let atinaInitialPage='dashboard';
 try{atinaInitialPage=location.hash.slice(1)||localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';}catch(e){}
