@@ -41,6 +41,8 @@ function atinaProgressRender(profile) {
   if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
   if (!profile) return;
   const xp = Math.max(0, Number(profile.xp) || 0);
+  const points = Math.max(0, Number(profile.points) || 0);
+  if ($('atinaCloudPoints')) $('atinaCloudPoints').textContent = points + ' pontos';
   const level = Math.max(1, Number(profile.level) || Math.floor(xp / 250) + 1);
   const progress = xp % 250;
   const fill = $('atinaCloudXpFill');
@@ -134,6 +136,35 @@ async function atinaProgressClaim(state) {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Não foi possível sincronizar o XP. Será tentado novamente: ' + (error.message || 'falha de ligação');
   } finally {
     atinaCloudClaimsInFlight.delete(key);
+  }
+}
+
+async function atinaProgressLoadPointsLeaderboard() {
+  const list = $('atinaPointsLeaderboard');
+  if (!list) return;
+  list.replaceChildren();
+  const loading = document.createElement('li');
+  loading.textContent = 'A carregar classificação de Pontos…';
+  list.appendChild(loading);
+  try {
+    const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 50 });
+    list.replaceChildren();
+    if (!Array.isArray(rows) || !rows.length) {
+      const empty = document.createElement('li');
+      empty.textContent = 'Ainda não há Pontos globais registados.';
+      list.appendChild(empty);
+      return;
+    }
+    rows.forEach((row, index) => {
+      const item = document.createElement('li');
+      item.textContent = (index + 1) + '. ' + row.nickname + ' — ' + Number(row.points || 0) + ' pontos';
+      list.appendChild(item);
+    });
+  } catch (error) {
+    list.replaceChildren();
+    const item = document.createElement('li');
+    item.textContent = error.message || 'Não foi possível carregar a classificação de Pontos.';
+    list.appendChild(item);
   }
 }
 
