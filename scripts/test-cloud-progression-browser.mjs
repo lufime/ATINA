@@ -20,6 +20,7 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 const pageErrors = [];
+const dialogMessages = [];
 page.on('pageerror', error => pageErrors.push(error.message));
 await page.route('https://commons.wikimedia.org/**', route => route.fulfill({status:200,contentType:'application/json',body:'{"query":{"pages":{}}}'}));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
@@ -44,7 +45,7 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
         window.__mockRpcCalls.push({name,args});
         if(name==='atina_account_register') return {data:{session_token:sessionToken,recovery_key:recoveryKey,profile},error:null};
         if(name==='atina_account_login') return {data:{session_token:sessionToken,profile},error:null};
-        if(name==='atina_account_recover') return {data:{session_token:sessionToken,recovered:true},error:null};
+        if(name==='atina_account_recover') return {data:{session_token:sessionToken,recovery_key:'e'.repeat(48),recovered:true},error:null};
         if(name==='atina_account_profile') return {data:profile,error:null};
         if(name==='atina_progress_claim_local') {
           profile={...profile,xp:15,level:1,total_challenges:1,awarded:true,challenge_xp:15,daily_bonus:0};
@@ -62,7 +63,7 @@ try {
   await page.locator('#atinaAccountRegister').waitFor({state:'visible'});
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
-  page.on('dialog', dialog => dialog.accept());
+  page.on('dialog', dialog => { dialogMessages.push(dialog.message()); return dialog.accept(); });
   await page.locator('#atinaAccountRegister').click();
   await page.waitForFunction(() => document.querySelector('#atinaCloudStatus')?.textContent.includes('Conta criada.'), null, {timeout:10000}).catch(async () => {
     throw new Error('O registo não terminou. Estado: '+await page.locator('#atinaCloudStatus').textContent()
@@ -77,6 +78,18 @@ try {
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
   await page.locator('#atinaAccountLogin').click();
   await page.getByText('Sessão iniciada. O teu progresso está sincronizado.').waitFor();
+  assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
+
+  // Recovery must return and display a replacement single-use key.
+  await page.locator('#atinaRecoveryArea summary').click();
+  await page.locator('#atinaRecoveryKey').fill('d'.repeat(48));
+  await page.locator('#atinaNewAccountPassword').fill('AnotherCorrectHorse2!');
+  await page.locator('#atinaAccountRecover').click();
+  await page.waitForFunction(() => document.querySelector('#atinaCloudStatus')?.textContent.includes('Conta recuperada.'), null, {timeout:10000});
+  assert.ok(dialogMessages.some(message => message.includes('e'.repeat(48))),
+    'A nova chave de recuperação tem de ser apresentada ao utilizador.');
+  const recoveryCall = await page.evaluate(() => window.__mockRpcCalls.find(call => call.name==='atina_account_recover'));
+  assert.equal(recoveryCall.args.p_recovery_key,'d'.repeat(48));
   assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
 
   await page.evaluate(() => {
