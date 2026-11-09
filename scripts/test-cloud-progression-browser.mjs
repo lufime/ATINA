@@ -44,8 +44,8 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
       rpc: async (name,args) => {
         window.__mockRpcCalls.push({name,args});
         if(name==='atina_account_register') return {data:{session_token:sessionToken,recovery_key:recoveryKey,profile},error:null};
-        if(name==='atina_account_login') return {data:{session_token:sessionToken,profile},error:null};
-        if(name==='atina_account_recover') return {data:{session_token:sessionToken,recovery_key:'e'.repeat(48),recovered:true},error:null};
+        if(name==='atina_account_login') return {data:{ok:true,session_token:sessionToken,profile},error:null};
+        if(name==='atina_account_recover') return {data:{ok:true,session_token:sessionToken,recovery_key:'e'.repeat(48),recovered:true},error:null};
         if(name==='atina_account_profile') return {data:profile,error:null};
         if(name==='atina_progress_claim_local') {
           profile={...profile,xp:15,level:1,total_challenges:1,awarded:true,challenge_xp:15,daily_bonus:0};
