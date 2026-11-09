@@ -1319,6 +1319,8 @@ function screen(id){
  });
  const nav=$('atinaMainNav');if(nav){nav.classList.toggle('hidden',id!=='home');nav.style.setProperty('display',id==='home'?'':'none','important');}
  try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}
+ // Guardar também o ecrã no URL; assim o estado não depende apenas de localStorage.
+ try{history.replaceState(null,'',id==='home'?'#'+(localStorage.getItem('atinaHomePage')||'dashboard'):'#screen-'+id);}catch(e){}
 }
 function restoreLastScreen(){
  let id='home',page='dashboard',hashPage='';
@@ -1327,10 +1329,11 @@ function restoreLastScreen(){
   page=localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';
   hashPage=String(location.hash||'').replace(/^#/,'');
  }catch(e){}
- // O separador indicado no endereço tem prioridade sobre um estado antigo de jogo guardado.
- if(atinaHomePageIsValid(hashPage)){
-  id='home';
-  page=hashPage;
+ if(hashPage.startsWith('screen-')){
+  const requested=hashPage.slice(7);
+  if(['game','mimicaGame','result','rankingPage','networkLobby'].includes(requested))id=requested;
+ }else if(atinaHomePageIsValid(hashPage)){
+  id='home';page=hashPage;
  }
  if(id==='game'){
   if(restoreLocalProgress())return;
