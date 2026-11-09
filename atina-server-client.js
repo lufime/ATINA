@@ -957,10 +957,13 @@ atinaProgressBoot();
 atinaOnlineCountBoot();
 (async function atinaServerBoot() {
   try {
+    // Uma sessão individual nunca deve ser recuperada automaticamente ao abrir/atualizar a página.
+    // Apagar a referência local impede que uma partida antiga volte a abrir o ecrã de jogo.
+    localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
+    atinaServerSession = null;
+    atinaServerState = null;
+    atinaServerStopTimers();
     await networkRestoreSession();
-    if (!networkRoom) {
-      const restored = await atinaServerRestoreSession();
-      if (!restored) screen('home');
-    }
+    if (!networkRoom) screen('home');
   } catch (_) { screen('home'); }
 })();
