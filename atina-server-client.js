@@ -214,6 +214,9 @@ function atinaProgressBoot() {
       atinaProgressRender(profile);
       atinaRenderDailyMission();
       if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Sessão recuperada. O teu progresso está sincronizado.';
+      if ($('authSummary')) $('authSummary').textContent = 'Sessão iniciada como ' + profile.nickname + '. O teu progresso está sincronizado.';
+      if ($('homeLoginBadge')) $('homeLoginBadge').classList.remove('hidden');
+      if ($('homeLoginText')) $('homeLoginText').textContent = profile.nickname;
     })
     .catch(error => {
       localStorage.removeItem(ATINA_ACCOUNT_SESSION_KEY);
