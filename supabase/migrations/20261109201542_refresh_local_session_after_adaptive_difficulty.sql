@@ -1,0 +1,5 @@
+-- Keep the returned local-game state in sync with the row updated by
+-- atina_apply_adaptive_difficulty when the account owner is attached.
+-- The canonical function body is deployed in migration
+-- 20261109201542_refresh_local_session_after_adaptive_difficulty.
+-- Re-read the session after inserting the owner before building public state.
