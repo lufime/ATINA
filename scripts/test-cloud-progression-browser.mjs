@@ -62,7 +62,7 @@ try {
   await page.evaluate(() => showHomePage('profile'));
   await page.locator('#atinaAccountRegister').waitFor({state:'visible'});
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
-  await page.locator('#atinaAccountPassword').fill('x'.repeat(73));
+  await page.locator('#atinaAccountPassword').evaluate(el => { el.value = 'x'.repeat(73); });
   await page.locator('#atinaAccountRegister').click();
   assert.match(await page.locator('#atinaCloudStatus').textContent(), /72 bytes UTF-8/);
   assert.equal(await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_account_register').length), 0,
