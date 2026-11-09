@@ -99,9 +99,10 @@ if (/p_(?:xp|points)\s*:/i.test(claimCall[1])) {
   throw new Error('O cliente não pode enviar XP ou pontos à RPC de atribuição.');
 }
 for (const id of [
-  'atinaCloudNickname', 'atinaCloudRegister', 'atinaCloudStatus',
-  'atinaCloudXp', 'atinaCloudLeaderboardRefresh', 'atinaCloudLeaderboard',
-  'atinaCloudRecoveryCode', 'atinaCloudRestore', 'atinaCloudCopyRecovery'
+  'atinaCloudNickname', 'atinaAccountPassword', 'atinaAccountRegister',
+  'atinaAccountLogin', 'atinaRecoveryKey', 'atinaNewAccountPassword',
+  'atinaAccountRecover', 'atinaCloudStatus', 'atinaCloudXp',
+  'atinaCloudLeaderboardRefresh', 'atinaCloudLeaderboard'
 ]) {
   if (!html.includes('id="' + id + '"')) {
     throw new Error('Elemento de interface de progressão em falta: ' + id);
