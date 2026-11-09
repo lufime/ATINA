@@ -1219,6 +1219,8 @@ function atinaRecordChallengeCompletion(key){if(!key)return;const data=atinaRead
 function atinaHomePageIsValid(page){return ['dashboard','play','categories','online','profile','ranking','settings'].includes(page);}
 function showHomePage(page,restore=false){
  if(!atinaHomePageIsValid(page))page='dashboard';
+ // Ao mudar de separador, garantir que o ecrã principal fica guardado como ativo.
+ if(!restore)screen('home');
  // Cada separador mostra exclusivamente o seu painel.
  document.querySelectorAll('#home [data-home-page]').forEach(el=>{
   const visible=el.dataset.homePage===page;
