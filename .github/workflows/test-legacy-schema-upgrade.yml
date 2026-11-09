@@ -28,8 +28,6 @@ jobs:
       - name: Start disposable local Supabase stack
         run: |
           supabase init --force
-          # Use a non-default port to avoid collisions on shared hosted runners.
-          sed -i 's/port = 54322/port = 55422/' supabase/config.toml
           # Keep the disposable database empty: apply only the v2 compatibility
           # migrations and pseudonym progression migration after the legacy fixture.
           sed -i '/^\[db\.migrations\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
@@ -37,7 +35,7 @@ jobs:
           supabase start
       - name: Create synthetic legacy atina-ranking schema
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
       - name: Apply only the compatibility v2 migrations
         run: |
           psql "postgresql://postgres:postgres@127.0.0.1:55422/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql
