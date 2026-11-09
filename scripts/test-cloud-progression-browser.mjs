@@ -64,7 +64,11 @@ try {
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
   page.on('dialog', dialog => dialog.accept());
   await page.locator('#atinaAccountRegister').click();
-  await page.getByText('Conta criada. Guarda agora a tua chave de recuperação:', {exact:false}).waitFor();
+  await page.waitForFunction(() => document.querySelector('#atinaCloudStatus')?.textContent.includes('Conta criada.'), null, {timeout:10000}).catch(async () => {
+    throw new Error('O registo não terminou. Estado: '+await page.locator('#atinaCloudStatus').textContent()
+      +' · RPC: '+JSON.stringify(await page.evaluate(()=>window.__mockRpcCalls||[]))
+      +' · erros: '+JSON.stringify(pageErrors));
+  });
   assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
   assert.equal(await page.locator('#atinaCloudXp').textContent(), '0 XP');
 
