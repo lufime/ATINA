@@ -900,6 +900,8 @@ function atinaAccountSetSession(data){
  if(data?.session_token)localStorage.setItem(ATINA_ACCOUNT_SESSION_KEY,data.session_token);
  if(data?.profile){window.atinaCloudProfile=data.profile;if(typeof atinaProgressRender==='function')atinaProgressRender(data.profile);}
  if(data?.profile?.nickname){localStorage.setItem('atinaProgressNicknameV1',data.profile.nickname);$('atinaCloudNickname').value=data.profile.nickname;}
+ const summary=$('authSummary'),badge=$('homeLoginBadge'),badgeText=$('homeLoginText');
+ if(data?.profile?.nickname){if(summary)summary.textContent='Sessão iniciada como '+data.profile.nickname+'. O teu progresso está sincronizado.';if(badge)badge.classList.remove('hidden');if(badgeText)badgeText.textContent=data.profile.nickname;}
 }
 async function atinaAccountRegister(){
  const nickname=$('atinaCloudNickname').value.trim(),password=$('atinaAccountPassword').value;
