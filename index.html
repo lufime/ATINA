@@ -2362,6 +2362,11 @@ document.addEventListener('click',function(event){
    if(typeof mimeRaceStop==='function')mimeRaceStop();
    if(typeof networkRoom!=='undefined'&&networkRoom&&typeof networkLeaveRoom==='function')networkLeaveRoom();
    try{localStorage.removeItem('atinaNetworkRoom');}catch(err){}
+   // A sessão individual do servidor era a causa da reabertura automática após atualizar.
+   try{localStorage.removeItem('atinaServerSessionV1');}catch(err){}
+   try{if(typeof atinaServerStopTimers==='function')atinaServerStopTimers();}catch(err){}
+   try{if(typeof atinaServerSession!=='undefined')atinaServerSession=null;}catch(err){}
+   try{if(typeof atinaServerState!=='undefined')atinaServerState=null;}catch(err){}
    try{localStorage.removeItem(ATINA_PROGRESS_KEY);}catch(err){}
    screen('home');
    showHomePage('dashboard');
