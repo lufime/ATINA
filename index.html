@@ -988,7 +988,7 @@ async function updateAtinaPassword(){
 if(supabaseClient){supabaseAuthClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'){$('authForms').classList.add('hidden');$('authReset').classList.remove('hidden');screen('authPage');authMessage('Define a tua nova palavra-passe.');} if(event==='SIGNED_OUT'||event==='SIGNED_IN')refreshAtinaSession();});}
 
 
-const ATINA_ACCOUNT_SESSION_KEY='atinaAccountSessionV1';
+// A chave da sessão é partilhada com atina-server-client.js.
 function atinaAccountMessage(message){const el=$('atinaCloudStatus');if(el)el.textContent=message;}
 function atinaAccountSetSession(data){
  if(data?.session_token)localStorage.setItem(ATINA_ACCOUNT_SESSION_KEY,data.session_token);
