@@ -1335,10 +1335,9 @@ function restoreLastScreen(){
  }else if(atinaHomePageIsValid(hashPage)){
   id='home';page=hashPage;
  }
- if(id==='game'){
-  if(restoreLocalProgress())return;
-  id='home';
- }
+ // A partida guardada não deve reabrir automaticamente após atualizar.
+ // O progresso fica guardado, mas o utilizador regressa ao último separador do menu.
+ if(id==='game')id='home';
  if(!['home','rankingPage','result'].includes(id))id='home';
  screen(id);
  if(id==='home')showHomePage(page,true);
@@ -2341,25 +2340,25 @@ document.addEventListener('click',function(event){
 
 </script>
 <script>
-/* Saída do jogo sem popup nem pedido obrigatório de pseudónimo. */
+/* Encerrar explicitamente a partida, ou cancelar e continuar a jogar. */
 (function(){
  const back=document.getElementById('back');
  if(!back)return;
- let exiting=false;
  back.addEventListener('click',function(e){
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-  if(networkGameActive){networkLeaveRoom();return;}
-  if(exiting)return;
-  exiting=true;back.disabled=true;
+  const confirmed=window.confirm('Queres mesmo fechar o jogo? A partida será terminada e não poderás continuar esta ronda.');
+  if(!confirmed)return;
   try{
-   stopTimer();
+   if(typeof stopTimer==='function')stopTimer();
    if(typeof raceStop==='function')raceStop();
+   if(typeof mimeStop==='function')mimeStop();
+   if(typeof mimeRaceStop==='function')mimeRaceStop();
+   if(networkGameActive&&typeof networkLeaveRoom==='function')networkLeaveRoom();
+   try{localStorage.removeItem(ATINA_PROGRESS_KEY);}catch(err){}
    screen('home');
+   showHomePage('dashboard');
    update();
-  }finally{
-   exiting=false;
-   back.disabled=false;
-  }
+  }catch(err){console.error('Erro ao fechar a partida:',err);}
  },true);
 })();
 </script><style id="atina-professional-overhaul">
