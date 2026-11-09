@@ -931,7 +931,8 @@ async function atinaAccountRecover(){
   const {data,error}=await supabaseClient.rpc('atina_account_recover',{p_nickname:nickname,p_recovery_key:key,p_new_password:password});if(error)throw error;
   localStorage.setItem(ATINA_ACCOUNT_SESSION_KEY,data.session_token);
   const profile=await supabaseClient.rpc('atina_account_profile',{p_session_token:data.session_token});if(profile.error)throw profile.error;
-  atinaAccountSetSession({session_token:data.session_token,profile:profile.data});atinaAccountMessage('Palavra-passe redefinida. Conta recuperada.');
+  atinaAccountSetSession({session_token:data.session_token,profile:profile.data});atinaAccountMessage('Conta recuperada. A chave anterior foi anulada; guarda a nova chave apresentada.');
+  window.alert('NOVA CHAVE DE RECUPERAÇÃO ATINA\\n\\n'+data.recovery_key+'\\n\\nA chave anterior já não funciona. Guarda esta nova chave num local seguro.');
  }catch(e){atinaAccountMessage(e.message||'Não foi possível recuperar a conta.');}
  finally{$('atinaAccountRecover').disabled=false;}
 }
