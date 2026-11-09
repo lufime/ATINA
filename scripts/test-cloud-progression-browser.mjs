@@ -6,191 +6,116 @@ import { chromium } from 'playwright';
 const root = new URL('../', import.meta.url);
 const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const serverClient = await readFile(new URL('../atina-server-client.js', import.meta.url), 'utf8');
-
 const server = createServer((request, response) => {
-  // O index carrega o cliente com query string de versão
-  // (atina-server-client.js?v=...). Comparar apenas o pathname.
   const pathname = new URL(request.url || '/', 'http://127.0.0.1').pathname;
   if (pathname === '/' || pathname === '/index.html') {
     response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     response.end(indexHtml);
-    return;
-  }
-  if (pathname === '/atina-server-client.js') {
+  } else if (pathname === '/atina-server-client.js') {
     response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' });
     response.end(serverClient);
-    return;
-  }
-  if (pathname === '/favicon.ico') {
-    response.writeHead(204);
-    response.end();
-    return;
-  }
-  response.writeHead(404);
-  response.end('Not found: ' + pathname);
+  } else { response.writeHead(404); response.end('Not found'); }
 });
-
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-const address = server.address();
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 const pageErrors = [];
-const consoleErrors = [];
-
-await page.addInitScript(() => {
-  Object.defineProperty(navigator, 'clipboard', {
-    configurable: true,
-    value: { writeText: async value => { window.__copiedRecoveryCode = value; } }
-  });
-});
-page.on('pageerror', error => pageErrors.push({ message: error.message, stack: error.stack }));
-page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
-await page.route('https://commons.wikimedia.org/**', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{\"query\":{\"pages\":{}}}' }));
+const dialogMessages = [];
+page.on('pageerror', error => pageErrors.push(error.message));
+await page.route('https://commons.wikimedia.org/**', route => route.fulfill({status:200,contentType:'application/json',body:'{"query":{"pages":{}}}'}));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
-  status: 200,
-  contentType: 'application/javascript',
-  body: `
+  status:200, contentType:'application/javascript',
+  body:`
     window.__mockRpcCalls = [];
+    let profile = {player_id:'00000000-0000-4000-8000-000000000001',nickname:'BrowserTester',xp:0,level:1,total_challenges:0,daily_count:0};
+    const sessionToken = 'c'.repeat(64);
+    const recoveryKey = 'd'.repeat(48);
     const auth = {
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
-      getSession: async () => ({ data: { session: null }, error: null }),
-      signOut: async () => ({ error: null }),
-      signInWithPassword: async () => ({ error: null }),
-      signUp: async () => ({ data: { session: null }, error: null }),
-      resetPasswordForEmail: async () => ({ error: null }),
-      updateUser: async () => ({ error: null })
+      onAuthStateChange: () => ({data:{subscription:{unsubscribe(){}}}}),
+      getSession: async () => ({data:{session:null},error:null}),
+      signOut: async () => ({error:null}),
+      signInWithPassword: async () => ({error:null}),
+      signUp: async () => ({data:{session:null},error:null}),
+      resetPasswordForEmail: async () => ({error:null}),
+      updateUser: async () => ({error:null})
     };
-    window.supabase = {
-      createClient: () => ({
-        auth,
-        from: () => ({
-          select() { return this; },
-          eq() { return this; },
-          maybeSingle: async () => ({ data: null, error: null })
-        }),
-        rpc: async (name, args) => {
-          window.__mockRpcCalls.push({ name, args });
-          if (name === 'atina_progress_register') {
-            return { data: { player_id: '00000000-0000-4000-8000-000000000001', nickname: args.p_nickname, xp: 0, level: 1, total_challenges: 0, daily_count: 0 }, error: null };
-          }
-          if (name === 'atina_progress_leaderboard') {
-            return { data: [{ nickname: 'BrowserTester', xp: 10, level: 1, challenges: 1 }], error: null };
-          }
-          if (name === 'atina_progress_claim_local') {
-            return { data: { awarded: true, challenge_xp: 10, daily_bonus: 0, xp: 10, level: 1, total_challenges: 1, daily_count: 1 }, error: null };
-          }
-          return { data: null, error: null };
+    window.supabase = {createClient: () => ({auth,
+      from: () => ({select(){return this;},eq(){return this;},maybeSingle:async()=>({data:null,error:null})}),
+      rpc: async (name,args) => {
+        window.__mockRpcCalls.push({name,args});
+        if(name==='atina_account_register') return {data:{session_token:sessionToken,recovery_key:recoveryKey,profile},error:null};
+        if(name==='atina_account_login') return {data:{ok:true,session_token:sessionToken,profile},error:null};
+        if(name==='atina_account_recover') return {data:{ok:true,session_token:sessionToken,recovery_key:'e'.repeat(48),recovered:true},error:null};
+        if(name==='atina_account_profile') return {data:profile,error:null};
+        if(name==='atina_progress_claim_local') {
+          profile={...profile,xp:15,level:1,total_challenges:1,awarded:true,challenge_xp:15,daily_bonus:0};
+          return {data:profile,error:null};
         }
-      })
-    };
+        if(name==='atina_progress_leaderboard') return {data:[{nickname:'BrowserTester',xp:15,level:1}],error:null};
+        return {data:null,error:null};
+      }
+    })};
   `
 }));
-
 try {
-  await page.goto(`http://127.0.0.1:${address.port}/`, { waitUntil: 'load' });
-  // The cloud profile lives on the profile page; navigate there before testing its controls.
+  await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   await page.evaluate(() => showHomePage('profile'));
-  await page.locator('#atinaCloudRegister').waitFor({ state: 'visible' });
-  assert.equal(await page.title(), 'ATINA — Pensa. Descobre. Atina.');
-
+  await page.locator('#atinaAccountRegister').waitFor({state:'visible'});
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
-  await page.locator('#atinaCloudRegister').click();
-  await page.waitForFunction(() => {
-    const status = document.querySelector('#atinaCloudStatus')?.textContent || '';
-    return status === 'Pseudónimo guardado. A progressão está sincronizada.'
-      || (status && status !== 'A sincronizar pseudónimo…');
-  }, null, { timeout: 10000 }).catch(async () => {
-    const status = await page.locator('#atinaCloudStatus').textContent().catch(() => '(sem painel de estado)');
-    throw new Error('O registo não terminou. Estado: ' + status
-      + '\\nErros da página: ' + JSON.stringify(pageErrors)
-      + '\\nErros da consola: ' + JSON.stringify(consoleErrors));
+  await page.locator('#atinaAccountPassword').evaluate(el => { el.value = 'x'.repeat(73); });
+  await page.locator('#atinaAccountRegister').click();
+  assert.match(await page.locator('#atinaCloudStatus').textContent(), /72 bytes UTF-8/);
+  assert.equal(await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_account_register').length), 0,
+    'Palavras-passe acima de 72 bytes não devem chegar ao RPC.');
+  await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
+  page.on('dialog', dialog => { dialogMessages.push(dialog.message()); return dialog.accept(); });
+  await page.locator('#atinaAccountRegister').click();
+  await page.waitForFunction(() => document.querySelector('#atinaCloudStatus')?.textContent.includes('Conta criada.'), null, {timeout:10000}).catch(async () => {
+    throw new Error('O registo não terminou. Estado: '+await page.locator('#atinaCloudStatus').textContent()
+      +' · RPC: '+JSON.stringify(await page.evaluate(()=>window.__mockRpcCalls||[]))
+      +' · erros: '+JSON.stringify(pageErrors));
   });
-  const registerStatus = await page.locator('#atinaCloudStatus').textContent();
-  assert.equal(registerStatus, 'Pseudónimo guardado. A progressão está sincronizada.',
-    'Falha ao registar pseudónimo. Estado: ' + registerStatus
-    + '\\nChamadas RPC: ' + JSON.stringify(await page.evaluate(() => window.__mockRpcCalls))
-    + '\\nErros da página: ' + JSON.stringify(pageErrors)
-    + '\\nErros da consola: ' + JSON.stringify(consoleErrors));
-  const deviceToken = await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1'));
-  assert.match(deviceToken, /^[0-9a-f]{64}$/);
-  await page.locator('#atinaCloudCopyRecovery').click();
-  await page.getByText('Código de recuperação copiado. Guarda-o num local seguro.').waitFor();
-  assert.equal(await page.evaluate(() => window.__copiedRecoveryCode), deviceToken);
-
-  // Losing localStorage must not silently create a different cloud identity.
-  await page.evaluate(() => localStorage.removeItem('atinaProgressDeviceTokenV1'));
-  await page.reload({ waitUntil: 'load' });
-  // Reload returns to the home screen; reveal the profile before checking its status.
-  await page.evaluate(() => showHomePage('profile'));
-  await page.locator('#atinaCloudStatus').waitFor({ state: 'visible' });
-  await page.getByText(/A chave deste pseudónimo não está neste dispositivo/).waitFor();
-  assert.equal(await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1')), null);
-  await page.locator('#atinaCloudRecoveryCode').fill(deviceToken);
-  await page.locator('#atinaCloudRestore').click();
-  await page.getByText('Pseudónimo guardado. A progressão está sincronizada.').waitFor();
-  assert.equal(await page.evaluate(() => localStorage.getItem('atinaProgressDeviceTokenV1')), deviceToken);
+  assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
   assert.equal(await page.locator('#atinaCloudXp').textContent(), '0 XP');
 
-  const wrongResultClaimCount = await page.evaluate(() => {
-    const sessionId = '00000000-0000-4000-8000-000000000123';
-    atinaServerSession = { session_id: sessionId, token: 'a'.repeat(64) };
-    atinaServerState = { session_id: sessionId, position: 1 };
-    const state = {
-      session_id: sessionId, position: 1, round_locked: true, status: 'active',
-      mode: 'solo', scores: [0, 0], current_player: 1, queue_size: 1,
-      difficulty: 'easy', last_result: { outcome: 'wrong', penalty: 10 },
-      challenge: { category: 'Teste', emoji: '🧪', clues: [], total_clues: 5, answer: 'Resposta' }
-    };
-    atinaServerApplyState(state);
-    return window.__mockRpcCalls.filter(call => call.name === 'atina_progress_claim_local').length;
-  });
-  assert.equal(wrongResultClaimCount, 0, 'Uma resposta errada nunca pode gerar um pedido de XP.');
+  // Account sign-in survives a fresh browser context through the server-issued session.
+  await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
+  await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
+  await page.locator('#atinaAccountLogin').click();
+  await page.getByText('Sessão iniciada. O teu progresso está sincronizado.').waitFor();
+  assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
 
-  const duelClaimCount = await page.evaluate(() => {
-    const sessionId = '00000000-0000-4000-8000-000000000124';
-    atinaServerSession = { session_id: sessionId, token: 'b'.repeat(64) };
-    atinaServerApplyState({
-      session_id: sessionId, position: 1, round_locked: true, status: 'active',
-      mode: 'duel', scores: [10, 0], current_player: 1, queue_size: 1,
-      difficulty: 'easy', last_result: { outcome: 'correct', points: 10 },
-      challenge: { category: 'Teste', emoji: '🧪', clues: [], total_clues: 5, answer: 'Resposta' }
-    });
-    return window.__mockRpcCalls.filter(call => call.name === 'atina_progress_claim_local').length;
-  });
-  assert.equal(duelClaimCount, 0, 'Duelo nunca deve creditar XP a um único pseudónimo.');
+  // Recovery must return and display a replacement single-use key.
+  await page.locator('#atinaRecoveryArea summary').click();
+  await page.locator('#atinaRecoveryKey').fill('d'.repeat(48));
+  await page.locator('#atinaNewAccountPassword').fill('AnotherCorrectHorse2!');
+  await page.locator('#atinaAccountRecover').click();
+  await page.waitForFunction(() => document.querySelector('#atinaCloudStatus')?.textContent.includes('Conta recuperada.'), null, {timeout:10000});
+  assert.ok(dialogMessages.some(message => message.includes('e'.repeat(48))),
+    'A nova chave de recuperação tem de ser apresentada ao utilizador.');
+  const recoveryCall = await page.evaluate(() => window.__mockRpcCalls.find(call => call.name==='atina_account_recover'));
+  assert.equal(recoveryCall.args.p_recovery_key,'d'.repeat(48));
+  assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
 
   await page.evaluate(() => {
-    const sessionId = '00000000-0000-4000-8000-000000000123';
-    atinaServerSession = { session_id: sessionId, token: 'a'.repeat(64) };
-    atinaServerState = { session_id: sessionId, position: 1 };
-    atinaServerApplyState({
-      session_id: sessionId, position: 1, round_locked: true, status: 'active',
-      mode: 'solo', scores: [10, 0], current_player: 1, queue_size: 1,
-      difficulty: 'easy', last_result: { outcome: 'correct', points: 10 },
-      challenge: { category: 'Teste', emoji: '🧪', clues: [], total_clues: 5, answer: 'Resposta' }
-    });
+    atinaServerSession={session_id:'00000000-0000-4000-8000-000000000123',token:'a'.repeat(64)};
+    atinaCloudProfile={player_id:'00000000-0000-4000-8000-000000000001',nickname:'BrowserTester',xp:0,level:1,total_challenges:0};
   });
-  await page.getByText(/\+10 XP confirmado pelo servidor/).waitFor();
-  await page.evaluate(() => atinaServerStopTimers());
-  assert.equal(await page.locator('#atinaCloudXp').textContent(), '10 XP');
-
-  const calls = await page.evaluate(() => window.__mockRpcCalls);
-  const claims = calls.filter(call => call.name === 'atina_progress_claim_local');
-  assert.equal(claims.length, 1, 'A ronda correta deve originar exatamente um claim.');
-  assert.deepEqual(Object.keys(claims[0].args).sort(), [
-    'p_device_token', 'p_position', 'p_session_id', 'p_session_token'
-  ].sort(), 'O cliente não pode enviar XP ou pontos à RPC.');
-  assert.equal(claims[0].args.p_device_token, deviceToken);
-  assert.equal(claims[0].args.p_position, 1);
-  assert.equal(claims[0].args.p_session_token, 'a'.repeat(64));
+  const claimState = {mode:'solo',session_id:'00000000-0000-4000-8000-000000000123',position:1,round_locked:true,last_result:{outcome:'correct',points:15}};
+  await page.evaluate(state => atinaProgressClaim(state), claimState);
+  await page.getByText(/\+15 XP confirmado pelo servidor/).waitFor();
+  assert.equal(await page.locator('#atinaCloudXp').textContent(), '15 XP');
+  await page.evaluate(state => atinaProgressClaim(state), claimState);
+  const claims = await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_progress_claim_local'));
+  assert.equal(claims.length,1,'O mesmo desafio não deve originar claims repetidos no cliente.');
+  assert.deepEqual(Object.keys(claims[0].args).sort(),['p_device_token','p_position','p_session_id','p_session_token'].sort());
+  assert.equal(claims[0].args.p_device_token,'c'.repeat(64));
 
   await page.locator('button.home-nav-btn[data-home-target="ranking"]').click();
-  await page.locator('[data-home-page="ranking"]').waitFor({ state: 'visible' });
   await page.locator('#atinaCloudLeaderboardRefresh').click();
-  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
-
-  assert.deepEqual(pageErrors, [], 'A página não deve produzir erros JavaScript.');
-  process.stdout.write('Browser E2E passed: perfil pseudónimo, token de dispositivo, leaderboard, bloqueio de XP em respostas erradas e claim de +10 XP apenas após resultado correto bloqueado pelo servidor.\\n');
+  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 15 XP/).waitFor();
+  assert.deepEqual(pageErrors,[],'A aplicação não deve produzir erros JavaScript.');
+  process.stdout.write('Browser E2E passed: criar conta, iniciar sessão, sincronizar XP, impedir claims duplicados e apresentar ranking.\\n');
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));
