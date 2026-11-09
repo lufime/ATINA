@@ -1321,11 +1321,17 @@ function screen(id){
  try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}
 }
 function restoreLastScreen(){
- let id='home',page='dashboard';
+ let id='home',page='dashboard',hashPage='';
  try{
   id=localStorage.getItem(ATINA_SCREEN_KEY)||'home';
   page=localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';
+  hashPage=String(location.hash||'').replace(/^#/,'');
  }catch(e){}
+ // O separador indicado no endereço tem prioridade sobre um estado antigo de jogo guardado.
+ if(atinaHomePageIsValid(hashPage)){
+  id='home';
+  page=hashPage;
+ }
  if(id==='game'){
   if(restoreLocalProgress())return;
   id='home';
