@@ -30,7 +30,10 @@ jobs:
           version: latest
 
       - name: Initialize disposable local Supabase configuration
-        run: supabase init --force
+        run: |
+          supabase init --force
+          # Avoid the default Postgres port, which may be occupied by another local stack.
+          sed -i '/^\[db\]/,/^\[/ s/^port = 54322$/port = 54323/' supabase/config.toml
 
       - name: Start disposable local Supabase stack
         run: supabase start
