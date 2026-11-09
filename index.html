@@ -1319,15 +1319,19 @@ function screen(id){
  try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}
 }
 function restoreLastScreen(){
- // Após recarregar a página, começar sempre no menu inicial.
+ let id='home',page='dashboard';
  try{
-  localStorage.removeItem(ATINA_PROGRESS_KEY);
-  localStorage.setItem(ATINA_SCREEN_KEY,'home');
-  localStorage.removeItem('atinaNetworkRoom');
+  id=localStorage.getItem(ATINA_SCREEN_KEY)||'home';
+  page=localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';
  }catch(e){}
- networkRoom=null;
- screen('home');
- showHomePage('dashboard',true);
+ if(id==='game'){
+  if(restoreLocalProgress())return;
+  id='home';
+ }
+ if(!['home','rankingPage','result'].includes(id))id='home';
+ screen(id);
+ if(id==='home')showHomePage(page,true);
+ if(id==='rankingPage'){loadMenuRanking();loadXpRanking();}
  update();
 }
 
@@ -1644,6 +1648,8 @@ $('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo
  }catch(error){if(resultStatus)resultStatus.textContent='Não foi possível guardar automaticamente. Podes tentar novamente no ecrã de resultados.';return;}
  screen('home');update();
 };renderCategories();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
+// Recupera o ecrã e o separador que estavam abertos antes da atualização.
+restoreLastScreen();
 /* Sincroniza o relógio quando a página volta a estar visível */
 function refreshVisibleClock(){if(document.hidden){if(raceStartedAt)raceStop();if(mimeRaceStartedAt)mimeRaceStop();return;}if(networkGameActive){networkDrawClock();ensureNetworkClock();}else if(!$('game').classList.contains('hidden')&&!locked){raceStart();if(timerDeadline){timerTick();if(timerInterval===null&&timedMode)timerInterval=setInterval(timerTick,200);}}if(!$('mimicaGame').classList.contains('hidden')&&mimeRunning&&!mimeRaceFinished)mimeRaceStart();}
 document.addEventListener('visibilitychange',refreshVisibleClock);
