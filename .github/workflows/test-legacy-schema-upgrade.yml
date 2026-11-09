@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: supabase-local-stack-${{ github.ref }}
+  group: supabase-legacy-local-stack-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -28,6 +28,9 @@ jobs:
       - name: Start disposable local Supabase stack
         run: |
           supabase init --force
+          # Use dedicated ports so this fixture can run alongside the clean replay.
+          sed -i '/^\[db\]/,/^\[/ s/^port = 54322$/port = 56322/' supabase/config.toml
+          sed -i '/^\[studio\]/,/^\[/ s/^port = 54323$/port = 56323/' supabase/config.toml
           # Keep the disposable database empty: apply only the v2 compatibility
           # migrations and pseudonym progression migration after the legacy fixture.
           sed -i '/^\[db\.migrations\]/,/^\[/ s/^enabled = true/enabled = false/' supabase/config.toml
