@@ -1323,8 +1323,10 @@ function screen(id){
  // Guardar também o ecrã no URL; assim o estado não depende apenas de localStorage.
  try{history.replaceState(null,'',id==='home'?'#'+(localStorage.getItem('atinaHomePage')||'dashboard'):'#screen-'+id);}catch(e){}
 }
+window.addEventListener('beforeunload',()=>{try{sessionStorage.setItem('atinaPageReloaded','1');}catch(e){}});
 function restoreLastScreen(){
- let id='home',page='dashboard',hashPage='';
+ let id='home',page='dashboard',hashPage='',wasReloaded=false;
+ try{wasReloaded=sessionStorage.getItem('atinaPageReloaded')==='1';sessionStorage.removeItem('atinaPageReloaded');}catch(e){}
  try{
   id=localStorage.getItem(ATINA_SCREEN_KEY)||'home';
   page=localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';
@@ -1336,9 +1338,9 @@ function restoreLastScreen(){
  }else if(atinaHomePageIsValid(hashPage)){
   id='home';page=hashPage;
  }
- // A partida guardada não deve reabrir automaticamente após atualizar.
- // O progresso fica guardado, mas o utilizador regressa ao último separador do menu.
- if(id==='game'||localStorage.getItem('atinaGameClosed')==='1')id='home';
+ // Após atualizar a página, regressar sempre ao menu, sem reabrir a partida.
+ // O progresso pode continuar guardado para referência, mas não força a entrada no jogo.
+ if(wasReloaded||id==='game'||id==='mimicaGame'||localStorage.getItem('atinaGameClosed')==='1')id='home';
  if(!['home','rankingPage','result'].includes(id))id='home';
  screen(id);
  if(id==='home')showHomePage(page,true);
