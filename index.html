@@ -2270,8 +2270,24 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const curatedItem=await atinaFindCuratedSolutionImage(cleanAnswer,aliases);
    // Em jogo online, aceitar o URL enviado pelo servidor apenas quando coincide
    // com a imagem curada e os respetivos créditos do catálogo.
+   const generatedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/solutions/';
+   const trustedGeneratedUrl=typeof preGeneratedUrl==='string'
+    &&preGeneratedUrl.startsWith(generatedStoragePrefix)
+    &&/^\\d+\\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
+   const generatedItem=trustedGeneratedUrl?{
+    title:cleanAnswer,
+    thumburl:preGeneratedUrl,
+    mime:'image/webp',
+    width:768,
+    height:768,
+    sourceName:'ATINA · imagem gerada por IA',
+    sourceUrl:'https://huggingface.co/black-forest-labs/FLUX.1-schnell',
+    author:'Imagem gerada localmente para ATINA',
+    license:'Imagem gerada por IA; modelo FLUX.1-schnell sob Apache-2.0',
+    licenseUrl:'https://www.apache.org/licenses/LICENSE-2.0'
+   }:null;
    item=preGeneratedUrl
-    ?(curatedItem&&curatedItem.thumburl===preGeneratedUrl?curatedItem:null)
+    ?(curatedItem&&curatedItem.thumburl===preGeneratedUrl?curatedItem:generatedItem)
     :curatedItem;
    // Sem URL explícito do servidor, procurar uma alternativa verificada.
    if(!item&&!preGeneratedUrl)item=await atinaFindCommonsSolutionImage(cleanAnswer,cleanCategory,aliases);
