@@ -1,3 +1,11 @@
+## Alternativa: executar no Kaggle pelo telemóvel
+
+Foi criado um notebook específico para o Kaggle: `tools/ai-solution-images/ATINA-Kaggle.ipynb`. Abre [o ficheiro no GitHub](https://github.com/lufime/ATINA/blob/feature/ai-solution-images/tools/ai-solution-images/ATINA-Kaggle.ipynb), descarrega o `.ipynb` (botão Raw / Download raw) e, no Kaggle, cria um Notebook e usa **File → Import Notebook** para carregar esse ficheiro. Mantém o notebook privado.
+
+Nas definições do notebook, ativa **Internet** e seleciona **Accelerator → GPU**, se houver uma disponível. O Kaggle documenta GPU NVIDIA P100 gratuita, mas a disponibilidade e a quota semanal são limitadas e pode existir fila. Referência: [Kaggle Notebooks](https://www.kaggle.com/docs/notebooks) e [Efficient GPU Usage](https://www.kaggle.com/docs/efficient-gpu-usage).
+
+Carrega o CSV apenas como input privado em **Input → Add Input → Upload** ou associa um dataset privado. Nunca publiques o CSV. Para upload ao Supabase, configura `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` em **Add-ons → Secrets** e ativa o acesso ao notebook. Não escrevas a chave em células.
+
 ## Usar pelo Google Colab (incluindo telemóvel)
 
 Foi preparado um notebook para executar o fluxo no Google Colab:
