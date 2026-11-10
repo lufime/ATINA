@@ -51,31 +51,18 @@ def parse_list(value: str | None) -> list[str]:
 def build_prompt(row: dict[str, str]) -> str:
     answer = (row.get("answer") or "").strip()
     category = (row.get("category") or "").strip()
-    clues = parse_list(row.get("clues"))
     tags = parse_list(row.get("image_tags"))
     description = (row.get("image_description") or "").strip()
-
-    evidence = "; ".join(clues[:6])
-    tag_text = ", ".join(tags[:10])
-    parts = [
-        "Create one polished, premium educational editorial illustration for a Portuguese family quiz game.",
-        "The exact subject to depict is: " + answer + ".",
-        "Challenge category: " + category + ".",
-    ]
-    if evidence:
-        parts.append("Verified challenge clues that disambiguate the subject: " + evidence + ".")
-    if tag_text:
-        parts.append("Additional subject tags: " + tag_text + ".")
-    if description:
-        parts.append("Visual direction: " + description + ".")
-    parts.extend([
-        "Depict the exact answer, not an associated object or a loosely related concept.",
-        "Make the subject immediately recognizable, factually plausible and visually unambiguous.",
-        "Use a consistent refined editorial illustration style, cinematic natural lighting, rich but balanced colours, clear focal point and carefully composed square frame.",
-        "No text, letters, numbers, captions, labels, logos, watermarks, signatures, borders, split panels or collage.",
-        "Do not include quiz clues as written text. Do not invent identifying details.",
-    ])
-    return " ".join(parts)
+    # Keep prompts short: FLUX's CLIP encoder truncates long prompts and
+    # long T5 sequences increase memory pressure on 16 GB Tesla T4 GPUs.
+    subject = description or ", ".join(tags[:3]) or category
+    return (
+        "Editorial educational illustration, square composition. "
+        f"Exact recognizable subject: {answer}. "
+        f"Visual direction: {subject}. "
+        "Single clear focal point, accurate natural appearance, refined lighting, "
+        "balanced colours. No text, letters, numbers, logos, watermark or collage."
+    )
 
 
 def load_pipeline(model_id: str) -> FluxPipeline:
@@ -84,16 +71,20 @@ def load_pipeline(model_id: str) -> FluxPipeline:
             "Não foi detetada uma GPU CUDA. Este modelo é demasiado pesado para "
             "recomendar geração em CPU. Usa uma máquina com GPU NVIDIA compatível."
         )
-    dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
-    print(f"A carregar {model_id} em {dtype}...", flush=True)
+    # Tesla T4 (Turing) is most reliable with FP16; BF16 is not supported.
+    dtype = torch.float16
+    print(f"A carregar {model_id} em {dtype} com sequential CPU offload...", flush=True)
     hf_token = os.getenv("HF_TOKEN", "").strip() or None
     pipe = FluxPipeline.from_pretrained(
         model_id,
         torch_dtype=dtype,
         use_safetensors=True,
         token=hf_token,
+        low_cpu_mem_usage=True,
     )
-    pipe.enable_model_cpu_offload()
+    # Must be enabled before any pipe.to("cuda") call. This is slower,
+    # but uses substantially less VRAM than model-level offload.
+    pipe.enable_sequential_cpu_offload()
     try:
         pipe.vae.enable_slicing()
         pipe.vae.enable_tiling()
@@ -110,15 +101,31 @@ def generate_one(pipe: FluxPipeline, row: dict[str, str], target: Path, force: b
 
     prompt = build_prompt(row)
     generator = torch.Generator(device="cpu").manual_seed(730000 + challenge_id)
-    result = pipe(
-        prompt=prompt,
-        height=768,
-        width=768,
-        num_inference_steps=4,
-        guidance_scale=0.0,
-        max_sequence_length=256,
-        generator=generator,
-    )
+    resolution = int(os.getenv("ATINA_IMAGE_RESOLUTION", "512"))
+    try:
+        result = pipe(
+            prompt=prompt,
+            height=resolution,
+            width=resolution,
+            num_inference_steps=4,
+            guidance_scale=0.0,
+            max_sequence_length=128,
+            generator=generator,
+        )
+    except torch.cuda.OutOfMemoryError:
+        print(f"[{challenge_id}] OOM a {resolution}px; a tentar novamente a 384px...", flush=True)
+        del generator
+        torch.cuda.empty_cache()
+        generator = torch.Generator(device="cpu").manual_seed(730000 + challenge_id)
+        result = pipe(
+            prompt=prompt,
+            height=384,
+            width=384,
+            num_inference_steps=4,
+            guidance_scale=0.0,
+            max_sequence_length=96,
+            generator=generator,
+        )
     image: Image.Image = result.images[0]
     target.parent.mkdir(parents=True, exist_ok=True)
     image.save(target, format="WEBP", quality=88, method=6)
@@ -263,7 +270,12 @@ def main() -> int:
             completed += 1
         except Exception as exc:
             print(f"[{challenge_id}] ERRO: {exc}", file=sys.stderr, flush=True)
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
             continue
+        finally:
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
     if args.upload and sql_statements:
         sql_path = ROOT / "generated" / "apply-generated-images.sql"
