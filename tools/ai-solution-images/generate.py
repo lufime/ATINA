@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+# Supabase exports can contain a single JSON field larger than csv's 128 KiB default.
+csv.field_size_limit(2**31 - 1)
 import hashlib
 import json
 import os
