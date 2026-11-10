@@ -1,3 +1,13 @@
+## Usar pelo Google Colab (incluindo telemóvel)
+
+Foi preparado um notebook para executar o fluxo no Google Colab:
+
+`tools/ai-solution-images/ATINA-Colab.ipynb`
+
+Abre-o em [Google Colab](https://colab.research.google.com/github/lufime/ATINA/blob/feature/ai-solution-images/tools/ai-solution-images/ATINA-Colab.ipynb). O notebook pede o CSV privado exportado do Supabase, monta o Google Drive para guardar o progresso e lê `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` a partir de Colab Secrets. Não coloques a chave no notebook nem a partilhes.
+
+O Colab gratuito pode não disponibilizar GPU em todas as sessões e pode interromper execuções longas. O notebook foi preparado para retomar imagens já guardadas no Drive; a primeira execução deve ser apenas um teste de 5 imagens.
+
 # Geração local de imagens de solução — ATINA
 
 Este fluxo prepara imagens geradas por IA para os 1.153 desafios ATINA sem recorrer a APIs pagas por imagem.
