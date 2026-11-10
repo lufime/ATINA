@@ -86,10 +86,12 @@ def load_pipeline(model_id: str) -> FluxPipeline:
         )
     dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
     print(f"A carregar {model_id} em {dtype}...", flush=True)
+    hf_token = os.getenv("HF_TOKEN", "").strip() or None
     pipe = FluxPipeline.from_pretrained(
         model_id,
         torch_dtype=dtype,
         use_safetensors=True,
+        token=hf_token,
     )
     pipe.enable_model_cpu_offload()
     try:
