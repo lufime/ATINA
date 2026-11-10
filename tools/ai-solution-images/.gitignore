@@ -1,0 +1,4 @@
+# Manifesto privado: contém respostas e pistas dos desafios
+tools/ai-solution-images/private/
+# Imagens geradas, SQL de aplicação e artefactos locais
+tools/ai-solution-images/generated/
