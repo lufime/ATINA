@@ -206,9 +206,25 @@ def main() -> int:
     with manifest.open("r", encoding="utf-8-sig", newline="") as handle:
         rows = list(csv.DictReader(handle))
 
+    # Also accept a one-row CSV exported from jsonb_agg(...) in Supabase SQL Editor.
+    if rows and len(rows[0]) == 1 and "challenges" in rows[0]:
+        try:
+            payload = json.loads(rows[0]["challenges"])
+            if isinstance(payload, list):
+                rows = [
+                    {
+                        key: (json.dumps(value, ensure_ascii=False) if isinstance(value, (list, dict)) else "" if value is None else str(value))
+                        for key, value in item.items()
+                    }
+                    for item in payload
+                    if isinstance(item, dict)
+                ]
+        except (json.JSONDecodeError, TypeError):
+            rows = []
+
     required = {"challenge_id", "category", "answer", "clues"}
     if not rows or not required.issubset(rows[0].keys()):
-        print("CSV inválido. Colunas obrigatórias: " + ", ".join(sorted(required)), file=sys.stderr)
+        print("CSV inválido. Esperava as colunas do manifesto ou uma coluna 'challenges' com JSON.", file=sys.stderr)
         return 2
 
     wanted_ids = {int(value.strip()) for value in args.ids.split(",") if value.strip()}
