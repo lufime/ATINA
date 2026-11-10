@@ -138,7 +138,7 @@ def upload_image(path: Path, challenge_id: int, base_url: str, service_key: str)
         "x-upsert": "true",
     }
     with path.open("rb") as handle:
-        response = requests.put(endpoint, headers=headers, data=handle, timeout=180)
+        response = requests.post(endpoint, headers=headers, data=handle, timeout=180)
     if response.status_code not in (200, 201):
         raise RuntimeError(
             f"Falha no upload do desafio {challenge_id}: "
