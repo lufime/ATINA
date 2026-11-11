@@ -31,6 +31,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <form id="uploadForm">
       <p>Seleciona várias imagens de uma só vez. O ID é lido do início do nome do ficheiro (por exemplo, <strong>0000-einstein.jpg</strong> corresponde ao desafio 0).</p>
       <label for="imageFiles">Imagens (JPEG, PNG ou WebP; até 10 MB cada)</label><input id="imageFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple required>
+      <label for="firstChallengeId">ID inicial (quando os nomes não incluem o ID)</label><input id="firstChallengeId" type="number" min="0" step="1" value="0" required>
+      <p class="note">Se os ficheiros tiverem nomes como 0005-nome.jpg, usa-se esse ID. Se tiverem nomes automáticos do telemóvel, são atribuídos por ordem de seleção, começando no ID inicial.</p>
       <label for="author">Autor / origem</label><input id="author" value="OpenAI / ChatGPT" required>
       <label for="license">Direitos / licença</label><input id="license" value="Imagem gerada por IA — confirmar termos aplicáveis antes de publicação" required>
       <label for="attribution">Atribuição / crédito</label><input id="attribution" value="Imagem gerada com ChatGPT" required>
