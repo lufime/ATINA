@@ -77,18 +77,18 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       for (const item of selected) {
         if (item.name.toLowerCase().endsWith(".zip")) {
           const archive = await JSZip.loadAsync(item);
-          const entries = Object.values(archive.files).filter(entry => !entry.dir && /\\.(jpe?g|png|webp)$/i.test(entry.name));
+          const entries = Object.values(archive.files).filter(entry => !entry.dir && /\.(jpe?g|png|webp)$/i.test(entry.name));
           for (const entry of entries) {
             const blob = await entry.async("blob");
             const name = entry.name.split("/").pop();
-            files.push(new File([blob], name, { type: /\\.png$/i.test(name) ? "image/png" : /\\.webp$/i.test(name) ? "image/webp" : "image/jpeg" }));
+            files.push(new File([blob], name, { type: /\.png$/i.test(name) ? "image/png" : /\.webp$/i.test(name) ? "image/webp" : "image/jpeg" }));
           }
         } else files.push(item);
       }
       if (!files.length) throw new Error("Não encontrei imagens no ficheiro selecionado.");
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const match = file.name.match(/^(\\d+)[-_]/);
+        const match = file.name.match(/^(\d+)[-_]/);
         if (!match) { results.push("✗ " + file.name + ": falta o ID no início do nome (ex.: 0005-nome.jpg)"); continue; }
         const challengeId = String(Number(match[1]));
         status("A enviar " + (i+1) + " de " + files.length + ": " + file.name + " → desafio " + challengeId + "\\n" + results.join("\\n"));
