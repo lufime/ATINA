@@ -91,7 +91,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
         const match = file.name.match(/^(\d+)[-_]/);
         if (!match) { results.push("✗ " + file.name + ": falta o ID no início do nome (ex.: 0005-nome.jpg)"); continue; }
         const challengeId = String(Number(match[1]));
-        status("A enviar " + (i+1) + " de " + files.length + ": " + file.name + " → desafio " + challengeId + "\\n" + results.join("\\n"));
+        status("A enviar " + (i+1) + " de " + files.length + ": " + file.name + " → desafio " + challengeId + "\n" + results.join("\n"));
         const body = new FormData();
         body.append("challenge_id", challengeId);
         body.append("file", file);
@@ -108,7 +108,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
         const result = await response.json().catch(() => ({}));
         results.push(response.ok ? "✓ " + file.name + " → desafio " + result.challenge_id : "✗ " + file.name + ": " + (result.error || "HTTP " + response.status));
       }
-      status("Processamento concluído (" + files.length + " imagens):\\n" + results.join("\\n"));
+      status("Processamento concluído (" + files.length + " imagens):\n" + results.join("\n"));
       $("imageFiles").value = "";
     } catch (error) { status(error.message || "Ocorreu um erro no envio."); }
     finally { button.disabled = false; }
