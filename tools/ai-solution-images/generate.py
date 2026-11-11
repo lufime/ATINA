@@ -191,7 +191,7 @@ def main() -> int:
             payload = json.loads(rows[0]["challenges"])
             if isinstance(payload, list):
                 rows = [
-                    {key: (json.dumps(value, ensure_ascii=False) if isinstance(value, (list, dict)) else "" if value is None else str(value) for key, value in item.items()}
+                    {key: (json.dumps(value, ensure_ascii=False) if isinstance(value, (list, dict)) else "" if value is None else str(value)) for key, value in item.items()}
                     for item in payload if isinstance(item, dict)
                 ]
         except (json.JSONDecodeError, TypeError):
