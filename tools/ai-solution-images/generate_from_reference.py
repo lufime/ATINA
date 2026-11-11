@@ -131,7 +131,7 @@ def main():
             result=pipe(prompt=build_prompt(row), image=canvas, strength=args.strength,
                 guidance_scale=6.5, num_inference_steps=30, generator=gen,
                 negative_prompt="illustration, painting, drawing, cartoon, fantasy, surreal, CGI, 3D render, distorted architecture, malformed objects, text, watermark")
-            final=add_logo(result.images[0])
+            final=result.images[0].convert('RGB')  # Logo omitted until the real brand asset is supplied.
             final.save(target,"WEBP",quality=92,method=6)
             sidecar={"challenge_id":cid,"answer":row.get("answer",""),"generated_file":target.name,
                 "method":"Stable Diffusion 1.5 img2img","reference_file":source["file"],
