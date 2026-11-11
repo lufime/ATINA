@@ -21,6 +21,9 @@ import requests
 import torch
 from diffusers import StableDiffusionPipeline
 from PIL import Image
+from PIL import ImageDraw
+import cairosvg
+import io
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_MODEL = "stable-diffusion-v1-5/stable-diffusion-v1-5"
@@ -58,6 +61,28 @@ def build_prompt(row: dict[str, str]) -> str:
         prompt += f" Subject details: {visual}."
     return prompt + " Real-world photography, natural materials and textures, accurate proportions, soft natural lighting, crisp focus, simple uncluttered background, documentary photography, no illustration, no drawing, no painting, no cartoon, no poster, no typography, no text, no letters, no watermark."
 
+
+
+def apply_atina_logo(image: Image.Image) -> Image.Image:
+    """Overlay the official ATINA SVG discreetly, preserving its original artwork."""
+    logo_path = ROOT / "assets" / "atina-logo-alentejo.svg"
+    if not logo_path.is_file():
+        raise FileNotFoundError(f"Logótipo oficial não encontrado: {logo_path}")
+    image = image.convert("RGBA")
+    logo_width = max(120, int(image.width * 0.34))
+    logo_png = cairosvg.svg2png(url=str(logo_path), output_width=logo_width)
+    logo = Image.open(io.BytesIO(logo_png)).convert("RGBA")
+    pad = max(5, int(image.width * 0.012))
+    panel_w, panel_h = logo.width + pad * 2, logo.height + pad * 2
+    margin = max(8, int(image.width * 0.025))
+    x = image.width - panel_w - margin
+    y = image.height - panel_h - margin
+    panel = Image.new("RGBA", (panel_w, panel_h), (8, 25, 42, 185))
+    mask = Image.new("L", (panel_w, panel_h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, panel_w - 1, panel_h - 1), radius=max(6, pad), fill=255)
+    image.alpha_composite(Image.composite(panel, Image.new("RGBA", panel.size), mask), (x, y))
+    image.alpha_composite(logo, (x + pad, y + pad))
+    return image.convert("RGB")
 
 def load_pipeline(model_id: str) -> StableDiffusionPipeline:
     if not torch.cuda.is_available():
@@ -116,7 +141,7 @@ def generate_one(pipe: StableDiffusionPipeline, row: dict[str, str], target: Pat
             guidance_scale=7.0,
             generator=generator,
         )
-    image: Image.Image = result.images[0]
+    image: Image.Image = apply_atina_logo(result.images[0])
     target.parent.mkdir(parents=True, exist_ok=True)
     image.save(target, format="WEBP", quality=88, method=6)
     print(f"[{challenge_id}] gerada: {target.name} ({target.stat().st_size:,} bytes)", flush=True)
