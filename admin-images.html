@@ -26,18 +26,15 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   </section>
   <section class="panel hidden" id="uploadPanel">
     <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
-      <h2>Enviar imagem</h2><button class="secondary" id="logout" style="width:auto;margin:0">Sair</button>
+      <h2>Enviar imagens em massa</h2><button class="secondary" id="logout" style="width:auto;margin:0">Sair</button>
     </div>
     <form id="uploadForm">
-      <label for="challengeId">ID do desafio</label><input id="challengeId" type="number" min="0" step="1" required placeholder="Ex.: 12">
-      <label for="imageFile">Imagem (JPEG, PNG ou WebP; máximo 10 MB)</label><input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp" required>
-      <label for="source">Origem da imagem</label><input id="source" required placeholder="Ex.: imagem original criada para ATINA">
-      <label for="sourceUrl">URL da origem</label><input id="sourceUrl" type="url" required placeholder="https://…">
-      <label for="author">Autor</label><input id="author" required placeholder="Nome do autor ou equipa">
-      <label for="license">Licença / direitos</label><input id="license" required placeholder="Ex.: criação original ATINA">
-      <label for="licenseUrl">URL da licença (opcional)</label><input id="licenseUrl" type="url" placeholder="https://…">
-      <label for="attribution">Atribuição / crédito</label><input id="attribution" required placeholder="Crédito a apresentar, se aplicável">
-      <button id="send" type="submit">Enviar imagem para o Supabase</button>
+      <p>Seleciona várias imagens de uma só vez. O ID é lido do início do nome do ficheiro (por exemplo, <strong>0000-einstein.jpg</strong> corresponde ao desafio 0).</p>
+      <label for="imageFiles">Imagens (JPEG, PNG ou WebP; até 10 MB cada)</label><input id="imageFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple required>
+      <label for="author">Autor / origem</label><input id="author" value="OpenAI / ChatGPT" required>
+      <label for="license">Direitos / licença</label><input id="license" value="Imagem gerada por IA — confirmar termos aplicáveis antes de publicação" required>
+      <label for="attribution">Atribuição / crédito</label><input id="attribution" value="Imagem gerada com ChatGPT" required>
+      <button id="send" type="submit">Enviar todas as imagens selecionadas</button>
     </form>
     <p class="note">Após o envio, a imagem fica guardada no Supabase e é associada automaticamente à solução com o mesmo ID.</p>
   </section>
@@ -67,27 +64,37 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   });
   $("uploadForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const button = $("send"); button.disabled = true; status("A enviar a imagem…");
+    const button = $("send"); button.disabled = true;
+    const files = Array.from($("imageFiles").files || []);
+    const results = [];
     try {
       const { data: { session } } = await client.auth.getSession();
       if (!session) throw new Error("A sessão expirou. Entra novamente.");
-      const file = $("imageFile").files[0];
-      if (!file) throw new Error("Seleciona primeiro uma imagem.");
-      const body = new FormData();
-      body.append("challenge_id", $("challengeId").value);
-      body.append("file", file);
-      for (const [field, id] of [["source","source"],["source_url","sourceUrl"],["author","author"],["license","license"],["license_url","licenseUrl"],["attribution","attribution"]]) {
-        body.append(field, $(id).value.trim());
+      if (!files.length) throw new Error("Seleciona pelo menos uma imagem.");
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const match = file.name.match(/^(\\d+)[-_]/);
+        if (!match) { results.push("✗ " + file.name + ": o nome deve começar pelo ID, por exemplo 0005-nome.jpg"); continue; }
+        const challengeId = String(Number(match[1]));
+        status("A enviar " + (i+1) + " de " + files.length + ": " + file.name + "\\n" + results.join("\\n"));
+        const body = new FormData();
+        body.append("challenge_id", challengeId);
+        body.append("file", file);
+        body.append("source", "Imagem gerada por IA — ChatGPT");
+        body.append("source_url", "gerada-por-ia://chatgpt");
+        body.append("author", $("author").value.trim());
+        body.append("license", $("license").value.trim());
+        body.append("attribution", $("attribution").value.trim());
+        const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-upload", {
+          method: "POST",
+          headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY },
+          body
+        });
+        const result = await response.json().catch(() => ({}));
+        results.push(response.ok ? "✓ " + file.name + " → desafio " + result.challenge_id : "✗ " + file.name + ": " + (result.error || "HTTP " + response.status));
       }
-      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-upload", {
-        method: "POST",
-        headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY },
-        body
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "O Supabase recusou o envio (HTTP " + response.status + ").");
-      status("Imagem enviada com sucesso para o Supabase.\nDesafio: " + result.challenge_id + "\nEstado: pendente de revisão.\nFicheiro: " + result.storage_path);
-      $("imageFile").value = "";
+      status("Processamento concluído (" + files.length + " ficheiros):\\n" + results.join("\\n"));
+      $("imageFiles").value = "";
     } catch (error) { status(error.message || "Ocorreu um erro no envio."); }
     finally { button.disabled = false; }
   });
