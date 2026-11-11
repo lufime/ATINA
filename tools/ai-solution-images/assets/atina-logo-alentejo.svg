@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 300" role="img" aria-labelledby="t d">
+<title id="t">ATINA</title><desc id="d">Logótipo ATINA com referência ao Alentejo, sobreiro e jogo.</desc>
+<circle cx="920" cy="112" r="84" fill="#FFC83D"/>
+<path d="M760 245 Q900 210 1080 245 M730 270 Q900 235 1060 270" fill="none" stroke="#6B8E23" stroke-width="13" stroke-linecap="round"/>
+<path d="M835 170 L920 112 L1008 170 V245 H835Z" fill="#FFFDF8" stroke="#0B315B" stroke-width="7" stroke-linejoin="round"/>
+<path d="M820 170 L920 98 L1022 170" fill="none" stroke="#E85D24" stroke-width="12" stroke-linejoin="round"/>
+<rect x="868" y="190" width="30" height="55" rx="3" fill="#0B315B"/><path d="M883 190V245 M868 217H898" stroke="#FFFDF8" stroke-width="4"/>
+<path d="M1035 240 Q1047 192 1034 151 M1035 183L1004 147 M1038 180L1072 145" fill="none" stroke="#60452D" stroke-width="13" stroke-linecap="round"/>
+<g fill="#526D1B"><circle cx="1000" cy="135" r="36"/><circle cx="1035" cy="115" r="43"/><circle cx="1072" cy="139" r="37"/></g>
+<text x="22" y="220" font-family="Arial,Helvetica,sans-serif" font-size="210" font-weight="900" letter-spacing="-10" fill="#FDFBF6">ATINA</text>
+<g fill="#F57C00" transform="translate(70 85)"><rect x="14" y="0" width="13" height="40" rx="4"/><rect x="0" y="13" width="40" height="13" rx="4"/></g>
+<path d="M30 260 Q370 225 745 252" fill="none" stroke="#F57C00" stroke-width="11" stroke-linecap="round"/>
+</svg>
