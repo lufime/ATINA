@@ -61,11 +61,11 @@ def build_prompt(row: dict[str, str]) -> str:
     # Hand-curated visual anchors for the first validation set. These take
     # priority over generic clues/tags when the solution is known.
     curated_subjects = {
-        "albert einstein": "a recognizable close-up photographic portrait of Albert Einstein, elderly physicist with distinctive wild white hair and moustache",
-        "lisboa": "a real panoramic photograph of Lisbon, Portugal, with the Tagus river, Praça do Comércio waterfront and traditional historic buildings",
-        "chave": "one single ordinary metal door key, clearly visible in close-up, isolated on a plain neutral surface; unmistakably a key, not a person or place",
-        "civilização do antigo egito": "the ancient Egyptian civilization represented by the Great Pyramids of Giza and the Great Sphinx in Egypt, with recognizable ancient Egyptian architecture",
-        "paz": "a single white dove clearly holding a small olive branch in its beak, photographed against a simple bright sky; universal symbol of peace",
+        "albert einstein": "an authentic archival-style black-and-white press photograph of Albert Einstein, head and shoulders, elderly face, distinctive unruly white hair and moustache, natural expression, realistic skin texture, softly lit plain studio background",
+        "lisboa": "a natural daylight travel documentary photograph taken from the south bank of the Tagus looking across to central Lisbon, Praça do Comércio and the historic waterfront, believable Portuguese architecture, real river reflections, ordinary city atmosphere",
+        "chave": "a single realistic, well-used silver metal house key lying flat on a wooden table beside a real door lock, photographed close enough to clearly see the bow and toothed blade, ordinary everyday object",
+        "civilização do antigo egito": "a colour documentary photograph of the real Giza plateau in Egypt, the Great Pyramid and the Great Sphinx clearly recognizable in their actual desert setting, warm natural sunlight, authentic limestone and sand textures, historically grounded archaeological site",
+        "paz": "a lifelike white dove standing naturally on a weathered stone ledge outdoors, gently holding a small clearly visible olive twig with leaves in its beak, realistic bird anatomy and feather detail, soft natural daylight",
     }
     normalized_answer = " ".join(answer.casefold().split())
     if normalized_answer in curated_subjects:
@@ -89,11 +89,14 @@ def build_prompt(row: dict[str, str]) -> str:
     if context:
         prompt += " This image must visually represent " + "; ".join(context) + "."
     prompt += (
-        " Show the actual recognizable subject, not a loosely related scene or decorative metaphor. "
-        "Keep the main subject prominent, centered, and visually unambiguous. "
-        "Natural real-world photography, accurate recognizable details, realistic materials and proportions, "
-        "soft natural light, crisp focus, simple uncluttered background. "
-        "No illustration, drawing, painting, cartoon, 3D render, poster, infographic, typography, "
+        " Make the scene physically plausible and grounded in a real place or everyday situation. "
+        "Use coherent perspective, natural scale, correct anatomy, believable object construction, "
+        "subtle imperfections, and realistic environmental details. "
+        "Photographed by a professional documentary photographer with a full-frame camera, "
+        "natural available light, true-to-life colours, realistic exposure and depth of field. "
+        "Avoid staged stock-photo poses, surreal combinations, floating objects, duplicated subjects, "
+        "invented architecture, exaggerated details, or decorative symbolism beyond the requested meaning. "
+        "No illustration, drawing, painting, cartoon, CGI, 3D render, poster, infographic, typography, "
         "text, letters, captions, or watermark."
     )
     return prompt
