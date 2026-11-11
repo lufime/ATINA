@@ -51,15 +51,42 @@ def parse_list(value: str | None) -> list[str]:
 
 
 def build_prompt(row: dict[str, str]) -> str:
+    """Build a short, solution-led prompt; clues disambiguate but are not depicted as text."""
     answer = (row.get("answer") or "").strip()
+    category = (row.get("category") or "").strip()
     description = (row.get("image_description") or "").strip()
     tags = parse_list(row.get("image_tags"))
-    visual = description or ", ".join(tags[:2])
-    # Photorealistic visual direction; keep concise for Stable Diffusion 1.5 CLIP.
-    prompt = f"Photorealistic high-quality photograph of {answer}."
-    if visual:
-        prompt += f" Subject details: {visual}."
-    return prompt + " Real-world photography, natural materials and textures, accurate proportions, soft natural lighting, crisp focus, simple uncluttered background, documentary photography, no illustration, no drawing, no painting, no cartoon, no poster, no typography, no text, no letters, no watermark."
+    clues = parse_list(row.get("clues"))
+
+    # A curated image description is the strongest visual guidance. Otherwise,
+    # use the answer plus a small amount of context to disambiguate it.
+    if description:
+        subject = description
+    elif tags:
+        subject = ", ".join(tags[:4])
+    else:
+        subject = answer
+
+    context = []
+    if category:
+        context.append(f"challenge category: {category}")
+    if answer:
+        context.append(f"the exact solution is {answer}")
+    if clues:
+        context.append("context to identify the correct subject: " + "; ".join(clues[:2]))
+
+    prompt = f"Photorealistic documentary photograph clearly depicting {subject}."
+    if context:
+        prompt += " This image must visually represent " + "; ".join(context) + "."
+    prompt += (
+        " Show the actual recognizable subject, not a loosely related scene or decorative metaphor. "
+        "Keep the main subject prominent, centered, and visually unambiguous. "
+        "Natural real-world photography, accurate recognizable details, realistic materials and proportions, "
+        "soft natural light, crisp focus, simple uncluttered background. "
+        "No illustration, drawing, painting, cartoon, 3D render, poster, infographic, typography, "
+        "text, letters, captions, or watermark."
+    )
+    return prompt
 
 
 
