@@ -30,9 +30,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     </div>
     <form id="uploadForm">
       <p>Seleciona várias imagens de uma só vez. O ID é lido do início do nome do ficheiro (por exemplo, <strong>0000-einstein.jpg</strong> corresponde ao desafio 0).</p>
-      <label for="imageFiles">Imagens (JPEG, PNG ou WebP; até 10 MB cada)</label><input id="imageFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple required>
-      <label for="firstChallengeId">ID inicial (quando os nomes não incluem o ID)</label><input id="firstChallengeId" type="number" min="0" step="1" value="0" required>
-      <p class="note">Se os ficheiros tiverem nomes como 0005-nome.jpg, usa-se esse ID. Se tiverem nomes automáticos do telemóvel, são atribuídos por ordem de seleção, começando no ID inicial.</p>
+      <label for="imageFiles">Imagens ou ficheiro ZIP (JPEG, PNG, WebP ou ZIP)</label><input id="imageFiles" type="file" accept=".zip,application/zip,image/jpeg,image/png,image/webp" multiple required>
+      <p class="note">Podes selecionar várias imagens ou um ZIP. Dentro do ZIP, cada imagem deve começar pelo ID do desafio, por exemplo 0000-einstein.jpg, 0001-lisboa.jpg.</p>
       <label for="author">Autor / origem</label><input id="author" value="OpenAI / ChatGPT" required>
       <label for="license">Direitos / licença</label><input id="license" value="Imagem gerada por IA — confirmar termos aplicáveis antes de publicação" required>
       <label for="attribution">Atribuição / crédito</label><input id="attribution" value="Imagem gerada com ChatGPT" required>
@@ -43,6 +42,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   <div id="status" role="status" aria-live="polite"></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 (() => {
   const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
@@ -67,18 +67,31 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("uploadForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const button = $("send"); button.disabled = true;
-    const files = Array.from($("imageFiles").files || []);
+    const selected = Array.from($("imageFiles").files || []);
     const results = [];
     try {
       const { data: { session } } = await client.auth.getSession();
       if (!session) throw new Error("A sessão expirou. Entra novamente.");
-      if (!files.length) throw new Error("Seleciona pelo menos uma imagem.");
+      if (!selected.length) throw new Error("Seleciona imagens ou um ficheiro ZIP.");
+      let files = [];
+      for (const item of selected) {
+        if (item.name.toLowerCase().endsWith(".zip")) {
+          const archive = await JSZip.loadAsync(item);
+          const entries = Object.values(archive.files).filter(entry => !entry.dir && /\\.(jpe?g|png|webp)$/i.test(entry.name));
+          for (const entry of entries) {
+            const blob = await entry.async("blob");
+            const name = entry.name.split("/").pop();
+            files.push(new File([blob], name, { type: /\\.png$/i.test(name) ? "image/png" : /\\.webp$/i.test(name) ? "image/webp" : "image/jpeg" }));
+          }
+        } else files.push(item);
+      }
+      if (!files.length) throw new Error("Não encontrei imagens no ficheiro selecionado.");
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const match = file.name.match(/^(\d+)[-_]/);
-        if (!match) { results.push("✗ " + file.name + ": o nome deve começar pelo ID, por exemplo 0005-nome.jpg"); continue; }
+        const match = file.name.match(/^(\\d+)[-_]/);
+        if (!match) { results.push("✗ " + file.name + ": falta o ID no início do nome (ex.: 0005-nome.jpg)"); continue; }
         const challengeId = String(Number(match[1]));
-        status("A enviar " + (i+1) + " de " + files.length + ": " + file.name + "\n" + results.join("\n"));
+        status("A enviar " + (i+1) + " de " + files.length + ": " + file.name + " → desafio " + challengeId + "\\n" + results.join("\\n"));
         const body = new FormData();
         body.append("challenge_id", challengeId);
         body.append("file", file);
@@ -95,7 +108,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
         const result = await response.json().catch(() => ({}));
         results.push(response.ok ? "✓ " + file.name + " → desafio " + result.challenge_id : "✗ " + file.name + ": " + (result.error || "HTTP " + response.status));
       }
-      status("Processamento concluído (" + files.length + " ficheiros):\n" + results.join("\n"));
+      status("Processamento concluído (" + files.length + " imagens):\\n" + results.join("\\n"));
       $("imageFiles").value = "";
     } catch (error) { status(error.message || "Ocorreu um erro no envio."); }
     finally { button.disabled = false; }
