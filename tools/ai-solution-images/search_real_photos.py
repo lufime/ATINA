@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import csv
 import html
 import json
 import re
@@ -20,6 +21,8 @@ from PIL import Image
 from io import BytesIO
 
 API = "https://commons.wikimedia.org/w/api.php"
+csv.field_size_limit(2**31 - 1)
+
 HEADERS = {"User-Agent": "ATINA-image-research/1.0 (educational challenge image sourcing)"}
 ALLOWED_LICENSES = ("CC BY", "CC BY-SA", "CC0", "Public domain", "public domain")
 
