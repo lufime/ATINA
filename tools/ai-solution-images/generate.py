@@ -21,6 +21,9 @@ import requests
 import torch
 from diffusers import StableDiffusionPipeline
 from PIL import Image
+from PIL import ImageDraw
+import cairosvg
+import io
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_MODEL = "stable-diffusion-v1-5/stable-diffusion-v1-5"
@@ -48,16 +51,78 @@ def parse_list(value: str | None) -> list[str]:
 
 
 def build_prompt(row: dict[str, str]) -> str:
+    """Build a short, solution-led prompt; clues disambiguate but are not depicted as text."""
     answer = (row.get("answer") or "").strip()
+    category = (row.get("category") or "").strip()
     description = (row.get("image_description") or "").strip()
     tags = parse_list(row.get("image_tags"))
-    visual = description or ", ".join(tags[:2])
-    # Keep the prompt short to avoid CLIP truncation and unnecessary memory use.
-    prompt = f"Clear educational illustration of {answer}."
-    if visual:
-        prompt += f" Visual details: {visual}."
-    return prompt + " Single subject, centered composition, realistic shapes, clean background, no text, no letters, no watermark."
+    clues = parse_list(row.get("clues"))
 
+    # Hand-curated visual anchors for the first validation set. These take
+    # priority over generic clues/tags when the solution is known.
+    curated_subjects = {
+        "albert einstein": "an authentic archival-style black-and-white press photograph of Albert Einstein, head and shoulders, elderly face, distinctive unruly white hair and moustache, natural expression, realistic skin texture, softly lit plain studio background",
+        "lisboa": "a highly recognizable real-world photograph of Lisbon, Portugal, featuring the iconic yellow number 28 vintage tram in the foreground on a traditional cobblestone street, historic pastel-coloured buildings and the São Jorge Castle hill in the background, authentic Portuguese street details, natural daylight",
+        "chave": "a single realistic, well-used silver metal house key lying flat on a wooden table beside a real door lock, photographed close enough to clearly see the bow and toothed blade, ordinary everyday object",
+        "civilização do antigo egito": "a realistic colour documentary photograph of the Giza plateau in Egypt showing the three unmistakable large ancient pyramids and the Great Sphinx together in one coherent wide composition, full pyramid silhouettes clearly visible and the Sphinx recognizable in the foreground, authentic desert landscape, natural warm daylight, historically accurate limestone structures",
+        "paz": "a close, lifelike wildlife photograph of a pure white dove in natural side profile, with a clearly visible green olive branch with several leaves held crosswise in the centre of its beak, the entire beak and branch unobstructed and sharply in focus, realistic bird anatomy and detailed natural feathers, soft outdoor daylight, calm simple background",
+    }
+    normalized_answer = " ".join(answer.casefold().split())
+    if normalized_answer in curated_subjects:
+        subject = curated_subjects[normalized_answer]
+    elif description:
+        subject = description
+    elif tags:
+        subject = ", ".join(tags[:4])
+    else:
+        subject = answer
+
+    context = []
+    if category:
+        context.append(f"challenge category: {category}")
+    if answer:
+        context.append(f"the exact solution is {answer}")
+    if clues:
+        context.append("context to identify the correct subject: " + "; ".join(clues[:2]))
+
+    prompt = f"Photorealistic documentary photograph clearly depicting {subject}."
+    if context:
+        prompt += " This image must visually represent " + "; ".join(context) + "."
+    prompt += (
+        " Make the scene physically plausible and grounded in a real place or everyday situation. "
+        "Use coherent perspective, natural scale, correct anatomy, believable object construction, "
+        "subtle imperfections, and realistic environmental details. "
+        "Photographed by a professional documentary photographer with a full-frame camera, "
+        "natural available light, true-to-life colours, realistic exposure and depth of field. "
+        "Avoid staged stock-photo poses, surreal combinations, floating objects, duplicated subjects, "
+        "invented architecture, exaggerated details, or decorative symbolism beyond the requested meaning. "
+        "No illustration, drawing, painting, cartoon, CGI, 3D render, poster, infographic, typography, "
+        "text, letters, captions, or watermark."
+    )
+    return prompt
+
+
+
+def apply_atina_logo(image: Image.Image) -> Image.Image:
+    """Overlay the official ATINA SVG discreetly, preserving its original artwork."""
+    logo_path = ROOT / "assets" / "atina-logo-alentejo.svg"
+    if not logo_path.is_file():
+        raise FileNotFoundError(f"Logótipo oficial não encontrado: {logo_path}")
+    image = image.convert("RGBA")
+    logo_width = max(120, int(image.width * 0.34))
+    logo_png = cairosvg.svg2png(url=str(logo_path), output_width=logo_width)
+    logo = Image.open(io.BytesIO(logo_png)).convert("RGBA")
+    pad = max(5, int(image.width * 0.012))
+    panel_w, panel_h = logo.width + pad * 2, logo.height + pad * 2
+    margin = max(8, int(image.width * 0.025))
+    x = image.width - panel_w - margin
+    y = image.height - panel_h - margin
+    panel = Image.new("RGBA", (panel_w, panel_h), (8, 25, 42, 185))
+    mask = Image.new("L", (panel_w, panel_h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, panel_w - 1, panel_h - 1), radius=max(6, pad), fill=255)
+    image.alpha_composite(Image.composite(panel, Image.new("RGBA", panel.size), mask), (x, y))
+    image.alpha_composite(logo, (x + pad, y + pad))
+    return image.convert("RGB")
 
 def load_pipeline(model_id: str) -> StableDiffusionPipeline:
     if not torch.cuda.is_available():
@@ -95,6 +160,7 @@ def generate_one(pipe: StableDiffusionPipeline, row: dict[str, str], target: Pat
     try:
         result = pipe(
             prompt=prompt,
+            negative_prompt="illustration, drawing, painting, cartoon, anime, 3d render, vector art, poster, infographic, text, letters, logo, watermark, blurry, distorted, low detail",
             height=resolution,
             width=resolution,
             num_inference_steps=25,
@@ -108,13 +174,14 @@ def generate_one(pipe: StableDiffusionPipeline, row: dict[str, str], target: Pat
         generator = torch.Generator(device="cpu").manual_seed(730000 + challenge_id)
         result = pipe(
             prompt=prompt,
+            negative_prompt="illustration, drawing, painting, cartoon, anime, 3d render, vector art, poster, infographic, text, letters, logo, watermark, blurry, distorted, low detail",
             height=384,
             width=384,
             num_inference_steps=25,
             guidance_scale=7.0,
             generator=generator,
         )
-    image: Image.Image = result.images[0]
+    image: Image.Image = apply_atina_logo(result.images[0])
     target.parent.mkdir(parents=True, exist_ok=True)
     image.save(target, format="WEBP", quality=88, method=6)
     print(f"[{challenge_id}] gerada: {target.name} ({target.stat().st_size:,} bytes)", flush=True)
