@@ -52,11 +52,11 @@ def build_prompt(row: dict[str, str]) -> str:
     description = (row.get("image_description") or "").strip()
     tags = parse_list(row.get("image_tags"))
     visual = description or ", ".join(tags[:2])
-    # Keep the prompt short to avoid CLIP truncation and unnecessary memory use.
-    prompt = f"Clear educational illustration of {answer}."
+    # Photorealistic visual direction; keep concise for Stable Diffusion 1.5 CLIP.
+    prompt = f"Photorealistic high-quality photograph of {answer}."
     if visual:
-        prompt += f" Visual details: {visual}."
-    return prompt + " Single subject, centered composition, realistic shapes, clean background, no text, no letters, no watermark."
+        prompt += f" Subject details: {visual}."
+    return prompt + " Real-world photography, natural materials and textures, accurate proportions, soft natural lighting, crisp focus, simple uncluttered background, documentary photography, no illustration, no drawing, no painting, no cartoon, no poster, no typography, no text, no letters, no watermark."
 
 
 def load_pipeline(model_id: str) -> StableDiffusionPipeline:
@@ -95,6 +95,7 @@ def generate_one(pipe: StableDiffusionPipeline, row: dict[str, str], target: Pat
     try:
         result = pipe(
             prompt=prompt,
+            negative_prompt="illustration, drawing, painting, cartoon, anime, 3d render, vector art, poster, infographic, text, letters, logo, watermark, blurry, distorted, low detail",
             height=resolution,
             width=resolution,
             num_inference_steps=25,
@@ -108,6 +109,7 @@ def generate_one(pipe: StableDiffusionPipeline, row: dict[str, str], target: Pat
         generator = torch.Generator(device="cpu").manual_seed(730000 + challenge_id)
         result = pipe(
             prompt=prompt,
+            negative_prompt="illustration, drawing, painting, cartoon, anime, 3d render, vector art, poster, infographic, text, letters, logo, watermark, blurry, distorted, low detail",
             height=384,
             width=384,
             num_inference_steps=25,
