@@ -62,10 +62,10 @@ def build_prompt(row: dict[str, str]) -> str:
     # priority over generic clues/tags when the solution is known.
     curated_subjects = {
         "albert einstein": "an authentic archival-style black-and-white press photograph of Albert Einstein, head and shoulders, elderly face, distinctive unruly white hair and moustache, natural expression, realistic skin texture, softly lit plain studio background",
-        "lisboa": "a natural daylight travel documentary photograph taken from the south bank of the Tagus looking across to central Lisbon, Praça do Comércio and the historic waterfront, believable Portuguese architecture, real river reflections, ordinary city atmosphere",
+        "lisboa": "a highly recognizable real-world photograph of Lisbon, Portugal, featuring the iconic yellow number 28 vintage tram in the foreground on a traditional cobblestone street, historic pastel-coloured buildings and the São Jorge Castle hill in the background, authentic Portuguese street details, natural daylight",
         "chave": "a single realistic, well-used silver metal house key lying flat on a wooden table beside a real door lock, photographed close enough to clearly see the bow and toothed blade, ordinary everyday object",
-        "civilização do antigo egito": "a colour documentary photograph of the real Giza plateau in Egypt, the Great Pyramid and the Great Sphinx clearly recognizable in their actual desert setting, warm natural sunlight, authentic limestone and sand textures, historically grounded archaeological site",
-        "paz": "a lifelike white dove standing naturally on a weathered stone ledge outdoors, gently holding a small clearly visible olive twig with leaves in its beak, realistic bird anatomy and feather detail, soft natural daylight",
+        "civilização do antigo egito": "a realistic colour documentary photograph of the Giza plateau in Egypt showing the three unmistakable large ancient pyramids and the Great Sphinx together in one coherent wide composition, full pyramid silhouettes clearly visible and the Sphinx recognizable in the foreground, authentic desert landscape, natural warm daylight, historically accurate limestone structures",
+        "paz": "a close, lifelike wildlife photograph of a pure white dove in natural side profile, with a clearly visible green olive branch with several leaves held crosswise in the centre of its beak, the entire beak and branch unobstructed and sharply in focus, realistic bird anatomy and detailed natural feathers, soft outdoor daylight, calm simple background",
     }
     normalized_answer = " ".join(answer.casefold().split())
     if normalized_answer in curated_subjects:
