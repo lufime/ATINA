@@ -22,7 +22,7 @@ Este fluxo prepara imagens geradas por IA para os 1.153 desafios ATINA sem recor
 
 ## Arquitetura
 
-- Modelo: `black-forest-labs/FLUX.1-schnell` (execução local; licença do modelo Apache-2.0).
+- Modelo: `stable-diffusion-v1-5/stable-diffusion-v1-5` (execução local; licença CreativeML OpenRAIL-M).
 - Geração: Diffusers + PyTorch numa máquina com GPU NVIDIA compatível.
 - Formato: WebP, 512 × 512 por omissão (fallback automático para 384 × 384 em caso de falta de VRAM).
 - Armazenamento final: bucket público já existente `atina-challenge-images` no Supabase Storage.
@@ -55,7 +55,7 @@ Exportar o resultado como CSV para:
 
 ## 2. Preparar o computador
 
-Requisitos: Python 3.10/3.11 e GPU NVIDIA com CUDA. Para a Tesla T4 (16 GB), o script usa FP16 e `enable_sequential_cpu_offload()` para reduzir VRAM. Esta opção transfere camadas entre CPU e GPU e pode ser bastante lenta; é preferível a falhar por falta de memória. A geração de 1.153 imagens pode demorar bastante.
+Requisitos: Python 3.10/3.11 e GPU NVIDIA com CUDA. Para a Tesla T4 (16 GB), o script usa Stable Diffusion 1.5 em FP16, `enable_model_cpu_offload()` e attention slicing. É uma configuração mais leve do que FLUX, embora a disponibilidade de memória dependa também das outras células do notebook. A geração de 1.153 imagens pode demorar bastante.
 
 Criar um ambiente virtual e instalar:
 
@@ -67,7 +67,7 @@ python -m pip install --upgrade pip
 pip install -r tools/ai-solution-images/requirements.txt
 ```
 
-O primeiro arranque descarrega o modelo do Hugging Face. A Tesla T4 usa FP16 (não BF16) e offload sequencial para CPU; o compromisso é maior tempo por imagem em troca de menor utilização de VRAM. A conta/token Hugging Face pode ser necessário conforme as condições de acesso em vigor. Não há API paga de geração neste fluxo.
+O primeiro arranque descarrega Stable Diffusion 1.5 do Hugging Face. A Tesla T4 usa FP16, offload de componentes para CPU e attention slicing. O modelo é público; se o Hugging Face pedir autenticação, configura um token Read como Secret `HF_TOKEN`. Não há API paga de geração neste fluxo.
 
 ## 3. Gerar um lote de teste
 
@@ -90,7 +90,7 @@ python tools/ai-solution-images/generate.py \
   --manifest tools/ai-solution-images/private/challenges.csv
 ```
 
-O script ignora imagens já existentes, permitindo retomar uma execução interrompida. Para regenerar uma imagem, usar `--force --ids 123` com o ID pretendido. Na Tesla T4, começa sempre com `--limit 5`. O script usa prompts curtos, 4 passos, sequência máxima de texto reduzida e limpa a cache CUDA após cada imagem. Se ocorrer OOM a 512 × 512, tenta novamente a 384 × 384. Para testar outra resolução, define `ATINA_IMAGE_RESOLUTION` no ambiente (por exemplo `384`).
+O script ignora imagens já existentes, permitindo retomar uma execução interrompida. Para regenerar uma imagem, usar `--force --ids 123` com o ID pretendido. Na Tesla T4, começa sempre com `--limit 5`. O script usa prompts curtos, 25 passos, 512 × 512 e limpa a cache CUDA após cada imagem. Se ocorrer OOM, tenta novamente a 384 × 384. Para testar outra resolução, define `ATINA_IMAGE_RESOLUTION` no ambiente (por exemplo `384`).
 
 ## 5. Enviar para o Supabase Storage
 
