@@ -1,0 +1,3 @@
+CREATE INDEX IF NOT EXISTS atina_detective_discoveries_evidence_idx ON private.atina_detective_discoveries(evidence_id);
+CREATE INDEX IF NOT EXISTS atina_detective_interactions_character_idx ON private.atina_detective_interactions(character_id);
+CREATE INDEX IF NOT EXISTS atina_detective_interactions_presented_evidence_idx ON private.atina_detective_interactions(presented_evidence_id) WHERE presented_evidence_id IS NOT NULL;
