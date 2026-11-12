@@ -33,9 +33,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <p>Seleciona várias imagens de uma só vez. O ID é lido do início do nome do ficheiro (por exemplo, <strong>0000-einstein.jpg</strong> corresponde ao desafio 0).</p>
       <label for="imageFiles">Imagens ou ficheiro ZIP (JPEG, PNG, WebP ou ZIP)</label><input id="imageFiles" type="file" accept=".zip,application/zip,image/jpeg,image/png,image/webp" multiple required>
       <p class="note">Podes selecionar várias imagens ou um ZIP. Dentro do ZIP, cada imagem deve começar pelo ID do desafio, por exemplo 0000-einstein.jpg, 0001-lisboa.jpg.</p>
-      <label for="author">Autor / origem</label><input id="author" value="OpenAI / ChatGPT" required>
-      <label for="license">Direitos / licença</label><input id="license" value="Imagem gerada por IA — confirmar termos aplicáveis antes de publicação" required>
-      <label for="attribution">Atribuição / crédito</label><input id="attribution" value="Imagem gerada com ChatGPT" required>
+      <label for="author">Autor / origem</label><input id="author" value="ATINA" required>
+      <label for="license">Direitos / licença</label><input id="license" value="© ATINA — Todos os direitos reservados. Uso exclusivo no projeto ATINA." required>
+      <label for="attribution">Atribuição / crédito</label><input id="attribution" value="© ATINA" required>
       <button id="send" type="submit">Enviar todas as imagens selecionadas</button>
     </form>
     <p class="note">Após o envio, a imagem fica guardada no Supabase e é associada automaticamente à solução com o mesmo ID.</p>
