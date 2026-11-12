@@ -34,6 +34,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <div class="stat"><strong>—</strong><span>Por confirmar</span></div>
       <div class="stat"><strong>—</strong><span>Sem imagem</span></div>
     </div>
+    <h2 style="margin-top:18px">Jogadores online e última atividade</h2>
+    <div id="presenceList" class="hint">A carregar jogadores…</div>
+    <p class="note">Online = atividade nos últimos 2 minutos. A lista mantém a última atividade até 30 dias.</p>
     <h2 style="margin-top:18px">O que precisa de atenção</h2>
     <div id="dashboardTasks" class="hint">A carregar tarefas…</div>
     <p class="note">Os números e as tarefas são consultados diretamente na base de dados, apenas depois de entrares como administrador.</p>
@@ -70,7 +73,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("uploadPanel").classList.toggle("hidden", !session);
     $("dashboardPanel").classList.toggle("hidden", !session);
     $("adminLinks").classList.toggle("hidden", !session);
-    if (session) loadDashboard();
+    if (session) { loadDashboard(); loadPresence(); }
   }
   $("login").addEventListener("click", async () => {
     const button = $("login");
@@ -87,7 +90,30 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     } finally { button.disabled = false; }
   });
   $("refreshDashboard").addEventListener("click", loadDashboard);
-  async function loadDashboard() {
+  async function loadPresence() {
+    const box = $("presenceList");
+    if (!box) return;
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) return;
+      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "presence" })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível carregar a presença.");
+      if (!data.players.length) { box.textContent = "Ainda não há registos de atividade."; return; }
+      box.innerHTML = data.players.map(function(p) {
+        const when = new Date(p.last_seen_at);
+        const ago = Math.max(0, Math.floor((Date.now() - when.getTime()) / 60000));
+        const time = ago < 1 ? "Agora mesmo" : ago < 60 ? "Há " + ago + " min" : when.toLocaleString("pt-PT");
+        const color = p.online ? "#83c6a4" : "#aab6c5";
+        return '<div class="task"><span><strong>' + String(p.nickname || "Visitante").replace(/[&<>"]/g, "") + '</strong><br><small style="color:' + color + '">' + (p.online ? "● Online" : "○ Offline") + '</small></span><span>' + time + '</span></div>';
+      }).join("");
+    } catch (error) { box.textContent = error.message; }
+  }
+  window.setInterval(() => { if (!$("dashboardPanel").classList.contains("hidden")) loadPresence(); }, 30000);\n  async function loadDashboard() {
     const target = $("dashboardTasks");
     $("dashboardUpdated").textContent = "A atualizar…";
     target.textContent = "A consultar tarefas…";
