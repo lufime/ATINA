@@ -883,7 +883,8 @@ function atinaOnlineCountBoot() {
     if (inFlight) return;
     inFlight = true;
     try {
-      await atinaServerRpc('atina_site_presence_heartbeat', { p_session_id: sessionId });
+      const nickname = (localStorage.getItem('atinaProgressNicknameV1') || '').trim().slice(0, 40) || 'Visitante';
+      await atinaServerRpc('atina_site_presence_heartbeat', { p_session_id: sessionId, p_nickname: nickname });
       const count = await atinaServerRpc('atina_online_player_count', {});
       const total = Math.max(0, Number(count) || 0);
       counter.textContent = '● ' + total + (total === 1 ? ' jogador online' : ' jogadores online');
