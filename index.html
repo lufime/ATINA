@@ -2325,7 +2325,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   frame.append(image);
   const provenance=document.createElement('p');provenance.className='muted small';
   provenance.style.cssText='margin:8px 0 0;line-height:1.5;overflow-wrap:anywhere';
-  const sourceUrl=item.sourceName==='ATINA'?'':(item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(String(item.title||'').replace(/ /g,'_')));
+  const sourceUrl=item.sourceName==='ATINA'?'':(item.sourceUrl || ('https://commons.wikimedia.org/wiki/'+encodeURIComponent(String(item.title||'').replace(/ /g,'_'))));
   const author=item.author||item.extmetadata?.Artist?.value?.replace(/<[^>]*>/g,'').trim()||'Autor não identificado';
   const license=item.license||atinaSolutionImageLicense(item)||'Licença não identificada';
   const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
