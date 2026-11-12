@@ -9,7 +9,7 @@
 :root{color-scheme:dark;--bg:#0b1421;--panel:#14243a;--line:#36516e;--gold:#d3ad68;--text:#f3f0e8;--muted:#aab6c5}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b3049,#0b1421 65%);color:var(--text);font:16px system-ui,sans-serif;min-height:100vh;padding:20px 12px}
 main{max-width:620px;margin:auto}.panel{background:#122238;border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}
-h1{font-size:24px;margin:4px 0 8px}h2{font-size:18px;margin:0 0 12px;color:var(--gold)}p,.hint{color:var(--muted);line-height:1.5}
+h1{font-size:24px;margin:4px 0 8px}h2{font-size:18px;margin:0 0 12px;color:var(--gold)}p,.hint{color:var(--muted);line-height:1.5}.page-link{display:inline-block;padding:10px 14px;border:1px solid var(--gold);border-radius:10px;color:var(--gold);text-decoration:none;font-weight:700}
 label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
 #status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden{display:none!important}.note{font-size:12px}
 </style>
@@ -18,6 +18,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 <main>
   <h1>ATINA · Imagens dos desafios</h1>
   <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
+  <p><a class="page-link" href="comparar-imagens.html">Ver imagens dos desafios →</a></p>
   <section class="panel" id="loginPanel">
     <h2>Entrar como administrador</h2>
     <label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
