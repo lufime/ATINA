@@ -1708,7 +1708,7 @@ function atinaPrepareSolutionImage(answer,category,hiddenTags=[],visualDescripti
  const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
  const cleanDescription=String(visualDescription||'').trim();
  if(!cleanAnswer||/^[+-]?(?:\d+|\d{1,3}(?:[ .\u00a0]\d{3})+)(?:[,.]\d+)?$/.test(cleanAnswer))return Promise.resolve();
- const key=cleanAnswer+'|'+cleanCategory;
+ const key=cleanAnswer+'|'+cleanCategory+'|'+String(preGeneratedUrl||'');
  if(atinaSolutionImagePreloads.has(key))return atinaSolutionImagePreloads.get(key);
  const staging=document.createElement('div');
  staging.id='atinaSolutionPreload_'+Math.random().toString(36).slice(2);
@@ -2325,7 +2325,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   frame.append(image);
   const provenance=document.createElement('p');provenance.className='muted small';
   provenance.style.cssText='margin:8px 0 0;line-height:1.5;overflow-wrap:anywhere';
-  const sourceUrl=item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(String(item.title||'').replace(/ /g,'_')));
+  const sourceUrl=item.sourceName==='ATINA'?'':(item.sourceUrl||('https://commons.wikimedia.org/wiki/'+encodeURIComponent(String(item.title||'').replace(/ /g,'_')));
   const author=item.author||item.extmetadata?.Artist?.value?.replace(/<[^>]*>/g,'').trim()||'Autor não identificado';
   const license=item.license||atinaSolutionImageLicense(item)||'Licença não identificada';
   const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
