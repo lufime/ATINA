@@ -145,3 +145,11 @@ O teste de 8 participantes humanos foi executado separadamente: 8 personagens hu
 - A solução detalhada (método e motivo) continua reservada ao detetive no fim da partida.
 - Os jogadores que ainda estavam no lobby passam para o ecrã de jogo quando a sala inicia e recebem o estado final quando a partida termina.
 - Teste SQL com rollback confirmou que um jogador não-detetive vê o resultado final, mas não recebe o método nem o motivo do crime.
+
+
+### Verificação adicional — runtime JavaScript (12-11-2026)
+
+- O módulo determinístico e o validador `scripts/validate-detective-engine.mjs` foram executados em Node.js 22.
+- Resultado: `Motor de regras Detetive: testes concluídos com sucesso.`
+- Verificação estática da interface: os 48 identificadores DOM referenciados pelo script da aventura existem no HTML. A pesquisa de IDs não encontrou referências em falta.
+- Esta verificação não substitui o teste visual/funcional num navegador real; não foi feito deploy.
