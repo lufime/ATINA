@@ -385,6 +385,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 /* A descrição editorial da imagem da solução não deve aparecer no jogo. */
 #solutionImage [data-solution-wikipedia]{display:none!important}
+
+/* Detective story briefing — visible before starting the case */
+.detective-story{margin:16px 0 18px;padding:16px;border:1px solid #42617e;border-radius:16px;background:linear-gradient(145deg,#172f49,#102238);color:#e8eef5;line-height:1.55}
+.detective-story h3{margin:0 0 11px;color:#f3c65e;font-size:19px}
+.detective-story h4{margin:15px 0 7px;color:#f3c65e;font-size:16px}
+.detective-story p{margin:9px 0;font-size:14px}
+.detective-story ul{margin:8px 0;padding-left:22px;font-size:14px}
+.detective-story li{margin:6px 0}
+.detective-story-note{padding:9px 11px;border-left:3px solid #d3ad68;background:#0d1d30;border-radius:0 9px 9px 0;color:#c5d3e2;font-size:12px!important}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
@@ -904,6 +913,20 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  <section class="card" id="detectiveAdventureSetup" style="margin-top:12px">
   <div class="home-welcome-kicker">CASO 001 · FAROL DA PONTA DA NÉVOA</div><h2 id="detectiveAdventureTitle">O Último Farol</h2>
   <p class="muted">Uma tempestade, uma morte e sete pessoas com algo a esconder. Explora o farol, recolhe provas e descobre quem matou Duarte Vale.</p>
+  <div class="detective-story" aria-labelledby="detectiveStoryHeading">
+   <h3 id="detectiveStoryHeading">📖 O que aconteceu naquela noite?</h3>
+   <p>A tempestade caiu sobre a Ponta da Névoa e isolou o antigo farol. Quando a luz voltou a falhar, o faroleiro <strong>Duarte Vale</strong> foi encontrado morto no interior do edifício.</p>
+   <p>A porta principal estava trancada por dentro. Não há uma explicação evidente para o que aconteceu — e sete pessoas estiveram no farol nessa noite. Cada uma conhece apenas uma parte da história; algumas escondem informações e nem todas serão totalmente sinceras.</p>
+   <p>Entre divisões abandonadas, objetos fora do lugar e registos antigos, há pistas que podem reconstruir os acontecimentos.</p>
+   <h4>🎯 A tua missão</h4>
+   <ul>
+    <li>Explorar o átrio, a sala da lanterna, a oficina e o arquivo.</li>
+    <li>Examinar os objetos e reunir as quatro provas do caso.</li>
+    <li>Interrogar as sete personagens e comparar os seus testemunhos.</li>
+    <li>Descobrir quem matou Duarte Vale e apresentar uma acusação fundamentada.</li>
+   </ul>
+   <p class="detective-story-note">A solução não é revelada nesta introdução. Descobre-a durante a investigação.</p>
+  </div>
   <p class="muted small">Podes jogar sozinho ou criar uma sala para até 8 participantes humanos. O jogo preenche os lugares vagos com personagens automáticas.</p>
   <label class="section" for="detectiveNickname">Pseudónimo ATINA</label><input class="answer" id="detectiveNickname" maxlength="20" placeholder="O teu pseudónimo">
   <div class="actions"><button class="btn full" id="detectiveSoloStart">Investigar sozinho</button><button class="btn secondary full" id="detectiveCreateRoom">Criar sala multijogador</button></div>
