@@ -113,7 +113,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       }).join("");
     } catch (error) { box.textContent = error.message; }
   }
-  window.setInterval(() => { if (!$("dashboardPanel").classList.contains("hidden")) loadPresence(); }, 30000);\n  async function loadDashboard() {
+  window.setInterval(() => { if (!$("dashboardPanel").classList.contains("hidden")) loadPresence(); }, 30000);
+  async function loadDashboard() {
     const target = $("dashboardTasks");
     $("dashboardUpdated").textContent = "A atualizar…";
     target.textContent = "A consultar tarefas…";
