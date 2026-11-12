@@ -137,3 +137,11 @@ Teste SQL integrado, com rollback, executado após estas alterações:
 O teste de 8 participantes humanos foi executado separadamente: 8 personagens humanas, sem NPCs de preenchimento e um único culpado.
 
 **Ainda falta:** validação visual/funcional num navegador real. O site público e a branch principal não foram alterados nem publicados.
+
+
+### Fecho de partida e resultado comum (12-11-2026)
+
+- Quando o detetive acusa, todos os participantes recebem o vencedor e o nome da pessoa acusada.
+- A solução detalhada (método e motivo) continua reservada ao detetive no fim da partida.
+- Os jogadores que ainda estavam no lobby passam para o ecrã de jogo quando a sala inicia e recebem o estado final quando a partida termina.
+- Teste SQL com rollback confirmou que um jogador não-detetive vê o resultado final, mas não recebe o método nem o motivo do crime.
