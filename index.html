@@ -2234,7 +2234,7 @@ async function atinaFindCommonsSolutionImage(answer,category,aliases=[]){
  }
  return null;
 }
-async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],preGeneratedUrl=null,visualDescription=''){
+async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],preGeneratedUrl=null,visualDescription='',solutionCredit=null){
  const target=$(targetId);if(!target)return;
  const cleanAnswer=String(answer||'').trim(),cleanCategory=String(category||'').trim();
  const key=cleanAnswer+'|'+cleanCategory;
@@ -2274,6 +2274,19 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const trustedGeneratedUrl=typeof preGeneratedUrl==='string'
     &&preGeneratedUrl.startsWith(generatedStoragePrefix)
     &&/^\\d+\\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
+   const publishedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/challenges/';
+   const trustedPublishedUrl=typeof preGeneratedUrl==='string'&&preGeneratedUrl.startsWith(publishedStoragePrefix)
+    &&/^\\d+\\/[a-f0-9]{64}\\.(?:jpg|jpeg|png|webp)$/i.test(preGeneratedUrl.slice(publishedStoragePrefix.length))
+    &&solutionCredit&&typeof solutionCredit==='object';
+   const publishedItem=trustedPublishedUrl?{
+    title:cleanAnswer,thumburl:preGeneratedUrl,mime:'image/jpeg',width:768,height:768,
+    sourceName:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'ATINA':' '+String(solutionCredit.source||'Fonte da imagem'),
+    sourceUrl:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'':solutionCredit.source_url||'',
+    author:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'ATINA':solutionCredit.author||'Autor não identificado',
+    license:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'© ATINA — Todos os direitos reservados':solutionCredit.license||'Licença não identificada',
+    licenseUrl:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'':solutionCredit.license_url||'',
+    attribution:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'© ATINA':solutionCredit.attribution||''
+   }:null;
    const generatedItem=trustedGeneratedUrl?{
     title:cleanAnswer,
     thumburl:preGeneratedUrl,
@@ -2287,7 +2300,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
     licenseUrl:'https://www.apache.org/licenses/LICENSE-2.0'
    }:null;
    item=preGeneratedUrl
-    ?(curatedItem&&curatedItem.thumburl===preGeneratedUrl?curatedItem:generatedItem)
+    ?(curatedItem&&curatedItem.thumburl===preGeneratedUrl?curatedItem:(publishedItem||generatedItem))
     :curatedItem;
    // Sem URL explícito do servidor, procurar uma alternativa verificada.
    if(!item&&!preGeneratedUrl)item=await atinaFindCommonsSolutionImage(cleanAnswer,cleanCategory,aliases);
@@ -2316,8 +2329,8 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   const author=item.author||item.extmetadata?.Artist?.value?.replace(/<[^>]*>/g,'').trim()||'Autor não identificado';
   const license=item.license||atinaSolutionImageLicense(item)||'Licença não identificada';
   const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
-  provenance.append(document.createTextNode('Autor: '+author+' · Fonte: '+(item.sourceName||'Wikimedia Commons')+' · Licença: '+license+' · '));
-  const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Fonte da imagem';provenance.append(sourceLink);
+  provenance.append(document.createTextNode('Autor: '+author+' · Fonte: '+(item.sourceName||'Wikimedia Commons')+' · Licença: '+license+(item.attribution?' · Crédito: '+item.attribution:'')+' · '));
+  if(/^https:\\/\\//i.test(sourceUrl)){const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Fonte da imagem';provenance.append(sourceLink)}else if(item.sourceName==='ATINA')provenance.append(document.createTextNode('Imagem própria ATINA'));
   if(/^https:\/\//i.test(licenseUrl)){const link=document.createElement('a');link.href=licenseUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Consultar licença';provenance.append(document.createTextNode(' · '),link);}
   status.textContent='Solução: '+cleanAnswer;
   target.append(frame);await atinaAppendWikipediaSolutionExcerpt(target,cleanAnswer,key);
