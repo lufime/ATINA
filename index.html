@@ -2273,10 +2273,10 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const generatedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/solutions/';
    const trustedGeneratedUrl=typeof preGeneratedUrl==='string'
     &&preGeneratedUrl.startsWith(generatedStoragePrefix)
-    &&/^\\d+\\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
+    &&/^\d+\\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
    const publishedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/challenges/';
    const trustedPublishedUrl=typeof preGeneratedUrl==='string'&&preGeneratedUrl.startsWith(publishedStoragePrefix)
-    &&/^\\d+\\/[a-f0-9]{64}\\.(?:jpg|jpeg|png|webp)$/i.test(preGeneratedUrl.slice(publishedStoragePrefix.length))
+    &&/^\d+\/[a-f0-9]{64}\\.(?:jpg|jpeg|png|webp)$/i.test(preGeneratedUrl.slice(publishedStoragePrefix.length))
     &&solutionCredit&&typeof solutionCredit==='object';
    const publishedItem=trustedPublishedUrl?{
     title:cleanAnswer,thumburl:preGeneratedUrl,mime:'image/jpeg',width:768,height:768,
@@ -2330,7 +2330,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   const license=item.license||atinaSolutionImageLicense(item)||'Licença não identificada';
   const licenseUrl=item.licenseUrl||item.extmetadata?.LicenseUrl?.value||sourceUrl;
   provenance.append(document.createTextNode('Autor: '+author+' · Fonte: '+(item.sourceName||'Wikimedia Commons')+' · Licença: '+license+(item.attribution?' · Crédito: '+item.attribution:'')+' · '));
-  if(/^https:\\/\\//i.test(sourceUrl)){const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Fonte da imagem';provenance.append(sourceLink)}else if(item.sourceName==='ATINA')provenance.append(document.createTextNode('Imagem própria ATINA'));
+  if(/^https:\/\//i.test(sourceUrl)){const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Fonte da imagem';provenance.append(sourceLink)}else if(item.sourceName==='ATINA')provenance.append(document.createTextNode('Imagem própria ATINA'));
   if(/^https:\/\//i.test(licenseUrl)){const link=document.createElement('a');link.href=licenseUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Consultar licença';provenance.append(document.createTextNode(' · '),link);}
   status.textContent='Solução: '+cleanAnswer;
   target.append(frame);await atinaAppendWikipediaSolutionExcerpt(target,cleanAnswer,key);
