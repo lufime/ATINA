@@ -74,3 +74,41 @@ Não existe integração com OpenAI ou outro serviço de IA. As respostas das pe
 - As respostas dos NPCs são determinísticas e ainda têm um conjunto inicial limitado de falas.
 - O adjunto apresenta provas e perguntas sugeridas; a análise avançada de cronologias/contradições entre testemunhos está por desenvolver.
 - Não foi feito deploy nem merge para a branch principal.
+
+
+## Atualização — compatibilidade V2 e papéis humanos (12-11-2026)
+
+### Compatibilidade com salas ATINA V2
+
+A primeira revisão da integração revelou que a UI usava as salas V2, mas as RPCs do Detetive estavam ligadas às tabelas de salas antigas. Corrigido:
+
+- As seis referências de chaves estrangeiras do motor Detetive foram alinhadas com `atina_v2_rooms` e `atina_v2_room_players`.
+- As sete RPCs centrais foram atualizadas para autenticar tokens e consultar participantes V2.
+- A criação e entrada na sala continuam a usar as funções V2 com sessão da conta ATINA.
+- A correção foi aplicada no projeto `atina-development`.
+
+### Papéis humanos e interrogatórios
+
+- O anfitrião pode escolher o detetive manualmente ou sortear.
+- Um participante humano que seja suspeito recebe apenas a sua própria personagem, papel e instruções privadas.
+- Quando o detetive interroga um participante humano, a pergunta fica pendente para esse jogador.
+- O participante responde no seu próprio ecrã; a resposta fica disponível ao detetive.
+- As falas privadas de outros participantes e os segredos do caso não são devolvidos a quem não os pode conhecer.
+
+### Testes de integração SQL executados com rollback
+
+- Sala V2 individual: 1 humano + 7 personagens automáticas.
+- Sala V2 com 2 humanos: atribuição de detetive e papel privado.
+- Sala V2 com 8 humanos: 8 personagens humanas, zero NPCs de preenchimento e exatamente um culpado.
+- Movimento, recolha de prova, interrogatório automático, análise do adjunto e acusação correta.
+- Pergunta a personagem humana, visibilidade apenas ao jogador interrogado e envio de resposta ao detetive.
+- Tentativa de acesso ao adjunto por não-detetive bloqueada.
+- Todas as sessões de QA foram revertidas; não ficaram salas nem partidas de teste na base de dados.
+
+### Estado e limitações
+
+- O backend V2 foi exercitado por SQL com as mesmas RPCs que a interface invoca.
+- Ainda não foi possível executar um teste visual real no browser/telemóvel nesta sessão.
+- Não foi feito deploy nem merge para a branch principal.
+- A interface ainda usa navegação por seleção de divisões, não deslocação livre animada.
+- Não existe chat geral; a comunicação atual é através de perguntas/respostas de interrogatório.
