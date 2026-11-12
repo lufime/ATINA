@@ -12,7 +12,7 @@
 <label>Pesquisar por ID, autor ou origem<input id="searchImages" type="search" placeholder="Ex.: 25, Einstein, Wikimedia" style="width:100%;padding:10px;margin-top:6px"></label>
 <label>Estado<select id="filterStatus" style="padding:10px;margin-top:6px"><option value="">Todos os estados</option><option value="pending">Pendente</option><option value="approved">Aprovada</option><option value="rejected">Rejeitada</option><option value="broken">Com erro</option><option value="generated">Gerada</option><option value="published">Publicado</option></select></label>
 <label>Autor<input id="filterAuthor" type="search" placeholder="Pesquisar autor" style="width:100%;padding:10px;margin-top:6px"></label>
-<label>Licença / utilização<select id="filterLicense" style="padding:10px;margin-top:6px"><option value="">Todas as licenças</option><option value="reusable">Pode reutilizar (CC0, domínio público, CC BY, CC BY-SA)</option><option value="restricted">Direitos reservados / não confirmada</option></select></label>
+<label>Licença / utilização<select id="filterLicense" style="padding:10px;margin-top:6px"><option value="">Todas as licenças</option><option value="reusable">Pode reutilizar (CC0, domínio público, CC BY, CC BY-SA)</option><option value="restricted">Não publicar (direitos reservados / licença não confirmada)</option></select></label>
 <label>Tipo de ficheiro<select id="filterType" style="padding:10px;margin-top:6px"><option value="">Todos os formatos</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></label>
 <label>Qualidade da imagem<select id="filterQuality" style="padding:10px;margin-top:6px"><option value="">Todas as qualidades</option><option value="Muito alta">Muito alta</option><option value="Alta">Alta</option><option value="Boa">Boa</option><option value="Média">Média</option><option value="Baixa">Baixa</option></select></label>
 <label>Ordenar por<select id="sortImages" style="padding:10px;margin-top:6px"><option value="id">ID do desafio</option><option value="newest">Mais recentes</option><option value="largest">Maior tamanho</option><option value="smallest">Menor tamanho</option></select></label>
@@ -36,12 +36,18 @@ const grouped=new Map();for(const a of filtered){if(!grouped.has(a.challenge_id)
 const details=document.createElement("div");details.className="image-details";
 const addDetail=(label,value,wide=false)=>{const d=document.createElement("div");d.className="detail"+(wide?" wide":"");const strong=document.createElement("strong");strong.textContent=label;const span=document.createElement("span");span.textContent=value||"—";d.append(strong,span);details.append(d);return span};
 addDetail("Tamanho",a.file_size_bytes!=null?(Number(a.file_size_bytes)/1048576).toFixed(2)+" MB ("+Number(a.file_size_bytes).toLocaleString("pt-PT")+" bytes)":"Não registado");
-addDetail("Autor",a.author||"Não indicado");
+const authorDetail=addDetail("Autor",a.author||"Não indicado");
+if(a.source_url){const link=document.createElement("a");link.href=a.source_url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Ver imagem original";link.style.display="block";authorDetail.append(document.createElement("br"),link)}
+
 addDetail("Tipo de ficheiro",a.mime_type||"Não identificado");
 const dimensions=addDetail("Resolução / qualidade","A verificar…");
 addDetail("Data de envio",a.created_at?new Date(a.created_at).toLocaleString("pt-PT"):"Não registada");
-addDetail("Licença",a.license||"Não indicada",true);
+const licenseDetail=addDetail("Licença",a.license||"Não indicada",true);
+if(a.license_url){const link=document.createElement("a");link.href=a.license_url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Consultar licença";licenseDetail.append(document.createElement("br"),link)}
+
 addDetail("Crédito / atribuição",a.attribution||"Não indicado",true);
+const ownAtina=/^atina(?:\\s|$)/i.test(String(a.source||"").trim())||/^imagem própria(?:\\s|$)/i.test(String(a.source||"").trim());
+const rightsNote=addDetail("Publicação",ownAtina?"Imagem própria ATINA — sem link externo":(isReusableLicense(a.license)?"Reutilização permitida, cumprindo a licença":"Não publicar até confirmar os direitos"),true);
 img.addEventListener("load",()=>{const w=img.naturalWidth,h=img.naturalHeight;const mp=(w*h/1000000).toFixed(2);const grade=(w*h>=8000000?"Muito alta":w*h>=2000000?"Alta":w*h>=1000000?"Boa":w*h>=400000?"Média":"Baixa");dimensions.textContent=w+" × "+h+" px · "+mp+" MP · "+grade;});
 img.addEventListener("error",()=>{dimensions.textContent="Não foi possível ler a resolução";});
 left.append(details);const right=document.createElement("div");const info=document.createElement("p");info.className="meta";info.textContent="Origem: "+(a.source||"—")+"\nLicença: "+(a.license||"—")+"\nFicheiro: "+(a.storage_path||"URL externa")+"\nEstado de publicação: "+(isPublished?"Publicado no jogo":a.status==="approved"?"Aprovado — por publicar":"Ainda não publicado");right.append(info);
