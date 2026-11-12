@@ -38,3 +38,39 @@ Testes SQL transacionais com rollback:
 ## Custos
 
 Não existe integração com OpenAI ou outro serviço de IA. As respostas das personagens serão geradas pelo motor determinístico local do ATINA. O Supabase e o alojamento continuam sujeitos às quotas/limites dos planos existentes.
+
+
+## Atualização — interface inicial e investigação (12-11-2026)
+
+### Novos componentes implementados no branch
+
+- Entrada própria «Jogar a aventura O Último Farol» dentro do separador Modalidades, sem substituir o botão/categoria Detetive existente.
+- Interface de configuração para iniciar sozinho, criar sala ou entrar por código.
+- Fluxo de lobby com até oito lugares humanos, partilha de código e atualização periódica.
+- Ecrã da aventura com mapa de quatro locais, deslocação validada pelo servidor, objetos examináveis, quadro de provas, interrogatório por suspeito/tema, adjunto e acusação final.
+- O jogador recebe apenas o papel que lhe foi atribuído; o detetive não recebe o papel secreto dos restantes participantes.
+- O adjunto é consultado no servidor e recebe exclusivamente provas descobertas pelo detetive.
+- As operações de diálogo, adjunto e acusação são RPCs tokenizadas e executadas no servidor.
+
+### RPCs adicionais
+
+- `atina_detective_interrogate`
+- `atina_detective_adjunct`
+- `atina_detective_accuse`
+
+### Testes SQL executados com rollback
+
+- Resposta determinística do culpado a uma pergunta sobre localização.
+- Rejeição de apresentação de prova não descoberta.
+- Adjunto com apenas a prova legitimamente recolhida.
+- Acusação correta, validada pelo servidor, com revelação da solução apenas no fim.
+- Testes executados em transação revertida; não ficaram sessões de QA na base de dados.
+
+### Limitações ainda existentes
+
+- A interface foi adicionada ao `index.html` na branch de desenvolvimento, mas ainda não foi testada visualmente num browser/telemóvel.
+- No modo multijogador, os participantes recebem papel privado; a comunicação/roleplay entre jogadores ainda não tem chat dedicado.
+- Não há animação livre de personagem no mapa: a navegação é por seleção de divisões.
+- As respostas dos NPCs são determinísticas e ainda têm um conjunto inicial limitado de falas.
+- O adjunto apresenta provas e perguntas sugeridas; a análise avançada de cronologias/contradições entre testemunhos está por desenvolver.
+- Não foi feito deploy nem merge para a branch principal.
