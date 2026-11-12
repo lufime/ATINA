@@ -434,7 +434,8 @@ function atinaServerApplyState(state, announce = false) {
       'solutionImage',
       Array.isArray(challenge.tags) ? challenge.tags : [],
       challenge.solution_image_url || null,
-      challenge.solution_description || ''
+      challenge.solution_description || '',
+      challenge.solution_image_credit || null
     ).then(() => atinaRenderSolutionWikipedia(challenge, !!atinaServerState?.round_locked, atinaServerState?.challenge?.id)).catch(() => {});
   } else {
     $('solutionImage')?.classList.add('hidden');
