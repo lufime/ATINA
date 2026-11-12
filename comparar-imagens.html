@@ -11,6 +11,8 @@
 <div class="controls">
 <label>Pesquisar por ID, autor ou origem<input id="searchImages" type="search" placeholder="Ex.: 25, Einstein, Wikimedia" style="width:100%;padding:10px;margin-top:6px"></label>
 <label>Estado<select id="filterStatus" style="padding:10px;margin-top:6px"><option value="">Todos os estados</option><option value="pending">Pendente</option><option value="approved">Aprovada</option><option value="rejected">Rejeitada</option><option value="broken">Com erro</option><option value="generated">Gerada</option><option value="published">Publicado</option></select></label>
+<label>Autor<input id="filterAuthor" type="search" placeholder="Pesquisar autor" style="width:100%;padding:10px;margin-top:6px"></label>
+<label>Licença / utilização<select id="filterLicense" style="padding:10px;margin-top:6px"><option value="">Todas as licenças</option><option value="reusable">Pode reutilizar (CC0, domínio público, CC BY, CC BY-SA)</option><option value="restricted">Direitos reservados / não confirmada</option></select></label>
 <label>Tipo de ficheiro<select id="filterType" style="padding:10px;margin-top:6px"><option value="">Todos os formatos</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></label>
 <label>Qualidade da imagem<select id="filterQuality" style="padding:10px;margin-top:6px"><option value="">Todas as qualidades</option><option value="Muito alta">Muito alta</option><option value="Alta">Alta</option><option value="Boa">Boa</option><option value="Média">Média</option><option value="Baixa">Baixa</option></select></label>
 <label>Ordenar por<select id="sortImages" style="padding:10px;margin-top:6px"><option value="id">ID do desafio</option><option value="newest">Mais recentes</option><option value="largest">Maior tamanho</option><option value="smallest">Menor tamanho</option></select></label>
@@ -24,7 +26,9 @@ async function invoke(body){const {data:{session:s}}=await sb.auth.getSession();
 async function refresh(){say("A carregar imagens…");try{const j=await invoke({action:"list"});assets=j.assets||[];await Promise.all(assets.map(a=>new Promise(resolve=>{const probe=new Image();probe.onload=()=>{const px=probe.naturalWidth*probe.naturalHeight;a._quality=px>=8000000?"Muito alta":px>=2000000?"Alta":px>=1000000?"Boa":px>=400000?"Média":"Baixa";resolve()};probe.onerror=()=>{a._quality="";resolve()};probe.src=a.image_url})));$("filters").style.display="block";render();say(assets.length+" imagens registadas.");}catch(e){say(e.message)}}
 function render(){gallery.replaceChildren();if(!assets.length){gallery.textContent="Não existem imagens registadas.";return}
 const term=$("searchImages").value.trim().toLocaleLowerCase("pt-PT"),status=$("filterStatus").value,type=$("filterType").value,quality=$("filterQuality").value,sort=$("sortImages").value;
-let filtered=assets.filter(a=>(!term||[a.challenge_id,a.author,a.source,a.attribution,a.license,a.storage_path].join(" ").toLocaleLowerCase("pt-PT").includes(term))&&(!status||(status==="published"?(a.status==="approved"&&a.solution_image_url===a.image_url):a.status===status))&&(!type||a.mime_type===type)&&(!quality||a._quality===quality));
+const authorTerm=$("filterAuthor").value.trim().toLocaleLowerCase("pt-PT"),licenseMode=$("filterLicense").value;
+const isReusableLicense=value=>{const x=String(value||"").toLowerCase();return x==="cc0 1.0"||x.includes("public domain")||/^cc by(?:-sa)?\\s/i.test(x)};
+let filtered=assets.filter(a=>(!term||[a.challenge_id,a.author,a.source,a.attribution,a.license,a.storage_path].join(" ").toLocaleLowerCase("pt-PT").includes(term))&&(!authorTerm||String(a.author||"").toLocaleLowerCase("pt-PT").includes(authorTerm))&&(!status||(status==="published"?a.status==="published":a.status===status))&&(!type||a.mime_type===type)&&(!quality||a._quality===quality)&&(!licenseMode||(licenseMode==="reusable"?isReusableLicense(a.license):!isReusableLicense(a.license))));
 filtered.sort((a,b)=>sort==="newest"?new Date(b.created_at)-new Date(a.created_at):sort==="largest"?(Number(b.file_size_bytes)||0)-(Number(a.file_size_bytes)||0):sort==="smallest"?(Number(a.file_size_bytes)||0)-(Number(b.file_size_bytes)||0):a.challenge_id-b.challenge_id);
 $("filterCount").textContent="A mostrar "+filtered.length+" de "+assets.length+" imagens.";
 if(!filtered.length){gallery.textContent="Não foram encontradas imagens com estes filtros.";return}
@@ -57,8 +61,8 @@ file.addEventListener("change",()=>{const f=file.files[0];if(!f)return;sourceIma
 sourceImage.onload=draw;sourceImage.src=a.image_url;editor.append(intro,file,canvas,controls,save);card.append(editor);gallery.append(card)}
 }
 $("signin").addEventListener("click",async()=>{say("A iniciar sessão…");const {error}=await sb.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){say(error.message);return}$("login").style.display="none";await refresh()});
-["searchImages","filterStatus","filterType","filterQuality","sortImages"].forEach(id=>$(id).addEventListener(id==="searchImages"?"input":"change",render));
-$("clearFilters").addEventListener("click",()=>{$("searchImages").value="";$("filterStatus").value="";$("filterType").value="";$("filterQuality").value="";$("sortImages").value="id";render()});
+["searchImages","filterAuthor","filterLicense","filterStatus","filterType","filterQuality","sortImages"].forEach(id=>$(id).addEventListener(id==="searchImages"?"input":"change",render));
+$("clearFilters").addEventListener("click",()=>{$("searchImages").value="";$("filterAuthor").value="";$("filterLicense").value="";$("filterStatus").value="";$("filterType").value="";$("filterQuality").value="";$("sortImages").value="id";render()});
 sb.auth.getSession().then(({data})=>{if(data.session){$("login").style.display="none";refresh()}});
 })();
 </script></body></html>
