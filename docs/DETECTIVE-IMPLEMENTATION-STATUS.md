@@ -112,3 +112,28 @@ A primeira revisão da integração revelou que a UI usava as salas V2, mas as R
 - Não foi feito deploy nem merge para a branch principal.
 - A interface ainda usa navegação por seleção de divisões, não deslocação livre animada.
 - Não existe chat geral; a comunicação atual é através de perguntas/respostas de interrogatório.
+
+
+## Atualização — teste de fluxo e proteção do adjunto (12-11-2026)
+
+- O modo individual cria uma sala V2 local sem exigir sessão de conta; continua a usar o detetive humano e sete personagens automáticas.
+- O modo multijogador mantém autenticação por conta ATINA.
+- A seleção manual do detetive foi ligada à lista de participantes da sala; o sorteio continua disponível.
+- Os participantes humanos recebem uma pergunta no seu próprio ecrã e podem responder como a personagem. A resposta aparece no registo privado do detetive.
+- O estado de cada jogador inclui apenas a sua própria personagem e papel. A lista pública de personagens não contém os papéis secretos.
+- O adjunto foi endurecido: uma referência a uma pista ainda não descoberta já não aparece como contradição.
+- Foram adicionados índices para as relações de evidências e diálogos.
+
+### Última verificação de backend
+
+Teste SQL integrado, com rollback, executado após estas alterações:
+- Criação de sala V2 individual sem sessão de conta.
+- Atribuição de 7 NPCs e 1 detetive humano.
+- Descoberta de prova e análise sem fuga de referências a pistas ocultas.
+- Seleção manual do detetive em sala com dois humanos.
+- Interrogatório pendente para personagem humana e resposta enviada pelo jogador.
+- Confirmação de que o detetive recebe a resposta e que o jogador interrogado só vê a sua pergunta.
+
+O teste de 8 participantes humanos foi executado separadamente: 8 personagens humanas, sem NPCs de preenchimento e um único culpado.
+
+**Ainda falta:** validação visual/funcional num navegador real. O site público e a branch principal não foram alterados nem publicados.
