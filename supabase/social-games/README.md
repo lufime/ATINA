@@ -34,3 +34,14 @@ The CI workflow applies this migration after the foundation and runs both test f
 
 
 The manual team migration is `migrations/20261113162000_atina_social_games_manual_teams.sql`; its rollback-only tests are in `supabase/tests/20261113162000_atina_social_games_manual_teams.test.sql`. The latest isolated CI run passed all three migrations and test suites in disposable PostgreSQL 17. No hosted Supabase project was changed.
+
+
+## Authoritative game start and round clock
+
+The isolated migration `migrations/20261113163000_atina_social_games_start_room.sql` adds `atina_social_game_start_room`. It validates the host token, one of the five social game codes, play mode, difficulty, 1–50 rounds, available non-repeating content, and team completeness/balance. It freezes the selected setup, creates the round rows, and sets the first server deadline.
+
+The approved round duration is **60 seconds**. The RPC accepts a duration argument for future flexibility but currently validates 30–180 seconds; the beta page sends 60. The room and first round deadlines are calculated by PostgreSQL, not the browser. Individual mode clears any pre-existing team assignments.
+
+Matching rollback-only tests are in `supabase/tests/20261113163000_atina_social_games_start_room.test.sql`. The GitHub Actions workflow now applies this migration and runs its tests after the three earlier SQL stages.
+
+Important: the content table is still empty in hosted test Supabase, and the 2,150 approved content records have not yet been imported or validated against per-game payload contracts. Consequently the start RPC correctly refuses to start until sufficient content exists. This migration is isolated and has not been applied to any hosted Supabase project.
