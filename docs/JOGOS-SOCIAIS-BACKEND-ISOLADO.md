@@ -109,3 +109,112 @@ Projetos Supabase novos não expõem automaticamente novas tabelas do schema `pu
 ## Critérios para produção
 
 A passagem para produção exige revisão explícita, backup, migrações versionadas, testes de regressão dos oito jogos, aprovação do utilizador e plano de reversão. Este documento não autoriza alterações à produção.
+
+
+## Modelo de dados proposto — revisão antes de SQL
+
+O modelo abaixo é a proposta de implementação inicial. Mantém os dados operacionais no schema `private`; só as funções RPC ficam no schema `public`. Nenhuma tabela privada recebe grants diretos a `anon` ou `authenticated`.
+
+### Tabelas privadas
+
+| Tabela | Finalidade e campos principais |
+|---|---|
+| `atina_social_rooms` | `id uuid`, `code`, `status` (waiting/playing/completed), `host_player_id`, `game_code`, `play_mode`, `difficulty`, `total_rounds`, `current_round`, `phase`, `deadline_at`, `state_version`, timestamps |
+| `atina_social_players` | `id uuid`, `room_id`, `token_hash bytea`, `nickname`, `is_host`, `team_id`, `ready`, `score`, `last_seen_at`; token original nunca é persistido |
+| `atina_social_teams` | `id uuid`, `room_id`, `label`, `sort_order`; equipa pertence a uma sala |
+| `atina_social_content` | `id bigint`, `game_code`, `difficulty`, `content_version`, `payload jsonb`, `active`; catálogo de 2.150 conteúdos |
+| `atina_social_rounds` | `id uuid`, `room_id`, `round_number`, `content_id`, `phase`, `prompt_public jsonb`, `secret_payload jsonb`, `started_at`, `deadline_at`, `resolved_at`; solução/segredo separado da projeção pública |
+| `atina_social_submissions` | `id uuid`, `round_id`, `player_id`, `answer_payload jsonb`, `normalized_answer`, `score_awarded`, timestamps; unicidade por ronda/jogador quando o jogo só admite uma resposta |
+| `atina_social_justifications` | `id uuid`, `round_id`, `player_id`, `text`, `created_at`; texto validado e limitado |
+| `atina_social_votes` | `round_id`, `justification_id`, `voter_player_id`, `created_at`; uma escolha por votante e ronda |
+| `atina_social_mystery_events` | `id uuid`, `round_id`, `player_id`, `event_type`, `question_text`, `answer_code`, `solution_guess`, `accepted`, timestamp; respostas oficiais do mistério só são escritas por anfitrião/RPC autorizada |
+| `atina_social_taboo_turns` | `id uuid`, `round_id`, `active_player_id`, `content_id`, `status`, `clue_text`, `forbidden_violation`, `score`, `deadline_at`; palavra e lista proibida só são devolvidas ao jogador ativo |
+| `atina_social_action_log` | `id bigint`, `room_id`, `player_id`, `action_key`, `request_id`, `created_at`; idempotência, auditoria técnica mínima e prevenção de repetição |
+
+Índices e restrições obrigatórios:
+- Código de sala único, normalizado e com entropia adequada.
+- Hash de token único; FK composta garante que jogador e equipa pertencem à mesma sala.
+- `game_code` limitado aos cinco códigos conhecidos.
+- `play_mode` apenas `individual` ou `teams`; dificuldade limitada ao catálogo aprovado.
+- Ronda única por `(room_id, round_number)`; submissão única por `(round_id, player_id)`; voto único por `(round_id, voter_player_id)`.
+- Conteúdo associado tem de pertencer ao mesmo jogo e dificuldade selecionados.
+- Restrições de comprimento para nickname, resposta, justificação, pergunta e palpite.
+- Não guardar dados pessoais; usar pseudónimos temporários.
+
+### Conteúdo dos 2.150 itens
+
+Cada item tem identificador estável, código do jogo, dificuldade, versão e payload estruturado. O conteúdo específico é validado por jogo:
+- `quanto_achas`: enunciado e valor numérico de referência, com unidade/contexto e tolerância ou regra de pontuação.
+- `associacao_palavras`: estímulo e critérios/aliases aceites; a lista de respostas aceites fica privada.
+- `isto_ou_aquilo`: duas opções e texto de enquadramento; sem resposta certa obrigatória, salvo regra editorial explícita.
+- `misterio_impossivel`: enunciado público, solução privada e regras de resposta/validação.
+- `palavra_proibida`: palavra-alvo e lista de palavras proibidas, ambas privadas para todos exceto o jogador ativo durante o seu turno.
+
+O importador deve validar exatamente 2.150 registos, distribuição por jogo/dificuldade aprovada, IDs únicos, campos obrigatórios, JSON válido e ausência de duplicados de conteúdo não intencionais. A distribuição por jogo não será inventada: fica fechada a partir do ficheiro/catalogação editorial aprovado antes do seed.
+
+## Contratos RPC — compatibilidade do frontend
+
+Todas as funções recebem `p_room_id uuid` e `p_token text`, exceto quando indicado. As assinaturas abaixo definem o contrato funcional; tipos/ordem finais serão fixados na migration e testados com o frontend.
+
+### Sala e configuração
+- `atina_v2_create_room(p_nickname text, p_max_players integer) -> jsonb`: cria sala social isolada e anfitrião; devolve `room_id`, token bearer, código e `player_id`.
+- `atina_v2_join_room(p_nickname text, p_code text) -> jsonb`: entra numa sala em espera e devolve token novo.
+- `atina_v2_room_state(p_room_id uuid, p_token text) -> jsonb`: projeção compatível com o HTML: `room_id`, `code`, `status`, `max_players`, `is_host`, `player_id`, `players[]`, `game_state`. Nunca inclui token hash nem segredos.
+- `atina_social_game_start_room(p_room_id uuid,p_token text,p_game_code text,p_play_mode text,p_total_rounds integer) -> jsonb`: só anfitrião; valida sala em espera, jogadores prontos, jogo ativo, rondas permitidas, dificuldade/configuração, equipas completas e conteúdo disponível; cria as rondas e inicia atomicamente.
+- `atina_social_game_get_state(p_room_id uuid,p_token text) -> jsonb`: estado público da ronda mais campos privados apenas do próprio jogador, como `submitted`, `justified`, `voted`; nunca devolve soluções privadas.
+
+### Respostas, justificação e votação
+- `atina_social_game_submit(p_room_id uuid,p_token text,p_answer jsonb) -> jsonb`: grava uma resposta por jogador/ronda; valida formato pelo jogo; pontuação calculada exclusivamente no servidor.
+- `atina_social_game_submit_justification(p_room_id uuid,p_token text,p_text text) -> jsonb`: só na fase `justify`, limite de tamanho e uma justificação por jogador.
+- `atina_social_game_vote_justification(p_room_id uuid,p_token text,p_justification_id uuid) -> jsonb`: só na fase `vote`; impede auto-voto e votos fora da ronda/equipa elegível.
+
+### Mistério Impossível
+- `atina_social_game_mystery_get_events(p_room_id uuid,p_token text) -> jsonb`: feed de perguntas/hipóteses e respostas já autorizadas; não revela a solução.
+- `atina_social_game_mystery_question(p_room_id uuid,p_token text,p_question text) -> jsonb`: cria pergunta limitada por tamanho/frequência.
+- `atina_social_game_mystery_solve(p_room_id uuid,p_token text,p_solution text) -> jsonb`: compara no servidor; devolve apenas correto/incorreto e não a solução.
+- `atina_social_game_mystery_answer(p_room_id uuid,p_token text,p_event_id uuid,p_answer_code text) -> jsonb`: apenas anfitrião/autoridade designada responde a pergunta pendente; códigos permitidos `yes`, `no`, `irrelevant`.
+
+### Palavra Proibida
+- `atina_social_game_taboo_round_state(p_room_id uuid,p_token text) -> jsonb`: estado agregado dos turnos, sem palavra-alvo nem lista proibida.
+- `atina_social_game_taboo_start_next_turn(p_room_id uuid,p_token text) -> jsonb`: anfitrião ou avanço automático autorizado; bloqueia turnos simultâneos.
+- `atina_social_game_taboo_get_turn(p_room_id uuid,p_token text,p_turn_id uuid) -> jsonb`: só o jogador ativo recebe palavra-alvo e palavras proibidas.
+- `atina_social_game_taboo_clue(p_room_id uuid,p_token text,p_turn_id uuid,p_text text) -> jsonb`: apenas jogador ativo; servidor valida limites e violações quando aplicável.
+- `atina_social_game_taboo_pass(p_room_id uuid,p_token text,p_turn_id uuid) -> jsonb`: apenas jogador ativo; uma única passagem por turno.
+- `atina_social_game_taboo_guess(p_room_id uuid,p_token text,p_turn_id uuid,p_guess text) -> jsonb`: valida palpite, normaliza e calcula pontos no servidor.
+
+### Fases, resultados e encerramento
+- `atina_social_game_advance_isto_phase(p_room_id uuid,p_token text) -> jsonb`: só anfitrião/avanço automático; transições answer → justify → vote → resolve, com relógio de servidor.
+- `atina_social_game_resolve_round(p_room_id uuid,p_token text) -> jsonb`: resolve apenas após deadline ou condição de conclusão; pontuação e estado final transacionais.
+- `atina_social_game_get_results(p_room_id uuid,p_token text) -> jsonb`: resultados finais filtrados por sala; classificação de equipa e individual sem conteúdo secreto.
+
+### Respostas comuns e códigos de erro
+
+- Sucesso: objeto JSON com `ok: true` e estado mínimo atualizado.
+- Erros previsíveis: `ROOM_NOT_FOUND`, `INVALID_TOKEN`, `NOT_HOST`, `ROOM_NOT_WAITING`, `ROOM_FULL`, `GAME_NOT_ALLOWED`, `INVALID_MODE`, `INVALID_ROUND_COUNT`, `NOT_READY`, `INVALID_PHASE`, `ALREADY_SUBMITTED`, `INVALID_PAYLOAD`, `RATE_LIMITED`, `ROUND_NOT_EXPIRED`, `SECRET_NOT_AVAILABLE`.
+- A implementação deve devolver mensagens seguras sem SQL interno, nomes de tabelas, tokens ou segredos.
+
+## Equipas, rondas e relógio
+
+- Modo individual: cada jogador pontua individualmente; não se criam equipas.
+- Modo equipas: anfitrião escolhe distribuição automática ou manual antes de iniciar.
+- Automática: distribuir por ordem estável/aleatória com seed da sala, tentando equilibrar tamanhos; diferença máxima de um jogador.
+- Manual: anfitrião atribui cada jogador a uma equipa; não iniciar enquanto existir jogador sem equipa ou equipa vazia.
+- Depois de iniciar, equipas e membros ficam bloqueados para preservar justiça e resultados.
+- Jogadores ímpares são distribuídos com diferença máxima de um elemento.
+- Número de rondas e dificuldade são congelados no início; alterações durante a partida são recusadas.
+- Deadline é calculado pelo servidor; o cliente apenas apresenta contagem decrescente. O cliente não pode resolver uma ronda antecipadamente.
+- Operações de arranque, avanço de fase e resolução bloqueiam a linha da sala/ronda (`FOR UPDATE`) e usam `state_version` para impedir corridas e duplicação de pontos.
+
+## Idempotência, concorrência e proteção contra abuso
+
+- Cada ação mutável deve aceitar `p_request_id uuid` numa revisão posterior do contrato ou usar chave idempotente determinística por jogador/ronda/ação. A mesma ação repetida devolve o resultado anterior sem duplicar pontos.
+- Transações curtas, bloqueios por sala e constraints únicas como última linha de defesa.
+- Rate limit por sala/jogador/ação, tamanho máximo de payload e validação de texto.
+- Token bearer gerado com fonte criptográfica, transmitido apenas no momento de criação/entrada, guardado no browser local para a sessão e persistido no servidor apenas como hash SHA-256.
+- Funções `SECURITY DEFINER` com `SET search_path = ''`; schema e funções sempre qualificados; `REVOKE EXECUTE` por defeito e `GRANT EXECUTE` apenas a `anon`/`authenticated` quando necessário.
+- Sem grants de SELECT/INSERT/UPDATE/DELETE às tabelas privadas.
+- Testes de fuga de informação com tokens de jogadores diferentes, incluindo jogador ativo de Palavra Proibida, anfitrião do Mistério e jogador comum.
+
+## Decisão de implementação
+
+A próxima entrega técnica será a migration de fundação isolada (salas, jogadores, equipas, catálogo, rondas, submissões e funções de lobby/estado), acompanhada de testes SQL transacionais. As funções específicas de cada jogo serão entregues por blocos e testadas antes de ligar o frontend. **Ainda não aplicar qualquer migration no Supabase nesta etapa de desenho.**
