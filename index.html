@@ -2355,10 +2355,10 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const generatedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/solutions/';
    const trustedGeneratedUrl=typeof preGeneratedUrl==='string'
     &&preGeneratedUrl.startsWith(generatedStoragePrefix)
-    &&/^\d+\\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
+    &&/^\d+\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
    const publishedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/challenges/';
    const trustedPublishedUrl=typeof preGeneratedUrl==='string'&&preGeneratedUrl.startsWith(publishedStoragePrefix)
-    &&/^\d+\/[a-f0-9]{64}\\.(?:jpg|jpeg|png|webp)$/i.test(preGeneratedUrl.slice(publishedStoragePrefix.length))
+    &&/^\d+\/[a-f0-9]{64}\.(?:jpg|jpeg|png|webp)$/i.test(preGeneratedUrl.slice(publishedStoragePrefix.length))
     &&solutionCredit&&typeof solutionCredit==='object';
    const publishedItem=trustedPublishedUrl?{
     title:cleanAnswer,thumburl:preGeneratedUrl,mime:'image/jpeg',width:768,height:768,
