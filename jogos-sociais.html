@@ -145,7 +145,7 @@ async function renderMystery(){
  if(eventsState.solved){setAction('<p class="good">Mistério resolvido! Aguarda o fim da ronda.</p>');return;}
  const host=!!roomState.is_host;
  let html='';
- if(!host)html+='<label for="mysteryQuestion">Faz uma pergunta (resposta Sim / Não / Não interessa)</label><input id="mysteryQuestion" maxlength="300" placeholder="A pessoa estava…?"><button class="btn full" id="askMystery">Enviar pergunta</button>';
+ html+='<label for="mysteryQuestion">Faz uma pergunta (resposta Sim / Não / Não interessa)</label><input id="mysteryQuestion" maxlength="300" placeholder="A pessoa estava…?"><button class="btn full" id="askMystery">Enviar pergunta</button>';
  html+='<label for="mysteryGuess">Tens uma hipótese?</label><input id="mysteryGuess" maxlength="300" placeholder="Acho que…"><button class="btn secondary full" id="guessMystery">Propor solução</button>';
  if(host){
   const unanswered=ev.filter(e=>e.type==='question'&&!e.answer);
