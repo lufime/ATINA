@@ -24,3 +24,10 @@ The workflow must pass before this SQL is considered parser/runtime validated. S
 ## Applying to hosted Supabase
 
 Do not apply this file through the normal repository migration chain. Hosted application is a separate, deliberate step after CI passes and after reviewing the final SQL. The isolated test project must be checked immediately before and after any approved application. Never apply to production without explicit approval.
+
+
+## Room and team RPC migration
+
+The second isolated migration is `migrations/20261113161000_atina_social_games_rooms_teams.sql`. It implements room creation, joining by code, token-authenticated room state, and balanced automatic team assignment. The matching rollback-only test is in `supabase/tests/20261113161000_atina_social_games_rooms_teams.test.sql`.
+
+The CI workflow applies this migration after the foundation and runs both test files. Wait for a successful workflow run before treating this second stage as runtime-validated. It has not been applied to any hosted Supabase project.
