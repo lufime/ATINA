@@ -328,3 +328,16 @@ Ainda pendente:
 - validação de conteúdo e importação dos 2.150 itens.
 
 Nenhuma migration foi aplicada ao projeto Supabase alojado.
+
+
+## Frontend beta — configuração social
+
+Em `jogos-sociais.html` foi acrescentado:
+- seletor de dificuldade: mista, fácil, média e difícil;
+- número de rondas configurável de 1 a 50 (antes limitado a 3);
+- painel de equipas para o anfitrião quando escolhe modo por equipas;
+- criação manual de equipas, atribuição individual de jogadores e distribuição automática.
+
+O arranque envia agora `p_difficulty` além do jogo, modo e número de rondas. A RPC de arranque ainda tem de ser implementada com validação server-side de conteúdo e equipas antes de esta opção poder iniciar uma partida real. A página continua sem URL/chave do Supabase, portanto não executa chamadas online nesta fase.
+
+A pipeline passou a incluir também uma verificação de sintaxe JavaScript inline com `node --check`. A validação browser/visual continua pendente.
