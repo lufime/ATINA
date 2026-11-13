@@ -48,9 +48,18 @@ Quando existir um backend de teste gratuito e isolado, repetir em dois dispositi
 - [x] Funções RPC de jogo instaladas no Supabase de produção.
 - [x] Bloqueio de ativação em produção identificado.
 - [x] Decisão de não incorrer em custos registada.
-- [ ] Modo de demonstração local sem Supabase implementado.
-- [ ] Revisão estática e validação de sintaxe concluídas.
-- [ ] Testes locais com dados fictícios executados.
+- [x] Modo de demonstração local sem chamadas a Supabase implementado.
+- [x] JavaScript da demonstração validado sintaticamente; HTML sem dependências externas.
+- [ ] Teste visual em navegador e interação manual ainda por executar.
 - [ ] Testes reais de dois dispositivos num backend isolado executados.
 
 **Não declarar os jogos testados ou aprovados até os cenários relevantes serem efetivamente executados.**
+
+
+## Validação técnica efetuada
+
+- JavaScript embutido compilado sem erros de sintaxe.
+- Ficheiro verificado sem scripts ou folhas de estilo externos.
+- Verificado que o JavaScript não contém chamadas RPC, Supabase ou pedidos de rede.
+- Confirmada a presença dos cinco jogos, opções de equipas e aviso de dados fictícios.
+- A validação foi estática; não foi executado um navegador nem um teste real em dois dispositivos.
