@@ -238,3 +238,19 @@ A migration cria o schema privado `private` e as 11 tabelas do modelo acima, com
 - A próxima revisão deve validar a sintaxe PostgreSQL num ambiente local/isolado, corrigir qualquer erro, executar os testes transacionais e só depois considerar aplicar esta migration no projeto `atina-social-games-test`, mediante confirmação explícita.
 
 Esta migration não altera os motores do jogo principal, Mímicas ou Detetive e não substitui nenhuma migration ativa existente.
+
+
+## Revisão técnica adicional — 2026-11-13
+
+A revisão estática dos dois ficheiros confirmou delimitadores equilibrados, 11 instruções `CREATE TABLE`, zero funções RPC nesta migration e um teste transacional terminado em `ROLLBACK`. Esta verificação é lexical/estrutural, não é uma validação pelo parser PostgreSQL.
+
+### Bloqueio descoberto antes de qualquer aplicação
+
+A pasta ativa `supabase/migrations/` já contém uma sequência anterior de migrations dos motores e salas existentes, incluindo dependências de ATINA/Mímicas. O Supabase CLI aplica a sequência pendente por ordem; portanto, **não se deve executar simplesmente `db push` ou aplicar esta migration isoladamente sem resolver primeiro a estratégia de histórico**. O projeto de testes está vazio e não tem essas dependências.
+
+Antes de validar ou aplicar no projeto de testes, é necessário escolher e documentar uma estratégia segura:
+1. usar uma branch Supabase isolada com baseline/histórico compatível, ou
+2. criar um projeto de teste dedicado com histórico completo e preflight das dependências, ou
+3. preparar uma pipeline de validação que aplique apenas o conjunto social a uma base PostgreSQL efémera, sem misturar migrations antigas.
+
+Não foi executada nenhuma migration nem teste remoto. O ambiente desta sessão não tem `supabase`, `psql`, servidor PostgreSQL ou Docker disponíveis. Não foi criado nenhum recurso novo nem incorrido qualquer custo.
