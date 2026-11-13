@@ -31,3 +31,6 @@ Do not apply this file through the normal repository migration chain. Hosted app
 The second isolated migration is `migrations/20261113161000_atina_social_games_rooms_teams.sql`. It implements room creation, joining by code, token-authenticated room state, and balanced automatic team assignment. The matching rollback-only test is in `supabase/tests/20261113161000_atina_social_games_rooms_teams.test.sql`.
 
 The CI workflow applies this migration after the foundation and runs both test files. Wait for a successful workflow run before treating this second stage as runtime-validated. It has not been applied to any hosted Supabase project.
+
+
+The manual team migration is `migrations/20261113162000_atina_social_games_manual_teams.sql`; its rollback-only tests are in `supabase/tests/20261113162000_atina_social_games_manual_teams.test.sql`. The latest isolated CI run passed all three migrations and test suites in disposable PostgreSQL 17. No hosted Supabase project was changed.
