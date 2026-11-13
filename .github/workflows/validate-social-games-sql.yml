@@ -38,11 +38,11 @@ jobs:
           import re
           from pathlib import Path
           html = Path("jogos-sociais.html").read_text(encoding="utf-8")
-          scripts = re.findall(r"<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>", html, re.IGNORECASE)
+          scripts = re.findall(r"<script(?:\s[^>]*)?>([\s\S]*?)</script>", html, re.IGNORECASE)
           inline = [part for part in scripts if part.strip()]
           if not inline:
               raise SystemExit("No inline JavaScript found")
-          Path("/tmp/atina-social-inline.js").write_text("\\n".join(inline), encoding="utf-8")
+          Path("/tmp/atina-social-inline.js").write_text("\n".join(inline), encoding="utf-8")
           PY
           node --check /tmp/atina-social-inline.js
       - name: Create Supabase-compatible database roles
