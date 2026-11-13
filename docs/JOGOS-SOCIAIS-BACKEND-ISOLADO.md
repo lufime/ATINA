@@ -271,3 +271,26 @@ Foram acrescentados:
 A pipeline não usa secrets, Supabase alojado, dados reais, nem recursos pagos. O resultado só será conhecido depois de a GitHub Actions executar; a criação do workflow não equivale a um teste aprovado.
 
 O projeto Supabase `atina-social-games-test` permanece intocado. A aplicação remota continua dependente de revisão e autorização separadas.
+
+
+## RPC de salas, jogadores e equipas — 2026-11-13
+
+Foi acrescentada a segunda migration isolada:
+`supabase/social-games/migrations/20261113161000_atina_social_games_rooms_teams.sql`
+
+Inclui:
+- `atina_v2_create_room`: cria sala e anfitrião; gera código de seis caracteres e token bearer aleatório.
+- `atina_v2_join_room`: entrada por código, com bloqueio da sala durante a verificação de lotação.
+- `atina_v2_room_state`: devolve estado autorizado ao jogador identificado pelo token; nunca devolve tokens nem hashes.
+- `atina_social_team_auto_assign`: distribuição equilibrada em equipas, com diferença máxima de um jogador.
+
+Os tokens têm 256 bits aleatórios; só o hash SHA-256 é persistido. As RPCs usam `SECURITY DEFINER`, `SET search_path = ''`, referências qualificadas e privilégios de execução revogados por defeito e concedidos explicitamente a `anon`/`authenticated`, porque o token bearer é a autorização da sala. As tabelas privadas continuam sem grants diretos.
+
+Testes acrescentados em `supabase/tests/20261113161000_atina_social_games_rooms_teams.test.sql`: criação, entrada, estado para anfitrião/convidado, ausência de fuga do token, distribuição automática e rejeição de token inválido/alteração por não anfitrião.
+
+A pipeline PostgreSQL efémera foi atualizada para aplicar ambas as migrations e executar ambos os ficheiros de teste. A validação da segunda etapa deve ser considerada pendente até a execução correspondente da GitHub Actions terminar com sucesso. Não foi aplicado SQL no projeto Supabase alojado.
+
+Limites conhecidos desta entrega:
+- A distribuição automática está implementada; a atribuição manual e criação de equipas manuais ficam para o próximo bloco.
+- A página HTML ainda não está ligada a estas RPCs e o contrato de arranque/dificuldade será atualizado em conjunto.
+- Ainda faltam limites de frequência e políticas de expiração/limpeza de salas; devem ser fechados antes da ativação online.
