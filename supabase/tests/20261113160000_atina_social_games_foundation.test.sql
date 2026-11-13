@@ -1,7 +1,8 @@
 -- pgTAP wrapper: execute the assertions as one reported test.
 begin;
 select plan(1);
-select lives_ok($atina_test$\n-- Structural regression checks for 20261113160000_atina_social_games_foundation.
+select lives_ok($atina_test$
+-- Structural regression checks for 20261113160000_atina_social_games_foundation.
 -- Run only after the matching migration in an isolated test database.
 begin;
 
@@ -55,6 +56,7 @@ begin
     raise exception 'Host/player deferred FK is missing';
   end if;
 end
-$$;\n$atina_test$, '20261113160000_atina_social_games_foundation: all assertions execute without error');
+$$;
+$atina_test$, '20261113160000_atina_social_games_foundation: all assertions execute without error');
 select * from finish();
 rollback;
