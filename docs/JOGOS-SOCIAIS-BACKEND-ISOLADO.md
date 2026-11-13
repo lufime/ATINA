@@ -79,3 +79,36 @@ Existe material antigo em `supabase/archive/proposals/` sobre sessões locais, s
 ## Critérios para produção
 
 A passagem para produção exige revisão explícita, backup, migrações versionadas, testes de regressão, aprovação do utilizador e um plano de reversão. Este documento não autoriza qualquer alteração à produção.
+
+
+## Primeira inspeção do projeto Supabase isolado (2026-11-13)
+
+Projeto: `atina-social-games-test` (`wmparhejigqjoqgsxrtp`), região `eu-west-1`, PostgreSQL 17.11.0.019.
+
+- Projeto recém-criado: zero migrações e zero tabelas.
+- `pgcrypto` já está instalado no schema `extensions`, necessário para os hashes de tokens usados pelo modelo de salas.
+- Advisors de segurança e performance: sem avisos no estado vazio.
+- Não foram criados dados, tabelas, funções ou migrações neste passo.
+
+### Decisão de instalação
+
+Não aplicar diretamente as migrações antigas de salas nem a migração grande de Mímicas. A migração `20261101081410_atina_ranking_v2_multiplayer_mimicas.sql` inclui pré-condições e dependências de catálogos privados de desafios/cartões e estruturas de Mímicas. Não é uma base mínima isolada para os jogos sociais e a sua execução sem essas dependências falharia ou instalaria componentes desnecessários.
+
+A fundação antiga `007_multiplayer_room_foundation`/ `008_multiplayer_lobby_rpcs` usa o namespace legado `atina_rooms` e um contrato de sala diferente do cliente social atual, que chama `atina_v2_room_state`. Não misturar esses contratos.
+
+### Compatibilidade Data API
+
+Projetos novos não expõem automaticamente novas tabelas do schema `public` à Data API. Qualquer futura migração deverá definir explicitamente os privilégios necessários para os papéis usados e ativar RLS com políticas apropriadas. Não assumir que criar tabela torna a tabela acessível pelo cliente.
+
+### Próxima unidade de implementação
+
+Construir uma fundação social v2 mínima, versionada e independente, que forneça:
+- salas e jogadores com tokens aleatórios, guardando apenas hash;
+- RLS e privilégios mínimos, sem acesso direto às tabelas pelo browser;
+- RPC de estado da sala compatível com `atina_v2_room_state`;
+- validação de anfitrião no servidor;
+- atribuição automática/manual de equipas e prontidão;
+- configuração do jogo, número de rondas e modo individual/equipas;
+- catálogo e estado privado para conteúdos sociais, sem expor respostas/soluções antes do momento certo.
+
+Depois, implementar e testar as RPCs específicas de cada jogo e carregar os 2.150 conteúdos com validação de integridade. Só ligar o frontend quando os contratos e payloads coincidirem. Esta implementação ainda não foi aplicada à base de dados.
