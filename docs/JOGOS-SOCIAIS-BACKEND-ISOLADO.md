@@ -1,114 +1,111 @@
-# Jogos sociais ATINA — plano de backend isolado
+# ATINA — arquitetura dos oito jogos
 
-Estado: preparação técnica; **não aplicar em produção**.
+Estado: âmbito consolidado e preparação técnica; **não aplicar em produção**.
 Branch: `atina-social-games-beta`.
 Data: 2026-11-13.
 
-## Objetivo
+## Âmbito confirmado
 
-Preparar os cinco jogos sociais para partidas online com salas ATINA, mantendo a versão de produção intacta e usando apenas um backend de testes isolado. Os jogos são:
+O ATINA terá oito jogos/experiências no conjunto:
 
-- `quanto_achas`
-- `associacao_palavras`
-- `isto_ou_aquilo`
-- `misterio_impossivel`
-- `palavra_proibida`
+### Três experiências já existentes no ATINA
+1. **Jogo principal ATINA** — as modalidades e desafios atuais (inclui os modos já existentes, como individual, duelo, mix, party e multiplayer).
+2. **Mímicas** — jogo multijogador com representante por ronda e palavra secreta privada.
+3. **Aventura Detetive — O Último Farol** — aventura narrativa de investigação, com papéis humanos/NPC, pistas, interrogatórios e adjunto determinístico.
 
-Decisões funcionais já aprovadas: 2.150 conteúdos no conjunto dos cinco jogos; rondas à escolha; níveis de dificuldade; modo individual e por equipas; distribuição automática ou manual de equipas.
+### Cinco novos jogos sociais
+4. **Quanto Achas?** — `quanto_achas`
+5. **Associação de Palavras** — `associacao_palavras`
+6. **Isto ou Aquilo** — `isto_ou_aquilo`
+7. **Mistério Impossível** — `misterio_impossivel`
+8. **Palavra Proibida** — `palavra_proibida`
 
-## Estado de segurança
+Os cinco jogos sociais novos têm um catálogo conjunto de **2.150 conteúdos**, com rondas à escolha do jogador, níveis de dificuldade, modo individual/equipas e distribuição automática/manual de equipas. Estas decisões não alteram retroativamente as regras específicas do jogo principal, Mímicas ou Detetive.
 
-- A página `jogos-sociais.html` foi alterada para não conter URL nem chave do Supabase de produção.
-- O cliente Supabase só é criado quando existirem credenciais configuradas para um ambiente de testes.
-- Sem essas credenciais, a página informa que o modo online está em preparação e não executa RPCs.
-- A demonstração `jogos-sociais-demo-local.html` continua a ser a opção de experimentação sem backend.
-- Não foi criado nem configurado qualquer projeto Supabase novo. Não foram executadas migrações nem alterados dados.
+## Objetivo técnico
 
-## RPCs chamadas pela interface
+Construir a fundação isolada para os cinco jogos sociais novos, garantindo que podem coexistir com os três jogos existentes sem duplicar nem substituir os seus motores, salas, pontuação, conteúdos ou regras. O âmbito global é de oito jogos; a primeira implementação de backend descrita neste documento cobre apenas os cinco novos jogos.
 
-A implementação online atual referencia estas RPCs. A lista é um inventário do cliente, não uma confirmação de que as funções existam no servidor:
+## Estado de segurança e ambiente
+
+- Branch de trabalho: `atina-social-games-beta`.
+- Projeto Supabase isolado de testes: `atina-social-games-test` (`wmparhejigqjoqgsxrtp`), região `eu-west-1`.
+- A página `jogos-sociais.html` não contém URL nem chave do Supabase de produção.
+- Sem credenciais de teste configuradas, o cliente online não é criado e nenhuma RPC é chamada.
+- A demonstração `jogos-sociais-demo-local.html` usa dados fictícios e não liga ao backend.
+- O projeto Supabase de teste foi criado vazio: sem migrações, tabelas, funções ou dados adicionados até à última inspeção.
+- Não alterar `main`, não fazer merge e não aplicar alterações no Supabase de produção.
+- Não criar recursos pagos nem ativar serviços pagos sem autorização explícita.
+
+## Separação dos motores
+
+- **Jogo principal ATINA:** manter o motor existente de desafios, validação server-side, sessões, progressão, ranking e respetivos modos.
+- **Mímicas:** manter o motor próprio, a palavra secreta privada, o representante por ronda e as regras de validação humana.
+- **Detetive:** manter o motor privado da aventura, os papéis, culpado, provas, diálogos e adjunto; nunca expor segredos ainda não descobertos.
+- **Cinco jogos sociais novos:** construir um backend social próprio e isolado. Não reutilizar migrações antigas em bloco nem assumir que as RPCs chamadas pelo HTML já existem no novo projeto.
+
+A integração visual pode partilhar navegação, identidade, lobby ou componentes quando os contratos forem compatíveis, mas não pode fundir estados privados nem reduzir as fronteiras de segurança dos três motores existentes.
+
+## RPCs referenciadas pelo cliente social
+
+A lista seguinte é inventário do frontend, não confirmação de que as funções existam no Supabase de teste:
 
 - Sala e estado: `atina_v2_room_state`, `atina_social_game_start_room`, `atina_social_game_get_state`, `atina_social_game_get_results`.
 - Respostas e justificações: `atina_social_game_submit`, `atina_social_game_submit_justification`, `atina_social_game_vote_justification`.
 - Mistério: `atina_social_game_mystery_get_events`, `atina_social_game_mystery_question`, `atina_social_game_mystery_solve`, `atina_social_game_mystery_answer`.
-- Palavra proibida: `atina_social_game_taboo_round_state`, `atina_social_game_taboo_start_next_turn`, `atina_social_game_taboo_get_turn`, `atina_social_game_taboo_clue`, `atina_social_game_taboo_pass`, `atina_social_game_taboo_guess`.
+- Palavra Proibida: `atina_social_game_taboo_round_state`, `atina_social_game_taboo_start_next_turn`, `atina_social_game_taboo_get_turn`, `atina_social_game_taboo_clue`, `atina_social_game_taboo_pass`, `atina_social_game_taboo_guess`.
 - Fases e resolução: `atina_social_game_advance_isto_phase`, `atina_social_game_resolve_round`.
 
-Antes de escrever migrações, é obrigatório fechar para cada função: assinatura e tipos; validação de sala/jogador; autorização de anfitrião; transições de estado permitidas; idempotência; concorrência; payload devolvido; tratamento de erros; limites de frequência.
+Antes de escrever migrações, fechar para cada função: assinatura/tipos, validação de sala e jogador, autorização do anfitrião, transições permitidas, idempotência, concorrência, payload, erros e limites de frequência.
 
-## Migrações existentes e arquivo
+## Inspeção das migrações existentes
 
-A branch contém migrações ativas para a fundação de salas ATINA v2, jogos anteriores e o motor de Detetive. A pesquisa da pasta ativa não encontrou uma série de migrações específica `atina_social_game_*` que implemente o conjunto de RPCs listado acima.
+A branch inclui migrações do motor principal ATINA, Mímicas, salas V2 e Detetive. A família de RPCs `atina_social_game_*` não foi encontrada nas migrações ativas inspecionadas.
 
-Existe material antigo em `supabase/archive/proposals/` sobre sessões locais, salas multijogador, fila, respostas, pistas, equipas e votação. Esses ficheiros estão arquivados e **não são prova de que o código esteja aplicado nem devem ser aplicados em bloco**. Devem ser comparados com o esquema ativo e com as RPCs atuais antes de qualquer reutilização.
+- A fundação antiga `007_multiplayer_room_foundation`/`008_multiplayer_lobby_rpcs` usa o namespace legado `atina_rooms` e não corresponde diretamente ao contrato V2 do frontend social.
+- A migração grande `20261101081410_atina_ranking_v2_multiplayer_mimicas.sql` tem pré-condições e dependências próprias de Mímicas; não é uma fundação mínima para os cinco jogos novos.
+- O Detetive tem o seu próprio conjunto de migrações e tabelas privadas; não o copiar nem misturar com o estado social novo.
+- Não aplicar migrações antigas em bloco ao projeto vazio.
 
-## Arquitetura proposta
+## Arquitetura proposta para os cinco jogos novos
 
-1. Criar/usar um projeto Supabase de teste independente, sem dados reais e sem ligação à produção.
-2. Confirmar que o plano escolhido não gera custos; não ativar recursos pagos nem criar projeto sem confirmação explícita do utilizador.
-3. Reproduzir no ambiente de teste apenas a fundação mínima de salas/jogadores/equipas necessária, a partir das migrações ativas revistas.
-4. Implementar as RPCs sociais com autoridade no servidor. O cliente nunca decide pontuação, validação de resposta, vencedor, relógio, permissões ou avanço definitivo de fase.
-5. Ativar os cinco jogos apenas no catálogo do ambiente de teste.
-6. Configurar URL e chave publicável do ambiente de teste por configuração separada da produção. Nunca incluir chave `service_role` no browser.
-7. Testar com salas e jogadores fictícios em dois ou mais browsers/dispositivos.
+1. Usar exclusivamente o projeto Supabase isolado de testes.
+2. Construir uma fundação social v2 mínima, independente e versionada.
+3. Implementar salas e jogadores com tokens aleatórios, guardando apenas hashes.
+4. Aplicar RLS e privilégios mínimos; o browser não acede diretamente às tabelas privadas.
+5. Implementar RPC de estado da sala compatível com `atina_v2_room_state`, sem assumir que a sala contém segredos de jogo.
+6. Validar anfitrião no servidor.
+7. Suportar equipas automáticas e manuais, incluindo número ímpar de jogadores e alterações de equipa antes do arranque.
+8. Suportar modo individual/equipas, dificuldade e número de rondas configurável.
+9. Guardar catálogo, respostas e estado privado sem expor soluções antes do momento certo.
+10. Carregar e validar os 2.150 conteúdos do conjunto dos cinco jogos.
+11. Só configurar o frontend com URL e chave publicável do projeto de teste depois de as migrações e RPCs estarem instaladas e testadas. Nunca colocar chave `service_role` no browser.
+
+Projetos Supabase novos não expõem automaticamente novas tabelas do schema `public` à Data API. As migrações futuras devem definir explicitamente privilégios e políticas RLS; preferir RPCs controladas e não conceder acesso direto desnecessário.
 
 ## Requisitos de segurança e consistência
 
-- Todas as RPCs devem validar sala existente, jogo ativo, estado atual e associação do jogador à sala.
-- Ações exclusivas do anfitrião devem validar o anfitrião no servidor, não confiar num valor enviado pelo browser.
-- Respostas e votos devem ser idempotentes ou rejeitar duplicados de forma determinística.
-- Mudanças de fase e pontuação devem ser transacionais.
-- Dados privados de mistério/solução não podem ser incluídos em estados públicos antes do momento adequado.
-- Aplicar RLS e privilégios mínimos às tabelas; revogar execução pública desnecessária.
-- Limitar tamanho de payload e frequência de chamadas.
-- Não guardar dados pessoais reais nos testes.
+- Todas as RPCs validam sala existente, jogo ativo, estado atual e pertença do jogador.
+- Ações exclusivas do anfitrião validam o anfitrião no servidor.
+- Respostas e votos são idempotentes ou rejeitam duplicados deterministicamente.
+- Mudanças de fase e pontuação são transacionais.
+- Soluções de Mistério e palavras secretas de Palavra Proibida não são expostas antes do momento devido.
+- Limites de payload e frequência.
+- `SECURITY DEFINER` apenas quando necessário, com `SET search_path = ''`, privilégios revogados por defeito e grants explícitos.
+- Testes apenas com salas, contas e conteúdos fictícios.
 
-## Plano de validação antes de ligar o frontend
+## Plano de validação
 
-- [ ] Projeto de teste isolado criado e custo/plano confirmado.
-- [ ] Migrações revistas contra o esquema de salas/jogadores/equipas.
-- [ ] Contratos de todas as RPCs documentados e aprovados.
-- [ ] Testes SQL: permissões, estados inválidos, duplicados, concorrência e rollback.
-- [ ] Testes de integração dos cinco jogos.
-- [ ] Testes de equipa automática e manual, incluindo jogadores ímpares.
-- [ ] Testes de rondas configuráveis e níveis de dificuldade.
-- [ ] Testes de reconexão, atualização da página e abandono de jogador.
-- [ ] Testes em dois dispositivos com contas fictícias.
-- [ ] Só depois, configurar credenciais de teste na beta e validar o deploy.
+- [ ] Confirmar que o jogo principal, Mímicas e Detetive continuam sem alterações funcionais.
+- [ ] Rever os contratos e o esquema da fundação social nova.
+- [ ] Testar permissões, estados inválidos, duplicados, concorrência e rollback.
+- [ ] Testar os cinco jogos sociais novos e os seus fluxos específicos.
+- [ ] Testar equipas automáticas/manuais, jogadores ímpares, rondas e dificuldade.
+- [ ] Testar reconexão, atualização da página e abandono.
+- [ ] Testar em dois ou mais browsers/dispositivos com dados fictícios.
+- [ ] Confirmar que o catálogo contém exatamente 2.150 conteúdos válidos, sem duplicados indevidos nem soluções expostas.
+- [ ] Só depois ligar a página beta ao projeto de testes.
 
 ## Critérios para produção
 
-A passagem para produção exige revisão explícita, backup, migrações versionadas, testes de regressão, aprovação do utilizador e um plano de reversão. Este documento não autoriza qualquer alteração à produção.
-
-
-## Primeira inspeção do projeto Supabase isolado (2026-11-13)
-
-Projeto: `atina-social-games-test` (`wmparhejigqjoqgsxrtp`), região `eu-west-1`, PostgreSQL 17.11.0.019.
-
-- Projeto recém-criado: zero migrações e zero tabelas.
-- `pgcrypto` já está instalado no schema `extensions`, necessário para os hashes de tokens usados pelo modelo de salas.
-- Advisors de segurança e performance: sem avisos no estado vazio.
-- Não foram criados dados, tabelas, funções ou migrações neste passo.
-
-### Decisão de instalação
-
-Não aplicar diretamente as migrações antigas de salas nem a migração grande de Mímicas. A migração `20261101081410_atina_ranking_v2_multiplayer_mimicas.sql` inclui pré-condições e dependências de catálogos privados de desafios/cartões e estruturas de Mímicas. Não é uma base mínima isolada para os jogos sociais e a sua execução sem essas dependências falharia ou instalaria componentes desnecessários.
-
-A fundação antiga `007_multiplayer_room_foundation`/ `008_multiplayer_lobby_rpcs` usa o namespace legado `atina_rooms` e um contrato de sala diferente do cliente social atual, que chama `atina_v2_room_state`. Não misturar esses contratos.
-
-### Compatibilidade Data API
-
-Projetos novos não expõem automaticamente novas tabelas do schema `public` à Data API. Qualquer futura migração deverá definir explicitamente os privilégios necessários para os papéis usados e ativar RLS com políticas apropriadas. Não assumir que criar tabela torna a tabela acessível pelo cliente.
-
-### Próxima unidade de implementação
-
-Construir uma fundação social v2 mínima, versionada e independente, que forneça:
-- salas e jogadores com tokens aleatórios, guardando apenas hash;
-- RLS e privilégios mínimos, sem acesso direto às tabelas pelo browser;
-- RPC de estado da sala compatível com `atina_v2_room_state`;
-- validação de anfitrião no servidor;
-- atribuição automática/manual de equipas e prontidão;
-- configuração do jogo, número de rondas e modo individual/equipas;
-- catálogo e estado privado para conteúdos sociais, sem expor respostas/soluções antes do momento certo.
-
-Depois, implementar e testar as RPCs específicas de cada jogo e carregar os 2.150 conteúdos com validação de integridade. Só ligar o frontend quando os contratos e payloads coincidirem. Esta implementação ainda não foi aplicada à base de dados.
+A passagem para produção exige revisão explícita, backup, migrações versionadas, testes de regressão dos oito jogos, aprovação do utilizador e plano de reversão. Este documento não autoriza alterações à produção.
