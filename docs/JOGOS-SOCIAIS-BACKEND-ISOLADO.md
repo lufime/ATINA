@@ -254,3 +254,20 @@ Antes de validar ou aplicar no projeto de testes, é necessário escolher e docu
 3. preparar uma pipeline de validação que aplique apenas o conjunto social a uma base PostgreSQL efémera, sem misturar migrations antigas.
 
 Não foi executada nenhuma migration nem teste remoto. O ambiente desta sessão não tem `supabase`, `psql`, servidor PostgreSQL ou Docker disponíveis. Não foi criado nenhum recurso novo nem incorrido qualquer custo.
+
+
+## Pipeline de validação isolada — 2026-11-13
+
+Para impedir que a migration social entre acidentalmente na sequência antiga do Supabase, foi movida para:
+
+`supabase/social-games/migrations/20261113160000_atina_social_games_foundation.sql`
+
+A pasta ativa `supabase/migrations/` foi verificada e já não contém esta migration. A nova localização é intencional e não é descoberta automaticamente pelo fluxo normal de migrations do Supabase.
+
+Foram acrescentados:
+- `.github/workflows/validate-social-games-sql.yml`: inicia PostgreSQL 17 efémero em GitHub Actions, cria os papéis mínimos `anon` e `authenticated`, aplica **apenas** a migration social e executa os testes rollback-only.
+- `supabase/social-games/README.md`: explica o isolamento e o processo de validação.
+
+A pipeline não usa secrets, Supabase alojado, dados reais, nem recursos pagos. O resultado só será conhecido depois de a GitHub Actions executar; a criação do workflow não equivale a um teste aprovado.
+
+O projeto Supabase `atina-social-games-test` permanece intocado. A aplicação remota continua dependente de revisão e autorização separadas.
