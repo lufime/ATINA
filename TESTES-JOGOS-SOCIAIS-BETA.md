@@ -45,12 +45,14 @@ Quando existir um backend de teste gratuito e isolado, repetir em dois dispositi
 ## Estado
 
 - [x] Código beta presente na branch.
-- [x] Funções RPC de jogo instaladas no Supabase de produção.
 - [x] Bloqueio de ativação em produção identificado.
+- [x] Ligação da página online ao Supabase de produção removida; sem configuração de testes, a página não executa RPCs.
 - [x] Decisão de não incorrer em custos registada.
 - [x] Modo de demonstração local sem chamadas a Supabase implementado.
 - [x] JavaScript da demonstração validado sintaticamente; HTML sem dependências externas.
 - [ ] Teste visual em navegador e interação manual ainda por executar.
+- [ ] Projeto Supabase de testes gratuito e isolado configurado.
+- [ ] Migrações e funções RPC dos cinco jogos revistas e aplicadas apenas no ambiente de testes.
 - [ ] Testes reais de dois dispositivos num backend isolado executados.
 
 **Não declarar os jogos testados ou aprovados até os cenários relevantes serem efetivamente executados.**
@@ -63,3 +65,8 @@ Quando existir um backend de teste gratuito e isolado, repetir em dois dispositi
 - Verificado que o JavaScript não contém chamadas RPC, Supabase ou pedidos de rede.
 - Confirmada a presença dos cinco jogos, opções de equipas e aviso de dados fictícios.
 - A validação foi estática; não foi executado um navegador nem um teste real em dois dispositivos.
+
+
+## Proteção da versão online (2026-11-13)
+
+A página `jogos-sociais.html` deixou de conter a URL e a chave publicável do Supabase de produção. O cliente Supabase só é criado quando forem configuradas credenciais de um ambiente de testes isolado. Sem essas credenciais, a página apresenta uma mensagem de preparação e não tenta ler a sala local nem executar RPCs. Esta alteração é uma salvaguarda; não transforma a versão online numa partida funcional.
