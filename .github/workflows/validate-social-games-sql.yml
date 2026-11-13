@@ -53,6 +53,11 @@ jobs:
           PGPASSWORD: postgres
         run: |
           psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/social-games/migrations/20261113161000_atina_social_games_rooms_teams.sql
+      - name: Apply manual team RPC migration
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/social-games/migrations/20261113162000_atina_social_games_manual_teams.sql
       - name: Run rollback-only structural tests
         env:
           PGPASSWORD: postgres
@@ -64,6 +69,11 @@ jobs:
           PGPASSWORD: postgres
         run: |
           psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/tests/20261113161000_atina_social_games_rooms_teams.test.sql
+      - name: Run rollback-only manual team RPC tests
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/tests/20261113162000_atina_social_games_manual_teams.test.sql
       - name: Verify no test data or objects leaked outside private schema
         env:
           PGPASSWORD: postgres
