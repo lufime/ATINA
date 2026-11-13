@@ -37,6 +37,9 @@ jobs:
           sed -i '/^\[db\]/,/^\[/ s/^port = 54322$/port = 55322/' supabase/config.toml
           sed -i '/^\[studio\]/,/^\[/ s/^port = 54323$/port = 55323/' supabase/config.toml
 
+      - name: Include isolated ATINA social-games migrations in disposable replay
+        run: cp supabase/social-games/migrations/*.sql supabase/migrations/
+
       - name: Start disposable local Supabase stack
         run: supabase start
 
