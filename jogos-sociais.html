@@ -51,7 +51,7 @@
 <section class="panel hidden" id="finished">
  <h2>Partida concluída</h2>
  <p>As rondas foram fechadas e os resultados ficaram guardados no servidor.</p>
- <p class="muted small">O quadro de classificações será apresentado quando a integração de rankings estiver ligada.</p>
+ <div id="resultsBoard"></div>
  <button class="btn secondary full" onclick="location.href='index.html'">Voltar ao ATINA</button>
 </section>
 <p class="footer"><a href="index.html">← Voltar ao ATINA</a> · ATINA Jogos Sociais</p>
@@ -89,7 +89,8 @@ async function refresh(){
    return;
   }
   if(roomState.status==='completed'||roomState.game_state?.status==='completed'){
-   show('setup',false);show('play',false);show('finished',true);return;
+   show('setup',false);show('play',false);show('finished',true);
+   const results=await rpc('atina_social_game_get_results',{p_room_id:room.room_id,p_token:room.token});renderResults(results);return;
   }
   if(roomState.game_state?.mode!=='social_game'){msg('setupMessage','Esta sala ainda não tem um jogo social ativo.');return;}
   gameState=await rpc('atina_social_game_get_state',{p_room_id:room.room_id,p_token:room.token});
@@ -116,6 +117,15 @@ function render(){
   setAction('<label for="answerWord">A tua associação</label><input id="answerWord" maxlength="60" placeholder="Uma palavra"><button class="btn full" id="sendAnswer">Enviar palavra</button>');
   $('sendAnswer').onclick=()=>submitAnswer({word:$('answerWord').value.trim()});
  }
+}
+function renderResults(r){
+ const players=r.players||[],teams=r.teams||[];
+ let html='<h3>'+esc(names[r.game_code]||r.game_code)+' · classificação</h3>';
+ if(r.play_mode==='teams'&&teams.length){
+  html+='<h4>Equipas</h4><ol class="list">'+teams.map(t=>'<li><b>'+esc(t.team)+'</b> — '+esc(t.normalized_score)+'% · '+esc(t.raw_score)+' pontos</li>').join('')+'</ol>';
+ }
+ html+='<h4>Jogadores</h4><ol class="list">'+players.map(p=>'<li><b>'+esc(p.nickname)+'</b> — '+esc(p.raw_score)+' pontos · '+esc(p.overall_score)+'% geral · '+esc(p.rounds_played)+' rondas'+(p.team?' · '+esc(p.team):'')+'</li>').join('')+'</ol>';
+ $('resultsBoard').innerHTML=html;
 }
 async function submitAnswer(answer){
  if(busy)return;busy=true;try{await rpc('atina_social_game_submit',{p_room_id:room.room_id,p_token:room.token,p_answer:answer});msg('playMessage','Resposta enviada.');await refresh();}catch(e){msg('playMessage',e.message);}finally{busy=false;}
