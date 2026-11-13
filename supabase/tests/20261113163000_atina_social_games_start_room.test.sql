@@ -55,7 +55,7 @@ begin
  exception when sqlstate '22023' then null; end;
  begin
   perform public.atina_social_game_start_room(rid,token,'misterio_impossivel','individual','easy',1,60);
-  raise exception 'Missing content accepted';
+  raise exception using errcode='XX000',message='Missing content accepted';
  exception when sqlstate 'P0001' then null; end;
 end $$;
 rollback;
