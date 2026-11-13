@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "supabase/social-games/**"
+      - "supabase/tests/*atina_social_games*.test.sql"
       - ".github/workflows/validate-social-games-sql.yml"
   push:
     branches:
