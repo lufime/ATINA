@@ -42,17 +42,17 @@ begin
  if (select status from private.atina_social_rooms where id=rid)<>'playing' then
   raise exception 'Room did not enter playing state';
  end if;
- begin
-  perform public.atina_social_game_start_room(rid,ht,'unknown','teams','mixed',1,60);
-  raise exception 'Invalid game accepted';
- exception when sqlstate '22023' then null; end;
 end $$;
 
-do $$
+do $
 declare h jsonb; rid uuid; token text;
 begin
  h:=public.atina_v2_create_room('Sem catalogo',4);
  rid:=(h->>'room_id')::uuid; token:=h->>'token';
+ begin
+  perform public.atina_social_game_start_room(rid,token,'unknown','individual','easy',1,60);
+  raise exception 'Invalid game accepted';
+ exception when sqlstate '22023' then null; end;
  begin
   perform public.atina_social_game_start_room(rid,token,'misterio_impossivel','individual','easy',1,60);
   raise exception 'Missing content accepted';
