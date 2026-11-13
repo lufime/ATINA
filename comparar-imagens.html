@@ -20,6 +20,8 @@
 </section>
 <section class="panel" id="bulkTools" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0">
 <label style="display:flex;gap:8px;align-items:center"><input id="selectVisible" type="checkbox"> Selecionar todas as imagens visíveis</label>
+<button id="approveAll" type="button">✓ Aprovar todas as pendentes/geradas</button>
+<button id="publishAll" type="button">↗ Publicar todas as aprovadas</button>
 <button id="deleteSelected" class="danger" type="button">Apagar selecionadas (0)</button>
 <button id="deleteVisible" class="danger" type="button">Apagar todas as visíveis</button>
 </section>
@@ -79,6 +81,9 @@ sourceImage.onload=draw;sourceImage.src=a.image_url;editor.append(intro,file,can
 $("signin").addEventListener("click",async()=>{say("A iniciar sessão…");const {error}=await sb.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){say(error.message);return}$("login").style.display="none";await refresh()});
 ["searchImages","filterAuthor","filterLicense","filterStatus","filterType","filterQuality","sortImages"].forEach(id=>$(id).addEventListener(id==="searchImages"?"input":"change",render));
 $("selectVisible").addEventListener("change",()=>{for(const a of currentFiltered){if($("selectVisible").checked)selectedChallenges.add(String(a.challenge_id));else selectedChallenges.delete(String(a.challenge_id))}render()});
+async function bulkStatus(action,items,label,question){if(!items.length){say("Não existem imagens elegíveis.");return}if(!confirm(question+"\\nTotal: "+items.length))return;let ok=0;const errors=[];for(const a of items){try{say(label+" "+(ok+1)+"/"+items.length+" · ID "+a.challenge_id);await invoke({action,challenge_id:Number(a.challenge_id)});ok++}catch(e){errors.push("ID "+a.challenge_id+": "+e.message)}}say(label+" concluído: "+ok+"/"+items.length+(errors.length?"\\nFalhas:\\n"+errors.join("\\n"):""));await refresh()}
+$("approveAll").addEventListener("click",()=>bulkStatus("approve",assets.filter(a=>["pending","generated"].includes(String(a.status||"").toLowerCase())),"Aprovação","Aprovar todas as imagens pendentes e geradas?"));
+$("publishAll").addEventListener("click",()=>bulkStatus("publish",assets.filter(a=>a.status==="approved"),"Publicação","Publicar todas as imagens já aprovadas no jogo?"));
 $("deleteSelected").addEventListener("click",async()=>{const ids=[...selectedChallenges];if(!ids.length){say("Seleciona primeiro uma ou mais imagens.");return}if(!confirm("Apagar "+ids.length+" imagem(ns) selecionada(s), incluindo os respetivos ficheiros? Esta ação não pode ser anulada."))return;try{for(const id of ids)await invoke({action:"delete",challenge_id:Number(id)});selectedChallenges.clear();say(ids.length+" imagem(ns) apagada(s).");await refresh()}catch(e){say("A operação parou: "+(e.message||"erro ao apagar"));await refresh()}});
 $("deleteVisible").addEventListener("click",async()=>{const ids=[...new Set(currentFiltered.map(a=>String(a.challenge_id)))];if(!ids.length){say("Não há imagens visíveis para apagar.");return}if(!confirm("ATENÇÃO: apagar TODAS as "+ids.length+" imagens atualmente visíveis (respeitando os filtros), incluindo ficheiros? Esta ação não pode ser anulada."))return;try{for(const id of ids)await invoke({action:"delete",challenge_id:Number(id)});ids.forEach(id=>selectedChallenges.delete(id));say(ids.length+" imagem(ns) visível(is) apagada(s).");await refresh()}catch(e){say("A operação parou: "+(e.message||"erro ao apagar"));await refresh()}});
 $("clearFilters").addEventListener("click",()=>{$("searchImages").value="";$("filterAuthor").value="";$("filterLicense").value="";$("filterStatus").value="";$("filterType").value="";$("filterQuality").value="";$("sortImages").value="id";render()});
