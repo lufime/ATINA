@@ -218,3 +218,23 @@ Todas as funções recebem `p_room_id uuid` e `p_token text`, exceto quando indi
 ## Decisão de implementação
 
 A próxima entrega técnica será a migration de fundação isolada (salas, jogadores, equipas, catálogo, rondas, submissões e funções de lobby/estado), acompanhada de testes SQL transacionais. As funções específicas de cada jogo serão entregues por blocos e testadas antes de ligar o frontend. **Ainda não aplicar qualquer migration no Supabase nesta etapa de desenho.**
+
+
+## Primeira migration da fundação — 2026-11-13
+
+Foi criada na branch beta, sem aplicação em qualquer base de dados:
+
+- `supabase/migrations/20261113160000_atina_social_games_foundation.sql`
+- Testes estruturais rollback-only: `supabase/tests/20261113160000_atina_social_games_foundation.test.sql`
+
+A migration cria o schema privado `private` e as 11 tabelas do modelo acima, com chaves estrangeiras, restrições, índices, RLS ativado e privilégios diretos revogados para `anon`, `authenticated` e `public`. Não cria ainda RPCs, políticas de acesso direto, nem importa conteúdos.
+
+### Limites da etapa
+
+- A migration foi guardada na branch, mas **não foi aplicada** no Supabase de testes nem em produção.
+- O ficheiro de testes foi criado, mas **não foi executado**: a CLI `supabase` não está instalada no ambiente de trabalho disponível e não foi feito deploy de esquema para permitir testes remotos.
+- A criação da migration foi feita diretamente pela API de conteúdos do GitHub porque a CLI não está disponível; numa estação com CLI, gerar futuras migrations com `supabase migration new`.
+- A compatibilidade de frontend continua pendente: o HTML atual ainda não envia dificuldade no arranque e espera uma sala V2 com campos específicos. O contrato/RPC e o frontend devem ser atualizados em conjunto antes da primeira ativação.
+- A próxima revisão deve validar a sintaxe PostgreSQL num ambiente local/isolado, corrigir qualquer erro, executar os testes transacionais e só depois considerar aplicar esta migration no projeto `atina-social-games-test`, mediante confirmação explícita.
+
+Esta migration não altera os motores do jogo principal, Mímicas ou Detetive e não substitui nenhuma migration ativa existente.
