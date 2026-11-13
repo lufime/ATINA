@@ -79,9 +79,7 @@ begin
    raise exception using errcode='22023',message='TEAMS_UNBALANCED';
   end if;
  else
-  if exists(select 1 from private.atina_social_players p where p.room_id=p_room_id and p.team_id is not null) then
-   raise exception using errcode='22023',message='TEAMS_PRESENT_IN_INDIVIDUAL_MODE';
-  end if;
+  update private.atina_social_players set team_id=null where room_id=p_room_id;
  end if;
 
  select count(*) into v_available
