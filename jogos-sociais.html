@@ -251,8 +251,8 @@ async function guarded(fn,success){
 $('startGame').onclick=async()=>{
  if(busy)return;busy=true;$('startGame').disabled=true;
  try{
-  const rounds=Math.max(1,Math.min(3,Number($('roundCount').value)||1));
-  await rpc('atina_social_game_start_room',{p_room_id:room.room_id,p_token:room.token,p_game_code:$('gameChoice').value,p_play_mode:$('playMode').value,p_difficulty:$('difficulty').value,p_total_rounds:rounds});
+  const rounds=Math.max(1,Math.min(50,Number($('roundCount').value)||1));
+  await rpc('atina_social_game_start_room',{p_room_id:room.room_id,p_token:room.token,p_game_code:$('gameChoice').value,p_play_mode:$('playMode').value,p_difficulty:$('difficulty').value,p_total_rounds:rounds,p_round_duration_seconds:60});
   await refresh();
  }catch(e){msg('setupMessage',e.message||'Não foi possível iniciar. Os jogos ainda podem estar em preparação no servidor.');}
  finally{busy=false;$('startGame').disabled=false;}
