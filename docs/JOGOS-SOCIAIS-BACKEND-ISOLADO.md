@@ -294,3 +294,37 @@ Limites conhecidos desta entrega:
 - A distribuição automática está implementada; a atribuição manual e criação de equipas manuais ficam para o próximo bloco.
 - A página HTML ainda não está ligada a estas RPCs e o contrato de arranque/dificuldade será atualizado em conjunto.
 - Ainda faltam limites de frequência e políticas de expiração/limpeza de salas; devem ser fechados antes da ativação online.
+
+
+## Validação de salas e equipas — 2026-11-13
+
+A pipeline PostgreSQL isolada foi corrigida após a primeira execução revelar um erro de continuação de linha no shell. A execução seguinte passou integralmente.
+
+A segunda etapa confirmou em PostgreSQL 17:
+- criação de sala e jogador anfitrião;
+- entrada de convidado por código;
+- consulta do estado por tokens distintos;
+- ausência de tokens no JSON do estado;
+- rejeição de token inválido e de operações de anfitrião por convidado;
+- distribuição automática em equipas equilibradas.
+
+Foi acrescentada a terceira migration:
+`supabase/social-games/migrations/20261113162000_atina_social_games_manual_teams.sql`
+
+RPCs:
+- `atina_social_team_create`: cria equipa com autorização do anfitrião.
+- `atina_social_team_assign_player`: atribui jogador a equipa da mesma sala, apenas antes do início.
+
+Testes rollback-only:
+`supabase/tests/20261113162000_atina_social_games_manual_teams.test.sql`
+
+A execução da GitHub Actions de 2026-11-13 (run 43456667020) concluiu com sucesso: as três migrations isoladas e os três conjuntos de testes passaram; a verificação de isolamento também passou. Isto valida o esquema e as RPCs num PostgreSQL efémero. Não equivale a testes no Supabase alojado, nem valida a integração browser.
+
+Ainda pendente:
+- RPC de arranque com validação de todas as equipas e catálogo;
+- dificuldade e rondas no contrato do frontend;
+- duração das rondas/deadlines, que precisa de uma decisão funcional antes de fixar o relógio;
+- gestão visual das equipas na página beta;
+- validação de conteúdo e importação dos 2.150 itens.
+
+Nenhuma migration foi aplicada ao projeto Supabase alojado.
