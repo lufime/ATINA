@@ -39,6 +39,8 @@ jobs:
           psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 <<'SQL'
           create role anon nologin;
           create role authenticated nologin;
+          create schema extensions;
+          create extension pgcrypto with schema extensions;
           SQL
       - name: Apply only isolated social-games migration
         env:
@@ -46,12 +48,24 @@ jobs:
         run: |
           psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 \
             -f supabase/social-games/migrations/20261113160000_atina_social_games_foundation.sql
+      - name: Apply isolated rooms and teams RPC migration
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 \\
+            -f supabase/social-games/migrations/20261113161000_atina_social_games_rooms_teams.sql
       - name: Run rollback-only structural tests
         env:
           PGPASSWORD: postgres
         run: |
           psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 \
             -f supabase/tests/20261113160000_atina_social_games_foundation.test.sql
+      - name: Run rollback-only room and team RPC tests
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 \\
+            -f supabase/tests/20261113161000_atina_social_games_rooms_teams.test.sql
       - name: Verify no test data or objects leaked outside private schema
         env:
           PGPASSWORD: postgres
