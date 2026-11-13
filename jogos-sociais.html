@@ -57,20 +57,24 @@
 <p class="footer"><a href="index.html">← Voltar ao ATINA</a> · ATINA Jogos Sociais</p>
 </main>
 <script>
-const SUPABASE_URL='https://qvvlqrgbtjujsejvenld.supabase.co';
-const SUPABASE_KEY='sb_publishable_hNav9TfG49in13UfflVdUw_O-_s2-0t';
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+// Ambiente de testes: manter vazio até existir um Supabase isolado de produção.
+// Nunca colocar aqui a URL/chave do projeto ATINA de produção.
+const SUPABASE_URL='';
+const SUPABASE_KEY='';
+const db=(SUPABASE_URL && SUPABASE_KEY && window.supabase)
+ ? window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY) : null;
 const $=id=>document.getElementById(id);
 let room=null,roomState=null,gameState=null,eventsState=null,tabooState=null,myTurn=null,poll=null,busy=false,resolving=false,lastAction='',lastPhase='';
 const names={quanto_achas:'Quanto Achas?',associacao_palavras:'Associação de Palavras',isto_ou_aquilo:'Isto ou Aquilo',misterio_impossivel:'Mistério Impossível',palavra_proibida:'Palavra Proibida'};
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function msg(id,t){$(id).textContent=t||'';}
-async function rpc(name,args){const {data,error}=await db.rpc(name,args);if(error)throw error;return data;}
+async function rpc(name,args){if(!db)throw new Error('Ambiente online de testes ainda não configurado. A ligação à produção está bloqueada por segurança.');const {data,error}=await db.rpc(name,args);if(error)throw error;return data;}
 function show(id,on=true){$(id).classList.toggle('hidden',!on);}
 function seconds(deadline){return Math.max(0,Math.floor((Date.parse(deadline)-Date.now())/1000));}
 function setAction(html){$('actionArea').innerHTML=html;}
 function actionButton(label,fn,cls='btn'){return '<button class="'+cls+'" id="actionButton">'+esc(label)+'</button>';}
 async function init(){
+ if(!db){$('roomCode').textContent='Ambiente de testes isolado';$('playerInfo').textContent='Ligação desativada';show('hostSetup',false);msg('setupMessage','A versão online está em preparação. A ligação ao Supabase de produção foi bloqueada. Para ativar partidas reais é necessário configurar um projeto de testes separado; até lá, utiliza a demonstração offline.');return;}
  try{room=JSON.parse(localStorage.getItem('atinaNetworkRoom')||'null');}catch(e){room=null;}
  if(!room?.room_id||!room?.token){msg('setupMessage','Não encontrei uma sala ativa neste dispositivo. Volta ao ATINA, entra numa sala online e abre novamente Jogos Sociais.');return;}
  await refresh();poll=setInterval(refresh,1800);
