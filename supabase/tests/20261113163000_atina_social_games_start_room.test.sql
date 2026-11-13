@@ -1,7 +1,8 @@
 -- pgTAP wrapper: execute the assertions as one reported test.
 begin;
 select plan(1);
-select lives_ok($atina_test$\ndo $$
+select lives_ok($atina_test$
+do $$
 declare
  h jsonb; g jsonb; started jsonb; rid uuid; ht text; gt text;
  p1 uuid; p2 uuid; p3 uuid; t1 uuid; t2 uuid;
@@ -59,6 +60,7 @@ begin
   perform public.atina_social_game_start_room(rid,token,'misterio_impossivel','individual','easy',1,60);
   raise exception using errcode='XX000',message='Missing content accepted';
  exception when sqlstate 'P0001' then null; end;
-end $$;\n$atina_test$, '20261113163000_atina_social_games_start_room: all assertions execute without error');
+end $$;
+$atina_test$, '20261113163000_atina_social_games_start_room: all assertions execute without error');
 select * from finish();
 rollback;
