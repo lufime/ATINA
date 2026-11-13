@@ -1,40 +1,56 @@
 # Plano de testes — Jogos Sociais ATINA (beta)
 
-## Âmbito e segurança
+## Decisão de custo e segurança
 
-- Branch de trabalho: `atina-social-games-beta`.
-- Não publicar esta branch no GitHub Pages principal.
-- Não alterar a branch `main`.
-- Não ativar os jogos no catálogo Supabase de produção.
-- Não executar partidas de teste contra o projeto Supabase de produção.
+- A opção de criar uma branch Supabase foi recusada por implicar custo horário.
+- Não criar projetos ou branches Supabase pagos.
+- Não executar partidas de teste contra o Supabase de produção.
+- Não ativar os cinco jogos no catálogo Supabase de produção.
+- Não alterar a branch `main` nem a publicação atual do ATINA.
+- Todo o trabalho gratuito decorre na branch GitHub `atina-social-games-beta`.
 
-## Bloqueio técnico confirmado
+## Limitação técnica atual
 
-A função `public.atina_social_game_start_room` valida `atina_social_game_catalog.active = true` antes de criar uma partida. Os cinco jogos continuam com `active = false` no catálogo atual. Por isso, a partida real não pode ser iniciada no projeto atual sem ativar jogos em produção — ação que está fora do âmbito destes testes.
+A página `jogos-sociais.html` utiliza RPCs Supabase e a sessão de uma sala existente. A função `public.atina_social_game_start_room` exige que o jogo esteja ativo no catálogo. Os cinco jogos continuam inativos em produção.
 
-Para testes de integração reais, é necessário um projeto Supabase de staging/teste isolado, com as migrações e conteúdos beta aplicados e as credenciais de teste configuradas na aplicação. A publicação de uma página web beta, por si só, não isola a base de dados.
+Por isso, abrir a página beta tal como está não constitui um teste isolado: a configuração atual aponta para o Supabase de produção. Não usar essa página para iniciar partidas, nem introduzir contas, tokens ou dados reais durante os testes.
 
-## Cenários de teste em dois dispositivos
+Sem um backend de teste gratuito, não é possível validar com segurança partidas online reais em dois dispositivos. O trabalho gratuito pode avançar com revisão estática do código, validação de sintaxe, documentação dos cenários e preparação de um modo de demonstração local com dados fictícios, sem chamadas ao Supabase.
 
-1. Anfitrião inicia sessão e cria uma sala.
-2. Convidado inicia sessão noutro dispositivo e entra com o código.
-3. Confirmar presença dos dois jogadores e estado da sala.
-4. Testar atribuição manual de equipas.
-5. Testar distribuição automática de equipas.
-6. Iniciar cada um dos cinco jogos em modo individual.
-7. Repetir cada jogo em modo equipas.
-8. Confirmar submissões, sincronização entre dispositivos, temporizadores e transição de rondas.
-9. Confirmar pontuação, classificação final e encerramento da partida.
-10. Repetir com interrupção/recarregamento de página e reconexão.
+## Cenários de teste a validar no modo local/demonstração
+
+1. Abrir a demonstração sem sessão ATINA e sem ligação ao Supabase.
+2. Confirmar apresentação dos cinco jogos e respetivas instruções.
+3. Testar seleção de modo individual e por equipas.
+4. Testar seleção do número de rondas e dificuldade, quando disponível.
+5. Testar distribuição automática de jogadores por 2–6 equipas.
+6. Testar atribuição manual de jogadores às equipas.
+7. Simular submissões e feedback em cada um dos cinco jogos.
+8. Simular temporizadores, transição entre rondas e fim de partida.
+9. Confirmar classificação individual e por equipa com dados fictícios.
+10. Recarregar a demonstração e confirmar que não há dependência de dados de produção.
+
+## Testes de integração futuros (não executados)
+
+Quando existir um backend de teste gratuito e isolado, repetir em dois dispositivos:
+
+1. Anfitrião cria uma sala e convidado entra com o código.
+2. Confirmar presença dos dois jogadores e estado da sala.
+3. Testar atribuição manual e automática de equipas.
+4. Iniciar cada jogo em modo individual e em modo equipas.
+5. Confirmar submissões, sincronização, temporizadores e transições.
+6. Confirmar pontuação, classificação final e encerramento.
+7. Repetir com recarregamento e reconexão.
 
 ## Estado
 
 - [x] Código beta presente na branch.
-- [x] Funções RPC de jogo instaladas no Supabase consultado.
+- [x] Funções RPC de jogo instaladas no Supabase de produção.
 - [x] Bloqueio de ativação em produção identificado.
-- [ ] Projeto Supabase de staging criado e configurado.
-- [ ] Página beta disponibilizada num host isolado.
-- [ ] Testes reais de dois dispositivos executados.
-- [ ] Resultados de pontuação e fim de ronda validados.
+- [x] Decisão de não incorrer em custos registada.
+- [ ] Modo de demonstração local sem Supabase implementado.
+- [ ] Revisão estática e validação de sintaxe concluídas.
+- [ ] Testes locais com dados fictícios executados.
+- [ ] Testes reais de dois dispositivos num backend isolado executados.
 
-**Não declarar os testes aprovados até os cenários acima serem executados num ambiente isolado.**
+**Não declarar os jogos testados ou aprovados até os cenários relevantes serem efetivamente executados.**
