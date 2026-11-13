@@ -1,5 +1,7 @@
+-- pgTAP wrapper: execute the assertions as one reported test.
 begin;
-do $$
+select plan(1);
+select lives_ok($atina_test$\ndo $$
 declare h jsonb; g jsonb; sh jsonb; sg jsonb; teams jsonb; rid uuid; ht text; gt text;
 begin
  h:=public.atina_v2_create_room('Anfitriao',6); rid:=(h->>'room_id')::uuid; ht:=h->>'token';
@@ -17,5 +19,6 @@ begin
  exception when sqlstate '28000' then null; end;
  begin perform public.atina_social_team_auto_assign(rid,gt,2); raise exception 'Non-host changed teams';
  exception when insufficient_privilege then null; end;
-end $$;
+end $$;\n$atina_test$, '20261113161000_atina_social_games_rooms_teams: all assertions execute without error');
+select * from finish();
 rollback;
