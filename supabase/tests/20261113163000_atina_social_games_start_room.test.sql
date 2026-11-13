@@ -44,7 +44,7 @@ begin
  end if;
 end $$;
 
-do $
+do $$
 declare h jsonb; rid uuid; token text;
 begin
  h:=public.atina_v2_create_room('Sem catalogo',4);
