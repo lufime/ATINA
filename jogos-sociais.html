@@ -34,8 +34,19 @@
   </select>
   <label for="playMode">Modo</label>
   <select id="playMode"><option value="individual">Individual</option><option value="teams">Por equipas</option></select>
+  <label for="difficulty">Dificuldade</label>
+  <select id="difficulty"><option value="mixed">Mista</option><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select>
   <label for="roundCount">Número de rondas</label>
-  <input id="roundCount" type="number" min="1" max="3" value="3">
+  <input id="roundCount" type="number" min="1" max="50" value="3">
+  <div id="teamSetup" class="hidden">
+   <h3>Distribuição de equipas</h3>
+   <label for="teamCount">Número de equipas (automático)</label>
+   <input id="teamCount" type="number" min="2" max="20" value="2">
+   <button class="btn secondary full" id="autoTeams" type="button">Distribuir automaticamente</button>
+   <label for="newTeamName">Criar equipa manualmente</label>
+   <div class="row"><input id="newTeamName" maxlength="32" placeholder="Nome da equipa"><button class="btn" id="createTeam" type="button">Criar</button></div>
+   <div id="manualTeamPlayers"></div>
+  </div>
   <button class="btn full" id="startGame">Iniciar jogo social</button>
  </div>
  <p id="setupMessage" class="feedback">A carregar a sala…</p>
@@ -79,6 +90,25 @@ async function init(){
  if(!room?.room_id||!room?.token){msg('setupMessage','Não encontrei uma sala ativa neste dispositivo. Volta ao ATINA, entra numa sala online e abre novamente Jogos Sociais.');return;}
  await refresh();poll=setInterval(refresh,1800);
 }
+function renderTeamSetup(){
+ const panel=$('teamSetup');
+ if(!panel)return;
+ const enabled=$('playMode')?.value==='teams'&&!!roomState?.is_host;
+ show('teamSetup',enabled);
+ if(!enabled)return;
+ const teams=roomState.teams||[],players=roomState.players||[];
+ $('manualTeamPlayers').innerHTML=players.map(p=>{
+  const options=teams.map(t=>'<option value="'+esc(t.id)+'" '+(p.team_id===t.id?'selected':'')+'>'+esc(t.label)+'</option>').join('');
+  return '<div class="row"><span>'+esc(p.nickname)+'</span><select data-player-team="'+esc(p.id)+'"><option value="">Sem equipa</option>'+options+'</select></div>';
+ }).join('');
+ $('manualTeamPlayers').querySelectorAll('[data-player-team]').forEach(sel=>{
+  sel.onchange=async()=>{if(!sel.value)return;await guarded(()=>rpc('atina_social_team_assign_player',{p_room_id:room.room_id,p_token:room.token,p_player_id:sel.dataset.playerTeam,p_team_id:sel.value}),'Jogador atribuído à equipa.');};
+ });
+ const auto=$('autoTeams'),create=$('createTeam');
+ if(auto)auto.onclick=async()=>{const count=Math.max(2,Math.min(20,Number($('teamCount').value)||2));await guarded(()=>rpc('atina_social_team_auto_assign',{p_room_id:room.room_id,p_token:room.token,p_team_count:count}),'Equipas distribuídas automaticamente.');};
+ if(create)create.onclick=async()=>{const label=$('newTeamName').value.trim();if(!label)return;await guarded(()=>rpc('atina_social_team_create',{p_room_id:room.room_id,p_token:room.token,p_label:label}),'Equipa criada.');};
+}
+$('playMode')?.addEventListener('change',renderTeamSetup);
 async function refresh(){
  if(!room||busy)return;
  try{
@@ -89,6 +119,7 @@ async function refresh(){
   show('hostSetup',roomState.status==='waiting'&&host);
   if(roomState.status==='waiting'){
    show('setup',true);show('play',false);
+   renderTeamSetup();
    msg('setupMessage',host?'Escolhe a modalidade e inicia quando todos estiverem prontos. Para o modo por equipas, distribui primeiro os jogadores pelas equipas na sala.':'À espera que o anfitrião inicie um jogo social.');
    return;
   }
@@ -221,7 +252,7 @@ $('startGame').onclick=async()=>{
  if(busy)return;busy=true;$('startGame').disabled=true;
  try{
   const rounds=Math.max(1,Math.min(3,Number($('roundCount').value)||1));
-  await rpc('atina_social_game_start_room',{p_room_id:room.room_id,p_token:room.token,p_game_code:$('gameChoice').value,p_play_mode:$('playMode').value,p_total_rounds:rounds});
+  await rpc('atina_social_game_start_room',{p_room_id:room.room_id,p_token:room.token,p_game_code:$('gameChoice').value,p_play_mode:$('playMode').value,p_difficulty:$('difficulty').value,p_total_rounds:rounds});
   await refresh();
  }catch(e){msg('setupMessage',e.message||'Não foi possível iniciar. Os jogos ainda podem estar em preparação no servidor.');}
  finally{busy=false;$('startGame').disabled=false;}
