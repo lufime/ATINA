@@ -5,6 +5,8 @@ let atinaServerState = null;
 let atinaServerTimer = null;
 let atinaServerPolling = null;
 let atinaServerBusy = false;
+let atinaServerAutoRevealAt = 0;
+let atinaServerAutoRevealTriggered = false;
 let atinaServerLastResult = '{}';
 let atinaNetworkChallengeKey = '';
 let atinaNetworkFeedback = '';
@@ -488,10 +490,31 @@ function atinaServerStopTimers() {
   timerInterval = null;
 }
 function atinaServerRenderTimer() {
-  const challenge = atinaServerState?.challenge;
   const deadline = atinaServerState?.deadline_at ? Date.parse(atinaServerState.deadline_at) : 0;
-  if (!deadline || atinaServerState?.round_locked) {
-    $('timerDisplay').textContent = deadline ? '00:00' : 'Sem limite';
+  const cluesRevealed = (atinaServerState?.challenge?.clues || []).length;
+  if (atinaServerState?.round_locked) {
+    $('timerDisplay').textContent = '00:00';
+    $('timerDisplay').classList.remove('urgent');
+    return;
+  }
+  // Antes da primeira pista, mostrar a contagem decrescente de 10 segundos.
+  // Ao chegar a zero, pedir ao servidor a revelação da primeira pista.
+  if (cluesRevealed === 0) {
+    if (!atinaServerAutoRevealAt) atinaServerAutoRevealAt = Date.now() + 10000;
+    const remaining = Math.max(0, Math.ceil((atinaServerAutoRevealAt - Date.now()) / 1000));
+    timeLeft = remaining;
+    $('timerDisplay').textContent = '00:' + String(remaining).padStart(2, '0');
+    $('timerDisplay').classList.toggle('urgent', remaining <= 3);
+    if (remaining === 0 && !atinaServerAutoRevealTriggered && !atinaServerBusy) {
+      atinaServerAutoRevealTriggered = true;
+      reveal();
+    }
+    return;
+  }
+  atinaServerAutoRevealAt = 0;
+  atinaServerAutoRevealTriggered = false;
+  if (!deadline) {
+    $('timerDisplay').textContent = 'Sem limite';
     $('timerDisplay').classList.remove('urgent');
     return;
   }
@@ -562,6 +585,10 @@ async function atinaRenderChallengeImageCredit(challengeId) {
 function atinaServerApplyState(state, announce = false) {
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
   const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
+  if (!sameChallenge) {
+    atinaServerAutoRevealAt = (state.challenge.clues || []).length === 0 ? Date.now() + 10000 : 0;
+    atinaServerAutoRevealTriggered = false;
+  }
   const resultKey = JSON.stringify(state.last_result || {});
   const clearAnswer = !sameChallenge || resultKey !== atinaServerLastResult;
   atinaServerLastResult = resultKey;
