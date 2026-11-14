@@ -837,7 +837,7 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 <section class="home-page-panel hidden" data-home-page="ranking">
  <div class="home-welcome"><div class="home-welcome-kicker">COMUNIDADE ATINA</div><h2>Classificação</h2><p>Consulta os jogadores com mais XP e vê a tua posição no ranking de pontuações.</p></div>
  
- <section class="card" style="margin:14px 0;padding:16px"><h3>🏆 Ranking global de XP</h3><p class="muted small">Compara o teu XP e nível com os restantes jogadores.</p><table class="atina-ranking-table"><thead><tr><th scope="col">#</th><th scope="col">Jogador</th><th scope="col" style="text-align:right">XP</th><th scope="col" style="text-align:right">Nível</th></tr></thead><tbody id="atinaCloudLeaderboard" aria-live="polite"><tr><td colspan="4">A classificação aparece aqui.</td></tr></tbody></table><hr><h3>⭐ Ranking global de Pontos</h3><p class="muted small">Pontos acumulados por respostas certas em todos os modos associados à tua conta.</p><table class="atina-ranking-table"><thead><tr><th scope="col">#</th><th scope="col">Jogador</th><th scope="col" style="text-align:right">Pontos</th></tr></thead><tbody id="atinaPointsLeaderboard" aria-live="polite"><tr><td colspan="3">A classificação de Pontos aparece aqui.</td></tr></tbody></table></section>
+ <section class="card" style="margin:14px 0;padding:16px"><h3>🏆 Ranking global de XP</h3><p class="muted small">Compara o teu XP e nível com os restantes jogadores.</p><table class="atina-ranking-table"><thead><tr><th scope="col">#</th><th scope="col">Jogador</th><th scope="col" style="text-align:right">XP</th><th scope="col" style="text-align:right">Designação</th></tr></thead><tbody id="atinaCloudLeaderboard" aria-live="polite"><tr><td colspan="4">A classificação aparece aqui.</td></tr></tbody></table><hr><h3>⭐ Ranking global de Pontos</h3><p class="muted small">Pontos acumulados por respostas certas em todos os modos associados à tua conta.</p><table class="atina-ranking-table"><thead><tr><th scope="col">#</th><th scope="col">Jogador</th><th scope="col" style="text-align:right">Pontos</th></tr></thead><tbody id="atinaPointsLeaderboard" aria-live="polite"><tr><td colspan="3">A classificação de Pontos aparece aqui.</td></tr></tbody></table></section>
  </section><section class="home-page-panel hidden" data-home-page="settings">
  <div class="home-welcome"><div class="home-welcome-kicker">PERSONALIZA A EXPERIÊNCIA</div><h2>Definições</h2><p>Ajusta o tempo, a dificuldade e os efeitos sonoros antes de começar.</p></div>
  <section class="card" style="padding:16px;margin:14px 0"><h3>⏱️ Tempo por desafio</h3><p class="muted small">Escolhe quanto tempo tens para responder.</p><select id="timerMode" class="answer"><option value="60">60 segundos</option><option value="90">90 segundos</option><option value="0">Sem limite de tempo</option></select>
@@ -2439,7 +2439,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível carregar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261114-06">
+</script><script src="./atina-server-client.js?v=20261114-07">
 /* Confirmar saída de uma partida antes de mudar de página */
 document.addEventListener('click',function(event){
  const nav=event.target.closest('[data-home-target]');
