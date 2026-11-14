@@ -192,6 +192,73 @@ function atinaLevelDesignation(level) {
   return ATINA_LEVEL_TITLES[Math.min(safeLevel - 1, ATINA_LEVEL_TITLES.length - 1)];
 }
 
+function atinaCreateLevelInsignia(level) {
+  const designs = [
+    ['#5f8d63','M32 3 L54 15 L50 43 L32 61 L14 43 L10 15 Z','M20 25 Q32 12 44 25 Q32 42 20 25 Z'],
+    ['#4c91a8','M32 3 L57 25 L45 56 L19 56 L7 25 Z','M17 31 L32 16 L47 31 L32 46 Z'],
+    ['#8c78bd','M32 3 L51 12 L59 32 L51 52 L32 61 L13 52 L5 32 L13 12 Z','M18 42 L27 20 L34 34 L42 18 L48 42'],
+    ['#a17b49','M32 3 L58 18 L54 48 L32 61 L10 48 L6 18 Z','M18 22 L46 22 L46 42 L18 42 Z M23 28 L41 28 M23 35 L37 35'],
+    ['#b78a45','M32 2 L39 15 L54 8 L50 24 L62 32 L50 40 L54 56 L39 49 L32 62 L25 49 L10 56 L14 40 L2 32 L14 24 L10 8 L25 15 Z','M32 17 L36 29 L49 30 L39 38 L42 51 L32 44 L22 51 L25 38 L15 30 L28 29 Z'],
+    ['#577eaa','M32 3 L55 13 L55 39 Q48 53 32 61 Q16 53 9 39 L9 13 Z','M20 24 L32 16 L44 24 L44 38 L32 47 L20 38 Z'],
+    ['#8c6a9f','M32 3 L57 32 L32 61 L7 32 Z','M32 15 L32 48 M17 32 L47 32 M22 22 L42 42 M42 22 L22 42'],
+    ['#4e9b91','M32 3 C48 3 60 15 60 31 C60 47 48 61 32 61 C16 61 4 47 4 31 C4 15 16 3 32 3 Z','M32 14 C22 24 22 38 32 49 C42 38 42 24 32 14 Z'],
+    ['#a88b4d','M32 3 L59 22 L49 56 L15 56 L5 22 Z','M17 42 L32 16 L47 42 M22 34 L42 34'],
+    ['#c49b35','M32 2 L39 18 L57 12 L49 30 L62 42 L43 44 L38 62 L27 47 L10 55 L16 36 L2 24 L22 22 Z','M20 34 L29 25 L36 34 L45 25 L45 43 L20 43 Z'],
+    ['#8b9aa8','M32 3 L54 10 L61 32 L54 54 L32 61 L10 54 L3 32 L10 10 Z','M17 32 L25 20 L32 27 L39 20 L47 32 L39 44 L32 37 L25 44 Z'],
+    ['#9b6e55','M32 3 L57 17 L57 47 L32 61 L7 47 L7 17 Z','M18 22 L46 22 L32 45 Z M24 28 L40 28'],
+    ['#a78a5c','M32 2 L44 9 L57 9 L55 24 L62 32 L55 40 L57 55 L44 55 L32 62 L20 55 L7 55 L9 40 L2 32 L9 24 L7 9 L20 9 Z','M17 43 L17 25 L32 16 L47 25 L47 43 M24 30 L32 24 L40 30'],
+    ['#65a7b8','M32 3 L59 32 L32 61 L5 32 Z','M32 13 L44 32 L32 51 L20 32 Z'],
+    ['#c29b42','M32 2 L40 13 L54 8 L53 23 L63 32 L53 41 L54 56 L40 51 L32 62 L24 51 L10 56 L11 41 L1 32 L11 23 L10 8 L24 13 Z','M20 32 Q32 13 44 32 Q32 51 20 32 Z'],
+    ['#6b8fc1','M32 3 L57 18 L49 51 L32 61 L15 51 L7 18 Z','M18 40 L28 18 L36 40 L46 22'],
+    ['#9b77b6','M32 3 L49 9 L61 25 L55 45 L32 61 L9 45 L3 25 L15 9 Z','M19 40 L32 16 L45 40 M24 34 L40 34'],
+    ['#8b9b59','M32 2 L39 17 L56 12 L49 29 L62 40 L44 43 L39 61 L27 47 L10 55 L16 37 L2 25 L22 22 Z','M32 16 L32 45 M20 28 L44 28 M22 40 L42 40'],
+    ['#bd765d','M32 3 C48 3 59 15 59 31 C59 47 48 60 32 60 C16 60 5 47 5 31 C5 15 16 3 32 3 Z','M18 31 C18 20 46 20 46 31 C46 42 18 42 18 31 Z M32 18 L32 44'],
+    ['#b08bca','M32 2 L57 15 L57 49 L32 62 L7 49 L7 15 Z','M18 24 L32 15 L46 24 L46 40 L32 49 L18 40 Z M25 32 L39 32'],
+    ['#6c9caa','M32 3 L61 32 L32 61 L3 32 Z','M16 32 L24 21 L32 32 L40 21 L48 32 L40 43 L32 32 L24 43 Z'],
+    ['#9d8750','M32 2 L43 12 L58 13 L54 29 L62 41 L46 47 L38 62 L25 52 L9 55 L10 38 L2 25 L18 17 L21 4 Z','M19 42 L25 23 L32 36 L39 23 L45 42'],
+    ['#548e83','M32 3 L51 8 L61 25 L55 46 L32 61 L9 46 L3 25 L13 8 Z','M17 38 L25 25 L32 34 L39 25 L47 38 M22 44 L42 44'],
+    ['#8d78ad','M32 2 L60 20 L49 56 L15 56 L4 20 Z','M16 32 L25 20 L32 29 L39 20 L48 32 L39 44 L32 35 L25 44 Z'],
+    ['#c08b4b','M32 2 L40 16 L56 7 L52 25 L63 32 L52 39 L56 57 L40 48 L32 62 L24 48 L8 57 L12 39 L1 32 L12 25 L8 7 L24 16 Z','M20 42 L32 17 L44 42 M24 34 L40 34'],
+    ['#5c9fb1','M32 3 L58 16 L58 48 L32 61 L6 48 L6 16 Z','M18 42 L18 24 L32 15 L46 24 L46 42 L32 50 Z M24 32 L40 32'],
+    ['#9b6e9f','M32 2 L60 32 L32 62 L4 32 Z','M18 32 L32 15 L46 32 L32 49 Z M25 32 L39 32'],
+    ['#b18d49','M32 2 L43 10 L57 8 L55 23 L63 32 L55 41 L57 56 L43 54 L32 62 L21 54 L7 56 L9 41 L1 32 L9 23 L7 8 L21 10 Z','M18 43 L32 16 L46 43 M23 34 L41 34'],
+    ['#7896b7','M32 3 C48 3 60 15 60 31 C60 47 48 61 32 61 C16 61 4 47 4 31 C4 15 16 3 32 3 Z','M32 13 L38 27 L53 32 L38 37 L32 51 L26 37 L11 32 L26 27 Z'],
+    ['#c4a14b','M32 2 L43 7 L56 7 L57 20 L63 32 L57 44 L56 57 L43 57 L32 62 L21 57 L8 57 L7 44 L1 32 L7 20 L8 7 L21 7 Z','M32 13 L48 23 L42 43 L22 43 L16 23 Z']
+  ];
+  const design = designs[Math.min(Math.max(1, Number(level) || 1) - 1, designs.length - 1)];
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 64 64');
+  svg.setAttribute('class', 'atina-level-insignia');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Insígnia exclusiva do nível ' + level);
+  const outer = document.createElementNS(ns, 'path');
+  outer.setAttribute('d', design[1]);
+  outer.setAttribute('fill', design[0]);
+  outer.setAttribute('stroke', '#f4e3b0');
+  outer.setAttribute('stroke-width', '2');
+  const motif = document.createElementNS(ns, 'path');
+  motif.setAttribute('d', design[2]);
+  motif.setAttribute('fill', 'none');
+  motif.setAttribute('stroke', '#fff3d1');
+  motif.setAttribute('stroke-width', '2.5');
+  motif.setAttribute('stroke-linecap', 'round');
+  motif.setAttribute('stroke-linejoin', 'round');
+  const number = document.createElementNS(ns, 'text');
+  number.setAttribute('x', '32');
+  number.setAttribute('y', '53');
+  number.setAttribute('text-anchor', 'middle');
+  number.setAttribute('font-size', String(level >= 10 ? 10 : 12));
+  number.setAttribute('font-weight', '900');
+  number.setAttribute('fill', '#ffffff');
+  number.setAttribute('stroke', '#26313d');
+  number.setAttribute('stroke-width', '.8');
+  number.setAttribute('paint-order', 'stroke');
+  number.textContent = String(level);
+  svg.append(outer, motif, number);
+  return svg;
+}
+
 async function atinaProgressLoadLeaderboard() {
   const list = $('atinaCloudLeaderboard');
   if (!list) return;
@@ -222,16 +289,7 @@ async function atinaProgressLoadLeaderboard() {
       const levelNumber = Math.max(1, Number(row.level) || 1);
       const levelBadge = document.createElement('span');
       levelBadge.className = 'atina-level-medal';
-      const levelIcons = ['🌱','🧭','🔎','📚','🎓','🛡️','⚔️','🔮','💡','👑','🏆','📜','🏛️','💎','🥇','🚀','🌟','🦅','🔥','♾️','🧠','🌍','✨','🔱','💫','☀️','🗝️','🏅','🌠','💠'];
-      const levelIcon = levelIcons[Math.min(levelNumber - 1, levelIcons.length - 1)];
-      const iconGlyph = document.createElement('span');
-      iconGlyph.className = 'atina-level-medal-icon';
-      iconGlyph.textContent = levelIcon;
-      iconGlyph.setAttribute('aria-hidden', 'true');
-      const iconNumber = document.createElement('span');
-      iconNumber.className = 'atina-level-medal-number';
-      iconNumber.textContent = String(levelNumber);
-      levelBadge.append(iconGlyph, iconNumber);
+      levelBadge.appendChild(atinaCreateLevelInsignia(levelNumber));
       levelBadge.setAttribute('aria-label', 'Nível ' + levelNumber);
       const levelTitle = document.createElement('span');
       levelTitle.className = 'atina-level-title';
