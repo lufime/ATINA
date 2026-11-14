@@ -4,7 +4,7 @@ select plan(1);
 select lives_ok($atina_test$
 -- Structural regression checks for 20261113160000_atina_social_games_foundation.
 -- Run only after the matching migration in an isolated test database.
-do $
+do $atina_assertions$
 declare
   expected text[] := array[
     'atina_social_rooms','atina_social_players','atina_social_teams',
@@ -54,7 +54,7 @@ begin
     raise exception 'Host/player deferred FK is missing';
   end if;
 end
-$$;
+$atina_assertions$;
 $atina_test$, '20261113160000_atina_social_games_foundation: all assertions execute without error');
 select * from finish();
 rollback;
