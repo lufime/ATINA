@@ -44,12 +44,12 @@ function atinaProgressRender(profile) {
   const xp = Math.max(0, Number(profile.xp) || 0);
   const points = Math.max(0, Number(profile.points) || 0);
   if ($('atinaCloudPoints')) $('atinaCloudPoints').textContent = points + ' pontos';
-  const thresholds = [0,250,600,1100,1800,2700,3900,5400,7200,9300,11700,14400,17400,20700,24300,28200,32400,36900,41700,46800,52200,57900,64000,70500,77400,84700,92400,100500,109000,118000];
+  const thresholds = [0,2000,5000,9000,15000,23000,33000,46000,61000,79000,99000,122000,147000,175000,206000,239000,275000,313000,353000,397000,442000,491000,542000,597000,656000,718000,783000,852000,924000,1000000];
   const titles = ['Curioso','Explorador','Descobridor','Investigador','Aprendiz','Estudioso','Observador','Pesquisador','Experimentador','Cientista','Inventor','Criativo','Analista','Estratega','Especialista','Pensador','Filósofo','Intelectual','Mentor','Mestre','Erudito','Visionário','Inovador','Sábio','Génio','Iluminado','Grande Mestre','Guardião do Saber','Lenda do Conhecimento','Lenda ATINA'];
   const level = Math.max(1, Number(profile.level) || 1);
   const levelIndex = Math.min(level - 1, thresholds.length - 1);
-  const currentThreshold = level <= 30 ? thresholds[levelIndex] : 128000 + ((level - 31) * 10000) + (((level - 31) * (level - 32)) / 2 * 1000);
-  const nextThreshold = level < 30 ? thresholds[levelIndex + 1] : currentThreshold + 10000 + Math.max(0, level - 31) * 1000;
+  const currentThreshold = level <= 30 ? thresholds[levelIndex] : 1080000 + ((level - 31) * 10000) + (((level - 31) * (level - 32)) / 2 * 1000);
+  const nextThreshold = level < 30 ? thresholds[levelIndex + 1] : level === 30 ? 1080000 : currentThreshold + 10000 + Math.max(0, level - 31) * 1000;
   const progress = Math.max(0, xp - currentThreshold);
   const needed = Math.max(1, nextThreshold - currentThreshold);
   const remaining = Math.max(0, nextThreshold - xp);
@@ -303,7 +303,7 @@ function atinaCreateLevelInsignia(level) {
 function atinaRenderLevelGallery(profile) {
   const gallery = $('atinaLevelGallery');
   if (!gallery) return;
-  const thresholds = [0,250,600,1100,1800,2700,3900,5400,7200,9300,11700,14400,17400,20700,24300,28200,32400,36900,41700,46800,52200,57900,64000,70500,77400,84700,92400,100500,109000,118000];
+  const thresholds = [0,2000,5000,9000,15000,23000,33000,46000,61000,79000,99000,122000,147000,175000,206000,239000,275000,313000,353000,397000,442000,491000,542000,597000,656000,718000,783000,852000,924000,1000000];
   const titles = ['Curioso','Explorador','Descobridor','Investigador','Aprendiz','Estudioso','Observador','Pesquisador','Experimentador','Cientista','Inventor','Criativo','Analista','Estratega','Especialista','Pensador','Filósofo','Intelectual','Mentor','Mestre','Erudito','Visionário','Inovador','Sábio','Génio','Iluminado','Grande Mestre','Guardião do Saber','Lenda do Conhecimento','Lenda ATINA'];
   const xp = Math.max(0, Number(profile?.xp) || 0);
   const currentLevel = Math.max(1, Number(profile?.level) || 1);
@@ -314,7 +314,7 @@ function atinaRenderLevelGallery(profile) {
   const nextLevel = currentLevel + 1;
   const nextThreshold = currentLevel < 30
     ? thresholds[currentLevel]
-    : 128000 + ((currentLevel - 30) * 10000) + ((currentLevel - 30) * (currentLevel - 29) / 2 * 1000);
+    : 1080000 + ((currentLevel - 30) * 10000) + ((currentLevel - 30) * (currentLevel - 29) / 2 * 1000);
   const nextTitle = titles[Math.min(nextLevel - 1, titles.length - 1)] || 'Lenda ATINA';
   summary.textContent = 'Insígnias conquistadas: ' + Math.min(currentLevel, 30) + ' / 30 · Próximo nível: ' + nextTitle + ' aos ' + nextThreshold.toLocaleString('pt-PT') + ' XP';
   gallery.appendChild(summary);
