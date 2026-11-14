@@ -191,12 +191,14 @@ begin
     clock_timestamp()+interval '8 hours',null
   ) returning * into v_session;
 
-  insert into private.atina_xp_session_owners(session_id,player_id)
-  values(v_session.id,v_player_id);
+  if v_player_id is not null then
+    insert into private.atina_xp_session_owners(session_id,player_id)
+    values(v_session.id,v_player_id);
 
-  insert into private.atina_challenge_exposures(scope_type,scope_key,challenge_id)
-  values('player',v_player_id::text,v_queue[1])
-  on conflict(scope_type,scope_key,challenge_id) do nothing;
+    insert into private.atina_challenge_exposures(scope_type,scope_key,challenge_id)
+    values('player',v_player_id::text,v_queue[1])
+    on conflict(scope_type,scope_key,challenge_id) do nothing;
+  end if;
 
   select * into v_session from private.atina_v2_local_sessions where id=v_session.id;
   return jsonb_build_object('token',v_token,'state',private.atina_v2_local_public_state(v_session));
