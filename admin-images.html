@@ -59,7 +59,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible,.admin-nav a:focus-
  .challenge-meta{font-size:13px}
 }
 label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}textarea,select{font:inherit;width:100%;padding:11px;border-radius:10px;background:#0b1d2d;color:white;border:1px solid #456078}textarea{min-height:100px;resize:vertical}.clue-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.clue-fields{display:grid;gap:8px}.clue-row{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:8px;width:100%}.clue-row textarea{display:block;box-sizing:border-box;min-width:0;width:100%;max-width:none;min-height:104px;height:104px;padding:13px 14px;font-size:17px;line-height:1.4;white-space:pre-wrap;overflow-y:auto;resize:vertical}.clue-row button{width:42px;min-width:42px;margin:0;padding:9px 6px}.image-preview{margin-top:10px;padding:10px;border:1px dashed #456078;border-radius:12px;min-height:54px}.image-preview img{display:block;max-width:100%;max-height:240px;object-fit:contain;border-radius:8px}.image-preview a{display:inline-block;margin-top:8px;color:var(--gold);overflow-wrap:anywhere}.challenge-item{border:1px solid #36516e;border-radius:12px;padding:12px;margin:9px 0;background:#0b1d2d}.challenge-actions{display:flex;gap:8px;flex-wrap:wrap}.challenge-actions button{width:auto;flex:1;min-width:110px;margin-top:8px}.challenge-meta{font-size:12px;color:var(--muted)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.form-grid{grid-template-columns:1fr}}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
-#status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden,.page-hidden,.tab-hidden{display:none!important}.admin-nav a[aria-current="page"]{border-color:var(--gold);background:#19314a;color:var(--gold)}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
+#status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden,.page-hidden,.tab-hidden{display:none!important}.admin-nav a[aria-current="page"]{border-color:var(--gold);background:#19314a;color:var(--gold)}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.progress-track{height:10px;background:#081522;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin:8px 0}.progress-track span{display:block;height:100%;background:var(--gold);width:0;transition:width .25s}.history-item{padding:8px 0;border-bottom:1px solid #29425b;font-size:12px}.history-item:last-child{border-bottom:0}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
 
 /* Mobile compacto: consulta rápida sem sacrificar legibilidade */
 @media(max-width:600px){
@@ -141,6 +141,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <div class="stat"><strong>—</strong><span>Por confirmar</span></div>
       <div class="stat"><strong>—</strong><span>Sem imagem</span></div>
     </div>
+    <div class="progress-track" aria-label="Percentagem de desafios com imagem publicada"><span id="dashboardProgressBar"></span></div><p class="note" id="dashboardProgressText">A calcular progresso…</p>
+    <div class="challenge-actions"><a class="page-link" href="#challenges">Editar desafios</a><a class="page-link" href="#images">Gerir imagens</a><a class="page-link" href="#upload">Enviar imagens</a></div>
     <h2 id="playersSection" class="subsection-title">Jogadores registados</h2>
     <div id="playersSummary" class="note">A carregar jogadores…</div>
     <div id="playersList" class="hint"></div>
@@ -342,6 +344,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       const s = data.stats;
       const stats = [[s.total_challenges,"Desafios"],[s.published,"Imagens publicadas"],[s.pending+s.approved,"Por confirmar / publicar"],[s.missing_images,"Sem imagem"]];
       $("dashboardStats").innerHTML = stats.map(function(item) { return '<div class="stat"><strong>' + Number(item[0]).toLocaleString("pt-PT") + '</strong><span>' + item[1] + '</span></div>'; }).join("");
+      const total=Number(s.total_challenges)||0,published=Number(s.published)||0,percent=total?Math.min(100,Math.round(published/total*100)):0;
+      $("dashboardProgressBar").style.width=percent+"%"; $("dashboardProgressText").textContent=published+" de "+total+" desafios com imagem publicada · "+percent+"% concluído";
       const tasks = [];
       if (s.pending) tasks.push(s.pending + " imagem(ns) pendente(s) de confirmação — <a href=\"comparar-imagens.html\">Rever →</a>");
       if (s.approved) tasks.push(s.approved + " imagem(ns) aprovada(s) por publicar — <a href=\"comparar-imagens.html\">Publicar →</a>");
@@ -493,9 +497,19 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     } catch(error) { $("challengeCount").textContent="Erro: "+error.message; }
   }
   let challengePage=0; const CHALLENGES_PER_PAGE=30;
+  let challengeFormDirty=false;
+  const historyKey="atina_admin_history_v1";
+  function recordAdminAction(action,detail){try{const rows=JSON.parse(localStorage.getItem(historyKey)||"[]");rows.unshift({action,detail,time:new Date().toISOString()});localStorage.setItem(historyKey,JSON.stringify(rows.slice(0,30)));renderAdminHistory();}catch(error){console.warn("Não foi possível guardar o histórico local",error);}}
+  function renderAdminHistory(){const box=$("adminHistory");if(!box)return;let rows=[];try{rows=JSON.parse(localStorage.getItem(historyKey)||"[]");}catch{}box.innerHTML=rows.length?rows.map(x=>'<div class="history-item"><strong>'+esc(x.action)+'</strong> · '+esc(x.detail)+'<br><span class="challenge-meta">'+new Date(x.time).toLocaleString("pt-PT")+'</span></div>').join(""):"Ainda sem operações registadas.";}
+  function setFormDirty(value){challengeFormDirty=!!value;$("formDirtyNotice")?.classList.toggle("hidden",!challengeFormDirty);}
+  window.addEventListener("beforeunload",event=>{if(challengeFormDirty){event.preventDefault();event.returnValue="";}});
+  $("challengeForm").addEventListener("input",()=>setFormDirty(true));
+  $("challengeForm").addEventListener("change",()=>setFormDirty(true));
+  renderAdminHistory();
   function renderChallenges() {
     const term=$("challengeSearch").value.trim().toLocaleLowerCase("pt-PT");
-    const rows=challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term));
+    const activeFilter=$("challengeActiveFilter").value,difficultyFilter=$("challengeDifficultyFilter").value;
+    const rows=challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)&&(!activeFilter||(activeFilter==="active"?x.active:!x.active))&&(!difficultyFilter||x.difficulty===difficultyFilter));
     const pageCount=Math.max(1,Math.ceil(rows.length/CHALLENGES_PER_PAGE)); challengePage=Math.min(challengePage,pageCount-1);
     const visible=rows.slice(challengePage*CHALLENGES_PER_PAGE,(challengePage+1)*CHALLENGES_PER_PAGE);
     $("challengeCount").textContent=rows.length+" de "+challengeCache.length+" desafios · a mostrar "+(rows.length?challengePage*CHALLENGES_PER_PAGE+1:0)+"–"+Math.min((challengePage+1)*CHALLENGES_PER_PAGE,rows.length);
@@ -522,7 +536,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("challengeImageFile").addEventListener("change",()=>{const file=$("challengeImageFile").files?.[0];if(!file){updateChallengeImagePreview();return;}if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>10*1024*1024){$("challengeImageFile").value="";alert("Seleciona JPEG, PNG ou WebP até 10 MB.");return;}const url=URL.createObjectURL(file);$("challengeImagePreview").innerHTML='<img src="'+url+'" alt="Pré-visualização da imagem selecionada"><span class="note">'+esc(file.name)+' · '+Math.round(file.size/1024)+' KB · será enviada ao guardar</span>';});
   function resetChallengeForm() {
     $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview();
-    $("challengeFormTitle").textContent="Novo desafio"; $("challengeForm").classList.add("hidden"); $("challengePagination").classList.toggle("hidden",challengeCache.length<=CHALLENGES_PER_PAGE); $("challengeList").nextElementSibling?.classList.remove("hidden");
+    $("challengeFormTitle").textContent="Novo desafio"; setFormDirty(false); $("challengeForm").classList.add("hidden"); $("challengePagination").classList.toggle("hidden",challengeCache.length<=CHALLENGES_PER_PAGE); $("challengeList").nextElementSibling?.classList.remove("hidden");
   }
   function editChallenge(id) {
     const x=challengeCache.find(v=>String(v.challenge_id)===String(id)); if(!x)return;
@@ -530,7 +544,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("challengeAnswer").value=x.answer||""; $("challengeDifficulty").value=x.difficulty||"medium";
     renderClueFields(x.clues||[]); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
     $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||""; updateChallengeImagePreview();
-    $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id;
+    $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id; setFormDirty(false);
     $("challengeForm").classList.remove("hidden"); $("challengePagination").classList.add("hidden"); $("challengeList").nextElementSibling?.classList.add("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
   }
   $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeList").nextElementSibling?.classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
@@ -539,6 +553,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("challengeScrollBottom").addEventListener("click",()=>{const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().bottom+window.scrollY,behavior:"smooth"});});
   $("reloadChallenges").addEventListener("click",loadChallenges);
   $("challengeSearch").addEventListener("input",()=>{challengePage=0;renderChallenges();});
+  ["challengeActiveFilter","challengeDifficultyFilter"].forEach(id=>$(id).addEventListener("change",()=>{challengePage=0;renderChallenges();}));
   $("challengePrev").addEventListener("click",()=>{challengePage=Math.max(0,challengePage-1);renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
   $("challengeNext").addEventListener("click",()=>{challengePage++;renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
   $("challengeList").addEventListener("click",async event=>{
@@ -549,7 +564,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     const action=active?"desativar":"reativar";
     if(!confirm("Queres "+action+" o desafio #"+id+" — "+(x?.answer||"")+"? "+(active?"O registo e o histórico serão preservados.":"O desafio voltará a ficar ativo.")))return;
     toggle.disabled=true;
-    try { await challengeRequest({action:"challenge_toggle",challenge_id:id,active}); await loadChallenges(); }
+    try { await challengeRequest({action:"challenge_toggle",challenge_id:id,active}); recordAdminAction(active?"Desativou desafio":"Reativou desafio","#"+id+" · "+(x?.answer||"")); await loadChallenges(); }
     catch(error){alert(error.message);} finally{toggle.disabled=false;}
   });
   $("challengeForm").addEventListener("submit",async event=>{
@@ -566,6 +581,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
         const upload=await response.json().catch(()=>({}));if(!response.ok||!upload.success)throw new Error("O desafio foi guardado, mas o envio da imagem falhou: "+(upload.error||"erro desconhecido"));
         $("challengeImageUrl").value=upload.image_url;
       }
+      recordAdminAction(result.created?"Criou desafio":"Editou desafio","#"+result.challenge_id+" · "+$("challengeAnswer").value.trim());
       await loadChallenges(); resetChallengeForm(); alert((result.created?"Desafio criado":"Desafio atualizado")+" com sucesso. ID: "+result.challenge_id+(imageFile?"\nImagem enviada e associada. Estado da imagem: Pending.":""));
     } catch(error){alert(error.message);} finally{button.disabled=false;}
   });
