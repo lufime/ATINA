@@ -102,7 +102,7 @@ async function atinaProgressRegister(nickname, quiet = false, personalCode = '')
 
 async function atinaProgressClaim(state) {
   if (!['solo', 'mix'].includes(state?.mode)) return;
-  if (!state || state.last_result?.outcome !== 'correct' || !state.round_locked || !atinaServerSession) return;
+  if (!state || !['correct', 'wrong', 'incorrect'].includes(state.last_result?.outcome) || !state.round_locked || !atinaServerSession) return;
   const deviceToken = atinaAccountSessionToken();
   if (!deviceToken) {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Inicia sessão com o teu pseudónimo para guardar XP.';
