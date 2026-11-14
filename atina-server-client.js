@@ -39,6 +39,7 @@ function atinaProgressDeviceToken(createIfMissing = true) {
 function atinaProgressRender(profile) {
   const signedInName = $('atinaSignedInUserName');
   if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
+  atinaRenderLevelGallery(profile || {level:1,xp:0});
   if (!profile) return;
   const xp = Math.max(0, Number(profile.xp) || 0);
   const points = Math.max(0, Number(profile.points) || 0);
@@ -54,7 +55,6 @@ function atinaProgressRender(profile) {
   const remaining = Math.max(0, nextThreshold - xp);
   const percent = Math.min(100, progress / needed * 100);
   const title = titles[levelIndex] || 'Lenda ATINA';
-  atinaRenderLevelGallery(profile);
   const fill = $('atinaCloudXpFill');
   if ($('atinaCloudLevel')) $('atinaCloudLevel').textContent = 'Nível ' + level + ' · ' + title;
   if ($('atinaCloudXp')) $('atinaCloudXp').textContent = xp + ' XP';
