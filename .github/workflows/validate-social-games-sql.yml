@@ -1,0 +1,120 @@
+name: Validate isolated ATINA social-games SQL
+
+on:
+  pull_request:
+    paths:
+      - "supabase/social-games/**"
+      - "supabase/tests/*atina_social_games*.test.sql"
+      - ".github/workflows/validate-social-games-sql.yml"
+  push:
+    branches:
+      - atina-social-games-beta
+    paths:
+      - "supabase/social-games/**"
+      - ".github/workflows/validate-social-games-sql.yml"
+  workflow_dispatch:
+
+jobs:
+  postgres-validation:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: atina_social_games_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d atina_social_games_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - name: Checkout beta branch
+        uses: actions/checkout@v4
+      - name: Check social-games frontend JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path("jogos-sociais.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script(?:\s[^>]*)?>([\s\S]*?)</script>", html, re.IGNORECASE)
+          inline = [part for part in scripts if part.strip()]
+          if not inline:
+              raise SystemExit("No inline JavaScript found")
+          Path("/tmp/atina-social-inline.js").write_text("\n".join(inline), encoding="utf-8")
+          PY
+          node --check /tmp/atina-social-inline.js
+      - name: Create Supabase-compatible database roles
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon nologin;
+          create role authenticated nologin;
+          create schema extensions;
+          create extension pgcrypto with schema extensions;
+          SQL
+      - name: Apply only isolated social-games migration
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 \
+            -f supabase/social-games/migrations/20261113160000_atina_social_games_foundation.sql
+      - name: Apply isolated rooms and teams RPC migration
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/social-games/migrations/20261113161000_atina_social_games_rooms_teams.sql
+      - name: Apply manual team RPC migration
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/social-games/migrations/20261113162000_atina_social_games_manual_teams.sql
+      - name: Install pgTAP in isolated PostgreSQL service
+        run: |
+          container_id="$(docker ps --filter 'ancestor=postgres:17' --format '{{.ID}}' | head -n 1)"
+          test -n "$container_id"
+          docker exec "$container_id" bash -lc "apt-get update && apt-get install -y postgresql-17-pgtap"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -c "create extension pgtap;"
+      - name: Run rollback-only structural tests
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 \
+            -f supabase/tests/20261113160000_atina_social_games_foundation.test.sql
+      - name: Run rollback-only room and team RPC tests
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/tests/20261113161000_atina_social_games_rooms_teams.test.sql
+      - name: Run rollback-only manual team RPC tests
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/tests/20261113162000_atina_social_games_manual_teams.test.sql
+      - name: Apply authoritative game-start RPC migration
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/social-games/migrations/20261113163000_atina_social_games_start_room.sql
+      - name: Run rollback-only game-start tests
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 -f supabase/tests/20261113163000_atina_social_games_start_room.test.sql
+      - name: Verify no test data or objects leaked outside private schema
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d atina_social_games_test -v ON_ERROR_STOP=1 <<'SQL'
+          select count(*) = 11 as has_all_private_tables
+          from information_schema.tables
+          where table_schema = 'private'
+            and table_name like 'atina_social_%';
+          select count(*) = 0 as no_social_tables_in_public
+          from information_schema.tables
+          where table_schema = 'public'
+            and table_name like 'atina_social_%';
+          SQL
