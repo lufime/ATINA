@@ -845,6 +845,34 @@ stopTimer = function() {
   atinaServerTimer = null;
 };
 startTimer = function() { atinaServerStartTimers(); };
+$('listenCurrentClue').addEventListener('click', (event) => {
+  event.stopImmediatePropagation();
+  const clues = atinaServerState?.challenge?.clues || [];
+  const currentClue = clues.length ? String(clues[clues.length - 1] || '').trim() : '';
+  const feedback = $('feedback');
+  if (!currentClue) {
+    if (feedback) feedback.textContent = 'Ainda não existe uma pista revelada para ouvir.';
+    return;
+  }
+  if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+    if (feedback) feedback.textContent = 'A leitura de voz não está disponível neste navegador.';
+    return;
+  }
+  try {
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(currentClue);
+    utterance.lang = 'pt-PT';
+    utterance.rate = 0.9;
+    utterance.onstart = () => { if (feedback) feedback.textContent = '🔊 A ler a última pista revelada…'; };
+    utterance.onend = () => { if (feedback) feedback.textContent = 'Leitura da pista concluída.'; };
+    utterance.onerror = (error) => { if (feedback) feedback.textContent = 'Não foi possível ler a pista: ' + (error.error || 'erro de voz') + '.'; };
+    synth.resume();
+    synth.speak(utterance);
+  } catch (error) {
+    if (feedback) feedback.textContent = 'Erro ao iniciar a leitura: ' + (error.message || error);
+  }
+}, true);
 $('listenAnswer').onclick = () => {
   const answer = atinaServerState?.challenge?.answer || networkGameState?.answer;
   if (!answer) return;
