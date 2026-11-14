@@ -423,7 +423,7 @@ function atinaServerApplyState(state, announce = false) {
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
-  if (locked && result.outcome === 'correct') atinaProgressClaim(state);
+  if (locked && ['correct', 'wrong', 'incorrect'].includes(result.outcome)) atinaProgressClaim(state);
   if (locked) {
     atinaShowSolutionImage(
       challenge.answer,
