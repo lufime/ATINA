@@ -45,7 +45,7 @@ function atinaProgressRender(profile) {
   const points = Math.max(0, Number(profile.points) || 0);
   if ($('atinaCloudPoints')) $('atinaCloudPoints').textContent = points + ' pontos';
   const thresholds = [0,250,600,1100,1800,2700,3900,5400,7200,9300,11700,14400,17400,20700,24300,28200,32400,36900,41700,46800,52200,57900,64000,70500,77400,84700,92400,100500,109000,118000];
-  const titles = ['Iniciante','Explorador','Descobridor','Conhecedor','Especialista','Mestre','Perito','Sábio','Génio','Lenda ATINA','Veterano','Erudito','Grande Mestre','Ilustre','Campeão','Visionário','Eminência','Grão-Mestre','Imortal','Lenda Suprema','Mestre do Conhecimento','Explorador Supremo','Sábio Supremo','Grande Sábio','Mestre Lendário','Génio Supremo','Guardião do Saber','Ícone ATINA','Lenda Eterna','Lenda Absoluta'];
+  const titles = ['Curioso','Explorador','Descobridor','Investigador','Aprendiz','Estudioso','Observador','Pesquisador','Experimentador','Cientista','Inventor','Criativo','Analista','Estratega','Especialista','Pensador','Filósofo','Intelectual','Mentor','Mestre','Erudito','Visionário','Inovador','Sábio','Génio','Iluminado','Grande Mestre','Guardião do Saber','Lenda do Conhecimento','Lenda ATINA'];
   const level = Math.max(1, Number(profile.level) || 1);
   const levelIndex = Math.min(level - 1, thresholds.length - 1);
   const currentThreshold = level <= 30 ? thresholds[levelIndex] : 128000 + ((level - 31) * 10000) + (((level - 31) * (level - 32)) / 2 * 1000);
@@ -187,7 +187,7 @@ async function atinaProgressLoadPointsLeaderboard() {
   }
 }
 
-const ATINA_LEVEL_TITLES = ['Iniciante','Explorador','Descobridor','Conhecedor','Especialista','Mestre','Perito','Sábio','Génio','Lenda ATINA','Veterano','Erudito','Grande Mestre','Ilustre','Campeão','Visionário','Eminência','Grão-Mestre','Imortal','Lenda Suprema','Mestre do Conhecimento','Explorador Supremo','Sábio Supremo','Grande Sábio','Mestre Lendário','Génio Supremo','Guardião do Saber','Ícone ATINA','Lenda Eterna','Lenda Absoluta'];
+const ATINA_LEVEL_TITLES = ['Curioso','Explorador','Descobridor','Investigador','Aprendiz','Estudioso','Observador','Pesquisador','Experimentador','Cientista','Inventor','Criativo','Analista','Estratega','Especialista','Pensador','Filósofo','Intelectual','Mentor','Mestre','Erudito','Visionário','Inovador','Sábio','Génio','Iluminado','Grande Mestre','Guardião do Saber','Lenda do Conhecimento','Lenda ATINA'];
 const ATINA_KNOWLEDGE_LEVEL_ICONS = [
  'head-question','book-open-variant','lightbulb-on','magnify','school',
  'brain','notebook-edit','bookshelf','puzzle-check','compass-rose',
@@ -304,7 +304,7 @@ function atinaRenderLevelGallery(profile) {
   const gallery = $('atinaLevelGallery');
   if (!gallery) return;
   const thresholds = [0,250,600,1100,1800,2700,3900,5400,7200,9300,11700,14400,17400,20700,24300,28200,32400,36900,41700,46800,52200,57900,64000,70500,77400,84700,92400,100500,109000,118000];
-  const titles = ['Iniciante','Explorador','Descobridor','Conhecedor','Especialista','Mestre','Perito','Sábio','Génio','Lenda ATINA','Veterano','Erudito','Grande Mestre','Ilustre','Campeão','Visionário','Eminência','Grão-Mestre','Imortal','Lenda Suprema','Mestre do Conhecimento','Explorador Supremo','Sábio Supremo','Grande Sábio','Mestre Lendário','Génio Supremo','Guardião do Saber','Ícone ATINA','Lenda Eterna','Lenda Absoluta'];
+  const titles = ['Curioso','Explorador','Descobridor','Investigador','Aprendiz','Estudioso','Observador','Pesquisador','Experimentador','Cientista','Inventor','Criativo','Analista','Estratega','Especialista','Pensador','Filósofo','Intelectual','Mentor','Mestre','Erudito','Visionário','Inovador','Sábio','Génio','Iluminado','Grande Mestre','Guardião do Saber','Lenda do Conhecimento','Lenda ATINA'];
   const xp = Math.max(0, Number(profile?.xp) || 0);
   const currentLevel = Math.max(1, Number(profile?.level) || 1);
   gallery.replaceChildren();
