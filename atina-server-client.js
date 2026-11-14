@@ -786,6 +786,13 @@ reveal = async function() {
     });
     playAtinaSound('clue');
     atinaServerApplyState(state);
+    // Ler automaticamente cada nova pista revelada, incluindo a revelação automática após o countdown.
+    const clues = state?.challenge?.clues || [];
+    const latest = clues.length ? clues[clues.length - 1] : '';
+    const clueText = typeof latest === 'string' ? latest : (latest?.text || latest?.clue || latest?.content || '');
+    if (clueText && typeof atinaSpeakClue === 'function') {
+      atinaSpeakClue('Pista ' + clues.length + '. ' + String(clueText), false);
+    }
   } catch (error) { atinaServerMessage(error.message || 'Não foi possível revelar a pista.'); }
   finally { atinaServerBusy = false; }
 };
