@@ -78,7 +78,7 @@ const frontendRequired = [
   "atinaServerRpc('atina_progress_register'",
   "atinaServerRpc('atina_progress_claim_local'",
   "atinaServerRpc('atina_progress_leaderboard'",
-  "if (locked && result.outcome === 'correct') atinaProgressClaim(state);",
+  "if (locked && ['correct', 'wrong', 'incorrect'].includes(result.outcome)) atinaProgressClaim(state);",
   'p_device_token: deviceToken',
   'p_session_id: state.session_id',
   'p_session_token: atinaServerSession.token',
@@ -102,7 +102,7 @@ for (const id of [
   'atinaCloudNickname', 'atinaAccountPassword', 'atinaAccountRegister',
   'atinaAccountLogin', 'atinaRecoveryKey', 'atinaNewAccountPassword',
   'atinaAccountRecover', 'atinaCloudStatus', 'atinaCloudXp',
-  'atinaCloudLeaderboardRefresh', 'atinaCloudLeaderboard'
+  'atinaCloudLeaderboard'
 ]) {
   if (!html.includes('id="' + id + '"')) {
     throw new Error('Elemento de interface de progressão em falta: ' + id);
@@ -125,5 +125,5 @@ if (!migration.includes('p_device_token text default null') ||
 
 console.log(
   'Proposta e integração cliente validadas: pseudónimo, token de dispositivo, ' +
-  'XP apenas após resultado correto bloqueado pelo servidor e classificação global.'
+  'XP após qualquer desafio concluído e classificação global.'
 );
