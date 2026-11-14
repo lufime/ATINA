@@ -427,6 +427,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   }
   $("addClue").addEventListener("click",()=>{const values=Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value);if(values.length>=10)return;values.push("");renderClueFields(values);$("challengeClues").lastElementChild.querySelector("input").focus();});
   $("challengeClues").addEventListener("click",event=>{const button=event.target.closest(".remove-clue");if(!button)return;const values=Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value);if(values.length<=1)return;values.splice(Array.from($("challengeClues").querySelectorAll(".remove-clue")).indexOf(button),1);renderClueFields(values);});
+  $("challengeImageUrl").addEventListener("blur",()=>{const value=$("challengeImageUrl").value.trim();if(value&&!/^https?:\/\//i.test(value)&&/^[\w.-]+\.[a-z]{2,}(?:[/:?#].*)?$/i.test(value))$("challengeImageUrl").value="https://"+value;updateChallengeImagePreview();});
   $("challengeImageUrl").addEventListener("input",updateChallengeImagePreview);
   function resetChallengeForm() {
     $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview();
