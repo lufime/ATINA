@@ -226,7 +226,10 @@ function atinaCreateLevelInsignia(level) {
     ['#7896b7','M32 3 C48 3 60 15 60 31 C60 47 48 61 32 61 C16 61 4 47 4 31 C4 15 16 3 32 3 Z','M32 13 L38 27 L53 32 L38 37 L32 51 L26 37 L11 32 L26 27 Z'],
     ['#c4a14b','M32 2 L43 7 L56 7 L57 20 L63 32 L57 44 L56 57 L43 57 L32 62 L21 57 L8 57 L7 44 L1 32 L7 20 L8 7 L21 7 Z','M32 13 L48 23 L42 43 L22 43 L16 23 Z']
   ];
-  const design = designs[Math.min(Math.max(1, Number(level) || 1) - 1, designs.length - 1)];
+  const safeLevel = Math.min(30, Math.max(1, Number(level) || 1));
+  const design = designs[safeLevel - 1];
+  const jewelTones = ['#a8d6a0','#79d8ec','#c4a4ff','#f0c77d','#f8d36c','#8fc5ff','#d3a5ff','#8be2c8','#f3d28a','#ffe08a','#d6e6f2','#e9ad8d','#f4d49b','#9ee7f2','#ffdc83','#a9caff','#d7b0f2','#d5e69b','#f5a88d','#e6c5ff','#a8e2e8','#f4d58c','#a4e3cf','#d3baff','#ffd19a','#a8e2ff','#e6b4dc','#ffe19a','#b9d8ff','#fff0a8'];
+  const jewel = jewelTones[safeLevel - 1];
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
   svg.setAttribute('viewBox', '0 0 64 64');
@@ -238,13 +241,13 @@ function atinaCreateLevelInsignia(level) {
   gradient.setAttribute('id', 'atina-metal-' + level);
   gradient.setAttribute('x1', '0%'); gradient.setAttribute('y1', '0%');
   gradient.setAttribute('x2', '100%'); gradient.setAttribute('y2', '100%');
-  [['0%', '#fff2c9'],['22%', design[0]],['58%', '#172a45'],['82%', design[0]],['100%', '#fff0bd']].forEach(([offset,color]) => {
+  [['0%', '#fff9df'],['13%', '#ffffff'],['25%', design[0]],['48%', '#172a45'],['72%', design[0]],['88%', '#6f542d'],['100%', '#fff2c9']].forEach(([offset,color]) => {
     const stop = document.createElementNS(ns, 'stop');
     stop.setAttribute('offset', offset); stop.setAttribute('stop-color', color); gradient.appendChild(stop);
   });
   const innerGradient = document.createElementNS(ns, 'radialGradient');
   innerGradient.setAttribute('id', 'atina-core-' + level);
-  [['0%','#52627a'],['100%','#101b30']].forEach(([offset,color]) => {
+  [['0%',jewel],['24%','#fff8df'],['42%',jewel],['100%','#101b30']].forEach(([offset,color]) => {
     const stop = document.createElementNS(ns, 'stop');
     stop.setAttribute('offset', offset); stop.setAttribute('stop-color', color); innerGradient.appendChild(stop);
   });
@@ -269,7 +272,8 @@ function atinaCreateLevelInsignia(level) {
   motif.setAttribute('stroke-width', '2');
   motif.setAttribute('stroke-linecap', 'round');
   motif.setAttribute('stroke-linejoin', 'round');
-  motif.setAttribute('opacity', '.72');
+  motif.setAttribute('opacity', '1');
+  motif.setAttribute('stroke-width', '2.5');
   const core = document.createElementNS(ns, 'circle');
   core.setAttribute('cx', '32'); core.setAttribute('cy', '32'); core.setAttribute('r', '15.5');
   core.setAttribute('fill', 'url(#atina-core-' + level + ')');
@@ -283,19 +287,25 @@ function atinaCreateLevelInsignia(level) {
   number.setAttribute('y', '40.5');
   number.setAttribute('text-anchor', 'middle');
   number.setAttribute('font-family', 'Georgia,serif');
-  number.setAttribute('font-size', String(level >= 10 ? 18 : 23));
+  number.setAttribute('font-size', String(safeLevel >= 10 ? 18 : 23));
   number.setAttribute('font-weight', '900');
   number.setAttribute('fill', '#fff4d6');
   number.setAttribute('stroke', '#071426');
   number.setAttribute('stroke-width', '1.15');
   number.setAttribute('paint-order', 'stroke');
-  number.textContent = String(level);
+  number.textContent = String(safeLevel);
   const glint = document.createElementNS(ns, 'path');
   glint.setAttribute('d', 'M17 12 Q25 5 34 8');
   glint.setAttribute('fill', 'none'); glint.setAttribute('stroke', '#ffffff');
   glint.setAttribute('stroke-width', '1.4'); glint.setAttribute('stroke-linecap', 'round');
   glint.setAttribute('opacity', '.7');
-  svg.append(defs, outer, innerEdge, motif, core, coreRing, number, glint);
+  const facets = document.createElementNS(ns, 'path');
+  facets.setAttribute('d', 'M32 17 L39 25 L32 32 L25 25 Z M25 39 L32 32 L39 39 L32 47 Z');
+  facets.setAttribute('fill', 'none');
+  facets.setAttribute('stroke', '#ffffff');
+  facets.setAttribute('stroke-width', '0.8');
+  facets.setAttribute('opacity', '.3');
+  svg.append(defs, outer, innerEdge, motif, core, coreRing, facets, number, glint);
   return svg;
 }
 
