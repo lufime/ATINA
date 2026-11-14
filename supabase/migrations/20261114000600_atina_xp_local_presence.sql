@@ -32,7 +32,7 @@ begin
     raise exception 'Categoria inválida.' using errcode='22023';
   end if;
 
-  if p_device_token is null then
+  if p_game_mode in ('solo','mix') and p_device_token is null then
     raise exception 'Inicia sessão na tua conta ATINA para garantir desafios sem repetição.' using errcode='28000';
   end if;
 
