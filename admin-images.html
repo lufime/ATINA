@@ -179,15 +179,15 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <button id="watermarkAll" class="secondary" type="button">Aplicar logótipo em massa às restantes imagens</button>
     <p class="note" id="wmStatus">A aguardar início.</p>
   </section>
-  <section class="panel hidden tab-panel" id="imagesInfo" data-tab-panel="images"><h2>Gestão de imagens</h2><p>Pesquisa, compara, revê estados, aprova, publica e descarrega as imagens registadas.</p><a class="page-link" href="comparar-imagens.html">Abrir gestão e comparação de imagens →</a></section>
+  <section class="panel hidden tab-panel" id="imagesInfo" data-tab-panel="images"><div class="dash-head"><h2>Gestão de imagens</h2><a class="page-link" href="comparar-imagens.html" target="_blank" rel="noopener">Abrir em separador ↗</a></div><p>Pesquisa, compara, revê estados, aprova, publica e descarrega as imagens registadas. A gestão completa está incorporada abaixo e mantém a sessão de administrador deste navegador.</p><iframe title="Gestão e comparação de imagens ATINA" src="comparar-imagens.html?embedded=1" loading="lazy" style="display:block;width:100%;height:78vh;min-height:680px;border:1px solid var(--line);border-radius:12px;background:#0b1421"></iframe></section>
   <section class="panel hidden tab-panel" id="challengesPanel" data-tab-panel="challenges">
     <h2>Base de dados dos desafios</h2>
     <p class="note">Consulta, pesquisa, cria e edita desafios. A opção Apagar desativa o desafio, preservando o registo e o histórico; podes reativá-lo mais tarde.</p>
-    <label for="challengeSearch">Pesquisar por ID, solução ou categoria</label>
-    <input id="challengeSearch" type="search" placeholder="Pesquisar desafios…">
+    <div class="form-grid"><div><label for="challengeSearch">Pesquisar por ID, solução ou categoria</label><input id="challengeSearch" type="search" placeholder="Pesquisar desafios…"></div><div><label for="challengeActiveFilter">Estado do desafio</label><select id="challengeActiveFilter"><option value="">Todos</option><option value="active">Ativos</option><option value="inactive">Inativos</option></select></div><div><label for="challengeDifficultyFilter">Dificuldade</label><select id="challengeDifficultyFilter"><option value="">Todas</option><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div></div>
     <div class="challenge-actions"><button id="newChallenge" type="button">Criar novo desafio</button><button id="reloadChallenges" class="secondary" type="button">Atualizar lista</button></div>
     <p class="note" id="challengeCount">A carregar desafios…</p>
     <div id="challengeList"></div>
+    <h2 class="subsection-title">Histórico recente neste navegador</h2><p class="note">Regista alterações feitas a partir desta administração neste dispositivo. Não altera nem substitui o histórico da base de dados.</p><div id="adminHistory" class="hint">Ainda sem operações registadas.</div>
     <div id="challengePagination" class="challenge-actions" style="align-items:center;justify-content:space-between"><button type="button" class="secondary" id="challengePrev" style="width:auto">← Anterior</button><span id="challengePageInfo" class="challenge-meta">Página 1</span><button type="button" class="secondary" id="challengeNext" style="width:auto">Seguinte →</button></div>
     <div class="quick-scroll" aria-label="Navegação rápida na lista"><button type="button" id="challengeScrollTop" aria-label="Ir para o topo da lista" title="Ir para o topo">↑ Topo</button><button type="button" id="challengeScrollBottom" aria-label="Ir para o fim da lista" title="Ir para o fim">↓ Fim</button></div>
     <form id="challengeForm" class="hidden">
@@ -206,7 +206,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <label for="challengeImageFile">Selecionar imagem do dispositivo (JPEG, PNG ou WebP, máximo 10 MB)</label><input id="challengeImageFile" type="file" accept="image/jpeg,image/png,image/webp"><p class="note">A imagem será enviada para o Storage ATINA e o respetivo link será guardado automaticamente. O registo da imagem fica pendente de revisão.</p>
       <label for="challengeImageUrl">Ou inserir link da imagem (URL)</label><input id="challengeImageUrl" type="url" placeholder="https://…"><div id="challengeImagePreview" class="image-preview"><span class="note">Sem imagem associada.</span></div>
       <label><input id="challengeActive" type="checkbox" checked style="width:auto"> Desafio ativo</label>
-      <div class="challenge-actions"><button type="submit" id="saveChallenge">Guardar desafio</button><button type="button" class="secondary" id="cancelChallenge">Cancelar</button></div>
+      <p id="formDirtyNotice" class="note hidden">Existem alterações por guardar.</p><div class="challenge-actions"><button type="submit" id="saveChallenge">Guardar desafio</button><button type="button" class="secondary" id="cancelChallenge">Cancelar</button></div>
     </form>
   </section>
   <div id="status" role="status" aria-live="polite"></div>
