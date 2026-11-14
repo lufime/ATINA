@@ -134,12 +134,12 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores"}[tab]);
   }
   window.addEventListener("hashchange", () => activateTab(location.hash.slice(1)));
-  activateTab(location.hash.slice(1));
   const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dmxxcmdidGp1anNlanZlbmxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0ODMzMDksImV4cCI6MjEwOTA1OTMwOX0.k_3Q05KxqmAByJgPxDyWeWPnYYfkrPxkRjd60Bntn6w";
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const $ = (id) => document.getElementById(id);
   const status = (message) => { $("status").textContent = message; };
+  activateTab(location.hash.slice(1));
   async function refreshSession() {
     const { data: { session } } = await client.auth.getSession();
     $("loginPanel").classList.toggle("hidden", !!session);
