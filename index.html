@@ -3413,45 +3413,30 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 
 <script id="atina-knowledge-level-gallery">
 (()=>{
- const definitions=[
- ['head-question','Curioso'],['book-open-variant','Leitor'],['lightbulb-on','Ideias'],['magnify','Investigador'],['school','Aprendiz'],
- ['brain','Pensador'],['notebook-edit','Estudioso'],['bookshelf','Bibliotecário'],['puzzle-check','Lógico'],['compass-rose','Explorador'],
- ['calculator-variant','Matemático'],['atom','Físico'],['flask-outline','Químico'],['dna','Biólogo'],['earth','Geógrafo'],
- ['landmark','Historiador'],['palette-outline','Artista'],['translate','Poliglota'],['telescope','Astrónomo'],['microscope','Cientista'],
- ['chart-timeline-variant','Analista'],['medal-outline','Especialista'],['book-multiple','Erudito'],['brain-circuit','Estratega'],['lightbulb-group','Inventor'],
- ['head-cog','Intelectual'],['school-outline','Académico'],['star-four-points','Sábio'],['trophy-variant','Mestre'],['crown','Grande Sábio']
- ];
- const levelNow=()=>{
-  const p=window.atinaCloudProfile||{};
-  const explicit=Number(p.level||p.current_level||p.player_level);
-  if(Number.isFinite(explicit)&&explicit>0)return Math.min(30,Math.floor(explicit));
-  return Math.min(30,Math.floor(Math.max(0,Number(p.xp)||0)/250)+1);
- };
  const render=()=>{
   const host=document.getElementById('atinaLevelGallery');if(!host)return;
-  const lvl=levelNow();
+  const profile=window.atinaCloudProfile||{};
+  const level=Math.min(30,Math.max(1,Math.floor(Number(profile.level)||1)));
   host.replaceChildren();
-  const summary=document.createElement('p');summary.className='muted small';summary.textContent=lvl+' de 30 conhecimentos conquistados';host.appendChild(summary);
+  const summary=document.createElement('p');summary.className='muted small';summary.textContent='Insígnias conquistadas: '+level+' / 30';host.appendChild(summary);
   const grid=document.createElement('div');grid.className='atina-level-gallery-grid';
-  definitions.forEach(([icon,title],i)=>{
-   const n=i+1;if(n>lvl)return;
-   const card=document.createElement('div');card.className='atina-level-gallery-card is-unlocked';
+  for(let n=1;n<=level;n++){
+   const card=document.createElement('article');card.className='atina-level-gallery-card is-unlocked';
    const emblem=document.createElement('div');emblem.className='atina-level-gallery-emblem';
-   const medal=document.createElement('div');medal.className='atina-knowledge-medal';
-   const glyph=document.createElement('span');glyph.className='mdi mdi-'+icon;glyph.setAttribute('aria-hidden','true');
-   const number=document.createElement('em');number.textContent=String(n);medal.append(glyph,number);emblem.appendChild(medal);
-   const name=document.createElement('strong');name.textContent=title;
-   const status=document.createElement('span');status.className='atina-level-gallery-status';status.textContent='✓ Conquistado';
-   card.append(emblem,name,status);grid.appendChild(card);
-  });
+   if(typeof window.atinaCreateLevelInsignia==='function')emblem.appendChild(window.atinaCreateLevelInsignia(n));
+   const title=document.createElement('strong');title.textContent=typeof window.atinaLevelDesignation==='function'?window.atinaLevelDesignation(n):'Nível '+n;
+   const number=document.createElement('span');number.className='atina-level-gallery-number';number.textContent='Nível '+n;
+   const status=document.createElement('span');status.className='atina-level-gallery-status';status.textContent='✓ Conquistada';
+   card.append(emblem,number,title,status);grid.appendChild(card);
+  }
   host.appendChild(grid);
  };
  const start=()=>{
-  const host=document.getElementById('atinaLevelGallery');if(!host)return;
   render();
-  new MutationObserver(()=>{if(host.childElementCount===0)render();}).observe(host,{childList:true});
-  document.querySelectorAll('[data-home-target="profile"]').forEach(b=>b.addEventListener('click',()=>setTimeout(render,250)));
+  const host=document.getElementById('atinaLevelGallery');
+  if(host)new MutationObserver(()=>{if(host.childElementCount===0)render();}).observe(host,{childList:true});
   window.addEventListener('atina:profile-updated',render);
+  document.querySelectorAll('[data-home-target="profile"]').forEach(b=>b.addEventListener('click',()=>setTimeout(render,250)));
   setInterval(render,5000);
  };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
