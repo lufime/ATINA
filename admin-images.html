@@ -443,7 +443,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("challengeImageFile").addEventListener("change",()=>{const file=$("challengeImageFile").files?.[0];if(!file){updateChallengeImagePreview();return;}if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>10*1024*1024){$("challengeImageFile").value="";alert("Seleciona JPEG, PNG ou WebP até 10 MB.");return;}const url=URL.createObjectURL(file);$("challengeImagePreview").innerHTML='<img src="'+url+'" alt="Pré-visualização da imagem selecionada"><span class="note">'+esc(file.name)+' · '+Math.round(file.size/1024)+' KB · será enviada ao guardar</span>';});
   function resetChallengeForm() {
     $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview();
-    $("challengeFormTitle").textContent="Novo desafio"; $("challengeForm").classList.add("hidden"); $("challengePagination").classList.toggle("hidden",challengeCache.length<=CHALLENGES_PER_PAGE);
+    $("challengeFormTitle").textContent="Novo desafio"; $("challengeForm").classList.add("hidden"); $("challengePagination").classList.toggle("hidden",challengeCache.length<=CHALLENGES_PER_PAGE); $("challengeList").nextElementSibling?.classList.remove("hidden");
   }
   function editChallenge(id) {
     const x=challengeCache.find(v=>String(v.challenge_id)===String(id)); if(!x)return;
@@ -452,9 +452,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     renderClueFields(x.clues||[]); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
     $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||""; updateChallengeImagePreview();
     $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id;
-    $("challengeForm").classList.remove("hidden"); $("challengePagination").classList.add("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
+    $("challengeForm").classList.remove("hidden"); $("challengePagination").classList.add("hidden"); $("challengeList").nextElementSibling?.classList.add("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
   }
-  $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
+  $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeList").nextElementSibling?.classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
   $("cancelChallenge").addEventListener("click",resetChallengeForm);
   $("challengeScrollTop").addEventListener("click",()=>{const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().top+window.scrollY-12,behavior:"smooth"});});
   $("challengeScrollBottom").addEventListener("click",()=>{const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().bottom+window.scrollY,behavior:"smooth"});});
