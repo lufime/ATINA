@@ -308,20 +308,21 @@ function atinaRenderLevelGallery(profile) {
   const xp = Math.max(0, Number(profile?.xp) || 0);
   const currentLevel = Math.max(1, Number(profile?.level) || 1);
   gallery.replaceChildren();
+  gallery.removeAttribute('data-ready');
   const summary = document.createElement('p');
   summary.className = 'muted small';
   summary.textContent = 'Insígnias conquistadas: ' + Math.min(currentLevel, 30) + ' / 30';
   gallery.appendChild(summary);
   const grid = document.createElement('div');
   grid.className = 'atina-level-gallery-grid';
-  thresholds.forEach((threshold, index) => {
+  thresholds.slice(0, Math.min(currentLevel, 30)).forEach((threshold, index) => {
     const level = index + 1;
-    const unlocked = level <= currentLevel;
+    const unlocked = true;
     const card = document.createElement('article');
-    card.className = 'atina-level-gallery-card' + (unlocked ? ' is-unlocked' : ' is-locked');
+    card.className = 'atina-level-gallery-card is-unlocked';
     const emblem = document.createElement('div');
     emblem.className = 'atina-level-gallery-emblem';
-    emblem.appendChild(atinaCreateLevelInsignia(level));
+    emblem.appendChild(atinaCreateKnowledgeLevelIcon(level));
     if (!unlocked) emblem.setAttribute('aria-label', 'Insígnia bloqueada do nível ' + level);
     const title = document.createElement('strong');
     title.textContent = titles[index];
@@ -339,6 +340,7 @@ function atinaRenderLevelGallery(profile) {
     grid.appendChild(card);
   });
   gallery.appendChild(grid);
+  gallery.dataset.ready = 'true';
 }
 
 async function atinaProgressLoadLeaderboard() {
