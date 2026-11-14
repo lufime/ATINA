@@ -25,21 +25,23 @@ section[id],div[id]{scroll-margin-top:190px}
 .subsection-title{margin-top:20px!important;padding-top:12px;border-top:1px solid #29425b}
 @media(max-width:480px){body{padding:12px 9px}.admin-nav{top:4px}.submenu{grid-template-columns:1fr 1fr}.submenu a{font-size:13px;padding:10px 8px}}h2{font-size:18px;margin:0 0 12px;color:var(--gold)}p,.hint{color:var(--muted);line-height:1.5}.page-link{display:inline-block;padding:10px 14px;border:1px solid var(--gold);border-radius:10px;color:var(--gold);text-decoration:none;font-weight:700}
 label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
-#status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden{display:none!important}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
+#status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden,.page-hidden{display:none!important}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
 </style>
 </head>
 <body>
-<main>
-  <div class="admin-header"><h1>ATINA · Administração</h1><a class="page-link" href="index.html">Abrir jogo ↗</a></div>
+<main data-admin-page="home">
+  <div class="admin-header"><h1>ATINA · Início</h1><button id="logoutTop" class="secondary" type="button" style="width:auto;margin:0">Terminar sessão</button></div>
   <p>Gestão organizada por áreas, menus e submenus.</p>
-  <nav id="adminNavigation" class="admin-nav hidden" aria-label="Menu de administração">
-    <strong>Menu principal</strong>
-    <details class="menu-group" open><summary>Visão geral</summary><div class="submenu"><a href="#dashboardPanel">Painel e indicadores</a><a href="#dashboardTasks">Tarefas pendentes</a></div></details>
-    <details class="menu-group"><summary>Imagens</summary><div class="submenu"><a href="#uploadPanel">Enviar imagens</a><a href="comparar-imagens.html">Gerir e comparar imagens</a><a href="#watermarkPanel">Logótipo nas imagens</a><a href="#watermarkProgress">Progresso do logótipo</a></div></details>
-    <details class="menu-group"><summary>Jogadores</summary><div class="submenu"><a href="#playersSection">Jogadores registados</a><a href="#presenceSection">Online e atividade</a></div></details>
-    <details class="menu-group"><summary>Plataforma</summary><div class="submenu"><a href="index.html#dashboard">Dashboard do jogo</a><a href="comparar-imagens.html">Gestão de conteúdos</a></div></details>
-  </nav>
-  <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
+  <nav id="adminNavigation" class="admin-nav hidden" aria-label="Navegação administrativa">
+    <strong>Administração</strong>
+    <div class="submenu">
+      <a href="admin-images.html">Início</a>
+      <a href="admin-gestao-imagens.html">Gestão de imagens</a>
+      <a href="admin-envio-imagens.html">Envio de imagens</a>
+      <a href="admin-logotipo.html">Logótipo</a>
+      <a href="admin-jogadores.html">Jogadores</a>
+    </div>
+  </nav>  <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
   <p id="adminLinks" class="hidden" style="display:flex;gap:10px;flex-wrap:wrap"><a class="page-link" href="index.html">Abrir o jogo ATINA →</a><a class="page-link" href="comparar-imagens.html">Ver imagens dos desafios →</a></p>
   <section class="panel" id="loginPanel">
     <h2>Entrar como administrador</h2>
@@ -102,6 +104,11 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 (() => {
+  const page = document.querySelector("main").dataset.adminPage;
+  const pagePanels = {home:["dashboardPanel"],images:[],upload:["uploadPanel"],logo:["watermarkPanel"],players:["dashboardPanel"]};
+  for (const id of ["dashboardPanel","uploadPanel","watermarkPanel"]) {
+    if (!pagePanels[page].includes(id)) document.getElementById(id).classList.add("page-hidden");
+  }
   const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dmxxcmdidGp1anNlanZlbmxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0ODMzMDksImV4cCI6MjEwOTA1OTMwOX0.k_3Q05KxqmAByJgPxDyWeWPnYYfkrPxkRjd60Bntn6w";
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -115,6 +122,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("dashboardPanel").classList.toggle("hidden", !session);
     $("adminLinks").classList.toggle("hidden", !session);
     $("adminNavigation").classList.toggle("hidden", !session);
+    $("logoutTop").classList.toggle("hidden", !session);
     if (session) { loadDashboard(); loadPresence(); loadPlayers(); }
   }
   $("login").addEventListener("click", async () => {
@@ -315,11 +323,13 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     } finally { button.disabled = false; $("watermarkNext").disabled = false; }
   });
   watermarkStats().catch(error => { $("wmStatus").textContent = error.message; });
-  $("logout").addEventListener("click", async () => {
+  async function doLogout() {
     await client.auth.signOut();
     await refreshSession();
     status("Sessão terminada.");
-  });
+  }
+  $("logout").addEventListener("click", doLogout);
+  $("logoutTop").addEventListener("click", doLogout);
   $("uploadForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const button = $("send"); button.disabled = true;
