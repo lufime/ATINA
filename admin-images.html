@@ -128,6 +128,10 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
  #dashboardStats .stat span{font-size:11px}
 }
 @media(max-width:380px){.admin-header h1{font-size:16px}#logoutTop{font-size:11px;padding:6px 8px}}
+
+.image-manager-scroll{display:none;position:fixed;right:12px;bottom:18px;z-index:50;flex-direction:column;gap:7px}
+.image-manager-scroll button{width:auto;min-width:64px;min-height:38px;padding:7px 10px;border:1px solid var(--gold);border-radius:999px;background:#1b344d;color:var(--text);font-size:12px;font-weight:800;box-shadow:0 4px 16px #0008}
+@media(max-width:600px){.image-manager-scroll{right:7px;bottom:9px;gap:5px}.image-manager-scroll button{min-width:54px;min-height:34px;padding:6px 8px;font-size:11px}}
 </style>
 </head>
 <body>
@@ -233,6 +237,11 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     </form>
   </section>
   <div id="status" role="status" aria-live="polite"></div>
+  <div class="image-manager-scroll" id="imageManagerScroll" aria-label="Navegação rápida na gestão de imagens">
+    <button type="button" id="imageScrollTop" title="Ir para o início da gestão">↑ Topo</button>
+    <button type="button" id="imageScrollBottom" title="Ir para o fim da gestão">↓ Fim</button>
+  </div>
+
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -241,6 +250,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   const tabNames = ["home","images","upload","logo","players","challenges"];
   function activateTab(name) {
     const tab = tabNames.includes(name) ? name : "home";
+    const imageScroll = document.getElementById("imageManagerScroll");
+    if (imageScroll) imageScroll.style.display = tab === "images" ? "flex" : "none";
     document.querySelectorAll("[data-tab-panel]").forEach(panel => {
       const show = panel.dataset.tabPanel === tab || (tab === "players" && panel.dataset.tabPanel === "home");
       panel.classList.toggle("tab-hidden", !show);
@@ -573,6 +584,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeList").nextElementSibling?.classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
   $("cancelChallenge").addEventListener("click",()=>{if(challengeFormDirty&&!confirm("Existem alterações por guardar. Queres descartá-las?"))return;resetChallengeForm();});
   document.querySelectorAll("[data-admin-tab]").forEach(link=>link.addEventListener("click",event=>{if(challengeFormDirty&&!confirm("Existem alterações por guardar. Queres sair sem guardar?")){event.preventDefault();return;}setFormDirty(false);}));
+
+  $("imageScrollTop").addEventListener("click",()=>{const frame=$("imageManagerFrame");if(!frame)return;window.scrollTo({top:frame.getBoundingClientRect().top+window.scrollY-8,behavior:"smooth"});});
+  $("imageScrollBottom").addEventListener("click",()=>{const frame=$("imageManagerFrame");if(!frame)return;window.scrollTo({top:frame.getBoundingClientRect().bottom+window.scrollY-window.innerHeight+8,behavior:"smooth"});});
   $("challengeScrollTop").addEventListener("click",()=>{if(location.hash==="#images"){const frame=$("imageManagerFrame");window.scrollTo({top:frame.getBoundingClientRect().top+window.scrollY-8,behavior:"smooth"});return;}const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().top+window.scrollY-12,behavior:"smooth"});});
   $("challengeScrollBottom").addEventListener("click",()=>{if(location.hash==="#images"){const frame=$("imageManagerFrame");window.scrollTo({top:frame.getBoundingClientRect().bottom+window.scrollY-window.innerHeight+8,behavior:"smooth"});return;}const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().bottom+window.scrollY,behavior:"smooth"});});
   $("reloadChallenges").addEventListener("click",loadChallenges);
