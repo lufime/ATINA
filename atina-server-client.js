@@ -219,7 +219,15 @@ async function atinaProgressLoadLeaderboard() {
       rank.textContent = String(index + 1);
       nickname.textContent = row.nickname;
       xp.textContent = Number(row.xp || 0).toLocaleString('pt-PT');
-      level.textContent = atinaLevelDesignation(row.level);
+      const levelNumber = Math.max(1, Number(row.level) || 1);
+      const levelBadge = document.createElement('span');
+      levelBadge.className = 'atina-level-medal';
+      levelBadge.textContent = '🏅 ' + levelNumber;
+      levelBadge.setAttribute('aria-label', 'Nível ' + levelNumber);
+      const levelTitle = document.createElement('span');
+      levelTitle.className = 'atina-level-title';
+      levelTitle.textContent = atinaLevelDesignation(levelNumber);
+      level.append(levelBadge, levelTitle);
       item.append(rank, nickname, xp, level);
       list.appendChild(item);
     });
