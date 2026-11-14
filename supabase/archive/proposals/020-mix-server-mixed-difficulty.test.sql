@@ -76,7 +76,7 @@ CROSS JOIN (VALUES
 INSERT INTO private.atina_players (device_token_hash,nickname)
 VALUES (
   extensions.digest(convert_to(repeat('b',64),'UTF8'),'sha256'),
-  'mix-distribution-test'
+  'mix-dist-test'
 );
 
 CREATE TEMP TABLE atina_mix_distribution_run AS
