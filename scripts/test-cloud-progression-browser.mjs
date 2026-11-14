@@ -103,7 +103,7 @@ try {
   });
   const claimState = {mode:'solo',session_id:'00000000-0000-4000-8000-000000000123',position:1,round_locked:true,last_result:{outcome:'wrong',points:0}};
   await page.evaluate(state => atinaProgressClaim(state), claimState);
-  await page.getByText(/\+15 XP confirmado pelo servidor/).waitFor();
+  await page.getByText(/\+10 XP confirmado pelo servidor/).waitFor();
   assert.equal(await page.locator('#atinaCloudXp').textContent(), '10 XP');
   await page.evaluate(state => atinaProgressClaim(state), claimState);
   const claims = await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_progress_claim_local'));
