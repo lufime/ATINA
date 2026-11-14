@@ -107,6 +107,27 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
  .admin-nav .submenu a{font-size:11px;padding:7px 8px}
  .challenge-actions button{font-size:12px}
 }
+/* Ajuste final: interface móvel compacta e sem atalhos duplicados */
+@media(max-width:600px){
+ body{padding:5px 6px 12px}
+ .admin-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap}
+ .admin-header h1{font-size:18px;line-height:1.2;flex:1;min-width:0}
+ #logoutTop{width:auto!important;min-height:36px;padding:7px 10px;font-size:12px;white-space:nowrap;margin:0!important}
+ .admin-header+p{margin:5px 0 7px}
+ .admin-nav{margin:5px 0 7px;padding:4px 5px}
+ .admin-nav>strong{padding:1px 4px 3px}
+ .admin-nav .submenu a{padding:6px 8px;font-size:11px}
+ #adminLinks{margin:6px 0!important}
+ #adminLinks .page-link{padding:7px 9px;font-size:12px}
+ #dashboardPanel{margin-top:7px}
+ #dashboardPanel .dash-head{gap:7px}
+ #dashboardPanel .refresh{min-height:34px;padding:6px 9px}
+ #dashboardStats{gap:6px}
+ #dashboardStats .stat{padding:8px}
+ #dashboardStats .stat strong{font-size:19px}
+ #dashboardStats .stat span{font-size:11px}
+}
+@media(max-width:380px){.admin-header h1{font-size:16px}#logoutTop{font-size:11px;padding:6px 8px}}
 </style>
 </head>
 <body>
@@ -125,7 +146,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     </div>
   </nav>
   <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
-  <p id="adminLinks" class="hidden" style="display:flex;gap:10px;flex-wrap:wrap"><a class="page-link" href="index.html">Abrir o jogo ATINA →</a><a class="page-link" href="comparar-imagens.html">Ver imagens dos desafios →</a></p>
+  <p id="adminLinks" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap"><a class="page-link" href="index.html">Abrir o jogo ATINA →</a></p>
   <section class="panel" id="loginPanel">
     <h2>Entrar como administrador</h2>
     <label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
@@ -142,7 +163,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <div class="stat"><strong>—</strong><span>Sem imagem</span></div>
     </div>
     <div class="progress-track" aria-label="Percentagem de desafios com imagem publicada"><span id="dashboardProgressBar"></span></div><p class="note" id="dashboardProgressText">A calcular progresso…</p>
-    <div class="challenge-actions"><a class="page-link" href="#challenges">Editar desafios</a><a class="page-link" href="#images">Gerir imagens</a><a class="page-link" href="#upload">Enviar imagens</a></div>
+    
     <h2 id="playersSection" class="subsection-title">Jogadores registados</h2>
     <div id="playersSummary" class="note">A carregar jogadores…</div>
     <div id="playersList" class="hint"></div>
