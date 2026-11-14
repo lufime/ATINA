@@ -1,0 +1,92 @@
+-- Curated equivalent answer aliases for remaining low-coverage ATINA categories
+with aliases(challenge_id, variants) as (
+  values
+  (1102, array['Heart']), (1104, array['Liver']), (1106, array['Brain']),
+  (1107, array['Pancreas']), (1108, array['Stomach']), (1109, array['Small intestine']),
+  (1110, array['Skin']), (1112, array['Spleen']), (1116, array['Diaphragm']),
+  (1118, array['Retina']), (1120, array['Cornea']), (1122, array['Gallbladder']),
+  (1123, array['Oesophagus','Esophagus']), (1124, array['Voice box']),
+  (1125, array['Windpipe']), (1126, array['Large intestine']), (1127, array['Duodenum']),
+  (1129, array['Uterus','Womb']), (1130, array['Prostate']), (1131, array['Pupil']),
+  (1132, array['Optic nerve']), (1137, array['Achilles tendon']), (1138, array['Femur']),
+  (1140, array['Tibia','Shinbone']), (1142, array['Salivary glands']),
+  (1144, array['Hypothalamus']), (1146, array['Thymus']), (1147, array['Hippocampus']),
+  (1148, array['Cerebellum']), (1149, array['Aorta']),
+  (195, array['Track and field']), (210, array['Cycling']), (691, array['Handball']),
+  (692, array['Volleyball']), (693, array['Badminton']), (694, array['Squash']),
+  (695, array['Golf']), (696, array['Roller hockey']), (697, array['Ice hockey']),
+  (698, array['Baseball']), (699, array['Softball']), (700, array['Cricket']),
+  (701, array['Polo']), (702, array['Fencing']), (703, array['Judo']),
+  (704, array['Karate']), (705, array['Taekwondo']), (706, array['Boxing']),
+  (707, array['Greco-Roman wrestling']), (708, array['Sport climbing']),
+  (709, array['Surfing']), (710, array['Windsurfing']), (711, array['Kitesurfing']),
+  (712, array['Rowing']), (713, array['Canoeing']), (714, array['Sailing']),
+  (715, array['Mountain biking']), (716, array['Bicycle motocross']),
+  (717, array['Alpine skiing']), (718, array['Snowboarding']),
+  (719, array['Figure skating']), (720, array['Artistic gymnastics']),
+  (721, array['Rhythmic gymnastics']), (722, array['Trampoline gymnastics']),
+  (723, array['Modern pentathlon']), (724, array['Decathlon']), (725, array['Heptathlon']),
+  (726, array['Race walking']), (727, array['Orienteering']),
+  (58, array['Piano']), (615, array['Portuguese guitar']), (616, array['Accordion']),
+  (617, array['Clarinet']), (618, array['Oboe']), (619, array['Transverse flute','Concert flute']),
+  (620, array['Bassoon']), (621, array['Trumpet']), (622, array['Trombone']),
+  (623, array['Tuba']), (624, array['Harp']), (625, array['Double bass']),
+  (626, array['Viola']), (627, array['Cello','Violoncello']), (628, array['Drum kit']),
+  (629, array['Marimba']), (630, array['Xylophone']), (631, array['Organ']),
+  (632, array['Mandolin']), (633, array['Ukulele']), (634, array['Banjo']),
+  (635, array['Sitar']), (636, array['Didgeridoo']), (637, array['Bagpipes']),
+  (638, array['Fado']), (639, array['Song']), (640, array['Opera']),
+  (641, array['Musical theatre']), (642, array['Symphony']), (643, array['Concert']),
+  (644, array['Sonata']), (645, array['Fugue']), (646, array['Counterpoint']),
+  (647, array['Improvisation']), (648, array['Rhythm']), (649, array['Melody']),
+  (650, array['Harmony']), (651, array['Timbre']), (652, array['Tempo']),
+  (127, array['Paris']), (350, array['London']), (351, array['Rome']),
+  (352, array['Athens']), (353, array['Amsterdam']), (354, array['Berlin']),
+  (355, array['Vienna']), (356, array['Budapest']), (357, array['Edinburgh']),
+  (358, array['Dublin']), (359, array['Reykjavik']), (360, array['Oslo']),
+  (361, array['Stockholm']), (362, array['Copenhagen']), (363, array['Warsaw']),
+  (364, array['Krakow','Cracow']), (366, array['Seville']), (367, array['Valencia']),
+  (368, array['Marseille']), (369, array['Lyon']), (370, array['Brussels']),
+  (371, array['Geneva']), (372, array['Zurich']), (373, array['Munich']),
+  (375, array['Kyoto']), (376, array['Seoul']), (377, array['Bangkok']),
+  (378, array['Singapore']), (379, array['Hanoi']), (380, array['New Delhi']),
+  (381, array['Bombay']), (382, array['Cape Town']), (383, array['Nairobi']),
+  (384, array['Marrakesh']), (385, array['Rio de Janeiro']), (386, array['Buenos Aires']),
+  (42, array['Taj Mahal']), (175, array['Petra']), (243, array['Stonehenge']),
+  (244, array['Machu Picchu']), (245, array['Golden Gate Bridge']),
+  (246, array['Leaning Tower of Pisa']), (247, array['Statue of Liberty']),
+  (248, array['Mount Everest','Everest']), (249, array['Victoria Falls']),
+  (250, array['Sydney Opera House']), (251, array['Chichen Itza']),
+  (253, array['Mount Etna']), (254, array['Giraffe']), (255, array['Giant panda']),
+  (256, array['Flamingo']), (257, array['Peacock']), (258, array['Koala']),
+  (259, array['Penguin']), (260, array['Polar bear']), (261, array['Sea turtle']),
+  (262, array['Octopus']), (263, array['Chameleon']), (264, array['Zebra']),
+  (265, array['Raccoon']), (266, array['Elephant']), (267, array['Leopard']),
+  (268, array['Iceberg']), (269, array['Red fox']), (270, array['Toucan']),
+  (271, array['Camel']), (272, array['Baobab']), (273, array['Jellyfish']),
+  (274, array['Great Barrier Reef'])
+)
+update private.atina_challenges c
+set accepted_answers = (
+  select coalesce(jsonb_agg(to_jsonb(x.answer) order by x.ord), '[]'::jsonb)
+  from (
+    select distinct on (private.atina_v2_normalize_answer(v.answer))
+      v.answer, v.ord
+    from jsonb_array_elements_text(coalesce(c.accepted_answers,'[]'::jsonb))
+      with ordinality as old(answer,ord)
+    union all
+    select distinct on (private.atina_v2_normalize_answer(a.variant))
+      a.variant, 1000 + a.ord
+    from aliases al
+    cross join lateral unnest(al.variants) with ordinality as a(variant,ord)
+    where al.challenge_id = c.challenge_id
+  ) x
+)
+from aliases al
+where c.challenge_id = al.challenge_id
+  and c.active is true
+  and exists (select 1 from unnest(al.variants) v where private.atina_v2_normalize_answer(v) <> private.atina_v2_normalize_answer(c.answer))
+  and not exists (
+    select 1 from unnest(al.variants) v
+    where private.atina_v2_normalize_answer(v) = private.atina_v2_normalize_answer(c.answer)
+  );
