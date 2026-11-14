@@ -194,62 +194,90 @@ function atinaLevelDesignation(level) {
 }
 
 function atinaCreateLevelInsignia(level) {
-  const safeLevel = Math.min(30, Math.max(1, Number(level) || 1));
+  const n = Math.min(30, Math.max(1, Number(level) || 1));
   const palettes = [
-    ['#b97845','#f2c18a','#315c56','#f5d7a4'],['#a98b50','#f5d995','#345d87','#c9e6f0'],
-    ['#8b9c64','#e5d69a','#286b61','#d5f0bf'],['#9b7655','#f0c88b','#476d86','#e4e9f2'],
-    ['#bd934e','#ffe0a0','#356b67','#e9f4ce'],['#8396a8','#e1edf3','#315d85','#d4e8ff']
+    ['#a66c42','#f4c58d','#244e50','#a8d6a0'],
+    ['#9d854e','#f4dda0','#254d77','#79d8ec'],
+    ['#718b61','#e5d69a','#205d58','#c4a4ff'],
+    ['#987052','#f0c88b','#344e6d','#f0c77d'],
+    ['#b58b45','#ffe0a0','#285b55','#f8d36c'],
+    ['#8798a9','#edf4f8','#263f66','#d4e8ff']
   ];
-  const [metal, highlight, deep, jewel] = palettes[Math.floor((safeLevel - 1) / 5) % palettes.length];
-  const shapes = [
-    'M50 5 L83 19 L91 50 L75 82 L50 95 L25 82 L9 50 L17 19 Z',
-    'M50 4 L68 12 L86 30 L86 70 L68 88 L50 96 L32 88 L14 70 L14 30 L32 12 Z',
-    'M50 4 L91 50 L50 96 L9 50 Z',
-    'M50 5 C74 5 94 25 94 50 C94 75 74 95 50 95 C26 95 6 75 6 50 C6 25 26 5 50 5 Z',
-    'M50 4 L62 15 L80 12 L83 31 L96 50 L83 69 L80 88 L62 85 L50 96 L38 85 L20 88 L17 69 L4 50 L17 31 L20 12 L38 15 Z',
-    'M50 5 L87 26 L87 68 L50 95 L13 68 L13 26 Z'
+  const [metal, light, dark, gem] = palettes[Math.floor((n - 1) / 5)];
+  const silhouettes = [
+    'M50 4 77 13 94 39 83 73 50 96 17 73 6 39 23 13Z',
+    'M50 4 68 9 88 26 92 54 73 86 50 96 27 86 8 54 12 26 32 9Z',
+    'M50 3 91 50 50 97 9 50Z',
+    'M50 5C75 5 95 25 95 50S75 95 50 95 5 75 5 50 25 5 50 5Z',
+    'M50 3 62 14 80 8 84 28 97 50 84 72 80 92 62 86 50 97 38 86 20 92 16 72 3 50 16 28 20 8 38 14Z',
+    'M50 4 87 25 87 70 50 96 13 70 13 25Z',
+    'M50 4 74 10 91 31 87 68 50 96 13 68 9 31 26 10Z',
+    'M50 4 82 18 96 50 82 82 50 96 18 82 4 50 18 18Z',
+    'M50 3 96 37 78 91 22 91 4 37Z',
+    'M50 3 64 18 86 13 83 37 97 50 83 63 86 87 64 82 50 97 36 82 14 87 17 63 3 50 17 37 14 13 36 18Z'
   ];
-  const symbols = [
-    '<path d="M35 48 C35 38 43 31 51 31 C61 31 67 38 67 47 C67 54 62 57 58 61 L58 66 L45 66 L45 61 C39 57 35 54 35 48Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M45 74 H58" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
-    '<path d="M34 29 H62 Q68 29 68 35 V58 Q68 64 62 64 H49 L37 73 V64 H34 Q28 64 28 58 V35 Q28 29 34 29Z" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="47" r="2.8" fill="currentColor"/><circle cx="50" cy="47" r="2.8" fill="currentColor"/><circle cx="60" cy="47" r="2.8" fill="currentColor"/>',
-    '<path d="M31 29 Q50 22 69 29 V69 Q50 61 31 69Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 29 V67 M38 40 H44 M56 40 H63" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
-    '<circle cx="50" cy="49" r="20" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 21 L57 45 L50 49 L43 45Z M50 49 L67 61" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>',
-    '<path d="M31 36 L43 48 L67 27 M31 60 L43 72 L69 49" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
-    '<path d="M50 22 L57 41 L78 42 L62 55 L68 76 L50 64 L32 76 L38 55 L22 42 L43 41Z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>'
+  const motifs = [
+    '<path d="M50 25C39 25 31 33 31 43c0 8 6 12 11 16v6h16v-6c5-4 11-8 11-16 0-10-8-18-19-18Z M43 72h14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+    '<path d="M31 27h38v35H48L35 73v-11h-4Z" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="41" cy="44" r="2.5" fill="currentColor"/><circle cx="50" cy="44" r="2.5" fill="currentColor"/><circle cx="59" cy="44" r="2.5" fill="currentColor"/>',
+    '<path d="M29 29q21-9 42 0v42q-21-9-42 0Z M50 29v42 M36 40h8m12 0h8" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<circle cx="50" cy="49" r="21" fill="none" stroke="currentColor" stroke-width="4"/><path d="m50 20 7 26-7 5-7-5Z M50 51l18 12" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="m29 48 13 13 29-32 M29 65l13 10 29-29" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
+    '<path d="m50 20 8 22 23 1-18 14 7 23-20-13-20 13 7-23-18-14 23-1Z" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M29 34h42v34H29z M37 43h26 M37 51h18 M37 59h22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>',
+    '<path d="M50 23v49 M26 47h48 M33 30l34 38 M67 30 33 68" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="50" cy="47" r="8" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M50 23 74 37v27L50 78 26 64V37Z M38 48l8 8 17-19" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>',
+    '<path d="M50 21 72 42 50 77 28 42Z M28 42h44 M39 42l11 35 11-35" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M30 33h40v33H30z M39 43h22 M39 52h14 M39 61h18" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M50 22c-12 0-21 9-21 21 0 15 21 35 21 35s21-20 21-35c0-12-9-21-21-21Z" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="50" cy="43" r="7" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M50 22 57 42 78 43 62 56 68 77 50 65 32 77 38 56 22 43 43 42Z M50 31v27" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M29 29h42v42H29z M38 39l24 22 M62 39 38 61" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M50 22v54 M23 49h54 M31 30l38 38 M69 30 31 68" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="49" r="17" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M30 30h40v40H30z M39 42h22 M39 50h22 M39 58h14" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="m50 20 26 15v28L50 78 24 63V35Z M36 49l9 9 20-22" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M27 63 39 39l11 14 11-24 12 34Z M32 70h36" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M50 22 74 49 50 76 26 49Z M50 22v54 M26 49h48" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M30 31h40v38H30z M38 43h24 M38 51h24 M38 59h14" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M50 20c-17 0-29 12-29 29s12 29 29 29 29-12 29-29S67 20 50 20Z M50 32v18l14 9" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M50 20 80 50 50 80 20 50Z M35 50h30 M50 35v30" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M30 70V30h40v40H30Z M38 60l9-12 7 7 9-16" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M50 19 61 39l22 3-16 15 4 22-21-11-21 11 4-22-16-15 22-3Z M50 30v38" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M25 50h50 M50 25v50 M32 32l36 36 M68 32 32 68" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M29 28h42v44H29z M38 39h24 M38 49h24 M38 59h15" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M50 18 57 42 82 50 57 58 50 82 43 58 18 50 43 42Z" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M50 20 78 38v24L50 80 22 62V38Z M35 50l10 10 21-23" fill="none" stroke="currentColor" stroke-width="3.5"/>',
+    '<path d="M50 18 61 39 84 42 67 58 71 81 50 70 29 81 33 58 16 42 39 39Z M50 29v34" fill="none" stroke="currentColor" stroke-width="3"/>',
+    '<path d="M50 17 83 37 71 76H29L17 37Z M34 49l11 11 22-24 M50 17v60" fill="none" stroke="currentColor" stroke-width="3.5"/>'
   ];
-  const id = 'atina-insignia-' + safeLevel;
-  const shape = shapes[(safeLevel - 1) % shapes.length];
-  const symbol = symbols[(safeLevel - 1) % symbols.length];
+  const id = 'atina-level-' + n;
+  const shape = silhouettes[(n - 1) % silhouettes.length];
+  const motif = motifs[n - 1];
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', '0 0 100 100');
   svg.setAttribute('class', 'atina-level-insignia');
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', 'Insígnia ATINA do nível ' + safeLevel);
-  const markup = [
+  svg.setAttribute('aria-label', 'Insígnia ATINA do nível ' + n);
+  svg.innerHTML = [
     '<defs>',
-    '<linearGradient id="' + id + '-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff8e6"/><stop offset=".18" stop-color="' + highlight + '"/><stop offset=".42" stop-color="' + metal + '"/><stop offset=".62" stop-color="' + deep + '"/><stop offset=".82" stop-color="' + metal + '"/><stop offset="1" stop-color="#fff0c9"/></linearGradient>',
-    '<radialGradient id="' + id + '-core" cx=".38" cy=".28" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".22" stop-color="' + jewel + '"/><stop offset=".7" stop-color="' + deep + '"/><stop offset="1" stop-color="#101b2b"/></radialGradient>',
-    '<linearGradient id="' + id + '-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".5" stop-color="' + jewel + '" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></linearGradient>',
-    '<filter id="' + id + '-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>',
+    '<linearGradient id="' + id + '-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff9e9"/><stop offset=".18" stop-color="' + light + '"/><stop offset=".42" stop-color="' + metal + '"/><stop offset=".65" stop-color="' + dark + '"/><stop offset=".84" stop-color="' + metal + '"/><stop offset="1" stop-color="#fff0c9"/></linearGradient>',
+    '<radialGradient id="' + id + '-gem" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="#fff"/><stop offset=".22" stop-color="' + gem + '"/><stop offset=".72" stop-color="' + dark + '"/><stop offset="1" stop-color="#101827"/></radialGradient>',
+    '<filter id="' + id + '-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2"/></filter>',
     '</defs>',
-    '<path d="' + shape + '" transform="translate(0 2)" fill="#000" opacity=".45" filter="url(#' + id + '-shadow)"/>',
-    '<path d="' + shape + '" fill="url(#' + id + '-metal)" stroke="#fff3d4" stroke-width="2.5" stroke-linejoin="round"/>',
-    '<path d="' + shape + '" transform="translate(50 50) scale(.88) translate(-50 -50)" fill="none" stroke="' + deep + '" stroke-width="2.2"/>',
-    '<path d="' + shape + '" transform="translate(50 50) scale(.78) translate(-50 -50)" fill="none" stroke="#fff4d9" stroke-width="1" opacity=".65"/>',
-    '<circle cx="50" cy="49" r="30" fill="' + deep + '" stroke="' + highlight + '" stroke-width="2.4"/>',
-    '<circle cx="50" cy="49" r="26.5" fill="url(#' + id + '-core)" stroke="#fff8e8" stroke-opacity=".65" stroke-width="1.1"/>',
-    '<circle cx="50" cy="49" r="22" fill="url(#' + id + '-glass)" stroke="#fff" stroke-opacity=".3" stroke-width=".8"/>',
-    '<g color="' + highlight + '" opacity=".9">' + symbol + '</g>',
-    '<path d="M50 13 L53 20 L50 27 L47 20Z M50 72 L53 79 L50 86 L47 79Z" fill="' + highlight + '" stroke="#fff5df" stroke-width=".8"/>',
-    '<path d="M19 50 H27 M73 50 H81" stroke="' + highlight + '" stroke-width="2" stroke-linecap="round"/>',
-    '<circle cx="19" cy="50" r="2" fill="#fff4d5"/><circle cx="81" cy="50" r="2" fill="#fff4d5"/>',
-    '<path d="M28 20 Q39 13 48 15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".65"/>',
-    '<circle cx="50" cy="49" r="13" fill="' + deep + '" fill-opacity=".82" stroke="' + highlight + '" stroke-width="1.2"/>',
-    '<text x="50" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="' + (safeLevel >= 10 ? 15 : 19) + '" font-weight="700" fill="#fff8e8" stroke="#172333" stroke-width="1.1" paint-order="stroke">' + safeLevel + '</text>',
-    '<path d="M31 84 L38 88 L50 91 L62 88 L69 84" fill="none" stroke="#fff0c9" stroke-width="1.1" opacity=".8"/>'
+    '<path d="' + shape + '" transform="translate(0 2)" fill="#000" opacity=".5" filter="url(#' + id + '-shadow)"/>',
+    '<path d="' + shape + '" fill="url(#' + id + '-metal)" stroke="#fff4d8" stroke-width="2.5" stroke-linejoin="round"/>',
+    '<path d="' + shape + '" transform="translate(50 50) scale(.87) translate(-50 -50)" fill="none" stroke="' + dark + '" stroke-width="2.1"/>',
+    '<path d="' + shape + '" transform="translate(50 50) scale(.77) translate(-50 -50)" fill="none" stroke="#fff" stroke-opacity=".65" stroke-width="1"/>',
+    '<circle cx="50" cy="49" r="30" fill="' + dark + '" stroke="' + light + '" stroke-width="2.3"/>',
+    '<circle cx="50" cy="49" r="25.5" fill="url(#' + id + '-gem)" stroke="#fff" stroke-opacity=".6" stroke-width="1"/>',
+    '<circle cx="50" cy="49" r="21" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1"/>',
+    '<g color="' + light + '">' + motif + '</g>',
+    '<path d="M50 10 54 18 50 25 46 18Z M50 74 54 82 50 90 46 82Z" fill="' + light + '" stroke="#fff" stroke-width=".8"/>',
+    '<path d="M14 50h9 M77 50h9" stroke="' + light + '" stroke-width="2.2" stroke-linecap="round"/>',
+    '<circle cx="14" cy="50" r="2" fill="#fff"/><circle cx="86" cy="50" r="2" fill="#fff"/>',
+    '<circle cx="50" cy="49" r="12.5" fill="' + dark + '" fill-opacity=".88" stroke="' + light + '" stroke-width="1.4"/>',
+    '<text x="50" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="' + (n >= 10 ? 14 : 18) + '" font-weight="700" fill="#fff9e9" stroke="#142033" stroke-width="1.2" paint-order="stroke">' + n + '</text>',
+    '<path d="M27 19Q39 11 49 14" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".65"/>'
   ].join('');
-  svg.innerHTML = markup;
-  svg.dataset.family = String(Math.floor((safeLevel - 1) / 5) + 1);
+  svg.dataset.family = String(Math.floor((n - 1) / 5) + 1);
   return svg;
 }
 function atinaRenderLevelGallery(profile) {
