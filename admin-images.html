@@ -24,7 +24,7 @@ h1{font-size:24px;margin:4px 0 8px}
 section[id],div[id]{scroll-margin-top:190px}
 .subsection-title{margin-top:20px!important;padding-top:12px;border-top:1px solid #29425b}
 @media(max-width:480px){body{padding:12px 9px}.admin-nav{top:4px}.submenu{grid-template-columns:1fr 1fr}.submenu a{font-size:13px;padding:10px 8px}}h2{font-size:18px;margin:0 0 12px;color:var(--gold)}p,.hint{color:var(--muted);line-height:1.5}.page-link{display:inline-block;padding:10px 14px;border:1px solid var(--gold);border-radius:10px;color:var(--gold);text-decoration:none;font-weight:700}
-label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
+label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}textarea,select{font:inherit;width:100%;padding:11px;border-radius:10px;background:#0b1d2d;color:white;border:1px solid #456078}textarea{min-height:100px;resize:vertical}.challenge-item{border:1px solid #36516e;border-radius:12px;padding:12px;margin:9px 0;background:#0b1d2d}.challenge-actions{display:flex;gap:8px;flex-wrap:wrap}.challenge-actions button{width:auto;flex:1;min-width:110px;margin-top:8px}.challenge-meta{font-size:12px;color:var(--muted)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.form-grid{grid-template-columns:1fr}}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
 #status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden,.page-hidden,.tab-hidden{display:none!important}.admin-nav a[aria-current="page"]{border-color:var(--gold);background:#19314a;color:var(--gold)}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
 </style>
 </head>
@@ -40,6 +40,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <a href="#upload" data-admin-tab="upload">Envio de imagens</a>
       <a href="#logo" data-admin-tab="logo">Logótipo</a>
       <a href="#players" data-admin-tab="players">Jogadores</a>
+      <a href="#challenges" data-admin-tab="challenges">Base de dados dos desafios</a>
     </div>
   </nav>
   <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
@@ -98,13 +99,38 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <p class="note" id="wmStatus">A aguardar início.</p>
   </section>
   <section class="panel hidden tab-panel" id="imagesInfo" data-tab-panel="images"><h2>Gestão de imagens</h2><p>Pesquisa, compara, revê estados, aprova, publica e descarrega as imagens registadas.</p><a class="page-link" href="comparar-imagens.html">Abrir gestão e comparação de imagens →</a></section>
+  <section class="panel hidden tab-panel" id="challengesPanel" data-tab-panel="challenges">
+    <h2>Base de dados dos desafios</h2>
+    <p class="note">Consulta, pesquisa, cria e edita desafios. A opção Apagar desativa o desafio, preservando o registo e o histórico; podes reativá-lo mais tarde.</p>
+    <label for="challengeSearch">Pesquisar por ID, solução ou categoria</label>
+    <input id="challengeSearch" type="search" placeholder="Pesquisar desafios…">
+    <div class="challenge-actions"><button id="newChallenge" type="button">Criar novo desafio</button><button id="reloadChallenges" class="secondary" type="button">Atualizar lista</button></div>
+    <p class="note" id="challengeCount">A carregar desafios…</p>
+    <div id="challengeList"></div>
+    <form id="challengeForm" class="hidden">
+      <h2 id="challengeFormTitle">Novo desafio</h2>
+      <input id="challengeId" type="hidden">
+      <div class="form-grid">
+        <div><label for="challengeCategory">Categoria</label><input id="challengeCategory" required></div>
+        <div><label for="challengeEmoji">Emoji</label><input id="challengeEmoji" required maxlength="12"></div>
+        <div><label for="challengeAnswer">Solução / resposta</label><input id="challengeAnswer" required></div>
+        <div><label for="challengeDifficulty">Dificuldade</label><select id="challengeDifficulty"><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div>
+      </div>
+      <label for="challengeClues">Pistas (uma por linha)</label><textarea id="challengeClues" required></textarea>
+      <label for="challengeAccepted">Respostas aceites (separadas por vírgulas)</label><textarea id="challengeAccepted" required></textarea>
+      <label for="challengeTags">Etiquetas da imagem (separadas por vírgulas)</label><input id="challengeTags">
+      <label for="challengeDescription">Descrição da imagem (opcional)</label><textarea id="challengeDescription"></textarea>
+      <label><input id="challengeActive" type="checkbox" checked style="width:auto"> Desafio ativo</label>
+      <div class="challenge-actions"><button type="submit" id="saveChallenge">Guardar desafio</button><button type="button" class="secondary" id="cancelChallenge">Cancelar</button></div>
+    </form>
+  </section>
   <div id="status" role="status" aria-live="polite"></div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 (() => {
-  const tabNames = ["home","images","upload","logo","players"];
+  const tabNames = ["home","images","upload","logo","players","challenges"];
   function activateTab(name) {
     const tab = tabNames.includes(name) ? name : "home";
     document.querySelectorAll("[data-tab-panel]").forEach(panel => {
@@ -131,7 +157,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       link.setAttribute("aria-current", link.dataset.adminTab === tab ? "page" : "false");
     });
     const title = document.querySelector(".admin-header h1");
-    if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores"}[tab]);
+    if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores",challenges:"Base de dados dos desafios"}[tab]);
   }
   window.addEventListener("hashchange", () => activateTab(location.hash.slice(1)));
   const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
@@ -147,6 +173,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("watermarkPanel").classList.toggle("hidden", !session);
     $("dashboardPanel").classList.toggle("hidden", !session);
     $("imagesInfo").classList.toggle("hidden", !session);
+    $("challengesPanel").classList.toggle("hidden", !session);
+    if (session && location.hash === "#challenges") loadChallenges();
     $("adminLinks").classList.toggle("hidden", !session);
     $("adminNavigation").classList.toggle("hidden", !session);
     $("logoutTop").classList.toggle("hidden", !session);
@@ -358,6 +386,72 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     status("Sessão terminada.");
   }
   $("logoutTop").addEventListener("click", doLogout);
+
+  let challengeCache = [];
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  async function challengeRequest(payload) {
+    const {data:{session}} = await client.auth.getSession();
+    if(!session) throw new Error("A sessão expirou. Entra novamente.");
+    const response=await fetch(SUPABASE_URL+"/functions/v1/atina-image-manage",{
+      method:"POST",headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},body:JSON.stringify(payload)
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.error||"Não foi possível concluir a operação.");
+    return data;
+  }
+  async function loadChallenges() {
+    $("challengeCount").textContent="A carregar desafios…";
+    try {
+      const data=await challengeRequest({action:"challenge_list"});
+      challengeCache=data.challenges||[];
+      renderChallenges();
+    } catch(error) { $("challengeCount").textContent="Erro: "+error.message; }
+  }
+  function renderChallenges() {
+    const term=$("challengeSearch").value.trim().toLocaleLowerCase("pt-PT");
+    const rows=challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term));
+    $("challengeCount").textContent=rows.length+" de "+challengeCache.length+" desafios";
+    $("challengeList").innerHTML=rows.map(x=>'<article class="challenge-item"><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(x.active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-actions"><button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!x.active)+'">'+(x.active?"Apagar / desativar":"Reativar")+'</button></div></article>').join("")||'<p>Não foram encontrados desafios.</p>';
+  }
+  function resetChallengeForm() {
+    $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true;
+    $("challengeFormTitle").textContent="Novo desafio"; $("challengeForm").classList.add("hidden");
+  }
+  function editChallenge(id) {
+    const x=challengeCache.find(v=>String(v.challenge_id)===String(id)); if(!x)return;
+    $("challengeId").value=x.challenge_id; $("challengeCategory").value=x.category||""; $("challengeEmoji").value=x.emoji||"";
+    $("challengeAnswer").value=x.answer||""; $("challengeDifficulty").value=x.difficulty||"medium";
+    $("challengeClues").value=(x.clues||[]).join("\n"); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
+    $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||"";
+    $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id;
+    $("challengeForm").classList.remove("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
+  $("cancelChallenge").addEventListener("click",resetChallengeForm);
+  $("reloadChallenges").addEventListener("click",loadChallenges);
+  $("challengeSearch").addEventListener("input",renderChallenges);
+  $("challengeList").addEventListener("click",async event=>{
+    const edit=event.target.closest("[data-edit-challenge]"); if(edit){editChallenge(edit.dataset.editChallenge);return;}
+    const toggle=event.target.closest("[data-toggle-challenge]"); if(!toggle)return;
+    const id=Number(toggle.dataset.toggleChallenge), active=toggle.dataset.active==="true";
+    const x=challengeCache.find(v=>v.challenge_id===id);
+    const action=active?"desativar":"reativar";
+    if(!confirm("Queres "+action+" o desafio #"+id+" — "+(x?.answer||"")+"? "+(active?"O registo e o histórico serão preservados.":"O desafio voltará a ficar ativo.")))return;
+    toggle.disabled=true;
+    try { await challengeRequest({action:"challenge_toggle",challenge_id:id,active}); await loadChallenges(); }
+    catch(error){alert(error.message);} finally{toggle.disabled=false;}
+  });
+  $("challengeForm").addEventListener("submit",async event=>{
+    event.preventDefault(); const button=$("saveChallenge"); button.disabled=true;
+    const split=(id)=>$(id).value.split(/[,\n]/).map(v=>v.trim()).filter(Boolean);
+    try {
+      const id=$("challengeId").value;
+      const result=await challengeRequest({action:"challenge_save",challenge_id:id===""?null:Number(id),category:$("challengeCategory").value,emoji:$("challengeEmoji").value,answer:$("challengeAnswer").value,difficulty:$("challengeDifficulty").value,clues:split("challengeClues"),accepted_answers:split("challengeAccepted"),image_tags:split("challengeTags"),image_description:$("challengeDescription").value,active:$("challengeActive").checked});
+      await loadChallenges(); resetChallengeForm(); alert((result.created?"Desafio criado":"Desafio atualizado")+" com sucesso. ID: "+result.challenge_id);
+    } catch(error){alert(error.message);} finally{button.disabled=false;}
+  });
+  window.addEventListener("hashchange",()=>{if(location.hash==="#challenges")loadChallenges();});
+
   $("uploadForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const button = $("send"); button.disabled = true;
