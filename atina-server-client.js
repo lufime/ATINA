@@ -158,7 +158,7 @@ async function atinaProgressLoadPointsLeaderboard() {
     }
     rankedRows.forEach((row, index) => {
       const item = document.createElement('li');
-      item.textContent = (index + 1) + '. ' + row.nickname + ' — ' + Number(row.points || 0) + ' pontos';
+      item.textContent = row.nickname + ' — ' + Number(row.points || 0) + ' pontos';
       list.appendChild(item);
     });
   } catch (error) {
@@ -175,13 +175,16 @@ async function atinaProgressLoadLeaderboard() {
   try {
     const rows = await atinaServerRpc('atina_progress_leaderboard', { p_limit: 50 });
     list.replaceChildren();
-    if (!Array.isArray(rows) || !rows.length) {
+    const rankedRows = Array.isArray(rows)
+      ? rows.filter(row => Number(row.xp || 0) > 0).slice(0, 50)
+      : [];
+    if (!rankedRows.length) {
       const empty = document.createElement('li');
-      empty.textContent = 'Ainda não há perfis na classificação global.';
+      empty.textContent = 'Ainda não há jogadores com XP registado.';
       list.appendChild(empty);
       return;
     }
-    rows.forEach((row, index) => {
+    rankedRows.forEach(row => {
       const item = document.createElement('li');
       item.textContent = row.nickname + ' — ' + Number(row.xp || 0) + ' XP · nível ' + Number(row.level || 1);
       list.appendChild(item);
