@@ -3431,16 +3431,17 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
   const host=document.getElementById('atinaLevelGallery');if(!host)return;
   const lvl=levelNow();
   host.replaceChildren();
-  const summary=document.createElement('p');summary.className='muted small';summary.textContent='Nível atual: '+lvl+' de 30 · '+lvl+' conhecimentos conquistados';host.appendChild(summary);
+  const summary=document.createElement('p');summary.className='muted small';summary.textContent=lvl+' de 30 conhecimentos conquistados';host.appendChild(summary);
   const grid=document.createElement('div');grid.className='atina-level-gallery-grid';
   definitions.forEach(([icon,title],i)=>{
-   const n=i+1,unlocked=n<=lvl,card=document.createElement('div');card.className='atina-level-gallery-card '+(unlocked?'is-unlocked':'is-locked');
+   const n=i+1;if(n>lvl)return;
+   const card=document.createElement('div');card.className='atina-level-gallery-card is-unlocked';
    const emblem=document.createElement('div');emblem.className='atina-level-gallery-emblem';
    const medal=document.createElement('div');medal.className='atina-knowledge-medal';
    const glyph=document.createElement('span');glyph.className='mdi mdi-'+icon;glyph.setAttribute('aria-hidden','true');
    const number=document.createElement('em');number.textContent=String(n);medal.append(glyph,number);emblem.appendChild(medal);
-   const name=document.createElement('strong');name.textContent=unlocked?title:'Conhecimento por descobrir';
-   const status=document.createElement('span');status.className='atina-level-gallery-status';status.textContent=unlocked?'✓ Conquistado':'🔒 Nível '+n;
+   const name=document.createElement('strong');name.textContent=title;
+   const status=document.createElement('span');status.className='atina-level-gallery-status';status.textContent='✓ Conquistado';
    card.append(emblem,name,status);grid.appendChild(card);
   });
   host.appendChild(grid);
