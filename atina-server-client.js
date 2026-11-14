@@ -230,6 +230,41 @@ function atinaCreateLevelInsignia(level) {
   const design = designs[safeLevel - 1];
   const jewelTones = ['#a8d6a0','#79d8ec','#c4a4ff','#f0c77d','#f8d36c','#8fc5ff','#d3a5ff','#8be2c8','#f3d28a','#ffe08a','#d6e6f2','#e9ad8d','#f4d49b','#9ee7f2','#ffdc83','#a9caff','#d7b0f2','#d5e69b','#f5a88d','#e6c5ff','#a8e2e8','#f4d58c','#a4e3cf','#d3baff','#ffd19a','#a8e2ff','#e6b4dc','#ffe19a','#b9d8ff','#fff0a8'];
   const jewel = jewelTones[safeLevel - 1];
+  // Runas decorativas originais: um glifo diferente em cada nível.
+  // São símbolos de fantasia, não traduções nem alegações de autenticidade histórica.
+  const runes = [
+    'M12 2 V22 M12 2 L5 9 M12 11 L20 18',
+    'M4 3 L20 21 M20 3 L4 21 M4 12 H20',
+    'M5 3 V21 M5 3 L19 12 L5 21',
+    'M4 4 L20 4 L12 12 L20 20 L4 20',
+    'M12 2 V22 M12 2 L20 9 M12 12 L4 20',
+    'M4 3 V21 M4 3 L20 12 L4 21 M4 12 H20',
+    'M4 4 L20 4 L20 20 L4 20 M4 12 H20',
+    'M4 3 L12 12 L20 3 M12 12 V22 M4 21 H20',
+    'M4 3 L20 21 M20 3 L4 21',
+    'M4 3 V21 M4 3 L20 12 L4 21 M12 7 V17',
+    'M4 3 H20 V21 H4 Z M4 12 H20',
+    'M12 2 L4 12 L12 22 L20 12 Z',
+    'M4 3 L12 12 L20 3 M4 21 L12 12 L20 21',
+    'M4 3 V21 M20 3 V21 M4 12 H20',
+    'M4 3 L20 21 M4 21 L20 3 M12 3 V21',
+    'M4 3 H20 M12 3 V21 M4 21 H20',
+    'M4 3 L20 3 L4 21 L20 21',
+    'M12 2 V22 M4 7 L12 12 L20 7 M4 17 L12 12 L20 17',
+    'M4 3 L12 12 L4 21 M20 3 L12 12 L20 21',
+    'M4 3 V21 M4 3 L20 3 M4 12 H16 M4 21 H20',
+    'M4 3 L20 21 M12 3 V21 M4 12 H20',
+    'M4 3 H20 L4 21 H20',
+    'M4 3 V21 M4 3 L20 12 L4 21',
+    'M4 3 L12 12 L20 3 M12 12 L4 21 M12 12 L20 21',
+    'M4 3 H20 M4 3 V21 M4 12 H16 M4 21 H20',
+    'M12 2 L4 12 L12 22 M12 2 L20 12 L12 22',
+    'M4 3 V21 M20 3 V21 M4 3 L20 21 M20 3 L4 21',
+    'M4 3 L20 3 L12 12 L20 21 L4 21',
+    'M4 3 L12 12 L4 21 M20 3 L12 12 L20 21 M4 12 H20',
+    'M4 3 H20 V21 H4 M12 3 V21'
+  ];
+  const rune = runes[safeLevel - 1];
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
   svg.setAttribute('viewBox', '0 0 64 64');
@@ -305,7 +340,25 @@ function atinaCreateLevelInsignia(level) {
   facets.setAttribute('stroke', '#ffffff');
   facets.setAttribute('stroke-width', '0.8');
   facets.setAttribute('opacity', '.3');
-  svg.append(defs, outer, innerEdge, motif, core, coreRing, facets, number, glint);
+  const runeTop = document.createElementNS(ns, 'path');
+  runeTop.setAttribute('d', rune);
+  runeTop.setAttribute('transform', 'translate(23 5) scale(.75)');
+  runeTop.setAttribute('fill', 'none');
+  runeTop.setAttribute('stroke', '#fff0bd');
+  runeTop.setAttribute('stroke-width', '1.6');
+  runeTop.setAttribute('stroke-linecap', 'round');
+  runeTop.setAttribute('stroke-linejoin', 'round');
+  runeTop.setAttribute('opacity', '.92');
+  const runeBottom = document.createElementNS(ns, 'path');
+  runeBottom.setAttribute('d', rune);
+  runeBottom.setAttribute('transform', 'translate(23 43) scale(.75)');
+  runeBottom.setAttribute('fill', 'none');
+  runeBottom.setAttribute('stroke', '#fff0bd');
+  runeBottom.setAttribute('stroke-width', '1.6');
+  runeBottom.setAttribute('stroke-linecap', 'round');
+  runeBottom.setAttribute('stroke-linejoin', 'round');
+  runeBottom.setAttribute('opacity', '.92');
+  svg.append(defs, outer, innerEdge, motif, runeTop, runeBottom, core, coreRing, facets, number, glint);
   return svg;
 }
 
