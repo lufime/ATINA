@@ -1028,6 +1028,27 @@ networkRenderGameState = function() {
   const onlineCard = st.special_card || null;
   onlineCardNotice.textContent = onlineCard ? (onlineCard.icon || '🃏') + ' ' + (onlineCard.name || 'CARTA ESPECIAL') + ' — ' + (onlineCard.description || '') : '';
   onlineCardNotice.classList.toggle('hidden', !onlineCard);
+  const cardPopupKey = onlineCard ? [networkRoom?.room_id || '', st.pos, onlineCard.name || '', onlineCard.icon || ''].join('|') : '';
+  if (onlineCard && cardPopupKey !== window.__atinaLastOnlineCardPopupKey) {
+    window.__atinaLastOnlineCardPopupKey = cardPopupKey;
+    let overlay = document.getElementById('atinaOnlineSpecialCardPopup');
+    overlay?.remove();
+    overlay = document.createElement('div');
+    overlay.id = 'atinaOnlineSpecialCardPopup';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'atinaOnlineSpecialCardPopupTitle');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(8,12,24,.78);backdrop-filter:blur(5px)';
+    const panel = document.createElement('div');
+    panel.style.cssText = 'width:min(420px,100%);padding:28px 24px;border:2px solid #d6b45c;border-radius:22px;background:linear-gradient(145deg,#20283b,#111827);color:#fff;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.5)';
+    const icon = document.createElement('div'); icon.textContent = onlineCard.icon || '🃏'; icon.style.cssText = 'font-size:54px;margin-bottom:10px';
+    const eyebrow = document.createElement('div'); eyebrow.textContent = 'CARTA ESPECIAL'; eyebrow.style.cssText = 'font-size:12px;letter-spacing:2px;font-weight:800;color:#e5c56e;margin-bottom:8px';
+    const title = document.createElement('h2'); title.id = 'atinaOnlineSpecialCardPopupTitle'; title.textContent = onlineCard.name || 'Carta especial'; title.style.cssText = 'font-size:24px;margin:0 0 12px';
+    const desc = document.createElement('p'); desc.textContent = onlineCard.description || 'A carta foi ativada neste desafio.'; desc.style.cssText = 'font-size:16px;line-height:1.5;margin:0 0 24px';
+    const close = document.createElement('button'); close.type = 'button'; close.textContent = 'Continuar'; close.style.cssText = 'border:0;border-radius:999px;padding:12px 28px;background:#e5c56e;color:#171717;font-weight:800;font-size:15px;cursor:pointer'; close.addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', event => { if (event.target === overlay) overlay.remove(); });
+    panel.append(icon, eyebrow, title, desc, close); overlay.append(panel); document.body.append(overlay); close.focus();
+  }
   $('level').textContent = 'DESAFIO ' + (Number(st.pos) + 1) + ' / ' + st.queue_length;
   $('player').textContent = 'Multijogador · ' + (networkGameHost ? 'Anfitrião' : 'Jogador');
   $('clues').replaceChildren();
