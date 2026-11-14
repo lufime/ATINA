@@ -837,7 +837,7 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 <section class="home-page-panel hidden" data-home-page="ranking">
  <div class="home-welcome"><div class="home-welcome-kicker">COMUNIDADE ATINA</div><h2>Classificação</h2><p>Consulta os jogadores com mais XP e vê a tua posição no ranking de pontuações.</p></div>
  
- <section class="card" style="margin:14px 0;padding:16px"><h3>🏆 Ranking global de XP</h3><p class="muted small">Compara o teu XP e nível com os restantes jogadores.</p><button type="button" class="btn secondary full" id="atinaCloudLeaderboardRefresh">↻ Atualizar classificação</button><ol id="atinaCloudLeaderboard" aria-live="polite"><li>A classificação aparece aqui.</li></ol><hr><h3>⭐ Ranking global de Pontos</h3><p class="muted small">Pontos acumulados por respostas certas em todos os modos associados à tua conta.</p><button type="button" class="btn secondary full" id="atinaPointsLeaderboardRefresh">↻ Atualizar Pontos</button><ol id="atinaPointsLeaderboard" aria-live="polite"><li>A classificação de Pontos aparece aqui.</li></ol><button type="button" class="btn full" id="openRanking">Ver ranking de pontuações</button></section>
+ <section class="card" style="margin:14px 0;padding:16px"><h3>🏆 Ranking global de XP</h3><p class="muted small">Compara o teu XP e nível com os restantes jogadores.</p><ol id="atinaCloudLeaderboard" aria-live="polite"><li>A classificação aparece aqui.</li></ol><hr><h3>⭐ Ranking global de Pontos</h3><p class="muted small">Pontos acumulados por respostas certas em todos os modos associados à tua conta.</p><ol id="atinaPointsLeaderboard" aria-live="polite"><li>A classificação de Pontos aparece aqui.</li></ol><button type="button" class="btn full" id="openRanking">Ver ranking de pontuações</button></section>
  </section><section class="home-page-panel hidden" data-home-page="settings">
  <div class="home-welcome"><div class="home-welcome-kicker">PERSONALIZA A EXPERIÊNCIA</div><h2>Definições</h2><p>Ajusta o tempo, a dificuldade e os efeitos sonoros antes de começar.</p></div>
  <section class="card" style="padding:16px;margin:14px 0"><h3>⏱️ Tempo por desafio</h3><p class="muted small">Escolhe quanto tempo tens para responder.</p><select id="timerMode" class="answer"><option value="60">60 segundos</option><option value="90">90 segundos</option><option value="0">Sem limite de tempo</option></select>
@@ -888,8 +888,8 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 <div id="saveDuel" class="hidden"><label class="section" for="nickP1">Jogador 1</label><input id="nickP1" class="answer" maxlength="20" placeholder="Pseudónimo do Jogador 1"><button type="button" class="btn secondary full" id="saveP1Btn">Guardar pontuação do Jogador 1</button><label class="section" for="nickP2">Jogador 2</label><input id="nickP2" class="answer" maxlength="20" placeholder="Pseudónimo do Jogador 2"><button type="button" class="btn full" id="saveP2Btn">Guardar pontuação do Jogador 2</button></div>
 <p id="saveStatus" class="feedback" aria-live="polite"></p><div class="online-ranking"><div class="row"><strong>Classificação</strong><select id="rankingMode" class="answer" style="width:auto;margin:0;padding:8px"><option value="solo">Individual</option><option value="duel">Duelo</option></select></div><button type="button" class="btn secondary full" id="loadRanking">Ver ranking online</button><ol id="rankingList"></ol></div></div>
 <button type="button" class="btn full" id="resultHome">Voltar ao menu</button></section><section id="rankingPage" class="card hidden"><h2>🏆 Ranking ATINA</h2>
- <div class="online-ranking"><h3>⭐ Ranking de pontos</h3><p class="muted small">Melhores pontuações por modalidade. Este ranking começa agora na base de desenvolvimento.</p><div class="row"><strong>Modalidade</strong><select id="menuRankingMode" class="answer" style="width:auto;margin:0;padding:8px"><option value="solo">Individual</option><option value="duel">Duelo</option></select></div><button type="button" class="btn secondary full" id="refreshMenuRanking" style="margin-top:12px">Atualizar pontos</button><ol id="menuPointsRankingList"></ol></div>
- <div class="online-ranking"><h3>✨ Ranking de XP</h3><p class="muted small">Progressão acumulada dos jogadores.</p><button type="button" class="btn secondary full" id="refreshXpRanking" style="margin-top:12px">Atualizar XP</button><ol id="menuXpRankingList"></ol></div>
+ <div class="online-ranking"><h3>⭐ Ranking de pontos</h3><p class="muted small">Melhores pontuações por modalidade. Este ranking começa agora na base de desenvolvimento.</p><div class="row"><strong>Modalidade</strong><select id="menuRankingMode" class="answer" style="width:auto;margin:0;padding:8px"><option value="solo">Individual</option><option value="duel">Duelo</option></select></div><ol id="menuPointsRankingList"></ol></div>
+ <div class="online-ranking"><h3>✨ Ranking de XP</h3><p class="muted small">Progressão acumulada dos jogadores.</p><ol id="menuXpRankingList"></ol></div>
  <button type="button" class="btn full" id="rankingBack" style="margin-top:12px">Voltar ao menu</button></section>
 <div class="footer">ATINA · Pensa. Descobre. Atina. · Ranking online disponível no fim de cada jogo.</div>
 <section id="screenShareHelp" class="card hidden" role="dialog" aria-labelledby="screenShareTitle" aria-modal="true" style="margin:14px 0">
@@ -1327,8 +1327,27 @@ function showHomePage(page,restore=false){
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
-document.getElementById('atinaPointsLeaderboardRefresh')?.addEventListener('click',()=>{if(typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();});
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
+// Atualiza automaticamente os rankings visíveis, sem exigir botões manuais.
+let atinaRankingRefreshInFlight=false;
+setInterval(async()=>{
+ if(atinaRankingRefreshInFlight||document.hidden)return;
+ const activeHomeRanking=document.querySelector('#home [data-home-page="ranking"]');
+ const legacyRanking=document.getElementById('rankingPage');
+ const refreshHome=!!activeHomeRanking&&!activeHomeRanking.classList.contains('hidden')&&activeHomeRanking.getAttribute('aria-hidden')!=='true';
+ const refreshLegacy=!!legacyRanking&&!legacyRanking.classList.contains('hidden');
+ if(!refreshHome&&!refreshLegacy)return;
+ atinaRankingRefreshInFlight=true;
+ try{
+  const jobs=[];
+  if(refreshHome){
+   if(typeof atinaProgressLoadLeaderboard==='function')jobs.push(atinaProgressLoadLeaderboard());
+   if(typeof atinaProgressLoadPointsLeaderboard==='function')jobs.push(atinaProgressLoadPointsLeaderboard());
+  }
+  if(refreshLegacy){jobs.push(loadMenuRanking());jobs.push(loadXpRanking());}
+  await Promise.allSettled(jobs);
+ }finally{atinaRankingRefreshInFlight=false;}
+},2000);
 let atinaInitialPage='dashboard';
 try{atinaInitialPage=location.hash.slice(1)||localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'dashboard';}catch(e){}
 showHomePage(atinaInitialPage,true);
@@ -1717,7 +1736,7 @@ $('voice').onclick=()=>{
 };
 $('listenAnswer').onclick=()=>{let g=games[queue[pos]];if('speechSynthesis' in window){window.speechSynthesis.cancel();let fala=new SpeechSynthesisUtterance('A resposta correta é: '+g[3]);fala.lang='pt-PT';window.speechSynthesis.speak(fala);}else{$('feedback').textContent='A leitura em voz alta não está disponível neste navegador.';}};$('pass').onclick=pass;$('continue').onclick=next;$('answer').addEventListener('input',saveLocalProgress);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});$('openRanking').onclick=()=>{screen('rankingPage');loadMenuRanking();loadXpRanking();};
 // Autenticação desativada: o ranking funciona apenas com pseudónimo.
- $('refreshMenuRanking').onclick=loadMenuRanking;$('menuRankingMode').onchange=loadMenuRanking;$('refreshXpRanking').onclick=loadXpRanking;$('rankingBack').onclick=()=>screen('home');
+ $('menuRankingMode').onchange=loadMenuRanking;$('rankingBack').onclick=()=>screen('home');
 $('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo','saveSoloBtn');$('saveP1Btn').onclick=()=>saveOnlineScore($('nickP1').value,scores[0],'duel','saveP1Btn');$('saveP2Btn').onclick=()=>saveOnlineScore($('nickP2').value,scores[1],'duel','saveP2Btn');$('loadRanking').onclick=loadOnlineRanking;$('rankingMode').onchange=loadOnlineRanking;$('resultHome').onclick=async()=>{
  if(networkRoom&&networkGameState?.mode==='mimicas'){networkLeaveRoom();return;}
  const resultStatus=$('saveStatus');
