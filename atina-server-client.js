@@ -503,7 +503,7 @@ function atinaServerRenderTimer() {
     if (!atinaServerAutoRevealAt) atinaServerAutoRevealAt = Date.now() + 10000;
     const remaining = Math.max(0, Math.ceil((atinaServerAutoRevealAt - Date.now()) / 1000));
     timeLeft = remaining;
-    $('timerDisplay').textContent = '00:' + String(remaining).padStart(2, '0');
+    $('timerDisplay').textContent = 'Prepara-te! ' + '00:' + String(remaining).padStart(2, '0');
     $('timerDisplay').classList.toggle('urgent', remaining <= 3);
     if (remaining === 0 && !atinaServerAutoRevealTriggered && !atinaServerBusy) {
       atinaServerAutoRevealTriggered = true;
