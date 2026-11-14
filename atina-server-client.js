@@ -54,6 +54,7 @@ function atinaProgressRender(profile) {
   const remaining = Math.max(0, nextThreshold - xp);
   const percent = Math.min(100, progress / needed * 100);
   const title = titles[levelIndex] || 'Lenda ATINA';
+  atinaRenderLevelGallery(profile);
   const fill = $('atinaCloudXpFill');
   if ($('atinaCloudLevel')) $('atinaCloudLevel').textContent = 'Nível ' + level + ' · ' + title;
   if ($('atinaCloudXp')) $('atinaCloudXp').textContent = xp + ' XP';
@@ -257,6 +258,47 @@ function atinaCreateLevelInsignia(level) {
   number.textContent = String(level);
   svg.append(outer, motif, number);
   return svg;
+}
+
+function atinaRenderLevelGallery(profile) {
+  const gallery = $('atinaLevelGallery');
+  if (!gallery) return;
+  const thresholds = [0,250,600,1100,1800,2700,3900,5400,7200,9300,11700,14400,17400,20700,24300,28200,32400,36900,41700,46800,52200,57900,64000,70500,77400,84700,92400,100500,109000,118000];
+  const titles = ['Iniciante','Explorador','Descobridor','Conhecedor','Especialista','Mestre','Perito','Sábio','Génio','Lenda ATINA','Veterano','Erudito','Grande Mestre','Ilustre','Campeão','Visionário','Eminência','Grão-Mestre','Imortal','Lenda Suprema','Mestre do Conhecimento','Explorador Supremo','Sábio Supremo','Grande Sábio','Mestre Lendário','Génio Supremo','Guardião do Saber','Ícone ATINA','Lenda Eterna','Lenda Absoluta'];
+  const xp = Math.max(0, Number(profile?.xp) || 0);
+  const currentLevel = Math.max(1, Number(profile?.level) || 1);
+  gallery.replaceChildren();
+  const summary = document.createElement('p');
+  summary.className = 'muted small';
+  summary.textContent = 'Insígnias conquistadas: ' + Math.min(currentLevel, 30) + ' / 30';
+  gallery.appendChild(summary);
+  const grid = document.createElement('div');
+  grid.className = 'atina-level-gallery-grid';
+  thresholds.forEach((threshold, index) => {
+    const level = index + 1;
+    const unlocked = level <= currentLevel;
+    const card = document.createElement('article');
+    card.className = 'atina-level-gallery-card' + (unlocked ? ' is-unlocked' : ' is-locked');
+    const emblem = document.createElement('div');
+    emblem.className = 'atina-level-gallery-emblem';
+    emblem.appendChild(atinaCreateLevelInsignia(level));
+    if (!unlocked) emblem.setAttribute('aria-label', 'Insígnia bloqueada do nível ' + level);
+    const title = document.createElement('strong');
+    title.textContent = titles[index];
+    const number = document.createElement('span');
+    number.className = 'atina-level-gallery-number';
+    number.textContent = 'Nível ' + level;
+    const status = document.createElement('span');
+    status.className = 'atina-level-gallery-status';
+    if (unlocked) {
+      status.textContent = '✓ Conquistada';
+    } else {
+      status.textContent = Math.max(0, threshold - xp).toLocaleString('pt-PT') + ' XP em falta';
+    }
+    card.append(emblem, number, title, status);
+    grid.appendChild(card);
+  });
+  gallery.appendChild(grid);
 }
 
 async function atinaProgressLoadLeaderboard() {
