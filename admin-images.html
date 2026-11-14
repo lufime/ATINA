@@ -24,7 +24,7 @@ h1{font-size:24px;margin:4px 0 8px}
 section[id],div[id]{scroll-margin-top:190px}
 .subsection-title{margin-top:20px!important;padding-top:12px;border-top:1px solid #29425b}
 @media(max-width:480px){body{padding:12px 9px}.admin-nav{top:4px}.submenu{grid-template-columns:1fr 1fr}.submenu a{font-size:13px;padding:10px 8px}}h2{font-size:18px;margin:0 0 12px;color:var(--gold)}p,.hint{color:var(--muted);line-height:1.5}.page-link{display:inline-block;padding:10px 14px;border:1px solid var(--gold);border-radius:10px;color:var(--gold);text-decoration:none;font-weight:700}
-label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}textarea,select{font:inherit;width:100%;padding:11px;border-radius:10px;background:#0b1d2d;color:white;border:1px solid #456078}textarea{min-height:100px;resize:vertical}.challenge-item{border:1px solid #36516e;border-radius:12px;padding:12px;margin:9px 0;background:#0b1d2d}.challenge-actions{display:flex;gap:8px;flex-wrap:wrap}.challenge-actions button{width:auto;flex:1;min-width:110px;margin-top:8px}.challenge-meta{font-size:12px;color:var(--muted)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.form-grid{grid-template-columns:1fr}}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
+label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}textarea,select{font:inherit;width:100%;padding:11px;border-radius:10px;background:#0b1d2d;color:white;border:1px solid #456078}textarea{min-height:100px;resize:vertical}.clue-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.clue-fields{display:grid;gap:8px}.clue-row{display:flex;align-items:center;gap:8px}.clue-row input{flex:1;min-width:0}.clue-row button{width:auto;margin:0;padding:9px 12px}.image-preview{margin-top:10px;padding:10px;border:1px dashed #456078;border-radius:12px;min-height:54px}.image-preview img{display:block;max-width:100%;max-height:240px;object-fit:contain;border-radius:8px}.image-preview a{display:inline-block;margin-top:8px;color:var(--gold);overflow-wrap:anywhere}.challenge-item{border:1px solid #36516e;border-radius:12px;padding:12px;margin:9px 0;background:#0b1d2d}.challenge-actions{display:flex;gap:8px;flex-wrap:wrap}.challenge-actions button{width:auto;flex:1;min-width:110px;margin-top:8px}.challenge-meta{font-size:12px;color:var(--muted)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.form-grid{grid-template-columns:1fr}}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
 #status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden,.page-hidden,.tab-hidden{display:none!important}.admin-nav a[aria-current="page"]{border-color:var(--gold);background:#19314a;color:var(--gold)}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
 </style>
 </head>
@@ -116,10 +116,11 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
         <div><label for="challengeAnswer">Solução / resposta</label><input id="challengeAnswer" required></div>
         <div><label for="challengeDifficulty">Dificuldade</label><select id="challengeDifficulty"><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div>
       </div>
-      <label for="challengeClues">Pistas (uma por linha)</label><textarea id="challengeClues" required></textarea>
+      <div class="clue-heading"><label>Pistas (cada pista no seu próprio campo)</label><button type="button" class="secondary" id="addClue" style="width:auto;margin:4px 0">＋ Adicionar pista</button></div><div id="challengeClues" class="clue-fields"></div>
       <label for="challengeAccepted">Respostas aceites (separadas por vírgulas)</label><textarea id="challengeAccepted" required></textarea>
       <label for="challengeTags">Etiquetas da imagem (separadas por vírgulas)</label><input id="challengeTags">
       <label for="challengeDescription">Descrição da imagem (opcional)</label><textarea id="challengeDescription"></textarea>
+      <label for="challengeImageUrl">Link da imagem (URL)</label><input id="challengeImageUrl" type="url" placeholder="https://…"><div id="challengeImagePreview" class="image-preview"><span class="note">Sem imagem associada.</span></div>
       <label><input id="challengeActive" type="checkbox" checked style="width:auto"> Desafio ativo</label>
       <div class="challenge-actions"><button type="submit" id="saveChallenge">Guardar desafio</button><button type="button" class="secondary" id="cancelChallenge">Cancelar</button></div>
     </form>
@@ -413,20 +414,34 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("challengeCount").textContent=rows.length+" de "+challengeCache.length+" desafios";
     $("challengeList").innerHTML=rows.map(x=>'<article class="challenge-item"><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(x.active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-actions"><button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!x.active)+'">'+(x.active?"Apagar / desativar":"Reativar")+'</button></div></article>').join("")||'<p>Não foram encontrados desafios.</p>';
   }
+  function renderClueFields(clues) {
+    const values = Array.isArray(clues) && clues.length ? clues : [""];
+    $("challengeClues").innerHTML = values.slice(0,10).map((value,index)=>'<div class="clue-row"><input type="text" class="challenge-clue" aria-label="Pista '+(index+1)+'" placeholder="Pista '+(index+1)+'" value="'+esc(value)+'" required><button type="button" class="secondary remove-clue" aria-label="Remover pista '+(index+1)+'">−</button></div>').join("");
+    $("challengeClues").querySelectorAll(".remove-clue").forEach(button=>{button.disabled=values.length<=1;});
+  }
+  function updateChallengeImagePreview() {
+    const url=$("challengeImageUrl").value.trim(), box=$("challengeImagePreview");
+    if(!url){box.innerHTML='<span class="note">Sem imagem associada.</span>';return;}
+    let parsed; try{parsed=new URL(url);if(!["http:","https:"].includes(parsed.protocol))throw new Error();}catch{box.innerHTML='<span class="note">Introduz um URL http ou https válido.</span>';return;}
+    box.innerHTML='<img src="'+esc(url)+'" alt="Pré-visualização da imagem do desafio" loading="lazy"><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Abrir imagem num novo separador ↗</a>';
+  }
+  $("addClue").addEventListener("click",()=>{const values=Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value);if(values.length>=10)return;values.push("");renderClueFields(values);$("challengeClues").lastElementChild.querySelector("input").focus();});
+  $("challengeClues").addEventListener("click",event=>{const button=event.target.closest(".remove-clue");if(!button)return;const values=Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value);if(values.length<=1)return;values.splice(Array.from($("challengeClues").querySelectorAll(".remove-clue")).indexOf(button),1);renderClueFields(values);});
+  $("challengeImageUrl").addEventListener("input",updateChallengeImagePreview);
   function resetChallengeForm() {
-    $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true;
+    $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview();
     $("challengeFormTitle").textContent="Novo desafio"; $("challengeForm").classList.add("hidden");
   }
   function editChallenge(id) {
     const x=challengeCache.find(v=>String(v.challenge_id)===String(id)); if(!x)return;
     $("challengeId").value=x.challenge_id; $("challengeCategory").value=x.category||""; $("challengeEmoji").value=x.emoji||"";
     $("challengeAnswer").value=x.answer||""; $("challengeDifficulty").value=x.difficulty||"medium";
-    $("challengeClues").value=(x.clues||[]).join("\n"); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
-    $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||"";
+    renderClueFields(x.clues||[]); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
+    $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||""; updateChallengeImagePreview();
     $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id;
     $("challengeForm").classList.remove("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
   }
-  $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
+  $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");renderClueFields([""]);$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
   $("cancelChallenge").addEventListener("click",resetChallengeForm);
   $("reloadChallenges").addEventListener("click",loadChallenges);
   $("challengeSearch").addEventListener("input",renderChallenges);
@@ -446,7 +461,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     const split=(id)=>$(id).value.split(/[,\n]/).map(v=>v.trim()).filter(Boolean);
     try {
       const id=$("challengeId").value;
-      const result=await challengeRequest({action:"challenge_save",challenge_id:id===""?null:Number(id),category:$("challengeCategory").value,emoji:$("challengeEmoji").value,answer:$("challengeAnswer").value,difficulty:$("challengeDifficulty").value,clues:split("challengeClues"),accepted_answers:split("challengeAccepted"),image_tags:split("challengeTags"),image_description:$("challengeDescription").value,active:$("challengeActive").checked});
+      const result=await challengeRequest({action:"challenge_save",challenge_id:id===""?null:Number(id),category:$("challengeCategory").value,emoji:$("challengeEmoji").value,answer:$("challengeAnswer").value,difficulty:$("challengeDifficulty").value,clues:Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value.trim()).filter(Boolean),solution_image_url:$("challengeImageUrl").value.trim()||null,accepted_answers:split("challengeAccepted"),image_tags:split("challengeTags"),image_description:$("challengeDescription").value,active:$("challengeActive").checked});
       await loadChallenges(); resetChallengeForm(); alert((result.created?"Desafio criado":"Desafio atualizado")+" com sucesso. ID: "+result.challenge_id);
     } catch(error){alert(error.message);} finally{button.disabled=false;}
   });
