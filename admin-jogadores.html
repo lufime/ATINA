@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14243a">
+<title>ATINA — Administração de imagens</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1421;--panel:#14243a;--line:#36516e;--gold:#d3ad68;--text:#f3f0e8;--muted:#aab6c5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b3049,#0b1421 65%);color:var(--text);font:16px system-ui,sans-serif;min-height:100vh;padding:20px 12px}
+main{max-width:760px;margin:auto}.panel{background:#122238;border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}
+h1{font-size:24px;margin:4px 0 8px}
+.admin-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.admin-nav{background:#102137;border:1px solid var(--line);border-radius:16px;padding:10px;margin:14px 0;position:sticky;top:8px;z-index:5;box-shadow:0 8px 24px #0005}
+.admin-nav>strong{display:block;color:var(--gold);font-size:12px;letter-spacing:.08em;padding:4px 8px 8px;text-transform:uppercase}
+.menu-group{border-top:1px solid #29425b}
+.menu-group summary{cursor:pointer;list-style:none;padding:12px 9px;font-weight:800;color:var(--text);display:flex;justify-content:space-between;align-items:center}
+.menu-group summary::-webkit-details-marker{display:none}
+.menu-group summary:after{content:"＋";color:var(--gold)}
+.menu-group[open] summary:after{content:"−"}
+.submenu{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:7px;padding:0 6px 10px}
+.submenu a{display:block;text-decoration:none;color:var(--text);background:#0b1d2d;border:1px solid #36516e;border-radius:10px;padding:10px 12px;font-size:14px}
+.submenu a:hover,.submenu a:focus{border-color:var(--gold);background:#19314a}
+section[id],div[id]{scroll-margin-top:190px}
+.subsection-title{margin-top:20px!important;padding-top:12px;border-top:1px solid #29425b}
+@media(max-width:480px){body{padding:12px 9px}.admin-nav{top:4px}.submenu{grid-template-columns:1fr 1fr}.submenu a{font-size:13px;padding:10px 8px}}h2{font-size:18px;margin:0 0 12px;color:var(--gold)}p,.hint{color:var(--muted);line-height:1.5}.page-link{display:inline-block;padding:10px 14px;border:1px solid var(--gold);border-radius:10px;color:var(--gold);text-decoration:none;font-weight:700}
+label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
+#status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden,.page-hidden{display:none!important}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
+</style>
+</head>
+<body>
+<main data-admin-page="players">
+  <div class="admin-header"><h1>ATINA · Jogadores</h1><button id="logoutTop" class="secondary" type="button" style="width:auto;margin:0">Terminar sessão</button></div>
+  <p>Gestão organizada por áreas, menus e submenus.</p>
+  <nav id="adminNavigation" class="admin-nav hidden" aria-label="Navegação administrativa">
+    <strong>Administração</strong>
+    <div class="submenu">
+      <a href="admin-images.html">Início</a>
+      <a href="admin-gestao-imagens.html">Gestão de imagens</a>
+      <a href="admin-envio-imagens.html">Envio de imagens</a>
+      <a href="admin-logotipo.html">Logótipo</a>
+      <a href="admin-jogadores.html">Jogadores</a>
+    </div>
+  </nav>  <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
+  <p id="adminLinks" class="hidden" style="display:flex;gap:10px;flex-wrap:wrap"><a class="page-link" href="index.html">Abrir o jogo ATINA →</a><a class="page-link" href="comparar-imagens.html">Ver imagens dos desafios →</a></p>
+  <section class="panel" id="loginPanel">
+    <h2>Entrar como administrador</h2>
+    <label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
+    <label for="password">Palavra-passe</label><input id="password" type="password" autocomplete="current-password" required>
+    <button id="login">Entrar</button>
+  </section>
+  <section class="panel hidden" id="dashboardPanel">
+    <div class="dash-head"><h2>Painel de controlo</h2><button class="secondary refresh" id="refreshDashboard" type="button">Atualizar</button></div>
+    <p class="note" id="dashboardUpdated">A carregar estatísticas…</p>
+    <div class="stats" id="dashboardStats">
+      <div class="stat"><strong>—</strong><span>Desafios</span></div>
+      <div class="stat"><strong>—</strong><span>Imagens publicadas</span></div>
+      <div class="stat"><strong>—</strong><span>Por confirmar</span></div>
+      <div class="stat"><strong>—</strong><span>Sem imagem</span></div>
+    </div>
+    <h2 id="playersSection" class="subsection-title">Jogadores registados</h2>
+    <div id="playersSummary" class="note">A carregar jogadores…</div>
+    <div id="playersList" class="hint"></div>
+    <h2 id="presenceSection" class="subsection-title">Jogadores online e última atividade</h2>
+    <div id="presenceList" class="hint">A carregar jogadores…</div>
+    <p class="note">Online = atividade nos últimos 2 minutos. A lista mantém a última atividade até 30 dias.</p>
+    <h2 style="margin-top:18px">O que precisa de atenção</h2>
+    <div id="dashboardTasks" class="hint">A carregar tarefas…</div>
+    <p class="note">Os números e as tarefas são consultados diretamente na base de dados, apenas depois de entrares como administrador.</p>
+  </section>
+  <section class="panel hidden" id="uploadPanel">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+      <h2>Enviar imagens em massa</h2><button class="secondary" id="logout" style="width:auto;margin:0">Sair</button>
+    </div>
+    <form id="uploadForm">
+      <p>Seleciona várias imagens de uma só vez. O ID é lido do início do nome do ficheiro (por exemplo, <strong>0000-einstein.jpg</strong> corresponde ao desafio 0).</p>
+      <label for="imageFiles">Imagens ou ficheiro ZIP (JPEG, PNG, WebP ou ZIP)</label><input id="imageFiles" type="file" accept=".zip,application/zip,image/jpeg,image/png,image/webp" multiple required>
+      <p class="note">Podes selecionar várias imagens ou um ZIP. Dentro do ZIP, cada imagem deve começar pelo ID do desafio, por exemplo 0000-einstein.jpg, 0001-lisboa.jpg.</p>
+      <label for="author">Autor / origem</label><input id="author" value="ATINA" required>
+      <label for="license">Direitos / licença</label><input id="license" value="© ATINA — Todos os direitos reservados. Uso exclusivo no projeto ATINA." required>
+      <label for="attribution">Atribuição / crédito</label><input id="attribution" value="© ATINA" required>
+      <button id="send" type="submit">Enviar todas as imagens selecionadas</button>
+    </form>
+    <p class="note">Após o envio, a imagem fica guardada no Supabase e é associada automaticamente à solução com o mesmo ID.</p>
+  </section>
+  <section class="panel hidden" id="watermarkPanel">
+    <h2>Logótipo nas imagens publicadas</h2>
+    <p class="note">Submenu: processamento individual ou em massa.</p>
+    <div id="watermarkProgress"></div>
+    <p>Processamento de uma imagem de cada vez. O original é preservado no Storage e o estado de publicação é mantido. Começa pelo teste de uma imagem.</p>
+    <div class="stats">
+      <div class="stat"><strong id="wmDone">0</strong><span>Com logótipo</span></div>
+      <div class="stat"><strong id="wmTotal">88</strong><span>Imagens publicadas</span></div>
+      <div class="stat"><strong id="wmPercent">0%</strong><span>Concluído</span></div>
+      <div class="stat"><strong id="wmRemaining">88</strong><span>Por tratar</span></div>
+    </div>
+    <button id="watermarkNext" type="button">Aplicar logótipo à próxima imagem (teste)</button>
+    <button id="watermarkAll" class="secondary" type="button">Aplicar logótipo em massa às restantes imagens</button>
+    <p class="note" id="wmStatus">A aguardar início.</p>
+  </section>
+  <div id="status" role="status" aria-live="polite"></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+(() => {
+  const page = document.querySelector("main").dataset.adminPage;
+  const pagePanels = {home:["dashboardPanel"],images:[],upload:["uploadPanel"],logo:["watermarkPanel"],players:["dashboardPanel"]};
+  for (const id of ["dashboardPanel","uploadPanel","watermarkPanel"]) {
+    if (!pagePanels[page].includes(id)) document.getElementById(id).classList.add("page-hidden");
+  }
+  const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dmxxcmdidGp1anNlanZlbmxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0ODMzMDksImV4cCI6MjEwOTA1OTMwOX0.k_3Q05KxqmAByJgPxDyWeWPnYYfkrPxkRjd60Bntn6w";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const $ = (id) => document.getElementById(id);
+  const status = (message) => { $("status").textContent = message; };
+  async function refreshSession() {
+    const { data: { session } } = await client.auth.getSession();
+    $("loginPanel").classList.toggle("hidden", !!session);
+    $("uploadPanel").classList.toggle("hidden", !session);
+    $("watermarkPanel").classList.toggle("hidden", !session);
+    $("dashboardPanel").classList.toggle("hidden", !session);
+    $("adminLinks").classList.toggle("hidden", !session);
+    $("adminNavigation").classList.toggle("hidden", !session);
+    $("logoutTop").classList.toggle("hidden", !session);
+    if (session) { loadDashboard(); loadPresence(); loadPlayers(); }
+  }
+  $("login").addEventListener("click", async () => {
+    const button = $("login");
+    button.disabled = true;
+    status("A entrar…");
+    try {
+      const { data, error } = await client.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+      if (error) throw error;
+      if (!data || !data.session) throw new Error("A sessão não foi criada. Verifica os dados e tenta novamente.");
+      await refreshSession();
+      status("Sessão iniciada.");
+    } catch (error) {
+      status("Não foi possível entrar: " + (error.message || "erro desconhecido"));
+    } finally { button.disabled = false; }
+  });
+  $("refreshDashboard").addEventListener("click", () => { loadDashboard(); loadPresence(); loadPlayers(); });
+  async function loadPlayers() {
+    const box = $("playersList");
+    if (!box) return;
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) return;
+      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "players" })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível carregar os jogadores.");
+      $("playersSummary").textContent = data.players.length + " jogadores registados (máximo apresentado: 500).";
+      box.innerHTML = data.players.length ? data.players.map(function(p) {
+        const safe = String(p.nickname || "Visitante").replace(/[&<>"]/g, "");
+        const last = p.last_activity || p.updated_at || p.created_at;
+        return '<div class="task"><span><strong>' + safe + '</strong><br><small>' + (p.account ? "Conta registada" : "Perfil de jogador") + ' · ' + Number(p.total_challenges || 0) + ' desafios · ' + Number(p.xp || 0) + ' XP</small></span><span>' + (last ? new Date(last).toLocaleDateString("pt-PT") : "Sem atividade") + '</span></div>';
+      }).join("") : "Ainda não existem jogadores registados.";
+    } catch (error) { box.textContent = error.message; }
+  }
+  async function loadPresence() {
+    const box = $("presenceList");
+    if (!box) return;
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) return;
+      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "presence" })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível carregar a presença.");
+      if (!data.players.length) { box.textContent = "Ainda não há registos de atividade."; return; }
+      box.innerHTML = data.players.map(function(p) {
+        const when = new Date(p.last_seen_at);
+        const ago = Math.max(0, Math.floor((Date.now() - when.getTime()) / 60000));
+        const time = ago < 1 ? "Agora mesmo" : ago < 60 ? "Há " + ago + " min" : when.toLocaleString("pt-PT");
+        const color = p.online ? "#83c6a4" : "#aab6c5";
+        return '<div class="task"><span><strong>' + String(p.nickname || "Visitante").replace(/[&<>"]/g, "") + '</strong><br><small style="color:' + color + '">' + (p.online ? "● Online" : "○ Offline") + '</small></span><span>' + time + '</span></div>';
+      }).join("");
+    } catch (error) { box.textContent = error.message; }
+  }
+  window.setInterval(() => { if (!$("dashboardPanel").classList.contains("hidden")) loadPresence(); }, 30000);
+  async function loadDashboard() {
+    const target = $("dashboardTasks");
+    $("dashboardUpdated").textContent = "A atualizar…";
+    target.textContent = "A consultar tarefas…";
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) throw new Error("Sessão não encontrada.");
+      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "dashboard" })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível carregar o painel.");
+      const s = data.stats;
+      const stats = [[s.total_challenges,"Desafios"],[s.published,"Imagens publicadas"],[s.pending+s.approved,"Por confirmar / publicar"],[s.missing_images,"Sem imagem"]];
+      $("dashboardStats").innerHTML = stats.map(function(item) { return '<div class="stat"><strong>' + Number(item[0]).toLocaleString("pt-PT") + '</strong><span>' + item[1] + '</span></div>'; }).join("");
+      const tasks = [];
+      if (s.pending) tasks.push(s.pending + " imagem(ns) pendente(s) de confirmação — <a href=\"comparar-imagens.html\">Rever →</a>");
+      if (s.approved) tasks.push(s.approved + " imagem(ns) aprovada(s) por publicar — <a href=\"comparar-imagens.html\">Publicar →</a>");
+      if (s.missing_images) tasks.push(s.missing_images + " desafio(s) sem imagem associada — <a href=\"comparar-imagens.html\">Ver imagens →</a>");
+      if (s.broken) tasks.push(s.broken + " imagem(ns) com erro — <a href=\"comparar-imagens.html\">Ver erros →</a>");
+      target.innerHTML = tasks.length ? tasks.map(function(t) { return '<div class="task"><span>' + t + '</span></div>'; }).join("") : "<p>Está tudo em dia. Não há tarefas pendentes.</p>";
+      $("dashboardUpdated").textContent = "Atualizado em " + new Date().toLocaleString("pt-PT");
+    } catch (error) { $("dashboardUpdated").textContent = "Erro ao atualizar"; target.textContent = error.message; }
+  }
+  async function watermarkStats() {
+    const { data: { session } } = await client.auth.getSession();
+    if (!session) return;
+    const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+      method: "POST", headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "list" })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Não foi possível consultar as imagens.");
+    const published = (data.assets || []).filter(a => a.status === "published");
+    const done = published.filter(a => a.watermark_applied === true).length;
+    const total = published.length;
+    $("wmDone").textContent = done;
+    $("wmTotal").textContent = total;
+    $("wmRemaining").textContent = total - done;
+    $("wmPercent").textContent = total ? (done * 100 / total).toFixed(1).replace(".", ",") + "%" : "0%";
+    return published;
+  }
+  async function makeWatermarked(blob) {
+    const imageUrl = URL.createObjectURL(blob);
+    const logo = new Image();
+    const source = new Image();
+    try {
+      const load = (img, url) => new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
+      await load(source, imageUrl);
+      await load(logo, "assets/atina-logo-alentejo.svg");
+      const canvas = document.createElement("canvas");
+      canvas.width = source.naturalWidth; canvas.height = source.naturalHeight;
+      const ctx = canvas.getContext("2d", { alpha: false });
+      if (!ctx) throw new Error("Não foi possível preparar a imagem.");
+      ctx.drawImage(source, 0, 0);
+      const w = Math.round(canvas.width * 0.16);
+      const h = Math.round(w * (logo.naturalHeight / logo.naturalWidth));
+      const margin = Math.max(24, Math.round(canvas.width * 0.022));
+      ctx.save(); ctx.globalAlpha = 0.88;
+      ctx.drawImage(logo, canvas.width - w - margin, canvas.height - h - margin, w, h);
+      ctx.restore();
+      const result = await new Promise((resolve, reject) => canvas.toBlob(v => v ? resolve(v) : reject(new Error("Falhou a exportação WebP.")), "image/webp", 0.92));
+      return new File([result], "atina-watermarked.webp", { type: "image/webp" });
+    } finally { URL.revokeObjectURL(imageUrl); }
+  }
+  async function applyWatermarkToAsset(asset, session) {
+    const download = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+      method: "POST", headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "download", challenge_id: asset.challenge_id, filename: "atina-original" })
+    });
+    if (!download.ok) {
+      let detail = "HTTP " + download.status;
+      try { const data = await download.json(); detail = data.error || detail; } catch {}
+      throw new Error("Original do desafio " + asset.challenge_id + ": " + detail);
+    }
+    const watermarked = await makeWatermarked(await download.blob());
+    const body = new FormData();
+    body.append("challenge_id", String(asset.challenge_id));
+    body.append("file", watermarked);
+    body.append("watermark_only", "true");
+    body.append("source", "Imagem original gerada por IA — ChatGPT");
+    body.append("source_url", "gerada-por-ia://chatgpt");
+    body.append("author", "ATINA");
+    body.append("license", asset.license || "Conforme licença registada no ATINA");
+    body.append("attribution", asset.attribution || "ATINA");
+    const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-upload", {
+      method: "POST", headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY }, body
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.success || result.watermark_applied !== true || result.status !== "published") {
+      throw new Error("Desafio " + asset.challenge_id + ": " + (result.error || "A aplicação do logótipo não foi confirmada."));
+    }
+  }
+  $("watermarkNext").addEventListener("click", async () => {
+    const button = $("watermarkNext"); button.disabled = true;
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) throw new Error("A sessão expirou. Entra novamente.");
+      const assets = await watermarkStats();
+      const asset = assets.find(a => a.watermark_applied !== true);
+      if (!asset) { $("wmStatus").textContent = "Todas as imagens publicadas já têm logótipo."; return; }
+      $("wmStatus").textContent = "A preparar o desafio " + asset.challenge_id + " — " + asset.solution + "…";
+      await applyWatermarkToAsset(asset, session);
+      await watermarkStats();
+      $("wmStatus").textContent = "Teste concluído: desafio " + asset.challenge_id + ". Original preservado; estado mantido como Published.";
+    } catch (error) { $("wmStatus").textContent = "Erro: " + (error.message || "falha desconhecida"); }
+    finally { button.disabled = false; }
+  });
+  $("watermarkAll").addEventListener("click", async () => {
+    const button = $("watermarkAll");
+    if (!confirm("Aplicar o logótipo a todas as imagens publicadas que ainda faltam? O processo será sequencial, preservará os originais e manterá o estado Published. Pode demorar. Continuar?")) return;
+    button.disabled = true; $("watermarkNext").disabled = true;
+    let processed = 0; let failed = null;
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) throw new Error("A sessão expirou. Entra novamente.");
+      while (true) {
+        const assets = await watermarkStats();
+        const asset = assets.find(a => a.watermark_applied !== true);
+        if (!asset) break;
+        $("wmStatus").textContent = "A tratar " + (processed + 1) + " · desafio " + asset.challenge_id + " — " + asset.solution + ". Concluídos nesta execução: " + processed + ".";
+        try {
+          await applyWatermarkToAsset(asset, session);
+          processed++;
+          await watermarkStats();
+          $("wmStatus").textContent = "Concluídos nesta execução: " + processed + ". Último: desafio " + asset.challenge_id + ". A continuar…";
+        } catch (error) { failed = error; break; }
+      }
+      await watermarkStats();
+      if (failed) $("wmStatus").textContent = "Processo interrompido após " + processed + " imagens. " + failed.message + " As restantes continuam por tratar; podes retomar em massa.";
+      else $("wmStatus").textContent = "Concluído. Foram tratadas " + processed + " imagens nesta execução. Todas as imagens publicadas têm agora o logótipo.";
+    } catch (error) {
+      $("wmStatus").textContent = "Processo interrompido após " + processed + " imagens: " + (error.message || "falha desconhecida") + ". Podes retomar em massa.";
+    } finally { button.disabled = false; $("watermarkNext").disabled = false; }
+  });
+  watermarkStats().catch(error => { $("wmStatus").textContent = error.message; });
+  async function doLogout() {
+    await client.auth.signOut();
+    await refreshSession();
+    status("Sessão terminada.");
+  }
+  $("logout").addEventListener("click", doLogout);
+  $("logoutTop").addEventListener("click", doLogout);
+  $("uploadForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = $("send"); button.disabled = true;
+    const selected = Array.from($("imageFiles").files || []);
+    const results = [];
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) throw new Error("A sessão expirou. Entra novamente.");
+      if (!selected.length) throw new Error("Seleciona imagens ou um ficheiro ZIP.");
+      let files = [];
+      for (const item of selected) {
+        if (item.name.toLowerCase().endsWith(".zip")) {
+          const archive = await JSZip.loadAsync(item);
+          const entries = Object.values(archive.files).filter(entry => !entry.dir && /\.(jpe?g|png|webp)$/i.test(entry.name));
+          for (const entry of entries) {
+            const blob = await entry.async("blob");
+            const name = entry.name.split("/").pop();
+            files.push(new File([blob], name, { type: /\.png$/i.test(name) ? "image/png" : /\.webp$/i.test(name) ? "image/webp" : "image/jpeg" }));
+          }
+        } else files.push(item);
+      }
+      if (!files.length) throw new Error("Não encontrei imagens no ficheiro selecionado.");
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const match = file.name.match(/^(\d+)[-_]/);
+        if (!match) { results.push("✗ " + file.name + ": falta o ID no início do nome (ex.: 0005-nome.jpg)"); continue; }
+        const challengeId = String(Number(match[1]));
+        status("A enviar " + (i+1) + " de " + files.length + ": " + file.name + " → desafio " + challengeId + "\n" + results.join("\n"));
+        const body = new FormData();
+        body.append("challenge_id", challengeId);
+        body.append("file", file);
+        body.append("source", "Imagem gerada por IA — ChatGPT");
+        body.append("source_url", "gerada-por-ia://chatgpt");
+        body.append("author", $("author").value.trim());
+        body.append("license", $("license").value.trim());
+        body.append("attribution", $("attribution").value.trim());
+        const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-upload", {
+          method: "POST",
+          headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY },
+          body
+        });
+        const result = await response.json().catch(() => ({}));
+        results.push(response.ok ? "✓ " + file.name + " → desafio " + result.challenge_id : "✗ " + file.name + ": " + (result.error || "HTTP " + response.status));
+      }
+      status("Processamento concluído (" + files.length + " imagens):\n" + results.join("\n"));
+      $("imageFiles").value = "";
+    } catch (error) { status(error.message || "Ocorreu um erro no envio."); }
+    finally { button.disabled = false; }
+  });
+  refreshSession();
+})();
+</script>
+</body>
+</html>
