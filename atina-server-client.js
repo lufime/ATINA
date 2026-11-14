@@ -151,14 +151,23 @@ async function atinaProgressLoadPointsLeaderboard() {
       ? rows.filter(row => Number(row.points || 0) > 0).slice(0, 25)
       : [];
     if (!rankedRows.length) {
-      const empty = document.createElement('li');
-      empty.textContent = 'Ainda não há Pontos globais registados.';
+      const empty = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 3;
+      cell.textContent = 'Ainda não há Pontos globais registados.';
+      empty.appendChild(cell);
       list.appendChild(empty);
       return;
     }
     rankedRows.forEach((row, index) => {
-      const item = document.createElement('li');
-      item.textContent = row.nickname + ' — ' + Number(row.points || 0) + ' pontos';
+      const item = document.createElement('tr');
+      const rank = document.createElement('td');
+      const nickname = document.createElement('td');
+      const points = document.createElement('td');
+      rank.textContent = String(index + 1);
+      nickname.textContent = row.nickname;
+      points.textContent = Number(row.points || 0).toLocaleString('pt-PT');
+      item.append(rank, nickname, points);
       list.appendChild(item);
     });
   } catch (error) {
@@ -179,14 +188,25 @@ async function atinaProgressLoadLeaderboard() {
       ? rows.filter(row => Number(row.xp || 0) > 0).slice(0, 50)
       : [];
     if (!rankedRows.length) {
-      const empty = document.createElement('li');
-      empty.textContent = 'Ainda não há jogadores com XP registado.';
+      const empty = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 4;
+      cell.textContent = 'Ainda não há jogadores com XP registado.';
+      empty.appendChild(cell);
       list.appendChild(empty);
       return;
     }
-    rankedRows.forEach(row => {
-      const item = document.createElement('li');
-      item.textContent = row.nickname + ' — ' + Number(row.xp || 0) + ' XP · nível ' + Number(row.level || 1);
+    rankedRows.forEach((row, index) => {
+      const item = document.createElement('tr');
+      const rank = document.createElement('td');
+      const nickname = document.createElement('td');
+      const xp = document.createElement('td');
+      const level = document.createElement('td');
+      rank.textContent = String(index + 1);
+      nickname.textContent = row.nickname;
+      xp.textContent = Number(row.xp || 0).toLocaleString('pt-PT');
+      level.textContent = String(Number(row.level || 1));
+      item.append(rank, nickname, xp, level);
       list.appendChild(item);
     });
   } catch (error) {
