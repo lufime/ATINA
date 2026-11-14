@@ -71,11 +71,17 @@ CROSS JOIN (VALUES
   (3,-991008)
 ) AS recent(position,challenge_id);
 
--- Check level distribution in a separate unregistered session so the recent-
--- history fixture cannot legitimately force a category to use its fallback.
+-- Check level distribution in a separate registered disposable session so
+-- the recent-history fixture cannot force a category to use its fallback.
+INSERT INTO private.atina_players (device_token_hash,nickname)
+VALUES (
+  extensions.digest(convert_to(repeat('b',64),'UTF8'),'sha256'),
+  'mix-distribution-test'
+);
+
 CREATE TEMP TABLE atina_mix_distribution_run AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,NULL
+  'mix','medium',NULL,0,repeat('b',64)
 ) AS result;
 
 CREATE TEMP TABLE atina_mix_test_run AS
