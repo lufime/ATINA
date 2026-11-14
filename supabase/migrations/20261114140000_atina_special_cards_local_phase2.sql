@@ -49,8 +49,8 @@ begin
   v_def := replace(v_def, 'v_challenge:=v_session.challenge_queue[v_session.position]; v_round:=v_session.answered_count+1;', 'v_challenge:=v_session.challenge_queue[v_session.position]; v_round:=v_session.answered_count+1;'||chr(10)||'  v_penalty:=case v_session.special_card->>''id'' when ''shield'' then 0 when ''reduced_penalty'' then 5 else 10 end;'||chr(10)||'  v_protect_streak:=v_session.special_card->>''id''=''protected_streak'';');
   v_def := replace(v_def, 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-10;', 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-v_penalty;');
   v_def := replace(v_def, 'v_session.streaks[v_session.current_player]:=0;', 'if not v_protect_streak then v_session.streaks[v_session.current_player]:=0; end if;');
-  v_def := replace(v_def, "'penalty',10", "'penalty',v_penalty");
-  v_def := replace(v_def, "'timeout',-10", "'timeout',-v_penalty");
+  v_def := replace(v_def, '''penalty'',10', '''penalty'',v_penalty');
+  v_def := replace(v_def, '''timeout'',-10', '''timeout'',-v_penalty');
   if position('v_penalty' in v_def)=0 or position('v_protect_streak' in v_def)=0 then
     raise exception 'Não foi possível atualizar o timeout ao passar.';
   end if;
