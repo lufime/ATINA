@@ -759,7 +759,23 @@ async function atinaServerStart(gameMode, category = null) {
     atinaServerBusy = false;
   }
 }
-start = function(gameMode, category = null) { return atinaServerStart(gameMode, category); };
+function atinaServerPrimeAutomaticSpeech() {
+  if (!atinaClueSpeechEnabled || !('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) return;
+  try {
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    // Um utterance silencioso, iniciado durante o toque do jogador,
+    // prepara o motor de voz para as pistas que chegam após a resposta do servidor.
+    const primer = new SpeechSynthesisUtterance(' ');
+    primer.lang = 'pt-PT';
+    primer.volume = 0;
+    synth.speak(primer);
+    synth.resume();
+  } catch (error) {
+    console.warn('ATINA: não foi possível preparar a leitura automática.', error);
+  }
+}
+start = function(gameMode, category = null) { atinaServerPrimeAutomaticSpeech(); return atinaServerStart(gameMode, category); };
 submit = async function() {
   if (!atinaServerState || locked || atinaServerBusy) return;
   const answer = $('answer').value.trim();
@@ -779,6 +795,7 @@ submit = async function() {
 };
 reveal = async function() {
   if (!atinaServerState || locked || atinaServerBusy) return;
+  atinaServerPrimeAutomaticSpeech();
   atinaServerBusy = true;
   try {
     const state = await atinaServerRpc('atina_v2_local_reveal_clue', {
@@ -810,6 +827,7 @@ pass = async function() {
 };
 next = async function() {
   if (!atinaServerState || !locked || atinaServerBusy) return;
+  atinaServerPrimeAutomaticSpeech();
   atinaServerBusy = true;
   try {
     const state = await atinaServerRpc('atina_v2_local_next_challenge', {
