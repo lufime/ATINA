@@ -126,6 +126,8 @@ async function atinaProgressClaim(state) {
     atinaCloudProfile = result;
     window.atinaCloudProfile = result;
     atinaProgressRender(result);
+    // Refresh the public points ranking immediately after the server confirms an award.
+    void atinaProgressLoadPointsLeaderboard();
     atinaRenderDailyMission();
     if ($('atinaCloudStatus')) {
       $('atinaCloudStatus').textContent = result.awarded
@@ -990,6 +992,8 @@ function atinaNoticeBoot() {
 
 atinaNoticeBoot();
 atinaProgressBoot();
+// The public points ranking is visible to guests too; load it independently of login.
+void atinaProgressLoadPointsLeaderboard();
 atinaOnlineCountBoot();
 (async function atinaServerBoot() {
   try {
