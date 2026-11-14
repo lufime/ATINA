@@ -942,6 +942,19 @@ networkRenderGameState = function() {
   }
   const paused = !!(st.pause && Date.parse(st.pause.ends_at) > Date.now());
   $('category').textContent = (st.emoji || '') + ' ' + (st.category || 'Desafio');
+  let onlineCardNotice = document.getElementById('atinaOnlineSpecialCardNotice');
+  if (!onlineCardNotice) {
+    onlineCardNotice = document.createElement('div');
+    onlineCardNotice.id = 'atinaOnlineSpecialCardNotice';
+    onlineCardNotice.setAttribute('role', 'status');
+    onlineCardNotice.setAttribute('aria-live', 'polite');
+    onlineCardNotice.style.cssText = 'margin:12px 0;padding:12px 16px;border:1px solid #d6b45c;border-radius:12px;background:rgba(214,180,92,.12);font-weight:700;text-align:center';
+    const categoryNode = $('category');
+    if (categoryNode?.parentNode) categoryNode.parentNode.insertBefore(onlineCardNotice, categoryNode.nextSibling);
+  }
+  const onlineCard = st.special_card || null;
+  onlineCardNotice.textContent = onlineCard ? (onlineCard.icon || '🃏') + ' ' + (onlineCard.name || 'CARTA ESPECIAL') + ' — ' + (onlineCard.description || '') : '';
+  onlineCardNotice.classList.toggle('hidden', !onlineCard);
   $('level').textContent = 'DESAFIO ' + (Number(st.pos) + 1) + ' / ' + st.queue_length;
   $('player').textContent = 'Multijogador · ' + (networkGameHost ? 'Anfitrião' : 'Jogador');
   $('clues').replaceChildren();
