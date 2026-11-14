@@ -816,7 +816,20 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 #detectiveAdventure .section{display:block;margin:11px 0 5px;font-size:13px}
 #detectiveAdventure .answer{margin:0 0 8px}
 @media(min-width:650px){.detective-map{grid-template-columns:repeat(4,minmax(0,1fr))}}
-</style></head>
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+<style id="atina-knowledge-levels">
+.atina-level-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+.atina-knowledge-medal{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;position:relative;border:2px solid #6d8295;background:radial-gradient(circle at 35% 25%,#315675,#10263c 70%);color:#dce9f3;box-shadow:inset 0 0 0 4px #ffffff0b,0 5px 14px #0004}
+.atina-knowledge-medal .mdi{font-size:34px;line-height:1}
+.atina-knowledge-medal em{position:absolute;right:-3px;bottom:-3px;min-width:25px;height:25px;padding:0 5px;border-radius:99px;display:grid;place-items:center;background:#263c50;border:2px solid #91a5b8;color:#fff;font-size:11px;font-style:normal;font-weight:900}
+.atina-level-gallery-card.is-unlocked .atina-knowledge-medal{border-color:#e4bd69;color:#ffe3a1;background:radial-gradient(circle at 35% 25%,#866b35,#26354a 72%);box-shadow:0 0 18px #d6ad5540,inset 0 0 0 4px #ffffff12}
+.atina-level-gallery-card.is-locked .atina-knowledge-medal{filter:grayscale(1);opacity:.55}
+.atina-level-gallery-card{padding:10px 5px!important}
+.atina-level-gallery-card strong{font-size:11px!important}
+@media(min-width:620px){.atina-level-gallery-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+</style>
+</head>
 <body><main class="wrap">
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina." decoding="async" fetchpriority="high"><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
 </header>
@@ -3395,6 +3408,52 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
  el('detectiveSendHumanReply')?.addEventListener('click',()=>guarded(sendHumanReply,'detectiveSendHumanReply'));
  el('detectiveSelection')?.addEventListener('change',()=>{const manual=el('detectiveSelection').value==='manual';show('detectiveManualPlayerLabel',manual);show('detectiveManualPlayer',manual);});
  el('detectiveAccuse')?.addEventListener('click',()=>guarded(accuse,'detectiveAccuse'));
+})();
+</script>
+
+<script id="atina-knowledge-level-gallery">
+(()=>{
+ const definitions=[
+ ['head-question','Curioso'],['book-open-variant','Leitor'],['lightbulb-on','Ideias'],['magnify','Investigador'],['school','Aprendiz'],
+ ['brain','Pensador'],['notebook-edit','Estudioso'],['bookshelf','Bibliotecário'],['puzzle-check','Lógico'],['compass-rose','Explorador'],
+ ['calculator-variant','Matemático'],['atom','Físico'],['flask-outline','Químico'],['dna','Biólogo'],['earth','Geógrafo'],
+ ['landmark','Historiador'],['palette-outline','Artista'],['translate','Poliglota'],['telescope','Astrónomo'],['microscope','Cientista'],
+ ['chart-timeline-variant','Analista'],['medal-outline','Especialista'],['book-multiple','Erudito'],['brain-circuit','Estratega'],['lightbulb-group','Inventor'],
+ ['head-cog','Intelectual'],['school-outline','Académico'],['star-four-points','Sábio'],['trophy-variant','Mestre'],['crown','Grande Sábio']
+ ];
+ const levelNow=()=>{
+  const p=window.atinaCloudProfile||{};
+  const explicit=Number(p.level||p.current_level||p.player_level);
+  if(Number.isFinite(explicit)&&explicit>0)return Math.min(30,Math.floor(explicit));
+  return Math.min(30,Math.floor(Math.max(0,Number(p.xp)||0)/250)+1);
+ };
+ const render=()=>{
+  const host=document.getElementById('atinaLevelGallery');if(!host)return;
+  const lvl=levelNow();
+  host.replaceChildren();
+  const summary=document.createElement('p');summary.className='muted small';summary.textContent='Nível atual: '+lvl+' de 30 · '+lvl+' conhecimentos conquistados';host.appendChild(summary);
+  const grid=document.createElement('div');grid.className='atina-level-gallery-grid';
+  definitions.forEach(([icon,title],i)=>{
+   const n=i+1,unlocked=n<=lvl,card=document.createElement('div');card.className='atina-level-gallery-card '+(unlocked?'is-unlocked':'is-locked');
+   const emblem=document.createElement('div');emblem.className='atina-level-gallery-emblem';
+   const medal=document.createElement('div');medal.className='atina-knowledge-medal';
+   const glyph=document.createElement('span');glyph.className='mdi mdi-'+icon;glyph.setAttribute('aria-hidden','true');
+   const number=document.createElement('em');number.textContent=String(n);medal.append(glyph,number);emblem.appendChild(medal);
+   const name=document.createElement('strong');name.textContent=unlocked?title:'Conhecimento por descobrir';
+   const status=document.createElement('span');status.className='atina-level-gallery-status';status.textContent=unlocked?'✓ Conquistado':'🔒 Nível '+n;
+   card.append(emblem,name,status);grid.appendChild(card);
+  });
+  host.appendChild(grid);
+ };
+ const start=()=>{
+  const host=document.getElementById('atinaLevelGallery');if(!host)return;
+  render();
+  new MutationObserver(()=>{if(host.childElementCount===0)render();}).observe(host,{childList:true});
+  document.querySelectorAll('[data-home-target="profile"]').forEach(b=>b.addEventListener('click',()=>setTimeout(render,250)));
+  window.addEventListener('atina:profile-updated',render);
+  setInterval(render,5000);
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
 </body></html>
