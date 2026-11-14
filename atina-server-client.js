@@ -311,7 +311,12 @@ function atinaRenderLevelGallery(profile) {
   gallery.removeAttribute('data-ready');
   const summary = document.createElement('p');
   summary.className = 'muted small';
-  summary.textContent = 'Insígnias conquistadas: ' + Math.min(currentLevel, 30) + ' / 30';
+  const nextLevel = currentLevel + 1;
+  const nextThreshold = currentLevel < 30
+    ? thresholds[currentLevel]
+    : 128000 + ((currentLevel - 30) * 10000) + ((currentLevel - 30) * (currentLevel - 29) / 2 * 1000);
+  const nextTitle = titles[Math.min(nextLevel - 1, titles.length - 1)] || 'Lenda ATINA';
+  summary.textContent = 'Insígnias conquistadas: ' + Math.min(currentLevel, 30) + ' / 30 · Próximo nível: ' + nextTitle + ' aos ' + nextThreshold.toLocaleString('pt-PT') + ' XP';
   gallery.appendChild(summary);
   const grid = document.createElement('div');
   grid.className = 'atina-level-gallery-grid';
@@ -332,11 +337,14 @@ function atinaRenderLevelGallery(profile) {
     const status = document.createElement('span');
     status.className = 'atina-level-gallery-status';
     if (unlocked) {
-      status.textContent = '✓ Conquistada';
+      status.textContent = '✓ Conquistada · ' + threshold.toLocaleString('pt-PT') + ' XP';
     } else {
       status.textContent = Math.max(0, threshold - xp).toLocaleString('pt-PT') + ' XP em falta';
     }
-    card.append(emblem, number, title, status);
+    const xpRequirement = document.createElement('span');
+    xpRequirement.className = 'atina-level-gallery-status';
+    xpRequirement.textContent = 'Requer ' + threshold.toLocaleString('pt-PT') + ' XP';
+    card.append(emblem, number, title, status, xpRequirement);
     grid.appendChild(card);
   });
   gallery.appendChild(grid);
