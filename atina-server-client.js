@@ -102,7 +102,10 @@ async function atinaProgressRegister(nickname, quiet = false, personalCode = '')
 
 async function atinaProgressClaim(state) {
   if (!['solo', 'mix', 'duel', 'party'].includes(state?.mode)) return;
-  if (!state || !['correct', 'wrong', 'incorrect'].includes(state.last_result?.outcome) || !state.round_locked || !atinaServerSession) return;
+  if (!state || !state.round_locked || !atinaServerSession) return;
+  const outcome = state.last_result?.outcome;
+  const eligible = ['correct', 'wrong', 'incorrect'].includes(outcome) || (outcome === 'pass' && Number(state.revealed_clues || 1) > 1);
+  if (!eligible) return;
   const deviceToken = atinaAccountSessionToken();
   if (!deviceToken) {
     if ($('atinaCloudStatus')) $('atinaCloudStatus').textContent = 'Inicia sessão com o teu pseudónimo para guardar XP.';
@@ -423,7 +426,7 @@ function atinaServerApplyState(state, announce = false) {
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
-  if (locked && ['correct', 'wrong', 'incorrect'].includes(result.outcome)) atinaProgressClaim(state);
+  if (locked && (['correct', 'wrong', 'incorrect'].includes(result.outcome) || (result.outcome === 'pass' && Number(state.revealed_clues || 1) > 1))) atinaProgressClaim(state);
   if (locked) {
     atinaShowSolutionImage(
       challenge.answer,
