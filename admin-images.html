@@ -60,6 +60,53 @@ input:focus,select:focus,textarea:focus,button:focus-visible,.admin-nav a:focus-
 }
 label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,button{font:inherit;width:100%;padding:12px;border-radius:10px}input{background:#0b1d2d;color:white;border:1px solid #456078}input[type=file]{padding:9px}textarea,select{font:inherit;width:100%;padding:11px;border-radius:10px;background:#0b1d2d;color:white;border:1px solid #456078}textarea{min-height:100px;resize:vertical}.clue-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.clue-fields{display:grid;gap:8px}.clue-row{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:8px;width:100%}.clue-row textarea{display:block;box-sizing:border-box;min-width:0;width:100%;max-width:none;min-height:104px;height:104px;padding:13px 14px;font-size:17px;line-height:1.4;white-space:pre-wrap;overflow-y:auto;resize:vertical}.clue-row button{width:42px;min-width:42px;margin:0;padding:9px 6px}.image-preview{margin-top:10px;padding:10px;border:1px dashed #456078;border-radius:12px;min-height:54px}.image-preview img{display:block;max-width:100%;max-height:240px;object-fit:contain;border-radius:8px}.image-preview a{display:inline-block;margin-top:8px;color:var(--gold);overflow-wrap:anywhere}.challenge-item{border:1px solid #36516e;border-radius:12px;padding:12px;margin:9px 0;background:#0b1d2d}.challenge-actions{display:flex;gap:8px;flex-wrap:wrap}.challenge-actions button{width:auto;flex:1;min-width:110px;margin-top:8px}.challenge-meta{font-size:12px;color:var(--muted)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.form-grid{grid-template-columns:1fr}}button{margin-top:12px;border:0;background:var(--gold);color:#17202b;font-weight:800;cursor:pointer}button.secondary{background:#1a344b;color:var(--text);border:1px solid #456078}button:disabled{opacity:.55}
 #status{white-space:pre-wrap;line-height:1.5;margin-top:12px}.hidden,.page-hidden,.tab-hidden{display:none!important}.admin-nav a[aria-current="page"]{border-color:var(--gold);background:#19314a;color:var(--gold)}.note{font-size:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1d2d;border:1px solid #36516e;border-radius:12px;padding:12px}.stat strong{display:block;font-size:25px;color:var(--gold);line-height:1.2}.stat span{font-size:12px;color:var(--muted)}.task{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #29425b;font-size:13px}.task:last-child{border-bottom:0}.task a{color:var(--gold);font-weight:700;white-space:nowrap}.dash-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.dash-head h2{margin:0}.refresh{width:auto;margin:0;padding:8px 11px;font-size:12px}
+
+/* Mobile compacto: consulta rápida sem sacrificar legibilidade */
+@media(max-width:600px){
+ body{padding:6px 6px 14px;font-size:14px}
+ main{max-width:100%;width:100%}
+ h1{font-size:20px;margin:2px 0 6px}
+ h2{font-size:16px;margin:0 0 9px}
+ p,.hint{font-size:13px;line-height:1.4;margin:7px 0}
+ .panel{padding:11px 10px;margin:8px 0;border-radius:13px}
+ .admin-header{gap:6px}
+ .admin-nav{position:sticky;top:0;margin:5px 0 8px;padding:5px 6px;border-radius:11px}
+ .admin-nav>strong{font-size:10px;padding:2px 5px 4px}
+ .admin-nav .submenu{gap:5px;padding-bottom:3px}
+ .admin-nav .submenu a{font-size:12px;padding:7px 9px;border-radius:8px}
+ section[id],div[id]{scroll-margin-top:82px}
+ label{font-size:12px;margin:10px 0 5px}
+ input:not([type=checkbox]):not([type=file]),select{height:43px;min-height:43px;padding:0 10px;font-size:15px;border-radius:9px}
+ input[type=file]{min-height:43px;padding:7px;font-size:13px}
+ textarea{min-height:76px;padding:9px 10px;font-size:14px;line-height:1.4;border-radius:9px}
+ .form-grid{grid-template-columns:1fr 1fr;gap:7px}
+ .clue-heading{gap:6px}
+ .clue-fields{gap:6px}
+ .clue-row{grid-template-columns:minmax(0,1fr) 36px;gap:6px}
+ .clue-row textarea{height:88px;min-height:88px;padding:9px 10px;font-size:14px;line-height:1.4}
+ .clue-row button{width:36px;min-width:36px;padding:5px;font-size:14px}
+ button{min-height:40px;padding:8px 11px;font-size:14px;border-radius:9px}
+ .challenge-item{padding:10px;margin:7px 0;border-radius:11px}
+ .challenge-item>strong{font-size:15px;line-height:1.3}
+ .challenge-meta{font-size:11px;line-height:1.35;margin-top:3px}
+ .challenge-actions{gap:6px}
+ .challenge-actions button{min-height:39px;margin-top:5px;padding:7px 8px;font-size:13px}
+ .stats{gap:6px}
+ .stat{padding:8px;border-radius:9px}
+ .stat strong{font-size:20px}
+ .stat span{font-size:11px}
+ .task{padding:7px 0;font-size:12px}
+ .image-preview{padding:7px;margin-top:7px}
+ .image-preview img{max-height:170px}
+ .quick-scroll{right:6px;bottom:8px;gap:5px}
+ .quick-scroll button{min-width:56px;padding:6px 8px;font-size:11px}
+ .page-link{padding:8px 10px;font-size:13px}
+}
+@media(max-width:380px){
+ .form-grid{grid-template-columns:1fr}
+ .admin-nav .submenu a{font-size:11px;padding:7px 8px}
+ .challenge-actions button{font-size:12px}
+}
 </style>
 </head>
 <body>
