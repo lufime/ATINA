@@ -69,9 +69,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <p class="note">Os números e as tarefas são consultados diretamente na base de dados, apenas depois de entrares como administrador.</p>
   </section>
   <section class="panel hidden page-hidden" id="uploadPanel">
-    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
-      <h2>Enviar imagens em massa</h2><button class="secondary" id="logout" style="width:auto;margin:0">Sair</button>
-    </div>
+    <h2>Enviar imagens em massa</h2>
     <form id="uploadForm">
       <p>Seleciona várias imagens de uma só vez. O ID é lido do início do nome do ficheiro (por exemplo, <strong>0000-einstein.jpg</strong> corresponde ao desafio 0).</p>
       <label for="imageFiles">Imagens ou ficheiro ZIP (JPEG, PNG, WebP ou ZIP)</label><input id="imageFiles" type="file" accept=".zip,application/zip,image/jpeg,image/png,image/webp" multiple required>
@@ -329,7 +327,6 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     await refreshSession();
     status("Sessão terminada.");
   }
-  $("logout").addEventListener("click", doLogout);
   $("logoutTop").addEventListener("click", doLogout);
   $("uploadForm").addEventListener("submit", async (event) => {
     event.preventDefault();
