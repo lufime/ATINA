@@ -941,6 +941,9 @@ networkRenderGameState = function() {
     return;
   }
   const paused = !!(st.pause && Date.parse(st.pause.ends_at) > Date.now());
+  const activeTeam = st.active_team || null;
+  const myTeam = networkLobbyData?.team || null;
+  const myTeamTurn = !activeTeam || !myTeam || activeTeam === myTeam;
   $('category').textContent = (st.emoji || '') + ' ' + (st.category || 'Desafio');
   let onlineCardNotice = document.getElementById('atinaOnlineSpecialCardNotice');
   if (!onlineCardNotice) {
@@ -967,12 +970,23 @@ networkRenderGameState = function() {
     $('clues').appendChild(item);
   }
   $('clueProgress').textContent = Number(st.revealed || 1) + ' de ' + total + ' reveladas';
+  let teamTurnNotice = document.getElementById('atinaOnlineTeamTurnNotice');
+  if (!teamTurnNotice) {
+    teamTurnNotice = document.createElement('div');
+    teamTurnNotice.id = 'atinaOnlineTeamTurnNotice';
+    teamTurnNotice.setAttribute('role', 'status');
+    teamTurnNotice.style.cssText = 'margin:8px 0;padding:9px 12px;border-radius:10px;background:rgba(80,130,180,.12);font-weight:700;text-align:center';
+    const cardNode = document.getElementById('atinaOnlineSpecialCardNotice');
+    if (cardNode?.parentNode) cardNode.parentNode.insertBefore(teamTurnNotice, cardNode.nextSibling);
+  }
+  teamTurnNotice.textContent = activeTeam ? (myTeamTurn ? 'É a vez da ' + activeTeam + '.' : 'Aguarda: é a vez da ' + activeTeam + '.') : '';
+  teamTurnNotice.classList.toggle('hidden', !activeTeam);
   $('nextClue').disabled = !networkGameHost || st.locked || Number(st.revealed) >= total || paused;
   $('pass').disabled = !networkGameHost || st.locked || paused;
   $('pass').classList.toggle('hidden', !networkGameHost);
   $('continue').classList.toggle('hidden', !networkGameHost || !st.locked || paused);
-  $('answer').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
-  $('submit').disabled = !!st.locked || paused || networkAnsweredThisChallenge;
+  $('answer').disabled = !!st.locked || paused || networkAnsweredThisChallenge || !myTeamTurn;
+  $('submit').disabled = !!st.locked || paused || networkAnsweredThisChallenge || !myTeamTurn;
   $('feedback').textContent = st.locked ? 'Resposta: ' + (st.answer || 'ronda terminada') : (atinaNetworkFeedback || 'A resposta será validada pelo servidor.');
   if (st.locked) atinaRecordChallengeCompletion('room:' + (networkRoom?.room_id || 'online') + ':' + st.pos);
   $('networkScoreboard').classList.remove('hidden');
@@ -997,6 +1011,10 @@ networkRenderGameState = function() {
 };
 networkSubmitAnswer = async function() {
   if (!networkGameActive || !networkGameState || networkGameState.locked || networkGameState.pause || networkAnsweredThisChallenge) return;
+  if (networkGameState.active_team && networkLobbyData?.team && networkGameState.active_team !== networkLobbyData.team) {
+    $('feedback').textContent = 'Ainda não é a vez da tua equipa.';
+    return;
+  }
   const answer = $('answer').value.trim();
   if (!answer) { $('feedback').textContent = 'Escreve primeiro a tua resposta.'; return; }
   try {
