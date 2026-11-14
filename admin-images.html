@@ -120,7 +120,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <label for="challengeAccepted">Respostas aceites (separadas por vírgulas)</label><textarea id="challengeAccepted" required></textarea>
       <label for="challengeTags">Etiquetas da imagem (separadas por vírgulas)</label><input id="challengeTags">
       <label for="challengeDescription">Descrição da imagem (opcional)</label><textarea id="challengeDescription"></textarea>
-      <label for="challengeImageUrl">Link da imagem (URL)</label><input id="challengeImageUrl" type="url" placeholder="https://…"><div id="challengeImagePreview" class="image-preview"><span class="note">Sem imagem associada.</span></div>
+      <label for="challengeImageFile">Selecionar imagem do dispositivo (JPEG, PNG ou WebP, máximo 10 MB)</label><input id="challengeImageFile" type="file" accept="image/jpeg,image/png,image/webp"><p class="note">A imagem será enviada para o Storage ATINA e o respetivo link será guardado automaticamente. O registo da imagem fica pendente de revisão.</p>
+      <label for="challengeImageUrl">Ou inserir link da imagem (URL)</label><input id="challengeImageUrl" type="url" placeholder="https://…"><div id="challengeImagePreview" class="image-preview"><span class="note">Sem imagem associada.</span></div>
       <label><input id="challengeActive" type="checkbox" checked style="width:auto"> Desafio ativo</label>
       <div class="challenge-actions"><button type="submit" id="saveChallenge">Guardar desafio</button><button type="button" class="secondary" id="cancelChallenge">Cancelar</button></div>
     </form>
@@ -429,6 +430,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("challengeClues").addEventListener("click",event=>{const button=event.target.closest(".remove-clue");if(!button)return;const values=Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value);if(values.length<=1)return;values.splice(Array.from($("challengeClues").querySelectorAll(".remove-clue")).indexOf(button),1);renderClueFields(values);});
   $("challengeImageUrl").addEventListener("blur",()=>{const value=$("challengeImageUrl").value.trim();if(value&&!/^https?:\/\//i.test(value)&&/^[\w.-]+\.[a-z]{2,}(?:[/:?#].*)?$/i.test(value))$("challengeImageUrl").value="https://"+value;updateChallengeImagePreview();});
   $("challengeImageUrl").addEventListener("input",updateChallengeImagePreview);
+  $("challengeImageFile").addEventListener("change",()=>{const file=$("challengeImageFile").files?.[0];if(!file){updateChallengeImagePreview();return;}if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>10*1024*1024){$("challengeImageFile").value="";alert("Seleciona JPEG, PNG ou WebP até 10 MB.");return;}const url=URL.createObjectURL(file);$("challengeImagePreview").innerHTML='<img src="'+url+'" alt="Pré-visualização da imagem selecionada"><span class="note">'+esc(file.name)+' · '+Math.round(file.size/1024)+' KB · será enviada ao guardar</span>';});
   function resetChallengeForm() {
     $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview();
     $("challengeFormTitle").textContent="Novo desafio"; $("challengeForm").classList.add("hidden");
@@ -462,8 +464,16 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     const split=(id)=>$(id).value.split(/[,\n]/).map(v=>v.trim()).filter(Boolean);
     try {
       const id=$("challengeId").value;
-      const result=await challengeRequest({action:"challenge_save",challenge_id:id===""?null:Number(id),category:$("challengeCategory").value,emoji:$("challengeEmoji").value,answer:$("challengeAnswer").value,difficulty:$("challengeDifficulty").value,clues:Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value.trim()).filter(Boolean),solution_image_url:$("challengeImageUrl").value.trim()||null,accepted_answers:split("challengeAccepted"),image_tags:split("challengeTags"),image_description:$("challengeDescription").value,active:$("challengeActive").checked});
-      await loadChallenges(); resetChallengeForm(); alert((result.created?"Desafio criado":"Desafio atualizado")+" com sucesso. ID: "+result.challenge_id);
+      const imageFile=$("challengeImageFile").files?.[0]||null;
+      const result=await challengeRequest({action:"challenge_save",challenge_id:id===""?null:Number(id),category:$("challengeCategory").value,emoji:$("challengeEmoji").value,answer:$("challengeAnswer").value,difficulty:$("challengeDifficulty").value,clues:Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value.trim()).filter(Boolean),solution_image_url:imageFile?($("challengeId").value?($("challengeImageUrl").value.trim()||null):null):($("challengeImageUrl").value.trim()||null),accepted_answers:split("challengeAccepted"),image_tags:split("challengeTags"),image_description:$("challengeDescription").value,active:$("challengeActive").checked});
+      if(imageFile){
+        const {data:{session}}=await client.auth.getSession();if(!session)throw new Error("A sessão expirou. Entra novamente.");
+        const body=new FormData();body.append("challenge_id",String(result.challenge_id));body.append("file",imageFile);body.append("source","Imagem original gerada por IA — ChatGPT");body.append("source_url","gerada-por-ia://chatgpt");body.append("author","ATINA");body.append("license","Conforme licença definida pelo projeto ATINA");body.append("attribution","ATINA");
+        const response=await fetch(SUPABASE_URL+"/functions/v1/atina-image-upload",{method:"POST",headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY},body});
+        const upload=await response.json().catch(()=>({}));if(!response.ok||!upload.success)throw new Error("O desafio foi guardado, mas o envio da imagem falhou: "+(upload.error||"erro desconhecido"));
+        $("challengeImageUrl").value=upload.image_url;
+      }
+      await loadChallenges(); resetChallengeForm(); alert((result.created?"Desafio criado":"Desafio atualizado")+" com sucesso. ID: "+result.challenge_id+(imageFile?"\nImagem enviada e associada. Estado da imagem: Pending.":""));
     } catch(error){alert(error.message);} finally{button.disabled=false;}
   });
   window.addEventListener("hashchange",()=>{if(location.hash==="#challenges")loadChallenges();});
