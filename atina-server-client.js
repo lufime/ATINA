@@ -104,7 +104,7 @@ async function atinaProgressClaim(state) {
   if (!['solo', 'mix', 'duel', 'party'].includes(state?.mode)) return;
   if (!state || !state.round_locked || !atinaServerSession) return;
   const outcome = state.last_result?.outcome;
-  const eligible = ['correct', 'wrong', 'incorrect'].includes(outcome) || (outcome === 'pass' && Number(state.revealed_clues || 1) > 1);
+  const eligible = ['correct', 'wrong', 'incorrect'].includes(outcome);
   if (!eligible) return;
   const deviceToken = atinaAccountSessionToken();
   if (!deviceToken) {
