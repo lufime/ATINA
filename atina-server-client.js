@@ -131,7 +131,7 @@ async function atinaProgressClaim(state) {
     atinaRenderDailyMission();
     if ($('atinaCloudStatus')) {
       $('atinaCloudStatus').textContent = result.awarded
-        ? '✨ +' + (Number(result.challenge_xp) || 10) + ' XP' + (Number(result.daily_bonus) ? ' · bónus diário +' + result.daily_bonus + ' XP' : '') + ' confirmado pelo servidor.'
+        ? '✨ +' + (Number(result.challenge_xp) || 10) + ' XP' + (Number(result.bonus_total ?? result.daily_bonus) ? ' · bónus extra +' + Number(result.bonus_total ?? result.daily_bonus) + ' XP' : '') + ' confirmado pelo servidor.'
         : 'Este desafio já tinha sido contabilizado. XP sincronizado.';
     }
   } catch (error) {
