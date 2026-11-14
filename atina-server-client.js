@@ -194,174 +194,64 @@ function atinaLevelDesignation(level) {
 }
 
 function atinaCreateLevelInsignia(level) {
-  const designs = [
-    ['#5f8d63','M32 3 L54 15 L50 43 L32 61 L14 43 L10 15 Z','M20 25 Q32 12 44 25 Q32 42 20 25 Z'],
-    ['#4c91a8','M32 3 L57 25 L45 56 L19 56 L7 25 Z','M17 31 L32 16 L47 31 L32 46 Z'],
-    ['#8c78bd','M32 3 L51 12 L59 32 L51 52 L32 61 L13 52 L5 32 L13 12 Z','M18 42 L27 20 L34 34 L42 18 L48 42'],
-    ['#a17b49','M32 3 L58 18 L54 48 L32 61 L10 48 L6 18 Z','M18 22 L46 22 L46 42 L18 42 Z M23 28 L41 28 M23 35 L37 35'],
-    ['#b78a45','M32 2 L39 15 L54 8 L50 24 L62 32 L50 40 L54 56 L39 49 L32 62 L25 49 L10 56 L14 40 L2 32 L14 24 L10 8 L25 15 Z','M32 17 L36 29 L49 30 L39 38 L42 51 L32 44 L22 51 L25 38 L15 30 L28 29 Z'],
-    ['#577eaa','M32 3 L55 13 L55 39 Q48 53 32 61 Q16 53 9 39 L9 13 Z','M20 24 L32 16 L44 24 L44 38 L32 47 L20 38 Z'],
-    ['#8c6a9f','M32 3 L57 32 L32 61 L7 32 Z','M32 15 L32 48 M17 32 L47 32 M22 22 L42 42 M42 22 L22 42'],
-    ['#4e9b91','M32 3 C48 3 60 15 60 31 C60 47 48 61 32 61 C16 61 4 47 4 31 C4 15 16 3 32 3 Z','M32 14 C22 24 22 38 32 49 C42 38 42 24 32 14 Z'],
-    ['#a88b4d','M32 3 L59 22 L49 56 L15 56 L5 22 Z','M17 42 L32 16 L47 42 M22 34 L42 34'],
-    ['#c49b35','M32 2 L39 18 L57 12 L49 30 L62 42 L43 44 L38 62 L27 47 L10 55 L16 36 L2 24 L22 22 Z','M20 34 L29 25 L36 34 L45 25 L45 43 L20 43 Z'],
-    ['#8b9aa8','M32 3 L54 10 L61 32 L54 54 L32 61 L10 54 L3 32 L10 10 Z','M17 32 L25 20 L32 27 L39 20 L47 32 L39 44 L32 37 L25 44 Z'],
-    ['#9b6e55','M32 3 L57 17 L57 47 L32 61 L7 47 L7 17 Z','M18 22 L46 22 L32 45 Z M24 28 L40 28'],
-    ['#a78a5c','M32 2 L44 9 L57 9 L55 24 L62 32 L55 40 L57 55 L44 55 L32 62 L20 55 L7 55 L9 40 L2 32 L9 24 L7 9 L20 9 Z','M17 43 L17 25 L32 16 L47 25 L47 43 M24 30 L32 24 L40 30'],
-    ['#65a7b8','M32 3 L59 32 L32 61 L5 32 Z','M32 13 L44 32 L32 51 L20 32 Z'],
-    ['#c29b42','M32 2 L40 13 L54 8 L53 23 L63 32 L53 41 L54 56 L40 51 L32 62 L24 51 L10 56 L11 41 L1 32 L11 23 L10 8 L24 13 Z','M20 32 Q32 13 44 32 Q32 51 20 32 Z'],
-    ['#6b8fc1','M32 3 L57 18 L49 51 L32 61 L15 51 L7 18 Z','M18 40 L28 18 L36 40 L46 22'],
-    ['#9b77b6','M32 3 L49 9 L61 25 L55 45 L32 61 L9 45 L3 25 L15 9 Z','M19 40 L32 16 L45 40 M24 34 L40 34'],
-    ['#8b9b59','M32 2 L39 17 L56 12 L49 29 L62 40 L44 43 L39 61 L27 47 L10 55 L16 37 L2 25 L22 22 Z','M32 16 L32 45 M20 28 L44 28 M22 40 L42 40'],
-    ['#bd765d','M32 3 C48 3 59 15 59 31 C59 47 48 60 32 60 C16 60 5 47 5 31 C5 15 16 3 32 3 Z','M18 31 C18 20 46 20 46 31 C46 42 18 42 18 31 Z M32 18 L32 44'],
-    ['#b08bca','M32 2 L57 15 L57 49 L32 62 L7 49 L7 15 Z','M18 24 L32 15 L46 24 L46 40 L32 49 L18 40 Z M25 32 L39 32'],
-    ['#6c9caa','M32 3 L61 32 L32 61 L3 32 Z','M16 32 L24 21 L32 32 L40 21 L48 32 L40 43 L32 32 L24 43 Z'],
-    ['#9d8750','M32 2 L43 12 L58 13 L54 29 L62 41 L46 47 L38 62 L25 52 L9 55 L10 38 L2 25 L18 17 L21 4 Z','M19 42 L25 23 L32 36 L39 23 L45 42'],
-    ['#548e83','M32 3 L51 8 L61 25 L55 46 L32 61 L9 46 L3 25 L13 8 Z','M17 38 L25 25 L32 34 L39 25 L47 38 M22 44 L42 44'],
-    ['#8d78ad','M32 2 L60 20 L49 56 L15 56 L4 20 Z','M16 32 L25 20 L32 29 L39 20 L48 32 L39 44 L32 35 L25 44 Z'],
-    ['#c08b4b','M32 2 L40 16 L56 7 L52 25 L63 32 L52 39 L56 57 L40 48 L32 62 L24 48 L8 57 L12 39 L1 32 L12 25 L8 7 L24 16 Z','M20 42 L32 17 L44 42 M24 34 L40 34'],
-    ['#5c9fb1','M32 3 L58 16 L58 48 L32 61 L6 48 L6 16 Z','M18 42 L18 24 L32 15 L46 24 L46 42 L32 50 Z M24 32 L40 32'],
-    ['#9b6e9f','M32 2 L60 32 L32 62 L4 32 Z','M18 32 L32 15 L46 32 L32 49 Z M25 32 L39 32'],
-    ['#b18d49','M32 2 L43 10 L57 8 L55 23 L63 32 L55 41 L57 56 L43 54 L32 62 L21 54 L7 56 L9 41 L1 32 L9 23 L7 8 L21 10 Z','M18 43 L32 16 L46 43 M23 34 L41 34'],
-    ['#7896b7','M32 3 C48 3 60 15 60 31 C60 47 48 61 32 61 C16 61 4 47 4 31 C4 15 16 3 32 3 Z','M32 13 L38 27 L53 32 L38 37 L32 51 L26 37 L11 32 L26 27 Z'],
-    ['#c4a14b','M32 2 L43 7 L56 7 L57 20 L63 32 L57 44 L56 57 L43 57 L32 62 L21 57 L8 57 L7 44 L1 32 L7 20 L8 7 L21 7 Z','M32 13 L48 23 L42 43 L22 43 L16 23 Z']
-  ];
   const safeLevel = Math.min(30, Math.max(1, Number(level) || 1));
-  const design = designs[safeLevel - 1];
-  const jewelTones = ['#a8d6a0','#79d8ec','#c4a4ff','#f0c77d','#f8d36c','#8fc5ff','#d3a5ff','#8be2c8','#f3d28a','#ffe08a','#d6e6f2','#e9ad8d','#f4d49b','#9ee7f2','#ffdc83','#a9caff','#d7b0f2','#d5e69b','#f5a88d','#e6c5ff','#a8e2e8','#f4d58c','#a4e3cf','#d3baff','#ffd19a','#a8e2ff','#e6b4dc','#ffe19a','#b9d8ff','#fff0a8'];
-  const jewel = jewelTones[safeLevel - 1];
-  // Runas decorativas originais: um glifo diferente em cada nível.
-  // São símbolos de fantasia, não traduções nem alegações de autenticidade histórica.
-  const runes = [
-    'M12 2 V22 M12 2 L5 9 M12 11 L20 18',
-    'M4 3 L20 21 M20 3 L4 21 M4 12 H20',
-    'M5 3 V21 M5 3 L19 12 L5 21',
-    'M4 4 L20 4 L12 12 L20 20 L4 20',
-    'M12 2 V22 M12 2 L20 9 M12 12 L4 20',
-    'M4 3 V21 M4 3 L20 12 L4 21 M4 12 H20',
-    'M4 4 L20 4 L20 20 L4 20 M4 12 H20',
-    'M4 3 L12 12 L20 3 M12 12 V22 M4 21 H20',
-    'M4 3 L20 21 M20 3 L4 21',
-    'M4 3 V21 M4 3 L20 12 L4 21 M12 7 V17',
-    'M4 3 H20 V21 H4 Z M4 12 H20',
-    'M12 2 L4 12 L12 22 L20 12 Z',
-    'M4 3 L12 12 L20 3 M4 21 L12 12 L20 21',
-    'M4 3 V21 M20 3 V21 M4 12 H20',
-    'M4 3 L20 21 M4 21 L20 3 M12 3 V21',
-    'M4 3 H20 M12 3 V21 M4 21 H20',
-    'M4 3 L20 3 L4 21 L20 21',
-    'M12 2 V22 M4 7 L12 12 L20 7 M4 17 L12 12 L20 17',
-    'M4 3 L12 12 L4 21 M20 3 L12 12 L20 21',
-    'M4 3 V21 M4 3 L20 3 M4 12 H16 M4 21 H20',
-    'M4 3 L20 21 M12 3 V21 M4 12 H20',
-    'M4 3 H20 L4 21 H20',
-    'M4 3 V21 M4 3 L20 12 L4 21',
-    'M4 3 L12 12 L20 3 M12 12 L4 21 M12 12 L20 21',
-    'M4 3 H20 M4 3 V21 M4 12 H16 M4 21 H20',
-    'M12 2 L4 12 L12 22 M12 2 L20 12 L12 22',
-    'M4 3 V21 M20 3 V21 M4 3 L20 21 M20 3 L4 21',
-    'M4 3 L20 3 L12 12 L20 21 L4 21',
-    'M4 3 L12 12 L4 21 M20 3 L12 12 L20 21 M4 12 H20',
-    'M4 3 H20 V21 H4 M12 3 V21'
+  const palettes = [
+    ['#b97845','#f2c18a','#315c56','#f5d7a4'],['#a98b50','#f5d995','#345d87','#c9e6f0'],
+    ['#8b9c64','#e5d69a','#286b61','#d5f0bf'],['#9b7655','#f0c88b','#476d86','#e4e9f2'],
+    ['#bd934e','#ffe0a0','#356b67','#e9f4ce'],['#8396a8','#e1edf3','#315d85','#d4e8ff']
   ];
-  const rune = runes[safeLevel - 1];
-  const ns = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(ns, 'svg');
-  svg.setAttribute('viewBox', '0 0 64 64');
+  const [metal, highlight, deep, jewel] = palettes[Math.floor((safeLevel - 1) / 5) % palettes.length];
+  const shapes = [
+    'M50 5 L83 19 L91 50 L75 82 L50 95 L25 82 L9 50 L17 19 Z',
+    'M50 4 L68 12 L86 30 L86 70 L68 88 L50 96 L32 88 L14 70 L14 30 L32 12 Z',
+    'M50 4 L91 50 L50 96 L9 50 Z',
+    'M50 5 C74 5 94 25 94 50 C94 75 74 95 50 95 C26 95 6 75 6 50 C6 25 26 5 50 5 Z',
+    'M50 4 L62 15 L80 12 L83 31 L96 50 L83 69 L80 88 L62 85 L50 96 L38 85 L20 88 L17 69 L4 50 L17 31 L20 12 L38 15 Z',
+    'M50 5 L87 26 L87 68 L50 95 L13 68 L13 26 Z'
+  ];
+  const symbols = [
+    '<path d="M35 48 C35 38 43 31 51 31 C61 31 67 38 67 47 C67 54 62 57 58 61 L58 66 L45 66 L45 61 C39 57 35 54 35 48Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M45 74 H58" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+    '<path d="M34 29 H62 Q68 29 68 35 V58 Q68 64 62 64 H49 L37 73 V64 H34 Q28 64 28 58 V35 Q28 29 34 29Z" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="47" r="2.8" fill="currentColor"/><circle cx="50" cy="47" r="2.8" fill="currentColor"/><circle cx="60" cy="47" r="2.8" fill="currentColor"/>',
+    '<path d="M31 29 Q50 22 69 29 V69 Q50 61 31 69Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 29 V67 M38 40 H44 M56 40 H63" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+    '<circle cx="50" cy="49" r="20" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 21 L57 45 L50 49 L43 45Z M50 49 L67 61" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>',
+    '<path d="M31 36 L43 48 L67 27 M31 60 L43 72 L69 49" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
+    '<path d="M50 22 L57 41 L78 42 L62 55 L68 76 L50 64 L32 76 L38 55 L22 42 L43 41Z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>'
+  ];
+  const id = 'atina-insignia-' + safeLevel;
+  const shape = shapes[(safeLevel - 1) % shapes.length];
+  const symbol = symbols[(safeLevel - 1) % symbols.length];
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 100 100');
   svg.setAttribute('class', 'atina-level-insignia');
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', 'Insígnia exclusiva do nível ' + level);
-  const defs = document.createElementNS(ns, 'defs');
-  const gradient = document.createElementNS(ns, 'linearGradient');
-  gradient.setAttribute('id', 'atina-metal-' + level);
-  gradient.setAttribute('x1', '0%'); gradient.setAttribute('y1', '0%');
-  gradient.setAttribute('x2', '100%'); gradient.setAttribute('y2', '100%');
-  [['0%', '#fff9df'],['13%', '#ffffff'],['25%', design[0]],['48%', '#172a45'],['72%', design[0]],['88%', '#6f542d'],['100%', '#fff2c9']].forEach(([offset,color]) => {
-    const stop = document.createElementNS(ns, 'stop');
-    stop.setAttribute('offset', offset); stop.setAttribute('stop-color', color); gradient.appendChild(stop);
-  });
-  const innerGradient = document.createElementNS(ns, 'radialGradient');
-  innerGradient.setAttribute('id', 'atina-core-' + level);
-  [['0%',jewel],['24%','#fff8df'],['42%',jewel],['100%','#101b30']].forEach(([offset,color]) => {
-    const stop = document.createElementNS(ns, 'stop');
-    stop.setAttribute('offset', offset); stop.setAttribute('stop-color', color); innerGradient.appendChild(stop);
-  });
-  defs.append(gradient, innerGradient);
-  const outer = document.createElementNS(ns, 'path');
-  outer.setAttribute('d', design[1]);
-  outer.setAttribute('fill', 'url(#atina-metal-' + level + ')');
-  outer.setAttribute('stroke', '#fff0bd');
-  outer.setAttribute('stroke-width', '2.4');
-  outer.setAttribute('stroke-linejoin', 'round');
-  const innerEdge = document.createElementNS(ns, 'path');
-  innerEdge.setAttribute('d', design[1]);
-  innerEdge.setAttribute('transform', 'translate(32 32) scale(.84) translate(-32 -32)');
-  innerEdge.setAttribute('fill', 'none');
-  innerEdge.setAttribute('stroke', '#14243b');
-  innerEdge.setAttribute('stroke-width', '1.3');
-  innerEdge.setAttribute('opacity', '.9');
-  const motif = document.createElementNS(ns, 'path');
-  motif.setAttribute('d', design[2]);
-  motif.setAttribute('fill', 'none');
-  motif.setAttribute('stroke', '#fff0bd');
-  motif.setAttribute('stroke-width', '2');
-  motif.setAttribute('stroke-linecap', 'round');
-  motif.setAttribute('stroke-linejoin', 'round');
-  motif.setAttribute('opacity', '1');
-  motif.setAttribute('stroke-width', '2.5');
-  const core = document.createElementNS(ns, 'circle');
-  core.setAttribute('cx', '32'); core.setAttribute('cy', '32'); core.setAttribute('r', '15.5');
-  core.setAttribute('fill', 'url(#atina-core-' + level + ')');
-  core.setAttribute('stroke', '#f8d98e'); core.setAttribute('stroke-width', '1.8');
-  const coreRing = document.createElementNS(ns, 'circle');
-  coreRing.setAttribute('cx', '32'); coreRing.setAttribute('cy', '32'); coreRing.setAttribute('r', '12.8');
-  coreRing.setAttribute('fill', 'none'); coreRing.setAttribute('stroke', '#ffffff');
-  coreRing.setAttribute('stroke-opacity', '.35'); coreRing.setAttribute('stroke-width', '.7');
-  const number = document.createElementNS(ns, 'text');
-  number.setAttribute('x', '32');
-  number.setAttribute('y', '40.5');
-  number.setAttribute('text-anchor', 'middle');
-  number.setAttribute('font-family', 'Georgia,serif');
-  number.setAttribute('font-size', String(safeLevel >= 10 ? 18 : 23));
-  number.setAttribute('font-weight', '900');
-  number.setAttribute('fill', '#fff4d6');
-  number.setAttribute('stroke', '#071426');
-  number.setAttribute('stroke-width', '1.15');
-  number.setAttribute('paint-order', 'stroke');
-  number.textContent = String(safeLevel);
-  const glint = document.createElementNS(ns, 'path');
-  glint.setAttribute('d', 'M17 12 Q25 5 34 8');
-  glint.setAttribute('fill', 'none'); glint.setAttribute('stroke', '#ffffff');
-  glint.setAttribute('stroke-width', '1.4'); glint.setAttribute('stroke-linecap', 'round');
-  glint.setAttribute('opacity', '.7');
-  const facets = document.createElementNS(ns, 'path');
-  facets.setAttribute('d', 'M32 17 L39 25 L32 32 L25 25 Z M25 39 L32 32 L39 39 L32 47 Z');
-  facets.setAttribute('fill', 'none');
-  facets.setAttribute('stroke', '#ffffff');
-  facets.setAttribute('stroke-width', '0.8');
-  facets.setAttribute('opacity', '.3');
-  const runeTop = document.createElementNS(ns, 'path');
-  runeTop.setAttribute('d', rune);
-  runeTop.setAttribute('transform', 'translate(23 5) scale(.75)');
-  runeTop.setAttribute('fill', 'none');
-  runeTop.setAttribute('stroke', '#fff0bd');
-  runeTop.setAttribute('stroke-width', '1.6');
-  runeTop.setAttribute('stroke-linecap', 'round');
-  runeTop.setAttribute('stroke-linejoin', 'round');
-  runeTop.setAttribute('opacity', '.92');
-  const runeBottom = document.createElementNS(ns, 'path');
-  runeBottom.setAttribute('d', rune);
-  runeBottom.setAttribute('transform', 'translate(23 43) scale(.75)');
-  runeBottom.setAttribute('fill', 'none');
-  runeBottom.setAttribute('stroke', '#fff0bd');
-  runeBottom.setAttribute('stroke-width', '1.6');
-  runeBottom.setAttribute('stroke-linecap', 'round');
-  runeBottom.setAttribute('stroke-linejoin', 'round');
-  runeBottom.setAttribute('opacity', '.92');
-  svg.append(defs, outer, innerEdge, motif, runeTop, runeBottom, core, coreRing, facets, number, glint);
+  svg.setAttribute('aria-label', 'Insígnia ATINA do nível ' + safeLevel);
+  const markup = [
+    '<defs>',
+    '<linearGradient id="' + id + '-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff8e6"/><stop offset=".18" stop-color="' + highlight + '"/><stop offset=".42" stop-color="' + metal + '"/><stop offset=".62" stop-color="' + deep + '"/><stop offset=".82" stop-color="' + metal + '"/><stop offset="1" stop-color="#fff0c9"/></linearGradient>',
+    '<radialGradient id="' + id + '-core" cx=".38" cy=".28" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".22" stop-color="' + jewel + '"/><stop offset=".7" stop-color="' + deep + '"/><stop offset="1" stop-color="#101b2b"/></radialGradient>',
+    '<linearGradient id="' + id + '-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".5" stop-color="' + jewel + '" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></linearGradient>',
+    '<filter id="' + id + '-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>',
+    '</defs>',
+    '<path d="' + shape + '" transform="translate(0 2)" fill="#000" opacity=".45" filter="url(#' + id + '-shadow)"/>',
+    '<path d="' + shape + '" fill="url(#' + id + '-metal)" stroke="#fff3d4" stroke-width="2.5" stroke-linejoin="round"/>',
+    '<path d="' + shape + '" transform="translate(50 50) scale(.88) translate(-50 -50)" fill="none" stroke="' + deep + '" stroke-width="2.2"/>',
+    '<path d="' + shape + '" transform="translate(50 50) scale(.78) translate(-50 -50)" fill="none" stroke="#fff4d9" stroke-width="1" opacity=".65"/>',
+    '<circle cx="50" cy="49" r="30" fill="' + deep + '" stroke="' + highlight + '" stroke-width="2.4"/>',
+    '<circle cx="50" cy="49" r="26.5" fill="url(#' + id + '-core)" stroke="#fff8e8" stroke-opacity=".65" stroke-width="1.1"/>',
+    '<circle cx="50" cy="49" r="22" fill="url(#' + id + '-glass)" stroke="#fff" stroke-opacity=".3" stroke-width=".8"/>',
+    '<g color="' + highlight + '" opacity=".9">' + symbol + '</g>',
+    '<path d="M50 13 L53 20 L50 27 L47 20Z M50 72 L53 79 L50 86 L47 79Z" fill="' + highlight + '" stroke="#fff5df" stroke-width=".8"/>',
+    '<path d="M19 50 H27 M73 50 H81" stroke="' + highlight + '" stroke-width="2" stroke-linecap="round"/>',
+    '<circle cx="19" cy="50" r="2" fill="#fff4d5"/><circle cx="81" cy="50" r="2" fill="#fff4d5"/>',
+    '<path d="M28 20 Q39 13 48 15" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".65"/>',
+    '<circle cx="50" cy="49" r="13" fill="' + deep + '" fill-opacity=".82" stroke="' + highlight + '" stroke-width="1.2"/>',
+    '<text x="50" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="' + (safeLevel >= 10 ? 15 : 19) + '" font-weight="700" fill="#fff8e8" stroke="#172333" stroke-width="1.1" paint-order="stroke">' + safeLevel + '</text>',
+    '<path d="M31 84 L38 88 L50 91 L62 88 L69 84" fill="none" stroke="#fff0c9" stroke-width="1.1" opacity=".8"/>'
+  ].join('');
+  svg.innerHTML = markup;
+  svg.dataset.family = String(Math.floor((safeLevel - 1) / 5) + 1);
   return svg;
 }
-
 function atinaRenderLevelGallery(profile) {
   const gallery = $('atinaLevelGallery');
   if (!gallery) return;
