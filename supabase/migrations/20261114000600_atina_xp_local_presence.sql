@@ -200,7 +200,7 @@ begin
 
   v_outcome := v_session.last_result->>'outcome';
   if not found or v_session.position<>p_position or not v_session.round_locked
-     or v_outcome not in ('correct','wrong','incorrect')
+     or v_outcome is null or v_outcome not in ('correct','wrong','incorrect')
      or v_session.expires_at<=clock_timestamp() then
     raise exception 'O servidor ainda não confirmou este desafio como concluído.' using errcode='55000';
   end if;
