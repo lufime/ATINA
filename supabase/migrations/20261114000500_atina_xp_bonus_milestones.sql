@@ -154,7 +154,7 @@ begin
   end;
   if v_streak>=7 and v_streak%7=0 and v_player.last_active_date is distinct from v_today then
     insert into private.atina_xp_bonus_events(player_id,event_type,event_key,xp)
-    values(v_player.id,'streak_seven',v_streak::text,50)
+    values(v_player.id,'streak_seven',v_today::text,50)
     on conflict(player_id,event_type,event_key) do nothing
     returning id into v_bonus_inserted;
     if v_bonus_inserted is not null then v_streak_bonus:=50; end if;
