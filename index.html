@@ -3370,6 +3370,9 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 .atina-level-medal .atina-knowledge-medal{width:38px;height:38px;box-shadow:0 2px 7px #0004}
 .atina-level-medal .atina-knowledge-medal .mdi{font-size:19px}
 .atina-level-medal .atina-knowledge-medal em{min-width:15px;height:15px;padding:0 2px;font-size:8px;border-width:1px;right:-3px;bottom:-3px}
+
+#atinaLevelGallery:not([data-ready]){visibility:hidden;min-height:150px}
+#atinaLevelGallery[data-ready]{visibility:visible}
 </style>
 
 
@@ -3418,35 +3421,5 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 })();
 </script>
 
-<script id="atina-knowledge-level-gallery">
-(()=>{
- const render=()=>{
-  const host=document.getElementById('atinaLevelGallery');if(!host)return;
-  const profile=window.atinaCloudProfile||{};
-  const level=Math.min(30,Math.max(1,Math.floor(Number(profile.level)||1)));
-  host.replaceChildren();
-  const summary=document.createElement('p');summary.className='muted small';summary.textContent='Insígnias conquistadas: '+level+' / 30';host.appendChild(summary);
-  const grid=document.createElement('div');grid.className='atina-level-gallery-grid';
-  for(let n=1;n<=level;n++){
-   const card=document.createElement('article');card.className='atina-level-gallery-card is-unlocked';
-   const emblem=document.createElement('div');emblem.className='atina-level-gallery-emblem';
-   if(typeof window.atinaCreateKnowledgeLevelIcon==='function')emblem.appendChild(window.atinaCreateKnowledgeLevelIcon(n));
-   const title=document.createElement('strong');title.textContent=typeof window.atinaLevelDesignation==='function'?window.atinaLevelDesignation(n):'Nível '+n;
-   const number=document.createElement('span');number.className='atina-level-gallery-number';number.textContent='Nível '+n;
-   const status=document.createElement('span');status.className='atina-level-gallery-status';status.textContent='✓ Conquistada';
-   card.append(emblem,number,title,status);grid.appendChild(card);
-  }
-  host.appendChild(grid);
- };
- const start=()=>{
-  render();
-  const host=document.getElementById('atinaLevelGallery');
-  if(host)new MutationObserver(()=>{if(host.childElementCount===0)render();}).observe(host,{childList:true});
-  window.addEventListener('atina:profile-updated',render);
-  document.querySelectorAll('[data-home-target="profile"]').forEach(b=>b.addEventListener('click',()=>setTimeout(render,250)));
-  setInterval(render,5000);
- };
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
-})();
-</script>
+
 </body></html>
