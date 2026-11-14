@@ -224,7 +224,14 @@ async function atinaProgressLoadLeaderboard() {
       levelBadge.className = 'atina-level-medal';
       const levelIcons = ['🌱','🧭','🔎','📚','🎓','🛡️','⚔️','🔮','💡','👑','🏆','📜','🏛️','💎','🥇','🚀','🌟','🦅','🔥','♾️','🧠','🌍','✨','🔱','💫','☀️','🗝️','🏅','🌠','💠'];
       const levelIcon = levelIcons[Math.min(levelNumber - 1, levelIcons.length - 1)];
-      levelBadge.textContent = levelIcon + ' ' + levelNumber;
+      const iconGlyph = document.createElement('span');
+      iconGlyph.className = 'atina-level-medal-icon';
+      iconGlyph.textContent = levelIcon;
+      iconGlyph.setAttribute('aria-hidden', 'true');
+      const iconNumber = document.createElement('span');
+      iconNumber.className = 'atina-level-medal-number';
+      iconNumber.textContent = String(levelNumber);
+      levelBadge.append(iconGlyph, iconNumber);
       levelBadge.setAttribute('aria-label', 'Nível ' + levelNumber);
       const levelTitle = document.createElement('span');
       levelTitle.className = 'atina-level-title';
