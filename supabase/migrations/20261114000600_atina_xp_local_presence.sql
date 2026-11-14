@@ -1,4 +1,4 @@
--- Extend account-backed XP to local Duel/Team sessions and reward a clue-assisted pass.
+-- Extend account-backed XP to local Duel/Team sessions. Passed challenges always award 0 XP.
 -- Local multiplayer uses one authenticated device/account; online rooms need per-player ownership
 -- and are handled separately. Points logic is intentionally unchanged.
 
@@ -200,8 +200,7 @@ begin
 
   v_outcome := v_session.last_result->>'outcome';
   if not found or v_session.position<>p_position or not v_session.round_locked
-     or v_outcome not in ('correct','wrong','incorrect','pass')
-     or (v_outcome='pass' and coalesce(v_session.revealed_clues,1)<=1)
+     or v_outcome not in ('correct','wrong','incorrect')
      or v_session.expires_at<=clock_timestamp() then
     raise exception 'O servidor ainda não confirmou este desafio como concluído.' using errcode='55000';
   end if;
@@ -211,8 +210,6 @@ begin
   if not found or v_owner.player_id<>v_player.id then
     raise exception 'Esta sessão não está associada a esta conta.' using errcode='42501';
   end if;
-
-  if v_outcome='pass' then v_xp:=5; end if;
 
   v_challenge_id := v_session.challenge_queue[v_session.position];
   select * into v_challenge
