@@ -1,0 +1,19 @@
+with additions(challenge_id, aliases) as (values
+(806,'["Fossa de Madagáscar","Civeta-fossa"]'::jsonb),(824,'["Cacatua-de-crista-de-enxofre","Cacatua branca de crista amarela"]'::jsonb),(835,'["Náutilo","Nautilus pompilius"]'::jsonb),(851,'["Antílope-saiga","Saiga tatarica"]'::jsonb),
+(25,'["tegumento","órgão cutâneo"]'::jsonb),(507,'["rocha fundida subterrânea","rocha em fusão no interior da Terra"]'::jsonb),(1118,'["membrana retiniana","camada sensorial do olho"]'::jsonb),(1149,'["artéria aorta","artéria principal"]'::jsonb),
+(562,'["piano de teclado","pianoforte"]'::jsonb),(573,'["música jazz","jazzístico"]'::jsonb),(574,'["música flamenca","arte flamenca"]'::jsonb),(31,'["obra literária","volume"]'::jsonb),
+(693,'["badmínton","jogo do volante"]'::jsonb),(694,'["jogo de squash"]'::jsonb),(701,'["polo equestre","polo a cavalo"]'::jsonb),(703,'["judo japonês","judô"]'::jsonb),(704,'["karaté","karate-do"]'::jsonb),(705,'["tae kwon do","tae-kwon-do"]'::jsonb),
+(134,'["círculo de pedras de Stonehenge","monumento de Stonehenge"]'::jsonb),(426,'["Thamugadi","Colonia Marciana Ulpia Traiana Thamugadi"]'::jsonb),(438,'["RMS Titanic","navio Titanic"]'::jsonb),(440,'["Estela de Roseta","Rosetta Stone"]'::jsonb),(443,'["Tower of London"]'::jsonb),(445,'["Grande Carta","Carta Magna"]'::jsonb),(448,'["Renascença","Rinascimento"]'::jsonb),(451,'["Revolução de 1789","Revolução em França"]'::jsonb),(453,'["Berlin Wall"]'::jsonb),
+(42,'["Mausoléu Taj Mahal","Taj Mahal de Agra"]'::jsonb),(175,'["cidade nabateia de Petra"]'::jsonb),(243,'["monumento de Stonehenge","círculo megalítico de Stonehenge"]'::jsonb),(244,'["cidade inca de Machu Picchu","Machu Picchu, Peru"]'::jsonb),(252,'["Praia da Marinha, Algarve","Praia da Marinha em Lagoa"]'::jsonb),(256,'["flamingo-comum"]'::jsonb),(264,'["cavalo listrado","equídeo africano listrado"]'::jsonb),(268,'["montanha de gelo flutuante","bloco de gelo à deriva"]'::jsonb),
+(1163,'["folha de papel","papel de escrita"]'::jsonb),(1171,'["raio laser","amplificação da luz por emissão estimulada de radiação"]'::jsonb),(1197,'["imunização por vacina","preparação vacinal"]'::jsonb),
+(1003,'["Mensagem, de Fernando Pessoa","Mensagem (Fernando Pessoa)"]'::jsonb),(1036,'["Lolita, de Nabokov","romance Lolita"]'::jsonb),(1045,'["Aparição, de Vergílio Ferreira","romance Aparição"]'::jsonb),(1048,'["A Menina do Mar, de Sophia","conto A Menina do Mar"]'::jsonb),(1051,'["Ensaio sobre a Lucidez, de Saramago","romance Ensaio sobre a Lucidez"]'::jsonb),
+(967,'["Górgona Medusa","a Górgona"]'::jsonb),(992,'["Titã Atlas","Atlas, o titã"]'::jsonb),(994,'["Jarra de Pandora","mito de Pandora"]'::jsonb),(1000,'["Loki, deus nórdico","deus trapaceiro nórdico"]'::jsonb),
+(22,'["bravura","valentia"]'::jsonb),(23,'["satélite natural da Terra","nosso satélite natural"]'::jsonb),(135,'["nostalgia","sentimento de saudade"]'::jsonb),(136,'["temor","receio"]'::jsonb),(137,'["H2O","óxido de hidrogénio"]'::jsonb),
+(326,'["D. Vasco da Gama","Vasco da Gama, navegador"]'::jsonb),(907,'["Bluetooth wireless","ligação Bluetooth"]'::jsonb),
+(1053,'["Petra, Jordânia","cidade de Petra"]'::jsonb),(1054,'["Machu Picchu, Peru","cidade perdida dos Incas"]'::jsonb),(1060,'["templo de Angkor Wat","Angkor, Camboja"]'::jsonb),(1063,'["Taj Mahal, Índia","mausoléu de Mumtaz Mahal"]'::jsonb),(1082,'["ilha de Bora Bora","Bora Bora, Polinésia Francesa"]'::jsonb)
+), merged as (
+ update private.atina_challenges c set accepted_answers = (
+ select coalesce(jsonb_agg(to_jsonb(v) order by v), '[]'::jsonb) from (
+ select distinct lower(trim(x)) as v from jsonb_array_elements_text(coalesce(c.accepted_answers,'[]'::jsonb) || a.aliases) x where trim(x)<>''
+ ) s) from additions a where c.challenge_id=a.challenge_id returning c.challenge_id
+) select count(*) from merged;
