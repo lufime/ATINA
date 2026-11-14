@@ -101,7 +101,7 @@ async function atinaProgressRegister(nickname, quiet = false, personalCode = '')
 }
 
 async function atinaProgressClaim(state) {
-  if (!['solo', 'mix'].includes(state?.mode)) return;
+  if (!['solo', 'mix', 'duel', 'party'].includes(state?.mode)) return;
   if (!state || !['correct', 'wrong', 'incorrect'].includes(state.last_result?.outcome) || !state.round_locked || !atinaServerSession) return;
   const deviceToken = atinaAccountSessionToken();
   if (!deviceToken) {
@@ -490,7 +490,7 @@ async function atinaServerStart(gameMode, category = null) {
     const duration = Number($('timerMode')?.value ?? 60);
     const selectedDifficulty = $('difficultyMode')?.value || 'medium';
     const difficulty = ['easy', 'medium', 'hard', 'mixed'].includes(selectedDifficulty) ? selectedDifficulty : 'medium';
-    if (['solo', 'mix'].includes(gameMode) && atinaAccountSessionToken() && !atinaCloudProfile) {
+    if (atinaAccountSessionToken() && !atinaCloudProfile) {
       try { atinaCloudProfile = await atinaServerRpc('atina_account_profile', {p_session_token: atinaAccountSessionToken()}); atinaProgressRender(atinaCloudProfile); } catch (_) {}
     }
     const response = await atinaServerRpc('atina_v2_start_local_game', {
@@ -498,8 +498,7 @@ async function atinaServerStart(gameMode, category = null) {
       p_difficulty: difficulty,
       p_category: category,
       p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
-      p_device_token: ['solo', 'mix'].includes(gameMode) && atinaCloudProfile
-        ? atinaAccountSessionToken() : null
+      p_device_token: atinaAccountSessionToken() || null
     });
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
     atinaServerSession = { session_id: response.state.session_id, token: response.token };
