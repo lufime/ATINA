@@ -147,15 +147,18 @@ async function atinaProgressLoadPointsLeaderboard() {
   loading.textContent = 'A carregar classificação de Pontos…';
   list.appendChild(loading);
   try {
-    const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 50 });
+    const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 25 });
     list.replaceChildren();
-    if (!Array.isArray(rows) || !rows.length) {
+    const rankedRows = Array.isArray(rows)
+      ? rows.filter(row => Number(row.points || 0) > 0).slice(0, 25)
+      : [];
+    if (!rankedRows.length) {
       const empty = document.createElement('li');
       empty.textContent = 'Ainda não há Pontos globais registados.';
       list.appendChild(empty);
       return;
     }
-    rows.forEach((row, index) => {
+    rankedRows.forEach((row, index) => {
       const item = document.createElement('li');
       item.textContent = (index + 1) + '. ' + row.nickname + ' — ' + Number(row.points || 0) + ' pontos';
       list.appendChild(item);
