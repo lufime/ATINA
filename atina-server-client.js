@@ -186,6 +186,12 @@ async function atinaProgressLoadPointsLeaderboard() {
   }
 }
 
+const ATINA_LEVEL_TITLES = ['Iniciante','Explorador','Descobridor','Conhecedor','Especialista','Mestre','Perito','Sábio','Génio','Lenda ATINA','Veterano','Erudito','Grande Mestre','Ilustre','Campeão','Visionário','Eminência','Grão-Mestre','Imortal','Lenda Suprema','Mestre do Conhecimento','Explorador Supremo','Sábio Supremo','Grande Sábio','Mestre Lendário','Génio Supremo','Guardião do Saber','Ícone ATINA','Lenda Eterna','Lenda Absoluta'];
+function atinaLevelDesignation(level) {
+  const safeLevel = Math.max(1, Number(level) || 1);
+  return ATINA_LEVEL_TITLES[Math.min(safeLevel - 1, ATINA_LEVEL_TITLES.length - 1)];
+}
+
 async function atinaProgressLoadLeaderboard() {
   const list = $('atinaCloudLeaderboard');
   if (!list) return;
@@ -213,7 +219,7 @@ async function atinaProgressLoadLeaderboard() {
       rank.textContent = String(index + 1);
       nickname.textContent = row.nickname;
       xp.textContent = Number(row.xp || 0).toLocaleString('pt-PT');
-      level.textContent = String(Number(row.level || 1));
+      level.textContent = atinaLevelDesignation(row.level);
       item.append(rank, nickname, xp, level);
       list.appendChild(item);
     });
