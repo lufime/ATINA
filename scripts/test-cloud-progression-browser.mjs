@@ -48,10 +48,10 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
         if(name==='atina_account_recover') return {data:{ok:true,session_token:sessionToken,recovery_key:'e'.repeat(48),recovered:true},error:null};
         if(name==='atina_account_profile') return {data:profile,error:null};
         if(name==='atina_progress_claim_local') {
-          profile={...profile,xp:15,level:1,total_challenges:1,awarded:true,challenge_xp:15,daily_bonus:0};
+          profile={...profile,xp:10,level:1,total_challenges:1,awarded:true,challenge_xp:10,daily_bonus:0};
           return {data:profile,error:null};
         }
-        if(name==='atina_progress_leaderboard') return {data:[{nickname:'BrowserTester',xp:15,level:1}],error:null};
+        if(name==='atina_progress_leaderboard') return {data:[{nickname:'BrowserTester',xp:10,level:1}],error:null};
         return {data:null,error:null};
       }
     })};
@@ -101,10 +101,10 @@ try {
     atinaServerSession={session_id:'00000000-0000-4000-8000-000000000123',token:'a'.repeat(64)};
     atinaCloudProfile={player_id:'00000000-0000-4000-8000-000000000001',nickname:'BrowserTester',xp:0,level:1,total_challenges:0};
   });
-  const claimState = {mode:'solo',session_id:'00000000-0000-4000-8000-000000000123',position:1,round_locked:true,last_result:{outcome:'correct',points:15}};
+  const claimState = {mode:'solo',session_id:'00000000-0000-4000-8000-000000000123',position:1,round_locked:true,last_result:{outcome:'wrong',points:0}};
   await page.evaluate(state => atinaProgressClaim(state), claimState);
   await page.getByText(/\+15 XP confirmado pelo servidor/).waitFor();
-  assert.equal(await page.locator('#atinaCloudXp').textContent(), '15 XP');
+  assert.equal(await page.locator('#atinaCloudXp').textContent(), '10 XP');
   await page.evaluate(state => atinaProgressClaim(state), claimState);
   const claims = await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_progress_claim_local'));
   assert.equal(claims.length,1,'O mesmo desafio não deve originar claims repetidos no cliente.');
@@ -112,10 +112,9 @@ try {
   assert.equal(claims[0].args.p_device_token,'c'.repeat(64));
 
   await page.locator('button.home-nav-btn[data-home-target="ranking"]').click();
-  await page.locator('#atinaCloudLeaderboardRefresh').click();
-  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 15 XP/).waitFor();
+  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
   assert.deepEqual(pageErrors,[],'A aplicação não deve produzir erros JavaScript.');
-  process.stdout.write('Browser E2E passed: criar conta, iniciar sessão, sincronizar XP, impedir claims duplicados e apresentar ranking.\\n');
+  process.stdout.write('Browser E2E passed: criar conta, iniciar sessão, sincronizar XP em resposta errada, impedir claims duplicados e apresentar ranking.\\n');
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));
