@@ -47,8 +47,8 @@ function atinaProgressRender(profile) {
   const titles = ['Iniciante','Explorador','Descobridor','Conhecedor','Especialista','Mestre','Perito','Sábio','Génio','Lenda ATINA','Veterano','Erudito','Grande Mestre','Ilustre','Campeão','Visionário','Eminência','Grão-Mestre','Imortal','Lenda Suprema','Mestre do Conhecimento','Explorador Supremo','Sábio Supremo','Grande Sábio','Mestre Lendário','Génio Supremo','Guardião do Saber','Ícone ATINA','Lenda Eterna','Lenda Absoluta'];
   const level = Math.max(1, Number(profile.level) || 1);
   const levelIndex = Math.min(level - 1, thresholds.length - 1);
-  const currentThreshold = thresholds[levelIndex];
-  const nextThreshold = level <= 30 ? thresholds[levelIndex + 1] : 128000 + ((level - 31) * (level - 30) * 500) + ((level - 31) * 10000);
+  const currentThreshold = level <= 30 ? thresholds[levelIndex] : 128000 + ((level - 31) * 10000) + (((level - 31) * (level - 32)) / 2 * 1000);
+  const nextThreshold = level < 30 ? thresholds[levelIndex + 1] : currentThreshold + 10000 + Math.max(0, level - 31) * 1000;
   const progress = Math.max(0, xp - currentThreshold);
   const needed = Math.max(1, nextThreshold - currentThreshold);
   const remaining = Math.max(0, nextThreshold - xp);
