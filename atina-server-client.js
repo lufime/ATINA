@@ -144,10 +144,6 @@ async function atinaProgressClaim(state) {
 async function atinaProgressLoadPointsLeaderboard() {
   const list = $('atinaPointsLeaderboard');
   if (!list) return;
-  list.replaceChildren();
-  const loading = document.createElement('li');
-  loading.textContent = 'A carregar classificação de Pontos…';
-  list.appendChild(loading);
   try {
     const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 25 });
     list.replaceChildren();
@@ -176,10 +172,6 @@ async function atinaProgressLoadPointsLeaderboard() {
 async function atinaProgressLoadLeaderboard() {
   const list = $('atinaCloudLeaderboard');
   if (!list) return;
-  list.replaceChildren();
-  const loading = document.createElement('li');
-  loading.textContent = 'A carregar classificação…';
-  list.appendChild(loading);
   try {
     const rows = await atinaServerRpc('atina_progress_leaderboard', { p_limit: 50 });
     list.replaceChildren();
