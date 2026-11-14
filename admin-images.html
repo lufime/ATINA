@@ -189,7 +189,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <div class="challenge-actions"><button id="newChallenge" type="button">Criar novo desafio</button><button id="reloadChallenges" class="secondary" type="button">Atualizar lista</button></div>
     <p class="note" id="challengeCount">A carregar desafios…</p>
     <div id="challengeList"></div>
-    <h2 class="subsection-title">Histórico recente neste navegador</h2><p class="note">Regista alterações feitas a partir desta administração neste dispositivo. Não altera nem substitui o histórico da base de dados.</p><div id="adminHistory" class="hint">Ainda sem operações registadas.</div>
+    <h2 class="subsection-title">Histórico recente neste navegador</h2><p class="note">Regista edições e ativações de desafios neste navegador. Não altera nem substitui o histórico da base de dados.</p><div id="adminHistory" class="hint">Ainda sem operações registadas.</div>
     <div id="challengePagination" class="challenge-actions" style="align-items:center;justify-content:space-between"><button type="button" class="secondary" id="challengePrev" style="width:auto">← Anterior</button><span id="challengePageInfo" class="challenge-meta">Página 1</span><button type="button" class="secondary" id="challengeNext" style="width:auto">Seguinte →</button></div>
     <div class="quick-scroll" aria-label="Navegação rápida na lista"><button type="button" id="challengeScrollTop" aria-label="Ir para o topo da lista" title="Ir para o topo">↑ Topo</button><button type="button" id="challengeScrollBottom" aria-label="Ir para o fim da lista" title="Ir para o fim">↓ Fim</button></div>
     <form id="challengeForm" class="hidden">
@@ -548,7 +548,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("challengeForm").classList.remove("hidden"); $("challengePagination").classList.add("hidden"); $("challengeList").nextElementSibling?.classList.add("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
   }
   $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeList").nextElementSibling?.classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
-  $("cancelChallenge").addEventListener("click",resetChallengeForm);
+  $("cancelChallenge").addEventListener("click",()=>{if(challengeFormDirty&&!confirm("Existem alterações por guardar. Queres descartá-las?"))return;resetChallengeForm();});
+  document.querySelectorAll("[data-admin-tab]").forEach(link=>link.addEventListener("click",event=>{if(challengeFormDirty&&!confirm("Existem alterações por guardar. Queres sair sem guardar?")){event.preventDefault();return;}setFormDirty(false);}));
   $("challengeScrollTop").addEventListener("click",()=>{const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().top+window.scrollY-12,behavior:"smooth"});});
   $("challengeScrollBottom").addEventListener("click",()=>{const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().bottom+window.scrollY,behavior:"smooth"});});
   $("reloadChallenges").addEventListener("click",loadChallenges);
