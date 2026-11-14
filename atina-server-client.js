@@ -188,6 +188,26 @@ async function atinaProgressLoadPointsLeaderboard() {
 }
 
 const ATINA_LEVEL_TITLES = ['Iniciante','Explorador','Descobridor','Conhecedor','Especialista','Mestre','Perito','Sábio','Génio','Lenda ATINA','Veterano','Erudito','Grande Mestre','Ilustre','Campeão','Visionário','Eminência','Grão-Mestre','Imortal','Lenda Suprema','Mestre do Conhecimento','Explorador Supremo','Sábio Supremo','Grande Sábio','Mestre Lendário','Génio Supremo','Guardião do Saber','Ícone ATINA','Lenda Eterna','Lenda Absoluta'];
+const ATINA_KNOWLEDGE_LEVEL_ICONS = [
+ 'head-question','book-open-variant','lightbulb-on','magnify','school',
+ 'brain','notebook-edit','bookshelf','puzzle-check','compass-rose',
+ 'calculator-variant','atom','flask-outline','dna','earth',
+ 'landmark','palette-outline','translate','telescope','microscope',
+ 'chart-timeline-variant','medal-outline','book-multiple','brain-circuit','lightbulb-group',
+ 'head-cog','school-outline','star-four-points','trophy-variant','crown'
+];
+function atinaCreateKnowledgeLevelIcon(level, compact=false) {
+ const n=Math.min(30,Math.max(1,Math.floor(Number(level)||1)));
+ const medal=document.createElement('span');
+ medal.className='atina-knowledge-medal'+(compact?' is-compact':'');
+ const glyph=document.createElement('span');
+ glyph.className='mdi mdi-'+ATINA_KNOWLEDGE_LEVEL_ICONS[n-1];
+ glyph.setAttribute('aria-hidden','true');
+ const number=document.createElement('em');number.textContent=String(n);
+ medal.append(glyph,number);
+ return medal;
+}
+
 function atinaLevelDesignation(level) {
   const safeLevel = Math.max(1, Number(level) || 1);
   return ATINA_LEVEL_TITLES[Math.min(safeLevel - 1, ATINA_LEVEL_TITLES.length - 1)];
@@ -351,7 +371,7 @@ async function atinaProgressLoadLeaderboard() {
       const levelNumber = Math.max(1, Number(row.level) || 1);
       const levelBadge = document.createElement('span');
       levelBadge.className = 'atina-level-medal';
-      levelBadge.appendChild(atinaCreateLevelInsignia(levelNumber));
+      levelBadge.appendChild(atinaCreateKnowledgeLevelIcon(levelNumber, true));
       levelBadge.setAttribute('aria-label', 'Nível ' + levelNumber);
       const levelTitle = document.createElement('span');
       levelTitle.className = 'atina-level-title';
