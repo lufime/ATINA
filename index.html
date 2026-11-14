@@ -1510,7 +1510,7 @@ async function loadOnlineRanking(){
  }catch(e){list.innerHTML='<li>Não foi possível carregar o ranking de pontos.</li>';}
 }
 async function loadMenuRanking(){
- const list=$('menuPointsRankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';const m=$('menuRankingMode')?.value||'solo';
+ const list=$('menuPointsRankingList');if(!list)return;const m=$('menuRankingMode')?.value||'solo';
  try{
   if(!supabaseClient)throw new Error('Supabase indisponível');
   const {data:rows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',m).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
@@ -1520,7 +1520,7 @@ async function loadMenuRanking(){
  }catch(e){list.innerHTML='<li>Não foi possível carregar o ranking de pontos.</li>';}
 }
 async function loadXpRanking(){
- const list=$('menuXpRankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';
+ const list=$('menuXpRankingList');if(!list)return;
  try{
   if(!supabaseClient)throw new Error('Supabase indisponível');
   const {data:rows,error}=await supabaseClient.rpc('atina_progress_leaderboard',{p_limit:10});
