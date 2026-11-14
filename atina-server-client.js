@@ -576,6 +576,21 @@ function atinaServerApplyState(state, announce = false) {
   answeredCount = Number(state.answered_count || 0);
   difficultyMode = state.difficulty || difficultyMode;
   const challenge = state.challenge;
+  const specialCard = state.special_card || null;
+  let cardNotice = document.getElementById('atinaSpecialCardNotice');
+  if (!cardNotice) {
+    cardNotice = document.createElement('div');
+    cardNotice.id = 'atinaSpecialCardNotice';
+    cardNotice.setAttribute('role', 'status');
+    cardNotice.setAttribute('aria-live', 'polite');
+    cardNotice.style.cssText = 'margin:12px 0;padding:12px 16px;border:1px solid #d6b45c;border-radius:12px;background:rgba(214,180,92,.12);font-weight:700;text-align:center';
+    const categoryNode = $('category');
+    if (categoryNode?.parentNode) categoryNode.parentNode.insertBefore(cardNotice, categoryNode.nextSibling);
+  }
+  if (cardNotice) {
+    cardNotice.textContent = specialCard ? (specialCard.icon || '🃏') + ' CARTA ESPECIAL: ' + (specialCard.name || 'Efeito ativo') + (specialCard.description ? ' — ' + specialCard.description : '') : '';
+    cardNotice.hidden = !specialCard;
+  }
   atinaRenderChallengeImageCredit(challenge.id);
   const total = Number(challenge.total_clues || (challenge.image_url ? 6 : 5));
   $('category').textContent = (challenge.emoji || '') + ' ' + (challenge.category || 'Desafio');
