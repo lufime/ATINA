@@ -1668,11 +1668,53 @@ $('voice').onclick=()=>{
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SpeechRecognition){$('feedback').textContent='O reconhecimento de voz não está disponível neste navegador. Podes escrever a resposta.';return;}
  const recognition=new SpeechRecognition();
- recognition.lang='pt-PT';recognition.interimResults=false;recognition.maxAlternatives=1;
- $('voice').disabled=true;$('feedback').textContent='Estou a ouvir… Diz a tua resposta.';
- recognition.onresult=e=>{const heard=e.results[0][0].transcript.trim();$('answer').value=heard;$('voiceTranscriptText').textContent=heard;$('voiceTranscript').classList.remove('hidden');saveLocalProgress();$('feedback').textContent='Resposta reconhecida. A confirmar…';submit();};
- recognition.onerror=()=>{$('feedback').textContent='Não consegui perceber. Tenta novamente ou escreve a resposta.';};
- recognition.onend=()=>{$('voice').disabled=locked;};
+ recognition.lang='pt-PT';recognition.interimResults=true;recognition.maxAlternatives=5;
+ let finalTranscript='',submitted=false,hadSpeech=false;
+ $('voice').disabled=true;$('feedback').textContent='Estou a ouvir… fala naturalmente e espera pelo fim da captura.';
+ $('voiceTranscriptText').textContent='A ouvir…';$('voiceTranscript').classList.remove('hidden');
+ const bestTranscript=result=>{
+  if(!result||!result.length)return '';
+  let best=result[0];
+  for(let i=1;i<result.length;i++){
+   const candidate=result[i];
+   if(Number(candidate.confidence||0)>Number(best.confidence||0))best=candidate;
+  }
+  return String(best.transcript||'').trim();
+ };
+ recognition.onresult=e=>{
+  let finalParts=[],interimParts=[];
+  for(let i=0;i<e.results.length;i++){
+   const result=e.results[i],phrase=bestTranscript(result);
+   if(!phrase)continue;
+   if(result.isFinal)finalParts.push(phrase);else interimParts.push(phrase);
+  }
+  finalTranscript=finalParts.join(' ').replace(/\\s+/g,' ').trim();
+  const preview=[finalTranscript,interimParts.join(' ')].filter(Boolean).join(' ').replace(/\\s+/g,' ').trim();
+  if(preview){
+   hadSpeech=true;$('answer').value=preview;$('voiceTranscriptText').textContent=preview;
+   $('feedback').textContent=finalTranscript?'A reconhecer a resposta…':'A captar a tua voz…';
+   saveLocalProgress();
+  }
+ };
+ recognition.onnomatch=()=>{$('feedback').textContent='Não consegui identificar as palavras. Tenta falar um pouco mais devagar e perto do microfone.';};
+ recognition.onerror=e=>{
+  const messages={ 'no-speech':'Não detetei voz. Verifica o microfone e tenta novamente.','audio-capture':'Não foi possível aceder ao microfone. Verifica as permissões.','not-allowed':'O acesso ao microfone foi recusado. Permite o acesso nas definições do navegador.' };
+  $('feedback').textContent=messages[e.error]||'O reconhecimento de voz falhou. Tenta novamente ou escreve a resposta.';
+ };
+ recognition.onend=()=>{
+  $('voice').disabled=locked;
+  if(submitted||locked)return;
+  const heard=finalTranscript.trim();
+  if(heard){
+   submitted=true;$('answer').value=heard;$('voiceTranscriptText').textContent=heard;
+   $('feedback').textContent='Resposta captada. A confirmar…';saveLocalProgress();submit();
+  }else if(!hadSpeech){
+   $('voiceTranscriptText').textContent='Não foi possível captar a resposta.';
+   $('feedback').textContent='Não captei uma resposta completa. Tenta novamente, falando de forma clara e sem pressa.';
+  }else{
+   $('feedback').textContent='A voz foi captada, mas não ficou uma frase completa. Tenta novamente.';
+  }
+ };
  try{recognition.start();}catch(err){$('voice').disabled=locked;$('feedback').textContent='Não foi possível iniciar o microfone. Verifica a permissão do navegador ou escreve a resposta.';}
 };
 $('listenAnswer').onclick=()=>{let g=games[queue[pos]];if('speechSynthesis' in window){window.speechSynthesis.cancel();let fala=new SpeechSynthesisUtterance('A resposta correta é: '+g[3]);fala.lang='pt-PT';window.speechSynthesis.speak(fala);}else{$('feedback').textContent='A leitura em voz alta não está disponível neste navegador.';}};$('pass').onclick=pass;$('continue').onclick=next;$('answer').addEventListener('input',saveLocalProgress);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
