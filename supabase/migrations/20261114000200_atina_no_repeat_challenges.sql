@@ -28,9 +28,11 @@ set search_path = ''
 as $function$
   with members as (
     select p.team_label,
-           coalesce('account:'||p.account_player_id::text,
+           coalesce('account:'||a.player_id::text,
                     'guest:'||md5(lower(btrim(p.nickname)))) as member_key
       from public.atina_v2_room_players p
+      left join private.atina_player_accounts a
+        on a.nickname_normalized=lower(btrim(p.nickname))
      where p.room_id=p_room_id
   ),
   teams as (
