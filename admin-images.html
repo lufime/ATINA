@@ -267,13 +267,13 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     const title = document.querySelector(".admin-header h1");
     if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores",challenges:"Base de dados dos desafios"}[tab]);
   }
+  const $ = (id) => document.getElementById(id);
   window.addEventListener("hashchange", () => activateTab(location.hash.slice(1)));
   window.addEventListener("message",event=>{const frame=$("imageManagerFrame");if(!frame||event.source!==frame.contentWindow||event.data?.type!=="atina-image-manager-height")return;const height=Math.max(700,Number(event.data.height)||700);frame.style.height=height+"px";frame.style.minHeight="0";});
   $("imageManagerFrame").addEventListener("load",()=>{const frame=$("imageManagerFrame");try{const doc=frame.contentDocument;const resize=()=>{const main=doc.querySelector("main"),gallery=doc.getElementById("gallery");const height=Math.max(doc.documentElement.scrollHeight,doc.body.scrollHeight,main?.scrollHeight||0,gallery?.scrollHeight||0)+100;frame.style.height=height+"px";};resize();if("ResizeObserver"in window){const observer=new ResizeObserver(resize);observer.observe(doc.documentElement);observer.observe(doc.body);const gallery=doc.getElementById("gallery");if(gallery)observer.observe(gallery);}new MutationObserver(resize).observe(doc.body,{childList:true,subtree:true,attributes:true});doc.defaultView.addEventListener("load",resize);doc.defaultView.addEventListener("resize",resize);[250,750,1500,3000,6000].forEach(ms=>setTimeout(resize,ms));}catch(error){console.warn("Não foi possível medir a gestão incorporada",error);}});
   const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dmxxcmdidGp1anNlanZlbmxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0ODMzMDksImV4cCI6MjEwOTA1OTMwOX0.k_3Q05KxqmAByJgPxDyWeWPnYYfkrPxkRjd60Bntn6w";
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const $ = (id) => document.getElementById(id);
   const status = (message) => { $("status").textContent = message; };
   activateTab(location.hash.slice(1));
   async function refreshSession() {
