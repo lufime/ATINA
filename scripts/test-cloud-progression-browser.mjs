@@ -86,11 +86,19 @@ try {
 
   // Account sign-in survives a fresh browser context through the server-issued session.
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
+  await page.reload({waitUntil:'load'});
+  await page.evaluate(() => showHomePage('profile'));
+  await page.locator('#atinaAccountLogin').waitFor({state:'visible'});
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
   await page.locator('#atinaAccountLogin').click();
   await page.getByText('Sessão iniciada. O teu progresso está sincronizado.').waitFor();
   assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
 
+  // Reabrir o formulário após autenticação para testar recuperação da conta.
+  await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
+  await page.reload({waitUntil:'load'});
+  await page.evaluate(() => showHomePage('profile'));
+  await page.locator('#atinaAccountRecover').waitFor({state:'visible'});
   // Recovery must return and display a replacement single-use key.
   await page.locator('#atinaRecoveryArea summary').click();
   await page.locator('#atinaRecoveryKey').fill('d'.repeat(48));
