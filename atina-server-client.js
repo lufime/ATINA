@@ -8,6 +8,7 @@ let atinaServerBusy = false;
 let atinaServerAutoRevealAt = 0;
 let atinaServerAutoRevealTriggered = false;
 let atinaServerLastResult = '{}';
+let atinaServerLastSpokenSolution = ''; // evita repetir a leitura durante atualizações/polling
 let atinaNetworkChallengeKey = '';
 let atinaNetworkFeedback = '';
 
@@ -668,6 +669,15 @@ function atinaServerApplyState(state, announce = false) {
   else if (locked) message = challenge.answer ? 'Resposta: ' + challenge.answer : 'Ronda terminada.';
   else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
   $('feedback').textContent = message;
+  // Lê a solução uma única vez quando o jogador erra, o tempo termina ou passa.
+  // A leitura é forçada: não depende da opção de leitura automática das pistas.
+  if (['wrong', 'incorrect', 'timeout', 'pass'].includes(result.outcome) && challenge.answer && typeof atinaSpeakClue === 'function') {
+    const spokenKey = [state.session_id, state.position, result.outcome].join(':');
+    if (spokenKey !== atinaServerLastSpokenSolution) {
+      atinaServerLastSpokenSolution = spokenKey;
+      atinaSpeakClue('A resposta correta é: ' + challenge.answer, true);
+    }
+  }
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
   if (locked && ['correct', 'wrong', 'incorrect'].includes(result.outcome)) atinaProgressClaim(state);
   if (locked) {
