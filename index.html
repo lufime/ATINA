@@ -1535,7 +1535,13 @@ setInterval(async()=>{
  }finally{atinaRankingRefreshInFlight=false;}
 },2000);
 let atinaInitialPage='access';
-showHomePage('access',true);
+try{
+ const hashPage=String(location.hash||'').replace(/^#/,'');
+ const savedPage=localStorage.getItem('atinaHomePage')||sessionStorage.getItem('atinaHomePage')||'access';
+ const candidate=atinaHomePageIsValid(hashPage)?hashPage:savedPage;
+ atinaInitialPage=atinaHomePageIsValid(candidate)?candidate:'access';
+}catch(e){atinaInitialPage='access';}
+showHomePage(atinaInitialPage,true);
 let raceElapsed=[0,0],raceStartedAt=0,raceTickHandle=null,raceFinished=false;let difficultyMode='medium',correctStreak=0;const difficultyPoints={easy:10,medium:15,hard:20};let atinaSoundEnabled=true;try{atinaSoundEnabled=localStorage.getItem('atinaSoundEnabled')!=='false';}catch(e){}let atinaClueSpeechEnabled=true;try{atinaClueSpeechEnabled=localStorage.getItem('atinaClueSpeechEnabled')!=='false';}catch(e){}let mode='solo',scores=[0,0],player=0,queue=[],pos=0,revealed=0,locked=false,answeredCount=0,timedMode=60,timeLeft=60,timerInterval=null,timerDeadline=0,lastTimerBeepAt=0,timePenaltyApplied=false,autoNextTimeout=null,autoRevealTimeout=null,autoRevealInterval=null,autoRevealSeconds=10;
 let activeSpecialCard=null,activeSurprise=null;
 const norm=s=>s.toLocaleLowerCase('pt-PT').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,'').trim();
