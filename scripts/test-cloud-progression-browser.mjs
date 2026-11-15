@@ -61,6 +61,12 @@ try {
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   await page.evaluate(() => showHomePage('profile'));
   await page.locator('#atinaAccountRegister').waitFor({state:'visible'});
+  // Cumprir o fluxo real de leitura e aceitação dos termos antes de testar o registo.
+  await page.locator('#atinaLegalOpenLink').click();
+  await page.locator('#atinaLegalText').evaluate(el => { el.scrollTop = el.scrollHeight; el.dispatchEvent(new Event('scroll')); });
+  await page.waitForFunction(() => document.querySelector('#atinaLegalAcknowledge')?.disabled === false);
+  await page.locator('[data-legal-close]').click();
+  await page.locator('#atinaLegalAcknowledge').check();
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaAccountPassword').evaluate(el => { el.value = 'x'.repeat(73); });
   await page.locator('#atinaAccountRegister').click();
