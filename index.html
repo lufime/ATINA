@@ -1085,7 +1085,7 @@ atinaLegalModal.className='atina-legal-modal hidden';
 atinaLegalModal.setAttribute('role','dialog');
 atinaLegalModal.setAttribute('aria-modal','true');
 atinaLegalModal.setAttribute('aria-labelledby','atinaLegalReadingTitle');
-atinaLegalModal.innerHTML='<div class="atina-legal-backdrop" data-legal-close></div><section class="card atina-legal-dialog"><div class="row"><h3 id="atinaLegalReadingTitle">Privacidade, dados e termos</h3><button type="button" class="btn secondary atina-legal-close" aria-label="Fechar" data-legal-close>✕</button></div><div id="atinaLegalReadingBody" class="atina-legal-content"></div><button type="button" class="btn full" data-legal-close>Fechar e voltar</button></section>';
+atinaLegalModal.innerHTML='<div class="atina-legal-backdrop" data-legal-close></div><section class="card atina-legal-dialog"><div class="row"><h3 id="atinaLegalReadingTitle">Privacidade, dados e termos</h3><button type="button" class="btn secondary atina-legal-close" aria-label="Fechar" data-legal-close>✕</button></div><div id="atinaLegalReadingBody"></div><button type="button" class="btn full" data-legal-close>Fechar e voltar</button></section>';
 document.body.appendChild(atinaLegalModal);
 const atinaLegalReadingBody=$('atinaLegalReadingBody');
 if(atinaLegalTextElement&&atinaLegalReadingBody)atinaLegalReadingBody.appendChild(atinaLegalTextElement);
@@ -3668,6 +3668,7 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 @media(max-width:480px){.atina-legal-modal{padding:8px}.atina-legal-dialog{max-height:92dvh;padding:12px!important}.atina-legal-dialog h3{font-size:16px}}
 </style>
 
+<style id="atina-legal-reading-layout">#atinaLegalReadingBody{flex:1 1 auto;min-height:0;overflow:hidden}#atinaLegalReadingBody #atinaLegalText{height:100%;max-height:calc(88dvh - 150px);overflow-y:auto;overscroll-behavior:contain}#atinaLegalReadingModal .atina-legal-dialog{max-height:92dvh}</style>
 <style id="atina-entry-gate-20261115">
 /* Entrada oficial: antes da autenticação só existe a página de boas-vindas e acesso. */
 body.atina-logged-out #atinaMainNav,
