@@ -1091,12 +1091,14 @@ const atinaLegalReadingBody=$('atinaLegalReadingBody');
 if(atinaLegalTextElement&&atinaLegalReadingBody)atinaLegalReadingBody.appendChild(atinaLegalTextElement);
 function atinaCheckLegalTextEnd(){
  if(!atinaLegalLinkWasOpened||atinaLegalTextWasReadToEnd)return;
- const legalText=$('atinaLegalText');
- if(!legalText)return;
- if(legalText.scrollTop+legalText.clientHeight>=legalText.scrollHeight-8){
+ const reader=$('atinaLegalReadingBody');
+ if(!reader)return;
+ const reachedEnd=reader.scrollTop+reader.clientHeight>=reader.scrollHeight-12;
+ if(reachedEnd){
   atinaLegalTextWasReadToEnd=true;
   const check=$('atinaLegalAcknowledge');
   if(check)check.disabled=false;
+  atinaAccountMessage('Obrigado por leres os termos. Já podes assinalar a caixa de confirmação.');
  }
 }
 $('atinaLegalOpenLink')?.addEventListener('click',event=>{
@@ -1108,7 +1110,9 @@ $('atinaLegalOpenLink')?.addEventListener('click',event=>{
  atinaLegalModal.classList.remove('hidden');
  document.body.style.overflow='hidden';
  if(atinaLegalTextElement)atinaLegalTextElement.scrollTop=0;
+ if(atinaLegalReadingBody){atinaLegalReadingBody.scrollTop=0;requestAnimationFrame(()=>{if(atinaLegalReadingBody.scrollHeight<=atinaLegalReadingBody.clientHeight+2){atinaLegalTextWasReadToEnd=true;$('atinaLegalAcknowledge').disabled=false;}});}
 });
+atinaLegalReadingBody?.addEventListener('scroll',atinaCheckLegalTextEnd,{passive:true});
 atinaLegalModal.addEventListener('click',event=>{
  if(event.target.closest('[data-legal-close]')){
   atinaLegalModal.classList.add('hidden');
@@ -3668,7 +3672,7 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 @media(max-width:480px){.atina-legal-modal{padding:8px}.atina-legal-dialog{max-height:92dvh;padding:12px!important}.atina-legal-dialog h3{font-size:16px}}
 </style>
 
-<style id="atina-legal-reading-layout">#atinaLegalReadingBody{flex:1 1 auto;min-height:0;overflow:hidden}#atinaLegalReadingBody #atinaLegalText{height:100%;max-height:calc(88dvh - 150px);overflow-y:auto;overscroll-behavior:contain}#atinaLegalReadingModal .atina-legal-dialog{max-height:92dvh}</style>
+<style id="atina-legal-reading-layout">#atinaLegalReadingBody{display:block;flex:1 1 auto;min-height:0;max-height:calc(92dvh - 145px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}#atinaLegalReadingBody #atinaLegalText{height:auto;max-height:none;overflow:visible;min-height:0}#atinaLegalReadingModal .atina-legal-dialog{height:92dvh;max-height:92dvh}#atinaLegalReadingModal .atina-legal-dialog>.row,#atinaLegalReadingModal .atina-legal-dialog>.btn{flex:0 0 auto}</style>
 <style id="atina-entry-gate-20261115">
 /* Entrada oficial: antes da autenticação só existe a página de boas-vindas e acesso. */
 body.atina-logged-out #atinaMainNav,
