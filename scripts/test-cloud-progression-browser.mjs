@@ -97,8 +97,14 @@ try {
   await page.locator('#atinaLegalAcknowledge').check();
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
   await page.locator('#atinaAccountLogin').click();
-  await page.getByText('Sessão iniciada. O teu progresso está sincronizado.').waitFor();
-  assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
+  // O login pode navegar automaticamente para o dashboard e ocultar a mensagem de estado.
+  await page.waitForFunction(() => localStorage.getItem('atinaAccountSessionV1') === 'c'.repeat(64), null, {timeout:10000}).catch(async () => {
+    throw new Error('O login não guardou a sessão. Estado: '+await page.locator('#atinaCloudStatus').textContent()
+      +' · RPC: '+JSON.stringify(await page.evaluate(()=>window.__mockRpcCalls||[]))
+      +' · erros: '+JSON.stringify(pageErrors));
+  });
+  assert.equal(await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_account_login').length), 1,
+    'O login deve chamar o RPC de autenticação exatamente uma vez.');
 
   // Reabrir o formulário após autenticação para testar recuperação da conta.
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
