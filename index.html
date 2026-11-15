@@ -1076,28 +1076,46 @@ async function atinaAccountRecover(){
  finally{$('atinaAccountRecover').disabled=false;}
 }
 let atinaLegalLinkWasOpened=false;
+let atinaLegalTextWasReadToEnd=false;
+function atinaCheckLegalTextEnd(){
+ if(!atinaLegalLinkWasOpened||atinaLegalTextWasReadToEnd)return;
+ const legalText=$('atinaLegalText');
+ if(!legalText)return;
+ const rect=legalText.getBoundingClientRect();
+ // Só desbloqueia quando o fim do texto completo chega à zona visível do ecrã.
+ if(rect.bottom<=window.innerHeight+12){
+  atinaLegalTextWasReadToEnd=true;
+  const check=$('atinaLegalAcknowledge');
+  if(check)check.disabled=false;
+ }
+}
 $('atinaLegalOpenLink')?.addEventListener('click',()=>{
  atinaLegalLinkWasOpened=true;
+ atinaLegalTextWasReadToEnd=false;
  const check=$('atinaLegalAcknowledge');
- if(check)check.disabled=false;
+ if(check){check.checked=false;check.disabled=true;}
+ // O link leva ao início do texto; é necessário percorrê-lo até ao fim.
+ requestAnimationFrame(atinaCheckLegalTextEnd);
 });
+window.addEventListener('scroll',atinaCheckLegalTextEnd,{passive:true});
+window.addEventListener('resize',atinaCheckLegalTextEnd);
 function atinaRequireLegalAcknowledgement(){
  const check=$('atinaLegalAcknowledge');
- if(!atinaLegalLinkWasOpened){
-  atinaAccountMessage('Abre e consulta primeiro o link dos termos completos. Depois poderás assinalar a confirmação.');
+ if(!atinaLegalLinkWasOpened||!atinaLegalTextWasReadToEnd){
+  atinaAccountMessage('Abre o link e percorre todo o texto até ao fim. Só depois poderás assinalar a confirmação.');
   $('atinaLegalOpenLink')?.scrollIntoView({behavior:'smooth',block:'center'});
   return false;
  }
  if(!check?.checked){
-  atinaAccountMessage('Depois de leres os termos, assinala a caixa de confirmação para continuar.');
+  atinaAccountMessage('Depois de leres os termos até ao fim, assinala a caixa de confirmação para continuar.');
   check?.focus();
   return false;
  }
  try{localStorage.setItem('atinaLegalAcknowledgedV2','1');}catch(e){}
  return true;
 }
-// A confirmação só pode ser assinalada depois de abrir o texto completo nesta visita.
-try{$('atinaLegalAcknowledge').checked=false;}catch(e){}
+// A caixa começa bloqueada em cada nova visita à página.
+try{$('atinaLegalAcknowledge').checked=false;$('atinaLegalAcknowledge').disabled=true;}catch(e){}
 
 $('atinaAccountRegister')?.addEventListener('click',atinaAccountRegister);
 $('atinaAccountLogin')?.addEventListener('click',atinaAccountLogin);
