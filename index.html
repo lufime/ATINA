@@ -953,6 +953,8 @@ const $=id=>document.getElementById(id);
 const ATINA_GAME_SUPABASE_URL='https://qvvlqrgbtjujsejvenld.supabase.co';
 const ATINA_GAME_SUPABASE_KEY='sb_publishable_hNav9TfG49in13UfflVdUw_O-_s2-0t';
 const supabaseClient=window.supabase?.createClient?window.supabase.createClient(ATINA_GAME_SUPABASE_URL,ATINA_GAME_SUPABASE_KEY):null;
+// Mostrar o formulário de conta logo no ecrã inicial de acesso.
+document.getElementById('atinaAccessAccountMount')?.appendChild(document.getElementById('atinaCloudProgressPanel'));
 // A chave da sessão é partilhada com atina-server-client.js.
 function atinaAccountMessage(message){const el=$('atinaCloudStatus');if(el)el.textContent=message;}
 function atinaAccountSetSession(data){
