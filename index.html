@@ -1290,7 +1290,7 @@ async function networkSubmitAnswer(){
  if(!answer){networkMessage('feedback','Escreve primeiro a resposta da tua equipa.');$('answer').focus();return;}
  if(networkAnsweredThisChallenge){networkMessage('feedback','A tua equipa já confirmou uma resposta neste desafio.');return;}
  if(!networkLobbyData?.team){networkMessage('feedback','Ainda não tens equipa atribuída. Pede ao anfitrião para te distribuir.');return;}
- if((networkLobbyData.players||[]).filter(p=>p.team===networkLobbyData.team).length<2){networkMessage('feedback','Esta equipa precisa de pelo menos duas pessoas para validar respostas.');return;}
+ 
  $('submit').disabled=true;
  try{
   const result=await networkCall('atina_v2_submit_team_proposal',{
