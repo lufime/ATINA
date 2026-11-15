@@ -89,6 +89,12 @@ try {
   await page.reload({waitUntil:'load'});
   await page.evaluate(() => showHomePage('profile'));
   await page.locator('#atinaAccountLogin').waitFor({state:'visible'});
+  // A confirmação dos termos é por sessão de página; repetir após reload antes do login.
+  await page.locator('#atinaLegalOpenLink').click();
+  await page.locator('#atinaLegalText').evaluate(el => { el.scrollTop = el.scrollHeight; el.dispatchEvent(new Event('scroll')); });
+  await page.waitForFunction(() => document.querySelector('#atinaLegalAcknowledge')?.disabled === false);
+  await page.getByRole('button', {name:'Fechar e voltar', exact:true}).click();
+  await page.locator('#atinaLegalAcknowledge').check();
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
   await page.locator('#atinaAccountLogin').click();
   await page.getByText('Sessão iniciada. O teu progresso está sincronizado.').waitFor();
