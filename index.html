@@ -843,7 +843,7 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 </style>
 </head>
 <body><main class="wrap">
-<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina." decoding="async" fetchpriority="high"><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><button type="button" id="atinaHeaderLogout" class="btn danger hidden" style="display:block;width:min(260px,100%);margin:10px auto 0;padding:10px 14px">Terminar sessão</button><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
+<header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina." decoding="async" fetchpriority="high"><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
 </header>
 <nav class="home-page-nav" id="atinaMainNav" aria-label="Navegação principal">
 <button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
@@ -962,7 +962,7 @@ function atinaAccountSetSession(data){
  if(data?.profile){window.atinaCloudProfile=data.profile;if(typeof atinaProgressRender==='function')atinaProgressRender(data.profile);}
  if(data?.profile?.nickname){localStorage.setItem('atinaProgressNicknameV1',data.profile.nickname);$('atinaCloudNickname').value=data.profile.nickname;}
  const summary=$('authSummary'),badge=$('homeLoginBadge'),badgeText=$('homeLoginText');
- if(data?.profile?.nickname){if(summary)summary.textContent='Sessão iniciada como '+data.profile.nickname+'. O teu progresso está sincronizado.';if(badge)badge.classList.remove('hidden');if(badgeText)badgeText.textContent=data.profile.nickname;const logout=$('atinaAccountLogout');if(logout)logout.classList.remove('hidden');$('atinaHeaderLogout')?.classList.remove('hidden');$('atinaAccountRegister')?.classList.add('hidden');$('atinaAccountLogin')?.classList.add('hidden');}
+ if(data?.profile?.nickname){if(summary)summary.textContent='Sessão iniciada como '+data.profile.nickname+'. O teu progresso está sincronizado.';if(badge)badge.classList.remove('hidden');if(badgeText)badgeText.textContent=data.profile.nickname;const logout=$('atinaAccountLogout');if(logout)logout.classList.remove('hidden');$('atinaAccountRegister')?.classList.add('hidden');$('atinaAccountLogin')?.classList.add('hidden');}
  if(data?.profile?.nickname&&localStorage.getItem('atinaLegalAcknowledgedV1')==='1'&&typeof showHomePage==='function')showHomePage('dashboard');
 }
 function atinaPasswordWithinBcryptLimit(password){return new TextEncoder().encode(password).length<=72;}
@@ -1022,7 +1022,6 @@ const atinaLogoutHandler=()=>{
  localStorage.removeItem(ATINA_ACCOUNT_SESSION_KEY);
  window.atinaCloudProfile=null;
  $('atinaAccountLogout')?.classList.add('hidden');
- $('atinaHeaderLogout')?.classList.add('hidden');
  $('atinaAccountRegister')?.classList.remove('hidden');
  $('atinaAccountLogin')?.classList.remove('hidden');
  if($('authSummary'))$('authSummary').textContent='Sessão terminada. Entra novamente para sincronizar o teu progresso.';
@@ -1031,8 +1030,6 @@ const atinaLogoutHandler=()=>{
  if(typeof showHomePage==='function')showHomePage('access');
 };
 $('atinaAccountLogout')?.addEventListener('click',atinaLogoutHandler);
-$('atinaHeaderLogout')?.addEventListener('click',atinaLogoutHandler);
-try{if(localStorage.getItem(ATINA_ACCOUNT_SESSION_KEY))$('atinaHeaderLogout')?.classList.remove('hidden');}catch(e){}
 
 let networkRoom=null, networkPollHandle=null, networkLobbyData=null, networkFinalizedResults=null, networkLastRefreshError=null;
 let networkLastSpokenClueState='';
