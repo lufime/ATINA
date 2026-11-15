@@ -1301,9 +1301,9 @@ async function networkSubmitAnswer(){
    networkMessage('feedback','Resposta proposta! Aguarda a votação dos restantes membros da tua equipa.');
   }else if(result?.status==='accepted'){
    networkAnsweredThisChallenge=true;
-   networkMessage('feedback','Resposta aceite e pontuação atribuída à equipa!');
+   networkMessage('feedback',result?.correct===true?'Resposta certa! Pontuação atribuída.':'Resposta aceite e pontuação atribuída à equipa!');
   }else if(result?.status==='rejected'){
-   networkMessage('feedback','A proposta foi rejeitada. A equipa pode discutir e propor outra resposta.');
+   networkMessage('feedback',result?.correct===false?'Resposta incorreta. Podes tentar novamente.':'A proposta foi rejeitada. A equipa pode discutir e propor outra resposta.');
   }else if(result?.status==='already_correct'){
    networkAnsweredThisChallenge=true;
    networkMessage('feedback','A tua equipa já acertou neste desafio.');
