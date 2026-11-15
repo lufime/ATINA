@@ -1077,32 +1077,45 @@ async function atinaAccountRecover(){
 }
 let atinaLegalLinkWasOpened=false;
 let atinaLegalTextWasReadToEnd=false;
+// O texto completo fica oculto no início e só é mostrado numa janela própria ao abrir o link.
+const atinaLegalTextElement=$('atinaLegalText');
+const atinaLegalModal=document.createElement('div');
+atinaLegalModal.id='atinaLegalReadingModal';
+atinaLegalModal.className='atina-legal-modal hidden';
+atinaLegalModal.setAttribute('role','dialog');
+atinaLegalModal.setAttribute('aria-modal','true');
+atinaLegalModal.setAttribute('aria-labelledby','atinaLegalReadingTitle');
+atinaLegalModal.innerHTML='<div class="atina-legal-backdrop" data-legal-close></div><section class="card atina-legal-dialog"><div class="row"><h3 id="atinaLegalReadingTitle">Privacidade, dados e termos</h3><button type="button" class="btn secondary atina-legal-close" aria-label="Fechar" data-legal-close>✕</button></div><div id="atinaLegalReadingBody" class="atina-legal-content"></div><button type="button" class="btn full" data-legal-close>Fechar e voltar</button></section>';
+document.body.appendChild(atinaLegalModal);
+const atinaLegalReadingBody=$('atinaLegalReadingBody');
+if(atinaLegalTextElement&&atinaLegalReadingBody)atinaLegalReadingBody.appendChild(atinaLegalTextElement);
 function atinaCheckLegalTextEnd(){
  if(!atinaLegalLinkWasOpened||atinaLegalTextWasReadToEnd)return;
  const legalText=$('atinaLegalText');
  if(!legalText)return;
- const hasInternalScroll=legalText.scrollHeight>legalText.clientHeight+2;
- const reachedEnd=hasInternalScroll
-  ? legalText.scrollTop+legalText.clientHeight>=legalText.scrollHeight-8
-  : legalText.getBoundingClientRect().bottom<=window.innerHeight+12;
- if(reachedEnd){
+ if(legalText.scrollTop+legalText.clientHeight>=legalText.scrollHeight-8){
   atinaLegalTextWasReadToEnd=true;
   const check=$('atinaLegalAcknowledge');
   if(check)check.disabled=false;
  }
 }
-$('atinaLegalOpenLink')?.addEventListener('click',()=>{
+$('atinaLegalOpenLink')?.addEventListener('click',event=>{
+ event.preventDefault();
  atinaLegalLinkWasOpened=true;
  atinaLegalTextWasReadToEnd=false;
  const check=$('atinaLegalAcknowledge');
  if(check){check.checked=false;check.disabled=true;}
- // O link leva ao início do texto; é necessário percorrê-lo até ao fim.
- requestAnimationFrame(atinaCheckLegalTextEnd);
+ atinaLegalModal.classList.remove('hidden');
+ document.body.style.overflow='hidden';
+ if(atinaLegalTextElement)atinaLegalTextElement.scrollTop=0;
 });
-const atinaLegalScrollableText=$('atinaLegalText');
-if(atinaLegalScrollableText)atinaLegalScrollableText.addEventListener('scroll',atinaCheckLegalTextEnd,{passive:true});
-window.addEventListener('scroll',atinaCheckLegalTextEnd,{passive:true});
-window.addEventListener('resize',atinaCheckLegalTextEnd);
+atinaLegalModal.addEventListener('click',event=>{
+ if(event.target.closest('[data-legal-close]')){
+  atinaLegalModal.classList.add('hidden');
+  document.body.style.overflow='';
+  if(atinaLegalTextWasReadToEnd)$('atinaLegalAcknowledge')?.focus();
+ }
+});
 function atinaRequireLegalAcknowledgement(){
  const check=$('atinaLegalAcknowledge');
  if(!atinaLegalLinkWasOpened||!atinaLegalTextWasReadToEnd){
