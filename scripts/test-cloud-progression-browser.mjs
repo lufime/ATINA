@@ -111,10 +111,11 @@ try {
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
   await page.reload({waitUntil:'load'});
   await page.evaluate(() => showHomePage('profile'));
+  // O formulário de recuperação está dentro de um painel details recolhido.
+  await page.locator('#atinaRecoveryArea summary').click();
   await page.locator('#atinaAccountRecover').waitFor({state:'visible'});
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
   // Recovery must return and display a replacement single-use key.
-  await page.locator('#atinaRecoveryArea summary').click();
   await page.locator('#atinaRecoveryKey').fill('d'.repeat(48));
   await page.locator('#atinaNewAccountPassword').fill('AnotherCorrectHorse2!');
   await page.locator('#atinaAccountRecover').click();
