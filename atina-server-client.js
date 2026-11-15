@@ -671,11 +671,12 @@ function atinaServerApplyState(state, announce = false) {
   $('feedback').textContent = message;
   // Lê a solução uma única vez quando o jogador erra, o tempo termina ou passa.
   // A leitura é forçada: não depende da opção de leitura automática das pistas.
-  if (['wrong', 'incorrect', 'timeout', 'pass'].includes(result.outcome) && challenge.answer && typeof atinaSpeakClue === 'function') {
+  if (['correct', 'wrong', 'incorrect', 'timeout', 'pass'].includes(result.outcome) && typeof atinaSpeakClue === 'function') {
     const spokenKey = [state.session_id, state.position, result.outcome].join(':');
     if (spokenKey !== atinaServerLastSpokenSolution) {
       atinaServerLastSpokenSolution = spokenKey;
-      atinaSpeakClue('A resposta correta é: ' + challenge.answer, true);
+      if (result.outcome === 'correct') atinaSpeakClue('Resposta certa!', true);
+      else if (challenge.answer) atinaSpeakClue('A resposta correta é: ' + challenge.answer, true);
     }
   }
   if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
