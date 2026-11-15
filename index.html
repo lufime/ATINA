@@ -1301,7 +1301,7 @@ async function networkHostNext(){
   if(button)button.disabled=!networkGameState?.locked||!networkGameHost;
  }
 }
-function networkHostReveal(){
+async function networkHostReveal(){
  if(!networkRoom||!networkGameHost||!networkGameActive||!networkGameState||networkGameState.mode==='mimicas')return;
  const total=Number(networkGameState.total_clues)||(Number(networkGameState.queue?.[networkGameState.pos]!=null&&isImageChallenge(networkGameState.queue[networkGameState.pos])?6:5));
  if(networkGameState.locked||Number(networkGameState.revealed||0)>=total)return;
