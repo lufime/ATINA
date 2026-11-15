@@ -962,6 +962,9 @@ const $=id=>document.getElementById(id);
 const ATINA_GAME_SUPABASE_URL='https://qvvlqrgbtjujsejvenld.supabase.co';
 const ATINA_GAME_SUPABASE_KEY='sb_publishable_hNav9TfG49in13UfflVdUw_O-_s2-0t';
 const supabaseClient=window.supabase?.createClient?window.supabase.createClient(ATINA_GAME_SUPABASE_URL,ATINA_GAME_SUPABASE_KEY):null;
+// O popup legal fica diretamente no body para não herdar ocultação/recortes dos painéis de navegação.
+const atinaLegalModalElement=document.getElementById('atinaLegalModal');
+if(atinaLegalModalElement&&atinaLegalModalElement.parentElement!==document.body)document.body.appendChild(atinaLegalModalElement);
 // Mostrar o formulário de conta logo no ecrã inicial de acesso.
 document.getElementById('atinaAccessAccountMount')?.appendChild(document.getElementById('atinaCloudProgressPanel'));
 // A chave da sessão é partilhada com atina-server-client.js.
