@@ -1122,7 +1122,8 @@ async function atinaAccountDelete(){
   if($('authSummary'))$('authSummary').textContent='Conta apagada permanentemente.';
   $('homeLoginBadge')?.classList.add('hidden');
   atinaAccountMessage('Conta apagada. Todos os dados da conta e progresso associado foram eliminados.');
-  if(typeof showHomePage==='function')showHomePage('access');
+  // Reiniciar a aplicação na página inicial de entrada, sem dados da sessão anterior.
+  window.location.replace(window.location.pathname+window.location.search+'#access');
  }catch(e){atinaAccountMessage(e.message||'Não foi possível apagar a conta. Tenta novamente.');}
  finally{if(button)button.disabled=false;}
 }
