@@ -1434,10 +1434,10 @@ function networkAssignTeam(playerId,team){
   try{
    const result=await networkCall('atina_v2_set_room_team',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_player_id:playerId,p_team:selectedTeam});
    if((result?.team??null)!==selectedTeam)throw new Error('O servidor não confirmou a equipa escolhida.');
-   const player=(networkLobbyData?.players||[]).find(p=>p.id===playerId);
-   if(player)player.team=result.team;
    await networkRefreshRoom();
-   const nickname=player?.nickname||'Jogador';
+   const player=(networkLobbyData?.players||[]).find(p=>p.id===playerId);
+   if(!player||(player.team??null)!==selectedTeam)throw new Error('A equipa escolhida não ficou guardada no servidor. Atualiza a sala e volta a escolher.');
+   const nickname=player.nickname||'Jogador';
    networkMessage('networkLobbyStatus',nickname+' atribuído a '+(selectedTeam||'sem equipa')+'. A alteração ficou guardada na sala.');
   }catch(e){
    networkMessage('networkLobbyStatus',e.message||'Não foi possível alterar a equipa.');
