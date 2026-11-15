@@ -146,7 +146,9 @@ try {
   assert.equal(claims[0].args.p_device_token,'c'.repeat(64));
 
   await page.locator('button.home-nav-btn[data-home-target="ranking"]').click();
-  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
+  // O ranking de XP ativo é o painel do menu, não a tabela histórica vazia do dashboard.
+  await page.evaluate(() => loadXpRanking());
+  await page.locator('#menuXpRankingList').getByText(/BrowserTester — 10 XP · nível 1/).waitFor();
   assert.deepEqual(pageErrors,[],'A aplicação não deve produzir erros JavaScript.');
   process.stdout.write('Browser E2E passed: criar conta, iniciar sessão, sincronizar XP em resposta errada, impedir claims duplicados e apresentar ranking.\\n');
 } finally {
