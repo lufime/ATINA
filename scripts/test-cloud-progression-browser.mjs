@@ -65,7 +65,7 @@ try {
   await page.locator('#atinaLegalOpenLink').click();
   await page.locator('#atinaLegalText').evaluate(el => { el.scrollTop = el.scrollHeight; el.dispatchEvent(new Event('scroll')); });
   await page.waitForFunction(() => document.querySelector('#atinaLegalAcknowledge')?.disabled === false);
-  await page.locator('[data-legal-close]').click();
+  await page.getByRole('button', {name:'Fechar e voltar', exact:true}).click();
   await page.locator('#atinaLegalAcknowledge').check();
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaAccountPassword').evaluate(el => { el.value = 'x'.repeat(73); });
