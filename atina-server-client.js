@@ -452,6 +452,7 @@ function atinaProgressBoot() {
       if ($('authSummary')) $('authSummary').textContent = 'Sessão iniciada como ' + profile.nickname + '. O teu progresso está sincronizado.';
       if ($('homeLoginBadge')) $('homeLoginBadge').classList.remove('hidden');
       if ($('homeLoginText')) $('homeLoginText').textContent = profile.nickname;
+      if (localStorage.getItem('atinaLegalAcknowledgedV1') === '1' && typeof showHomePage === 'function') showHomePage('dashboard', true);
     })
     .catch(error => {
       localStorage.removeItem(ATINA_ACCOUNT_SESSION_KEY);
