@@ -1268,9 +1268,39 @@ function networkDrawClock(){
  const d=Number(networkGameState.deadline)||0;timeLeft=d?Math.max(0,Math.ceil((d-Date.now())/1000)):0;drawTimer();if(networkGameHost&&d&&timeLeft===0&&!networkGameState.locked&&!networkGameState._timeoutResolving){networkGameState._timeoutResolving=true;networkCall('atina_v2_pass_room_challenge',{p_room_id:networkRoom.room_id,p_token:networkRoom.token}).then(result=>{if(result?.state)networkReceiveState(result.state);return networkRefreshRoom();}).catch(e=>{if(networkGameState)networkGameState._timeoutResolving=false;networkMessage('feedback',e.message||'Não foi possível fechar o desafio por tempo.');});}
 }
 function ensureNetworkClock(){if(networkClockHandle!==null)return;networkClockHandle=setInterval(networkDrawClock,100);networkDrawClock();}
-let networkChallengeIndexById={};function networkReceiveState(st){if(!st||(!st.queue&&st.mode!=='mimicas'&&st.mode!=='challenges'))return;if(st.mode==='challenges'&&!Array.isArray(st.queue)){const key=String(st.challenge_id);let idx=networkChallengeIndexById[key];const clueTotal=Number(st.total_clues)||5;const clueList=Array.from({length:clueTotal},(_,i)=>st.clues?.[i]||'');const virtualGame=[st.category||'Desafio',st.emoji||'🎯',clueList,st.answer||'',[],st.image_url||null];if(idx===undefined){idx=games.length;networkChallengeIndexById[key]=idx;games.push(virtualGame);}else games[idx]=virtualGame;st={...st,queue:Array(Math.max(1,Number(st.queue_length)||1)).fill(idx),scores:scores||[0,0],answeredCount:Number(st.answeredCount)||0};}if(networkGameState&&st.revision<=networkLastRevision)return;const sameChallenge=!!(networkGameState&&networkGameState.pos===st.pos&&networkGameState.challenge_id===st.challenge_id);networkGameState=st;networkLastRevision=st.revision||0;networkGameActive=!st.finished;if(!sameChallenge)networkAnsweredThisChallenge=false;networkGameHost=!!networkLobbyData?.is_host;if(st.mode==='mimicas'){if(networkClockHandle!==null&&st.finished){clearInterval(networkClockHandle);networkClockHandle=null;}networkRenderMimeState();if(!st.finished)ensureNetworkClock();return;}if($('game').classList.contains('hidden')&&localStorage.getItem('atinaGameClosed')!=='1')screen('game');networkRenderGameState();ensureNetworkClock();}
+let networkChallengeIndexById={};function networkReceiveState(st){if(!st||(!st.queue&&st.mode!=='mimicas'&&st.mode!=='challenges'&&st.mode!=='completed'))return;if(st.mode==='completed'){networkGameState={...st,queue:[],pos:0};networkGameActive=false;networkGameHost=!!networkLobbyData?.is_host;networkRenderGameState();return;}if(st.mode==='challenges'&&!Array.isArray(st.queue)){const key=String(st.challenge_id);let idx=networkChallengeIndexById[key];const clueTotal=Number(st.total_clues)||5;const clueList=Array.from({length:clueTotal},(_,i)=>st.clues?.[i]||'');const virtualGame=[st.category||'Desafio',st.emoji||'🎯',clueList,st.answer||'',[],st.image_url||null];if(idx===undefined){idx=games.length;networkChallengeIndexById[key]=idx;games.push(virtualGame);}else games[idx]=virtualGame;st={...st,queue:Array(Math.max(1,Number(st.queue_length)||1)).fill(idx),scores:scores||[0,0],answeredCount:Number(st.answeredCount)||0};}if(networkGameState&&st.revision<=networkLastRevision)return;const sameChallenge=!!(networkGameState&&networkGameState.pos===st.pos&&networkGameState.challenge_id===st.challenge_id);networkGameState=st;networkLastRevision=st.revision||0;networkGameActive=!st.finished;if(!sameChallenge)networkAnsweredThisChallenge=false;networkGameHost=!!networkLobbyData?.is_host;if(st.mode==='mimicas'){if(networkClockHandle!==null&&st.finished){clearInterval(networkClockHandle);networkClockHandle=null;}networkRenderMimeState();if(!st.finished)ensureNetworkClock();return;}if($('game').classList.contains('hidden')&&localStorage.getItem('atinaGameClosed')!=='1')screen('game');networkRenderGameState();ensureNetworkClock();}
 function renderTeamProposal(){const host=$('teamVotePanel');if(!host)return;host.replaceChildren();host.classList.add('hidden');const p=networkLobbyData?.team_proposal;if(!networkLobbyData?.team||!p)return;host.classList.remove('hidden');const title=document.createElement('strong');title.textContent='Votação da '+p.team;host.appendChild(title);const answer=document.createElement('p');answer.textContent=p.proposer+' propôs: «'+p.answer+'»';host.appendChild(answer);const votes=p.votes||[];const mine=votes.find(v=>v.player_id===networkLobbyData.player_id);const summary=document.createElement('p');summary.className='muted small';summary.textContent='Votos: '+votes.length+' · '+votes.filter(v=>v.agrees).length+' concordam · '+votes.filter(v=>!v.agrees).length+' não concordam';host.appendChild(summary);const status=document.createElement('p');status.textContent=p.status==='accepted'?'✓ Todos concordaram. Resposta aceite.':p.status==='rejected'?'✕ A proposta foi rejeitada.':p.proposer_id===networkLobbyData.player_id?'A aguardar os votos dos teus colegas.':mine?'Voto registado. A aguardar os restantes colegas.':'Concordas com esta resposta?';host.appendChild(status);if(p.status==='pending'&&p.proposer_id!==networkLobbyData.player_id&&!mine){for(const [label,agrees,cls] of [['Concordo',true,'btn full'],['Não concordo',false,'btn secondary full']]){const b=document.createElement('button');b.className=cls;b.textContent=label;b.style.marginTop='7px';b.onclick=async()=>{b.disabled=true;try{await networkCall('atina_v2_vote_team_proposal',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_proposal_id:p.id,p_agrees:agrees});await networkRefreshRoom();}catch(e){b.disabled=false;status.textContent=e.message;}};host.appendChild(b);}}if(p.status==='accepted'){networkAnsweredThisChallenge=true;$('answer').disabled=true;$('submit').disabled=true;}else if(p.status==='rejected'){networkAnsweredThisChallenge=false;const paused=!!networkGameState?.pause;$('answer').disabled=paused;$('submit').disabled=paused;$('answer').value='';}}
-async function networkHostReveal(){
+async async function networkHostPass(){
+ if(!networkRoom||!networkGameHost||!networkGameActive||!networkGameState||networkGameState.mode!=='challenges'||networkGameState.locked)return;
+ const button=$('pass');if(button)button.disabled=true;
+ try{
+  const result=await networkCall('atina_v2_pass_room_challenge',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});
+  if(result?.state)networkReceiveState(result.state);
+  await networkRefreshRoom();
+ }catch(e){
+  networkMessage('feedback',e.message||'Não foi possível passar este desafio.');
+ }finally{
+  if(button)button.disabled=!!networkGameState?.locked;
+ }
+}
+async function networkHostNext(){
+ if(!networkRoom||!networkGameHost||!networkGameActive||!networkGameState||networkGameState.mode!=='challenges'||!networkGameState.locked)return;
+ const button=$('continue');if(button)button.disabled=true;
+ try{
+  const result=await networkCall('atina_v2_next_room_challenge',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});
+  if(result?.state)networkReceiveState(result.state);
+  await networkRefreshRoom();
+  if(result?.status==='completed'){
+   const state=networkLobbyData?.game_state||{mode:'completed'};
+   networkReceiveState({...state,mode:'completed'});
+  }
+ }catch(e){
+  networkMessage('feedback',e.message||'Não foi possível avançar para o próximo desafio.');
+ }finally{
+  if(button)button.disabled=!networkGameState?.locked||!networkGameHost;
+ }
+}
+function networkHostReveal(){
  if(!networkRoom||!networkGameHost||!networkGameActive||!networkGameState||networkGameState.mode==='mimicas')return;
  const total=Number(networkGameState.total_clues)||(Number(networkGameState.queue?.[networkGameState.pos]!=null&&isImageChallenge(networkGameState.queue[networkGameState.pos])?6:5));
  if(networkGameState.locked||Number(networkGameState.revealed||0)>=total)return;
