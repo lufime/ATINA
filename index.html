@@ -1234,7 +1234,7 @@ function networkDrawClock(){
  }
  const pause=networkGameState.pause;
  if(pause&&Date.parse(pause.ends_at)>Date.now()){const left=Math.max(0,Math.ceil((Date.parse(pause.ends_at)-Date.now())/1000));$('timerDisplay').textContent='PAUSA · '+String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');$('timerDisplay').classList.remove('urgent');return;}
- if(pause){$('timerDisplay').textContent='A retomar…';return;}
+ if(pause){networkGameState.pause=null;}
  const d=Number(networkGameState.deadline)||0;timeLeft=d?Math.max(0,Math.ceil((d-Date.now())/1000)):0;drawTimer();if(networkGameHost&&d&&timeLeft===0&&!networkGameState.locked){networkGameState.locked=true;networkGameState.deadline=0;networkGameState.feedback='Tempo esgotado! O desafio terminou.';networkPublishGameState().then(networkRenderGameState).catch(e=>networkMessage('feedback',e.message));}
 }
 function ensureNetworkClock(){if(networkClockHandle!==null)return;networkClockHandle=setInterval(networkDrawClock,100);networkDrawClock();}
@@ -1419,7 +1419,7 @@ function renderNetworkTimeoutPanel(){
  const add=(label,scope,remaining)=>{
   const b=document.createElement('button');b.className='btn secondary full';b.style.marginTop='7px';
   b.textContent='⏸️ '+label+' · restam '+networkTimeoutLabel(remaining);
-  b.disabled=remaining<900||!!state.locked||!!state.pause;
+  b.disabled=remaining<900||!!state.locked||!!(state.pause&&Date.parse(state.pause.ends_at)>Date.now());
   b.onclick=async()=>{b.disabled=true;b.textContent='A pedir pausa…';try{await networkCall('atina_v2_request_timeout',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_scope:scope});await networkRefreshRoom();}catch(e){b.disabled=false;b.textContent='⏸️ '+label+' · restam '+networkTimeoutLabel(remaining);info.textContent=e.message||'Não foi possível iniciar a pausa.';}};
   actions.appendChild(b);
  };
