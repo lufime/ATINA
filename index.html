@@ -1324,7 +1324,8 @@ function showHomePage(page,restore=false){
  if(!atinaHomePageIsValid(page))page='access';
  let hasSession=false,hasAcknowledgement=false;
  try{hasSession=!!localStorage.getItem('atinaAccountSessionV1');hasAcknowledgement=localStorage.getItem('atinaLegalAcknowledgedV1')==='1';}catch(e){}
- if(page!=='access'&&(!hasSession||!hasAcknowledgement))page='access';\n document.body.classList.toggle('atina-logged-out',page==='access');
+ if(page!=='access'&&(!hasSession||!hasAcknowledgement))page='access';
+ document.body.classList.toggle('atina-logged-out',page==='access');
  // O painel de conta muda de contentor conforme o separador, para que o botão de terminar sessão fique sempre no Perfil.
  const accountPanel=document.getElementById('atinaCloudProgressPanel');
  const accountMount=document.getElementById(page==='profile'?'atinaProfileAccountMount':'atinaAccessAccountMount');
@@ -3521,7 +3522,7 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 @media(max-width:480px){.atina-legal-modal{padding:8px}.atina-legal-dialog{max-height:92dvh;padding:12px!important}.atina-legal-dialog h3{font-size:16px}}
 </style>
 
-\n<style id="atina-entry-gate-20261115">
+<style id="atina-entry-gate-20261115">
 /* Entrada oficial: antes da autenticação só existe a página de boas-vindas e acesso. */
 body.atina-logged-out #atinaMainNav,
 body.atina-logged-out #atinaUpdateNotice{display:none!important}
@@ -3564,4 +3565,5 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  body.atina-logged-out #atinaCloudProgressPanel{padding:12px!important}
  .atina-legal-inline .atina-legal-content{max-height:30vh}
 }
-</style>\n</body></html>
+</style>
+</body></html>
