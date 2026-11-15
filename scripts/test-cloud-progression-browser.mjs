@@ -95,6 +95,7 @@ try {
   await page.waitForFunction(() => document.querySelector('#atinaLegalAcknowledge')?.disabled === false);
   await page.getByRole('button', {name:'Fechar e voltar', exact:true}).click();
   await page.locator('#atinaLegalAcknowledge').check();
+  await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
   await page.locator('#atinaAccountLogin').click();
   // O login pode navegar automaticamente para o dashboard e ocultar a mensagem de estado.
@@ -111,6 +112,7 @@ try {
   await page.reload({waitUntil:'load'});
   await page.evaluate(() => showHomePage('profile'));
   await page.locator('#atinaAccountRecover').waitFor({state:'visible'});
+  await page.locator('#atinaCloudNickname').fill('BrowserTester');
   // Recovery must return and display a replacement single-use key.
   await page.locator('#atinaRecoveryArea summary').click();
   await page.locator('#atinaRecoveryKey').fill('d'.repeat(48));
