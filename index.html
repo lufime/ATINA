@@ -840,6 +840,11 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 .atina-level-gallery-card{padding:10px 5px!important}
 .atina-level-gallery-card strong{font-size:11px!important}
 @media(min-width:620px){.atina-level-gallery-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+<style id="atina-delete-button-profile-only">
+/* Segurança visual: o botão de apagar conta nunca aparece no contentor de acesso/início. */
+#atinaAccessAccountMount #atinaAccountDelete{display:none!important}
+#atinaProfileAccountMount #atinaAccountDelete.hidden{display:none!important}
+</style>
 </style>
 </head>
 <body><main class="wrap">
