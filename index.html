@@ -1091,7 +1091,7 @@ const atinaLegalReadingBody=$('atinaLegalReadingBody');
 if(atinaLegalTextElement&&atinaLegalReadingBody)atinaLegalReadingBody.appendChild(atinaLegalTextElement);
 function atinaCheckLegalTextEnd(){
  if(!atinaLegalLinkWasOpened)return;
- const reader=$('atinaLegalReadingBody');
+ const reader=atinaLegalTextElement;
  if(!reader)return;
  const maxScroll=Math.max(0,reader.scrollHeight-reader.clientHeight);
  const progress=maxScroll<=2?100:Math.min(100,Math.max(0,Math.round(reader.scrollTop/maxScroll*100)));
@@ -1099,7 +1099,7 @@ function atinaCheckLegalTextEnd(){
  const label=$('atinaLegalProgressText');
  if(fill)fill.style.width=progress+'%';
  if(label)label.textContent='Leitura: '+progress+'%';
- const reachedEnd=maxScroll<=2||reader.scrollTop+reader.clientHeight>=reader.scrollHeight-12;
+ const reachedEnd=maxScroll<=2||reader.scrollTop+reader.clientHeight>=reader.scrollHeight-8;
  if(reachedEnd&&!atinaLegalTextWasReadToEnd){
   atinaLegalTextWasReadToEnd=true;
   if(fill)fill.style.width='100%';
@@ -1118,8 +1118,10 @@ $('atinaLegalOpenLink')?.addEventListener('click',event=>{
  atinaLegalModal.classList.remove('hidden');
  document.body.style.overflow='hidden';
  if(atinaLegalTextElement)atinaLegalTextElement.scrollTop=0;
- if(atinaLegalReadingBody){atinaLegalReadingBody.scrollTop=0;requestAnimationFrame(atinaCheckLegalTextEnd);}
+ if(atinaLegalReadingBody)atinaLegalReadingBody.scrollTop=0;
+ requestAnimationFrame(atinaCheckLegalTextEnd);
 });
+atinaLegalTextElement?.addEventListener('scroll',atinaCheckLegalTextEnd,{passive:true});
 atinaLegalReadingBody?.addEventListener('scroll',atinaCheckLegalTextEnd,{passive:true});
 window.addEventListener('resize',()=>{if(!atinaLegalModal.classList.contains('hidden'))atinaCheckLegalTextEnd();});
 atinaLegalModal.addEventListener('click',event=>{
@@ -3744,5 +3746,11 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 
 <style id="atina-legal-progress-20261115">
 .atina-legal-progress{flex:0 0 auto;padding:2px 0 0}.atina-legal-progress-track{height:9px;width:100%;overflow:hidden;border-radius:99px;background:#263d55;border:1px solid #49627b}.atina-legal-progress-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#c99b4e,#f3d18a);transition:width .12s ease}.atina-legal-progress p{margin:4px 0 0!important;color:#f0cf87;font-size:12px;font-weight:750}.atina-legal-dialog #atinaLegalReadingBody{scrollbar-gutter:stable;touch-action:pan-y}
+</style>
+
+<style id="atina-legal-scroll-fix-20261115">
+/* O próprio texto é o único elemento com scroll; assim o evento e a medição coincidem. */
+#atinaLegalReadingModal #atinaLegalReadingBody{display:flex!important;flex:1 1 0!important;min-height:0!important;height:0!important;max-height:none!important;overflow:hidden!important;padding:0!important}
+#atinaLegalReadingModal #atinaLegalText{display:block!important;flex:1 1 auto!important;min-height:0!important;height:100%!important;max-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:2px 7px 12px 0!important}
 </style>
 </body></html>
