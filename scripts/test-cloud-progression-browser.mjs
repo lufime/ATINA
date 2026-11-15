@@ -61,6 +61,12 @@ try {
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   await page.evaluate(() => showHomePage('profile'));
   await page.locator('#atinaAccountRegister').waitFor({state:'visible'});
+  // Cumprir o fluxo real de leitura e aceitação dos termos antes de testar o registo.
+  await page.locator('#atinaLegalOpenLink').click();
+  await page.locator('#atinaLegalText').evaluate(el => { el.scrollTop = el.scrollHeight; el.dispatchEvent(new Event('scroll')); });
+  await page.waitForFunction(() => document.querySelector('#atinaLegalAcknowledge')?.disabled === false);
+  await page.getByRole('button', {name:'Fechar e voltar', exact:true}).click();
+  await page.locator('#atinaLegalAcknowledge').check();
   await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaAccountPassword').evaluate(el => { el.value = 'x'.repeat(73); });
   await page.locator('#atinaAccountRegister').click();
@@ -80,13 +86,36 @@ try {
 
   // Account sign-in survives a fresh browser context through the server-issued session.
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
+  await page.reload({waitUntil:'load'});
+  await page.evaluate(() => showHomePage('profile'));
+  await page.locator('#atinaAccountLogin').waitFor({state:'visible'});
+  // A confirmação dos termos é por sessão de página; repetir após reload antes do login.
+  await page.locator('#atinaLegalOpenLink').click();
+  await page.locator('#atinaLegalText').evaluate(el => { el.scrollTop = el.scrollHeight; el.dispatchEvent(new Event('scroll')); });
+  await page.waitForFunction(() => document.querySelector('#atinaLegalAcknowledge')?.disabled === false);
+  await page.getByRole('button', {name:'Fechar e voltar', exact:true}).click();
+  await page.locator('#atinaLegalAcknowledge').check();
+  await page.locator('#atinaCloudNickname').fill('BrowserTester');
   await page.locator('#atinaAccountPassword').fill('CorrectHorseBattery1!');
   await page.locator('#atinaAccountLogin').click();
-  await page.getByText('Sessão iniciada. O teu progresso está sincronizado.').waitFor();
-  assert.equal(await page.evaluate(() => localStorage.getItem('atinaAccountSessionV1')), 'c'.repeat(64));
+  // O login pode navegar automaticamente para o dashboard e ocultar a mensagem de estado.
+  await page.waitForFunction(() => localStorage.getItem('atinaAccountSessionV1') === 'c'.repeat(64), null, {timeout:10000}).catch(async () => {
+    throw new Error('O login não guardou a sessão. Estado: '+await page.locator('#atinaCloudStatus').textContent()
+      +' · RPC: '+JSON.stringify(await page.evaluate(()=>window.__mockRpcCalls||[]))
+      +' · erros: '+JSON.stringify(pageErrors));
+  });
+  assert.equal(await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_account_login').length), 1,
+    'O login deve chamar o RPC de autenticação exatamente uma vez.');
 
-  // Recovery must return and display a replacement single-use key.
+  // Reabrir o formulário após autenticação para testar recuperação da conta.
+  await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
+  await page.reload({waitUntil:'load'});
+  await page.evaluate(() => showHomePage('profile'));
+  // O formulário de recuperação está dentro de um painel details recolhido.
   await page.locator('#atinaRecoveryArea summary').click();
+  await page.locator('#atinaAccountRecover').waitFor({state:'visible'});
+  await page.locator('#atinaCloudNickname').fill('BrowserTester');
+  // Recovery must return and display a replacement single-use key.
   await page.locator('#atinaRecoveryKey').fill('d'.repeat(48));
   await page.locator('#atinaNewAccountPassword').fill('AnotherCorrectHorse2!');
   await page.locator('#atinaAccountRecover').click();
@@ -103,7 +132,12 @@ try {
   });
   const claimState = {mode:'solo',session_id:'00000000-0000-4000-8000-000000000123',position:1,round_locked:true,last_result:{outcome:'wrong',points:0}};
   await page.evaluate(state => atinaProgressClaim(state), claimState);
-  await page.getByText(/\+10 XP confirmado pelo servidor/).waitFor();
+  // O painel de conta pode estar oculto após a navegação automática; confirmar o estado persistido.
+  await page.waitForFunction(() => document.querySelector('#atinaCloudXp')?.textContent.trim() === '10 XP', null, {timeout:10000}).catch(async () => {
+    throw new Error('O XP confirmado não foi atualizado. XP: '+await page.locator('#atinaCloudXp').textContent()
+      +' · RPC: '+JSON.stringify(await page.evaluate(()=>window.__mockRpcCalls||[]))
+      +' · erros: '+JSON.stringify(pageErrors));
+  });
   assert.equal(await page.locator('#atinaCloudXp').textContent(), '10 XP');
   await page.evaluate(state => atinaProgressClaim(state), claimState);
   const claims = await page.evaluate(() => window.__mockRpcCalls.filter(call=>call.name==='atina_progress_claim_local'));
@@ -112,7 +146,11 @@ try {
   assert.equal(claims[0].args.p_device_token,'c'.repeat(64));
 
   await page.locator('button.home-nav-btn[data-home-target="ranking"]').click();
-  await page.locator('#atinaCloudLeaderboard').getByText(/BrowserTester — 10 XP/).waitFor();
+  // O ranking de XP ativo é o painel do menu, não a tabela histórica vazia do dashboard.
+  await page.evaluate(() => loadXpRanking());
+  await page.locator('#menuXpRankingList').getByText(/BrowserTester — 10 XP · nível 1/).waitFor({state:'attached'});
+  assert.match(await page.locator('#menuXpRankingList').textContent(), /BrowserTester — 10 XP · nível 1/,
+    'O ranking de XP deve incluir o perfil atualizado.');
   assert.deepEqual(pageErrors,[],'A aplicação não deve produzir erros JavaScript.');
   process.stdout.write('Browser E2E passed: criar conta, iniciar sessão, sincronizar XP em resposta errada, impedir claims duplicados e apresentar ranking.\\n');
 } finally {

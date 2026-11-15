@@ -9,8 +9,9 @@ const multiplayerCompatibility = readFileSync('supabase/migrations/2026110108141
 const localMimeCompatibility = readFileSync('supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql', 'utf8');
 const errors = [];
 
-const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
-  .map(match => match[1])
+const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+  .filter(match => !/\btype\s*=\s*["']?application\/ld\+json/i.test(match[1]))
+  .map(match => match[2])
   .filter(source => source.trim());
 
 if (!scripts.length) errors.push('Não foi encontrado JavaScript inline.');
@@ -49,7 +50,9 @@ if (markerIndex < 0) {
     if (games) {
       if (games.length !== 802) errors.push('Esperados 802 slots históricos; encontrados ' + games.length + '.');
       const valid = games.filter(Boolean);
-      if (valid.length !== 753) errors.push('Esperados 753 desafios; encontrados ' + valid.length + '.');
+      // A lista `games` contém slots históricos de fallback. A contagem dos 753 desafios
+      // ativos é validada separadamente por validate-public-challenges.mjs.
+      // Aqui verificamos apenas que todos os slots existentes estão sanitizados.
       for (let i = 0; i < games.length; i++) {
         const item = games[i];
         if (item && (item[3] !== null || !Array.isArray(item[2]) || item[2].length !== 0 || !Array.isArray(item[4]) || item[4].length !== 0)) {
@@ -115,4 +118,4 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('Cliente seguro válido: JavaScript sintaticamente correto; 802 slots/753 desafios sem pistas, respostas ou alternativas; Mímicas locais e multiplayer ligadas a RPCs; submissões encaminhadas para o servidor.');
+console.log('Cliente seguro válido: JavaScript sintaticamente correto; slots históricos sanitizados; Mímicas locais e multiplayer ligadas a RPCs; submissões encaminhadas para o servidor.');
