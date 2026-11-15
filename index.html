@@ -1028,7 +1028,7 @@ function atinaAccountSetSession(data){
  if(data?.profile){window.atinaCloudProfile=data.profile;if(typeof atinaProgressRender==='function')atinaProgressRender(data.profile);}
  if(data?.profile?.nickname){localStorage.setItem('atinaProgressNicknameV1',data.profile.nickname);$('atinaCloudNickname').value=data.profile.nickname;}
  const summary=$('authSummary'),badge=$('homeLoginBadge'),badgeText=$('homeLoginText');
- if(data?.profile?.nickname){if(summary)summary.textContent='Sessão iniciada como '+data.profile.nickname+'. O teu progresso está sincronizado.';if(badge)badge.classList.remove('hidden');if(badgeText)badgeText.textContent=data.profile.nickname;const logout=$('atinaAccountLogout');if(logout)logout.classList.remove('hidden');$('atinaAccountRegister')?.classList.add('hidden');$('atinaAccountLogin')?.classList.add('hidden');}const deleteButton=$('atinaAccountDelete');if(deleteButton)deleteButton.classList.toggle('hidden',!data?.profile?.nickname);
+ if(data?.profile?.nickname){if(summary)summary.textContent='Sessão iniciada como '+data.profile.nickname+'. O teu progresso está sincronizado.';if(badge)badge.classList.remove('hidden');if(badgeText)badgeText.textContent=data.profile.nickname;const logout=$('atinaAccountLogout');if(logout)logout.classList.remove('hidden');$('atinaAccountRegister')?.classList.add('hidden');$('atinaAccountLogin')?.classList.add('hidden');}const deleteButton=$('atinaAccountDelete');if(deleteButton){deleteButton.classList.add('hidden');deleteButton.style.setProperty('display','none','important');}
  if(data?.profile?.nickname&&localStorage.getItem('atinaLegalAcknowledgedV1')==='1'&&typeof showHomePage==='function')showHomePage('dashboard');
 }
 function atinaPasswordWithinBcryptLimit(password){return new TextEncoder().encode(password).length<=72;}
@@ -1420,7 +1420,12 @@ function showHomePage(page,restore=false){
  if(accountPanel&&accountMount&&accountPanel.parentElement!==accountMount)accountMount.appendChild(accountPanel);
  // A eliminação da conta é uma ação exclusiva do Perfil; nunca aparece no ecrã inicial de acesso.
  const deleteAccountButton=document.getElementById('atinaAccountDelete');
- if(deleteAccountButton)deleteAccountButton.classList.toggle('hidden',page!=='profile'||!hasSession);
+ if(deleteAccountButton){
+  const canShowDelete=page==='profile'&&hasSession;
+  deleteAccountButton.classList.toggle('hidden',!canShowDelete);
+  if(canShowDelete)deleteAccountButton.style.removeProperty('display');
+  else deleteAccountButton.style.setProperty('display','none','important');
+ }
  // Ao mudar de separador, garantir que o ecrã principal fica guardado como ativo.
  if(!restore)screen('home');
  // Cada separador mostra exclusivamente o seu painel.
