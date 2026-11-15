@@ -873,7 +873,7 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  <div id="atinaAccessAccountMount"></div>
  <section class="card atina-legal-inline" aria-labelledby="atinaLegalInlineTitle">
   <h3 id="atinaLegalInlineTitle">🔒 Privacidade, dados e termos</h3>
-  <div class="atina-legal-content">
+  <div class="atina-legal-content" id="atinaLegalText">
    <h4>Que dados são pedidos?</h4><p><strong>O ATINA não pede:</strong> nome verdadeiro, email, número de telemóvel, morada ou data de nascimento.</p>
    <h4>Que dados são guardados?</h4><p>Na conta são guardados: pseudónimo, palavra-passe protegida por hash, hash da chave de recuperação, dados técnicos de sessão, pontuação, XP, nível e progresso dos desafios.</p>
    <p>As palavras-passe e as chaves de recuperação não são guardadas em texto legível. O ATINA não guarda o histórico individual das respostas. Os serviços técnicos usados para alojar e operar a plataforma poderão tratar registos técnicos necessários ao seu funcionamento.</p>
@@ -902,7 +902,8 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
    <p>O responsável pelo projeto ATINA ainda tem de publicar os seus dados de identificação e um contacto próprio para questões de privacidade ou pedidos relacionados com os dados pessoais. Esta informação será acrescentada antes da versão pública definitiva.</p>
    <p class="muted small">Este texto é uma informação provisória e não substitui os termos e a política de privacidade finais. Será atualizado à medida que o projeto evoluir.</p>
   </div>
-  <label class="consent-row"><input id="atinaLegalAcknowledge" type="checkbox"><span>Li e aceito os termos provisórios de utilização e confirmo que li a informação de privacidade.</span></label>
+  <p class="small" style="margin:14px 0 8px"><a href="#atinaLegalText" id="atinaLegalOpenLink" style="color:#f0c66f;font-weight:700;text-decoration:underline">Abrir e ler os termos completos</a></p>
+  <label class="consent-row"><input id="atinaLegalAcknowledge" type="checkbox" disabled><span>Li e aceito os termos provisórios de utilização e confirmo que li a informação de privacidade.</span></label>
   <p class="muted small">A confirmação é obrigatória para criar conta ou iniciar sessão e entrar no jogo.</p>
  </section>
 </section><div class="sound-control home-page-panel" data-home-page="dashboard"><div class="home-welcome"><div class="home-welcome-kicker">BEM-VINDO AO ATINA</div><h2>Está na hora de pôr a mente à prova.</h2><p>Escolhe um modo de jogo, descobre pistas e soma pontos. Podes jogar sozinho, em equipa ou com amigos à distância.</p><button type="button" class="btn full" data-home-target="play">Começar a jogar →</button></div>
@@ -1074,15 +1075,29 @@ async function atinaAccountRecover(){
  }catch(e){atinaAccountMessage(e.message||'Não foi possível recuperar a conta.');}
  finally{$('atinaAccountRecover').disabled=false;}
 }
+let atinaLegalLinkWasOpened=false;
+$('atinaLegalOpenLink')?.addEventListener('click',()=>{
+ atinaLegalLinkWasOpened=true;
+ const check=$('atinaLegalAcknowledge');
+ if(check)check.disabled=false;
+});
 function atinaRequireLegalAcknowledgement(){
  const check=$('atinaLegalAcknowledge');
- let acknowledged=false;try{acknowledged=localStorage.getItem('atinaLegalAcknowledgedV1')==='1';}catch(e){}
- if(!check?.checked&&!acknowledged){atinaAccountMessage('Lê os termos e assinala a caixa de confirmação no final da página antes de continuar.');$('atinaLegalInlineTitle')?.scrollIntoView({behavior:'smooth',block:'center'});return false;}
- try{localStorage.setItem('atinaLegalAcknowledgedV1','1');}catch(e){}
+ if(!atinaLegalLinkWasOpened){
+  atinaAccountMessage('Abre e consulta primeiro o link dos termos completos. Depois poderás assinalar a confirmação.');
+  $('atinaLegalOpenLink')?.scrollIntoView({behavior:'smooth',block:'center'});
+  return false;
+ }
+ if(!check?.checked){
+  atinaAccountMessage('Depois de leres os termos, assinala a caixa de confirmação para continuar.');
+  check?.focus();
+  return false;
+ }
+ try{localStorage.setItem('atinaLegalAcknowledgedV2','1');}catch(e){}
  return true;
 }
-// A confirmação dos termos é apresentada diretamente na página de entrada.
-try{$('atinaLegalAcknowledge').checked=localStorage.getItem('atinaLegalAcknowledgedV1')==='1';}catch(e){}
+// A confirmação só pode ser assinalada depois de abrir o texto completo nesta visita.
+try{$('atinaLegalAcknowledge').checked=false;}catch(e){}
 
 $('atinaAccountRegister')?.addEventListener('click',atinaAccountRegister);
 $('atinaAccountLogin')?.addEventListener('click',atinaAccountLogin);
