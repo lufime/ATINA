@@ -1413,6 +1413,9 @@ function showHomePage(page,restore=false){
  const accountPanel=document.getElementById('atinaCloudProgressPanel');
  const accountMount=document.getElementById(page==='profile'?'atinaProfileAccountMount':'atinaAccessAccountMount');
  if(accountPanel&&accountMount&&accountPanel.parentElement!==accountMount)accountMount.appendChild(accountPanel);
+ // A eliminação da conta é uma ação exclusiva do Perfil; nunca aparece no ecrã inicial de acesso.
+ const deleteAccountButton=document.getElementById('atinaAccountDelete');
+ if(deleteAccountButton)deleteAccountButton.classList.toggle('hidden',page!=='profile'||!hasSession);
  // Ao mudar de separador, garantir que o ecrã principal fica guardado como ativo.
  if(!restore)screen('home');
  // Cada separador mostra exclusivamente o seu painel.
