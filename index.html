@@ -1030,7 +1030,7 @@ function atinaAccountSetSession(data){
  if(data?.profile?.nickname){localStorage.setItem('atinaProgressNicknameV1',data.profile.nickname);$('atinaCloudNickname').value=data.profile.nickname;}
  const summary=$('authSummary'),badge=$('homeLoginBadge'),badgeText=$('homeLoginText');
  if(data?.profile?.nickname){if(summary)summary.textContent='Sessão iniciada como '+data.profile.nickname+'. O teu progresso está sincronizado.';if(badge)badge.classList.remove('hidden');if(badgeText)badgeText.textContent=data.profile.nickname;const logout=$('atinaAccountLogout');if(logout)logout.classList.remove('hidden');$('atinaAccountRegister')?.classList.add('hidden');$('atinaAccountLogin')?.classList.add('hidden');}const deleteButton=$('atinaAccountDelete');if(deleteButton){deleteButton.classList.add('hidden');deleteButton.style.setProperty('display','none','important');}
- if(data?.profile?.nickname&&localStorage.getItem('atinaLegalAcknowledgedV1')==='1'&&typeof showHomePage==='function')showHomePage('dashboard');
+ if(data?.profile?.nickname&&localStorage.getItem('atinaLegalAcknowledgedV2')==='1'&&typeof showHomePage==='function')showHomePage('dashboard');
 }
 function atinaPasswordWithinBcryptLimit(password){return new TextEncoder().encode(password).length<=72;}
 async function atinaAccountRegister(){
@@ -1426,7 +1426,7 @@ function atinaHomePageIsValid(page){return ['access','dashboard','play','howto',
 function showHomePage(page,restore=false){
  if(!atinaHomePageIsValid(page))page='access';
  let hasSession=false,hasAcknowledgement=false;
- try{hasSession=!!localStorage.getItem('atinaAccountSessionV1');hasAcknowledgement=localStorage.getItem('atinaLegalAcknowledgedV1')==='1';}catch(e){}
+ try{hasSession=!!localStorage.getItem('atinaAccountSessionV1');hasAcknowledgement=localStorage.getItem('atinaLegalAcknowledgedV2')==='1';}catch(e){}
  if(page!=='access'&&(!hasSession||!hasAcknowledgement))page='access';
  document.body.classList.toggle('atina-logged-out',page==='access');
  // O painel de conta muda de contentor conforme o separador, para que o botão de terminar sessão fique sempre no Perfil.
