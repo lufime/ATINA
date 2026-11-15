@@ -333,6 +333,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 }
 :focus-visible{outline:4px solid #f5cf70!important;outline-offset:4px!important;box-shadow:0 0 0 3px #071727,0 0 0 7px #f5cf7066!important}
 
+/* Botões de partilha social: rótulos sempre legíveis em ecrãs estreitos */
+#atinaSocialShare{box-sizing:border-box;overflow:hidden}
+#atinaSocialShare .actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch;gap:9px!important;width:100%;min-width:0}
+#atinaSocialShare .actions button{display:flex!important;align-items:center;justify-content:center;width:100%!important;min-width:0!important;max-width:100%;min-height:58px;padding:10px 5px!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;font-size:clamp(11px,3.2vw,15px)!important;line-height:1.15!important;letter-spacing:0!important}
+#atinaSocialShare #socialShareStatus{overflow-wrap:anywhere}
+@media(max-width:380px){#atinaSocialShare{padding:13px!important}#atinaSocialShare .actions{gap:6px!important}#atinaSocialShare .actions button{font-size:11px!important;padding:9px 2px!important}}
 /* Partilha/espelhamento para TV e monitor */
 #shareMonitorHome{margin:0 0 12px;min-height:52px}
 #shareMonitorGame{min-height:44px;padding:10px 13px}
