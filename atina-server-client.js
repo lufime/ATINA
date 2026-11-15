@@ -589,6 +589,11 @@ function atinaServerApplyState(state, announce = false) {
   if (!sameChallenge) {
     atinaServerAutoRevealAt = (state.challenge.clues || []).length === 0 ? Date.now() + 10000 : 0;
     atinaServerAutoRevealTriggered = false;
+    // A transcrição de voz pertence apenas ao desafio anterior.
+    const voiceTranscript = document.getElementById('voiceTranscript');
+    const voiceTranscriptText = document.getElementById('voiceTranscriptText');
+    if (voiceTranscript) voiceTranscript.classList.add('hidden');
+    if (voiceTranscriptText) voiceTranscriptText.textContent = '';
   }
   const resultKey = JSON.stringify(state.last_result || {});
   const clearAnswer = !sameChallenge || resultKey !== atinaServerLastResult;
