@@ -1085,17 +1085,25 @@ atinaLegalModal.className='atina-legal-modal hidden';
 atinaLegalModal.setAttribute('role','dialog');
 atinaLegalModal.setAttribute('aria-modal','true');
 atinaLegalModal.setAttribute('aria-labelledby','atinaLegalReadingTitle');
-atinaLegalModal.innerHTML='<div class="atina-legal-backdrop" data-legal-close></div><section class="card atina-legal-dialog"><div class="row"><h3 id="atinaLegalReadingTitle">Privacidade, dados e termos</h3><button type="button" class="btn secondary atina-legal-close" aria-label="Fechar" data-legal-close>✕</button></div><div id="atinaLegalReadingBody"></div><button type="button" class="btn full" data-legal-close>Fechar e voltar</button></section>';
+atinaLegalModal.innerHTML='<div class="atina-legal-backdrop" data-legal-close></div><section class="card atina-legal-dialog"><div class="row"><h3 id="atinaLegalReadingTitle">Privacidade, dados e termos</h3><button type="button" class="btn secondary atina-legal-close" aria-label="Fechar" data-legal-close>✕</button></div><div class="atina-legal-progress" aria-live="polite"><div class="atina-legal-progress-track"><span id="atinaLegalProgressFill"></span></div><p id="atinaLegalProgressText">Leitura: 0%</p></div><div id="atinaLegalReadingBody" tabindex="0"></div><button type="button" class="btn full" data-legal-close>Fechar e voltar</button></section>';
 document.body.appendChild(atinaLegalModal);
 const atinaLegalReadingBody=$('atinaLegalReadingBody');
 if(atinaLegalTextElement&&atinaLegalReadingBody)atinaLegalReadingBody.appendChild(atinaLegalTextElement);
 function atinaCheckLegalTextEnd(){
- if(!atinaLegalLinkWasOpened||atinaLegalTextWasReadToEnd)return;
+ if(!atinaLegalLinkWasOpened)return;
  const reader=$('atinaLegalReadingBody');
  if(!reader)return;
- const reachedEnd=reader.scrollTop+reader.clientHeight>=reader.scrollHeight-12;
- if(reachedEnd){
+ const maxScroll=Math.max(0,reader.scrollHeight-reader.clientHeight);
+ const progress=maxScroll<=2?100:Math.min(100,Math.max(0,Math.round(reader.scrollTop/maxScroll*100)));
+ const fill=$('atinaLegalProgressFill');
+ const label=$('atinaLegalProgressText');
+ if(fill)fill.style.width=progress+'%';
+ if(label)label.textContent='Leitura: '+progress+'%';
+ const reachedEnd=maxScroll<=2||reader.scrollTop+reader.clientHeight>=reader.scrollHeight-12;
+ if(reachedEnd&&!atinaLegalTextWasReadToEnd){
   atinaLegalTextWasReadToEnd=true;
+  if(fill)fill.style.width='100%';
+  if(label)label.textContent='Leitura concluída: 100%';
   const check=$('atinaLegalAcknowledge');
   if(check)check.disabled=false;
   atinaAccountMessage('Obrigado por leres os termos. Já podes assinalar a caixa de confirmação.');
@@ -1110,9 +1118,10 @@ $('atinaLegalOpenLink')?.addEventListener('click',event=>{
  atinaLegalModal.classList.remove('hidden');
  document.body.style.overflow='hidden';
  if(atinaLegalTextElement)atinaLegalTextElement.scrollTop=0;
- if(atinaLegalReadingBody){atinaLegalReadingBody.scrollTop=0;requestAnimationFrame(()=>{if(atinaLegalReadingBody.scrollHeight<=atinaLegalReadingBody.clientHeight+2){atinaLegalTextWasReadToEnd=true;$('atinaLegalAcknowledge').disabled=false;}});}
+ if(atinaLegalReadingBody){atinaLegalReadingBody.scrollTop=0;requestAnimationFrame(atinaCheckLegalTextEnd);}
 });
 atinaLegalReadingBody?.addEventListener('scroll',atinaCheckLegalTextEnd,{passive:true});
+window.addEventListener('resize',()=>{if(!atinaLegalModal.classList.contains('hidden'))atinaCheckLegalTextEnd();});
 atinaLegalModal.addEventListener('click',event=>{
  if(event.target.closest('[data-legal-close]')){
   atinaLegalModal.classList.add('hidden');
@@ -3731,5 +3740,9 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <style id="atina-account-delete-style">
 #atinaAccountDelete{border:1px solid #a94c4c!important;background:#4b2028!important;color:#ffe5e5!important}
 #atinaAccountDelete:active{background:#682a32!important}
+</style>
+
+<style id="atina-legal-progress-20261115">
+.atina-legal-progress{flex:0 0 auto;padding:2px 0 0}.atina-legal-progress-track{height:9px;width:100%;overflow:hidden;border-radius:99px;background:#263d55;border:1px solid #49627b}.atina-legal-progress-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#c99b4e,#f3d18a);transition:width .12s ease}.atina-legal-progress p{margin:4px 0 0!important;color:#f0cf87;font-size:12px;font-weight:750}.atina-legal-dialog #atinaLegalReadingBody{scrollbar-gutter:stable;touch-action:pan-y}
 </style>
 </body></html>
