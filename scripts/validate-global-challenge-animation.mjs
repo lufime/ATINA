@@ -4,10 +4,15 @@ import vm from 'node:vm';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
-const scriptStart = html.indexOf('<script>') + '<script>'.length;
-const scriptEnd = html.indexOf('</script><script src=', scriptStart);
-if (scriptStart < '<script>'.length || scriptEnd < 0) throw new Error('Não foi possível localizar o JavaScript principal.');
-new vm.Script(html.slice(scriptStart, scriptEnd), { filename: 'index.html inline script' });
+// O HTML contém JSON-LD, scripts de arranque e scripts inline secundários.
+// Localizar o script principal pelo conteúdo, não pela posição de uma tag
+// adjacente (que muda quando se acrescentam scripts ou atributos).
+const inlineScripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)];
+const mainScript = inlineScripts.find(([, attrs, body]) =>
+  !/\\bsrc\\s*=/.test(attrs) && body.includes('function start(m,chosen=null)') && body.includes('function mixDraw')
+);
+if (!mainScript) throw new Error('Não foi possível localizar o JavaScript principal.');
+new vm.Script(mainScript[2], { filename: 'index.html inline script' });
 new vm.Script(client, { filename: 'atina-server-client.js' });
 
 const localStart = html.match(/function start\(m,chosen=null\)\{([^]*?)\}\s*function mixDraw/);
