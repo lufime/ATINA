@@ -25,11 +25,8 @@ $old$;
 $new$;
 begin
   v_def := pg_get_functiondef('private.atina_apply_adaptive_difficulty()'::regprocedure);
-  if position('private.atina_challenge_exposures' in v_def) > 0 then
-    return;
-  end if;
   v_def := replace(v_def,v_old,v_new);
-  if position('private.atina_challenge_exposures' in v_def)=0 then
+  if position('exposure.scope_key=new.player_id::text' in v_def)=0 then
     raise exception 'Não foi possível alinhar a dificuldade adaptativa com o histórico de desafios expostos.';
   end if;
   execute v_def;
