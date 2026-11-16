@@ -1687,7 +1687,7 @@ function renderNetworkTimeoutPanel(){
  if(signature===networkTimeoutPanelSignature)return;
  networkTimeoutPanelSignature=signature;
  panel.classList.remove('hidden');actions.replaceChildren();
- const state=networkGameState||{},pause=state.pause,active=pause&&Date.parse(pause.ends_at)>Date.now();
+ const active=pause&&Date.parse(pause.ends_at)>Date.now();
  if(active){
   const until=new Date(pause.ends_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
   info.textContent='Pausa global ativa'+(pause.requester?' · pedida por '+pause.requester:'')+'. Todos os jogadores retomam automaticamente às '+until+'.';
