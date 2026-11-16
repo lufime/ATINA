@@ -264,7 +264,6 @@ test('answer controls stay disabled when the turn changes during submit', async 
   };
   context.networkSubmitAnswer = async () => {
     submissions += 1;
-    context.networkLobbyData.team = 'Equipa B';
     context.networkGameState = {
       ...context.networkGameState,
       active_team: 'Equipa B', revision: 2
