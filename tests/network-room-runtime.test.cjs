@@ -36,6 +36,7 @@ function harness() {
     networkPollHandle: null,
     networkClockHandle: null,
     networkIsTurnDriver: () => false,
+    networkCanControlTurn: () => true,
     networkCanControlTurn() {
       const mine = String(context.networkLobbyData?.team || '').trim().toLocaleLowerCase('pt-PT');
       const active = String(context.networkGameState?.active_team || '').trim().toLocaleLowerCase('pt-PT');
@@ -221,7 +222,10 @@ test('a failed first reveal keeps the countdown state and backs off retries', as
   context.networkGameState = {
     mode: 'challenges', prepare_until: Date.now() - 1000, revealed: 0
   };
-  context.networkHostReveal = async () => { calls += 1; };
+  context.networkCall = async () => { calls += 1; return { status: 'revealed' }; };
+  // Simula a função original da página: a rotina automática deve passar
+  // pelo mesmo caminho de revelação que o botão manual.
+  context.networkHostReveal = async () => context.networkCall('atina_v2_reveal_room_clue', {});
   vm.runInContext(source, context);
 
   context.networkDrawClock();
@@ -299,4 +303,41 @@ test('inactive team cannot submit even if a stale button is enabled', async () =
   assert.equal(submissions, 0);
   assert.equal(element('answer').disabled, true);
   assert.equal(element('submit').disabled, true);
+});
+
+
+test('manual next-clue button calls the original room action and restores its state', async () => {
+  const { context, element } = harness();
+  let calls = 0;
+  context.networkGameActive = true;
+  context.networkRoom = { room_id: 'room-1', token: 'token-1' };
+  context.networkGameState = { mode: 'challenges', revealed: 1, locked: false };
+  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkGameState.active_team = 'Equipa A';
+  context.networkHostReveal = async () => { calls += 1; };
+  vm.runInContext(source, context);
+  await context.networkHostReveal();
+  assert.equal(calls, 1);
+  assert.equal(element('nextClue').textContent, 'Revelar próxima pista');
+  assert.equal(element('nextClue').disabled, false);
+});
+
+test('manual next-clue button reports server errors and becomes usable again', async () => {
+  const { context, element } = harness();
+  context.networkRoom = { room_id: 'room-1', token: 'token-1' };
+  context.networkGameActive = true;
+  context.networkGameState = {
+    mode: 'challenges', pos: 0, challenge_id: 55, active_team: 'Equipa A',
+    revealed: 1, total_clues: 5, locked: false, revision: 1
+  };
+  context.networkLobbyData = { team: 'Equipa A' };
+  let message = '';
+  context.networkMessage = (id, value) => { if (id === 'feedback') message = value; };
+  context.networkHostReveal = async () => { throw new Error('Falha simulada do servidor.'); };
+  context.networkRefreshRoom = async () => {};
+  vm.runInContext(source, context);
+  await context.networkHostReveal();
+  assert.match(message, /Falha simulada do servidor/);
+  assert.equal(element('nextClue').textContent, 'Revelar próxima pista');
+  assert.equal(element('nextClue').disabled, false);
 });

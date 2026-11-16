@@ -202,28 +202,32 @@
     return result;
   };
 
-  // Não enviar pedidos antes do fim da contagem. Serializar pedidos locais e
-  // aplicar intervalo de recuperação se o servidor ainda não confirmar a pista.
+  // Envolver a implementação original sem a substituir: esta também é usada
+  // pelo fluxo automático que inicia a primeira pista após a contagem decrescente.
+  // O bloqueio evita duplo clique e o finally recupera sempre o controlo visual.
   networkHostReveal = async function networkHostRevealV2() {
-    if (!networkRoom || !networkGameActive || !networkGameState ||
-        networkGameState.mode !== 'challenges') return;
-
-    const prepareUntil = Number(networkGameState.prepare_until) || 0;
-    if (prepareUntil && Date.now() < prepareUntil) {
-      networkMessage('feedback', 'Aguarda que a contagem decrescente termine.');
+    const button = $('nextClue');
+    if (!arguments[0]?.automatic && Number(networkGameState?.prepare_until) > Date.now() &&
+        Number(networkGameState?.revealed || 0) === 0) {
+      syncTurnControls();
       return;
     }
-
-    if (runtime.revealInFlight || Date.now() < runtime.nextRevealAttemptAt) return;
-
+    if (runtime.revealInFlight) {
+      networkMessage('feedback', 'A pista já está a ser carregada. Aguarda um instante.');
+      return;
+    }
     runtime.revealInFlight = true;
-    const before = Number(networkGameState.revealed || 0);
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'A revelar pista…';
+    }
     try {
-      await originalHostReveal();
+      return await originalHostReveal.apply(this, arguments);
+    } catch (error) {
+      networkMessage('feedback', error?.message || 'Não foi possível revelar a próxima pista. Tenta novamente.');
     } finally {
-      const after = Number(networkGameState?.revealed || 0);
-      runtime.nextRevealAttemptAt = after > before ? 0 : Date.now() + 1200;
       runtime.revealInFlight = false;
+      if (button) button.textContent = 'Revelar próxima pista';
       syncTurnControls();
     }
   };
@@ -255,7 +259,7 @@
         state._startingChallenge = true;
         const before = Number(state.revealed || 0);
 
-        Promise.resolve(networkHostReveal()).then(() => {
+        Promise.resolve(networkHostReveal({ automatic: true })).then(() => {
           const current = networkGameState;
           const after = Number(current?.revealed || 0);
 

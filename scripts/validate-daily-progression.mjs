@@ -4,10 +4,12 @@ import vm from 'node:vm';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
-const start = html.indexOf('<script>') + 8;
-const end = html.indexOf('</script><script src=', start);
-if (start < 8 || end < 0) throw new Error('Não foi possível localizar o JavaScript principal.');
-new vm.Script(html.slice(start, end), { filename: 'index.html inline script' });
+// Localizar o script principal pelo conteúdo, sem depender da posição
+// de tags externas ou de scripts auxiliares adicionados ao HTML.
+const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)];
+const mainScript = inlineScripts.find(([, body]) => body.includes('function start(m,chosen=null)') && body.includes('function mixDraw'));
+if (!mainScript) throw new Error('Não foi possível localizar o JavaScript principal.');
+new vm.Script(mainScript[1], { filename: 'index.html inline script' });
 new vm.Script(client, { filename: 'atina-server-client.js' });
 
 for (const id of ['dailyMissionTitle','dailyMissionFill','dailyMissionProgress','dailyMissionStatus','dailyStreak','dailyTotal','dailyMissionStart','atinaXpValue','atinaLevelValue','atinaXpFill','atinaBadges']) {
