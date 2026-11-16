@@ -24,7 +24,7 @@ jobs:
       - name: Set up Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 3.0.0
       - name: Start disposable local Supabase stack
         run: |
           supabase init --force
