@@ -45,13 +45,15 @@ function harness() {
       const previous = context.networkGameState;
       const sameChallenge = !!(previous && previous.pos === state.pos &&
         previous.challenge_id === state.challenge_id);
-      if (previous && sameChallenge &&
-          (Number(state.revision || 0) < Number(context.networkLastRevision || 0) ||
-           (Number(state.revision || 0) === Number(context.networkLastRevision || 0) &&
-            String(state.active_team || '') === String(previous.active_team || '') &&
-            !!state.locked === !!previous.locked &&
-            Number(state.revealed || 0) === Number(previous.revealed || 0) &&
-            String(state.feedback || '') === String(previous.feedback || ''))) return;
+      const incomingRevision = Number(state.revision || 0);
+      const currentRevision = Number(context.networkLastRevision || 0);
+      const staleRevision = incomingRevision < currentRevision;
+      const unchangedState = incomingRevision === currentRevision &&
+        String(state.active_team || '') === String(previous?.active_team || '') &&
+        !!state.locked === !!previous?.locked &&
+        Number(state.revealed || 0) === Number(previous?.revealed || 0) &&
+        String(state.feedback || '') === String(previous?.feedback || '');
+      if (previous && sameChallenge && (staleRevision || unchangedState)) return;
       context.networkGameState = state;
       context.networkLastRevision = Number(state.revision || 0);
       context.networkRenderGameState();
