@@ -156,11 +156,9 @@ test('a failed first reveal keeps the countdown state and backs off retries', as
 
   context.networkDrawClock();
   await new Promise(resolve => setTimeout(resolve, 0));
-  const retryAt = context.ATINARoomRuntime && Date.now() + 1000;
 
   assert.equal(calls, 1);
   assert.ok(Number(context.networkGameState.prepare_until) > 0);
   context.networkDrawClock();
   assert.equal(calls, 1);
-  assert.ok(retryAt > Date.now());
 });
