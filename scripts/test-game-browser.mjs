@@ -105,7 +105,7 @@ await page.route('https://commons.wikimedia.org/**', route => route.fulfill({
 await page.route('https://images.unsplash.com/**', route => route.abort());
 
 try {
-  await page.goto(\`http://127.0.0.1:\${server.address().port}/\`, {waitUntil:'load'});
+  await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
 
