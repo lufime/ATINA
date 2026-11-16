@@ -207,7 +207,7 @@
     networkPollHandle = setInterval(() => {
       if (!networkRoom || runtime.pollInFlight) return;
 
-      const delay = document.hidden ? 10000 : (networkGameActive ? 1500 : 5000);
+      const delay = document.hidden ? 15000 : (networkGameActive ? 1800 : 8000);
       const now = Date.now();
       if (now - runtime.lastPollAt < delay) return;
 
