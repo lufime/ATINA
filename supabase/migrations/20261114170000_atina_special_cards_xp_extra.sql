@@ -24,7 +24,7 @@ begin
   v_def := replace(v_def,
     '  update private.atina_players'||chr(10)||
     '     set total_xp=total_xp+v_xp+v_daily_bonus+v_mission_bonus+v_streak_bonus+'||
-    'v_category_bonus+v_hard_bonus+v_milestone_bonus,',
+    '                  v_category_bonus+v_hard_bonus+v_milestone_bonus,',
     '  v_special_bonus:=case when v_outcome=''correct'' and v_session.special_card->>''id''=''xp_extra'' then 10 else 0 end;'||chr(10)||
     '  update private.atina_players'||chr(10)||
     '     set total_xp=total_xp+v_xp+v_daily_bonus+v_mission_bonus+v_streak_bonus+'||
