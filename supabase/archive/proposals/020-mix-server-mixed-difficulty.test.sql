@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(10);
+SELECT plan(11);
 
 -- The clean migration replay intentionally has no production challenge seed.
 -- Build a deterministic, isolated fixture with six categories and all levels.
@@ -103,6 +103,14 @@ SELECT public.atina_v2_start_local_game(
 ) AS result;
 
 SELECT is(
+  (SELECT player_id::text
+     FROM private.atina_xp_session_owners
+    WHERE session_id=(SELECT (result->'state'->>'session_id')::uuid FROM atina_mix_test_run)),
+  (SELECT id::text FROM atina_mix_test_player),
+  'The second Mix session is bound to the same test player'
+);
+
+SELECT is(
   (SELECT (result->'state'->>'queue_size')::integer FROM atina_mix_test_run),
   (SELECT count(DISTINCT category)::integer FROM private.atina_challenges WHERE active),
   'Mix serves one challenge for every active category'
@@ -136,7 +144,16 @@ SELECT diag(
                JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid)||
   ' history='||(SELECT string_agg(challenge_id::text,',')
                  FROM private.atina_difficulty_history
-                WHERE player_id=(SELECT id FROM atina_mix_test_player))
+                WHERE player_id=(SELECT id FROM atina_mix_test_player))||
+  ' function_filter='||position('v_player_id is null or not exists' in
+    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))||
+  ' nonrecent_a='||coalesce((SELECT string_agg(c.challenge_id::text,',')
+    FROM private.atina_challenges c
+    WHERE c.active AND c.category='__mix_test_a__'
+      AND NOT EXISTS (SELECT 1 FROM (SELECT h.challenge_id FROM private.atina_difficulty_history h
+        WHERE h.player_id=(SELECT id FROM atina_mix_test_player)
+        ORDER BY h.created_at DESC,h.id DESC LIMIT 30) recent
+        WHERE recent.challenge_id=c.challenge_id)),'none')
 );
 
 SELECT is(
