@@ -41,7 +41,7 @@ begin
   -- sequência protegida mantém a sequência atual.
   v_def := pg_get_functiondef('public.atina_v2_local_submit_answer(uuid,text,text)'::regprocedure);
   v_def := replace(v_def, 'v_round integer;', 'v_round integer;'||chr(10)||'  v_penalty integer:=10;'||chr(10)||'  v_protect_streak boolean:=false;');
-  v_def := replace(v_def, 'v_round:=v_session.answered_count+1;', 'v_round:=v_session.answered_count+1;'||chr(10)||'  v_penalty:=case v_session.special_card->>''id'' when ''shield'' then 0 when ''reduced_penalty'' then 5 else 10 end;'||chr(10)||'  v_protect_streak:=v_session.special_card->>''id''=''protected_streak'';');
+  v_def := replace(v_def, 'v_round:=v_session.answered_count+1;', 'v_round:=v_session.answered_count+1;'||chr(10)||'  v_penalty:=case v_session.special_card->>''id'' when ''shield'' then 0 when ''reduced_penalty'' then 5 else 10 end;'||chr(10)||'  v_protect_streak:=coalesce(v_session.special_card->>''id''=''protected_streak'',false);');
   v_def := replace(v_def, 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-10;', 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-v_penalty;');
   v_def := replace(v_def, 'v_session.streaks[v_session.current_player]:=0;', 'if not v_protect_streak then v_session.streaks[v_session.current_player]:=0; end if;');
   v_def := replace(v_def, '''penalty'',10', '''penalty'',v_penalty');
