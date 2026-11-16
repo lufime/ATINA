@@ -56,7 +56,17 @@
       previous.challenge_id === state.challenge_id
     );
     const incomingRevision = Number(state.revision || 0);
-    if (previous && sameChallenge && incomingRevision < Number(networkLastRevision || 0)) {
+    const teamChanged = !!(
+      previous &&
+      sameChallenge &&
+      String(previous.active_team || '') !== String(state.active_team || '')
+    );
+    if (
+      previous &&
+      sameChallenge &&
+      incomingRevision < Number(networkLastRevision || 0) &&
+      !teamChanged
+    ) {
       return;
     }
 
