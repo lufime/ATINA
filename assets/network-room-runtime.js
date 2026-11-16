@@ -1,0 +1,235 @@
+/* ATINA — runtime dedicado para salas multiplayer.
+ * Mantém o servidor como autoridade e corrige identidade do turno, countdown e polling.
+ */
+(function installAtinaNetworkRoomRuntime() {
+  'use strict';
+
+  const runtime = {
+    lastPollAt: 0,
+    pollInFlight: false,
+    revealInFlight: false,
+    nextRevealAttemptAt: 0,
+    renderedTurnKey: ''
+  };
+
+  const originalReceiveState = networkReceiveState;
+  const originalRenderGameState = networkRenderGameState;
+  const originalHostReveal = networkHostReveal;
+  const originalDrawClock = networkDrawClock;
+  const originalStartPolling = networkStartPolling;
+  const originalStartGame = networkStartGame;
+  const originalLeaveRoom = networkLeaveRoom;
+
+  function turnKey(state) {
+    if (!state) return '';
+    return [
+      String(state.pos ?? ''),
+      String(state.challenge_id ?? ''),
+      String(state.active_team ?? '')
+    ].join(':');
+  }
+
+  function setCountdownControlsDisabled(disabled) {
+    ['nextClue', 'answer', 'submit', 'voice', 'pass', 'continue'].forEach(id => {
+      const control = $(id);
+      if (control) control.disabled = !!disabled;
+    });
+  }
+
+  function reset() {
+    runtime.lastPollAt = 0;
+    runtime.pollInFlight = false;
+    runtime.revealInFlight = false;
+    runtime.nextRevealAttemptAt = 0;
+    runtime.renderedTurnKey = '';
+  }
+
+  // Uma mudança de equipa no mesmo desafio é um turno novo.
+  // Não aceitar estados antigos e limpar apenas a resposta do turno anterior.
+  networkReceiveState = function networkReceiveStateV2(state) {
+    if (!state) return originalReceiveState(state);
+
+    const previous = networkGameState;
+    const sameChallenge = !!(
+      previous &&
+      previous.pos === state.pos &&
+      previous.challenge_id === state.challenge_id
+    );
+    const incomingRevision = Number(state.revision || 0);
+    if (previous && sameChallenge && incomingRevision < Number(networkLastRevision || 0)) {
+      return;
+    }
+
+    const nextTurnKey = turnKey(state);
+    if (previous && turnKey(previous) !== nextTurnKey) {
+      networkAnsweredThisChallenge = false;
+      const answer = $('answer');
+      if (answer) answer.value = '';
+      runtime.renderedTurnKey = nextTurnKey;
+    }
+
+    return originalReceiveState(state);
+  };
+
+  // O polling não pode apagar texto que o jogador ainda está a escrever.
+  networkRenderGameState = function networkRenderGameStateV2() {
+    const state = networkGameState;
+    if (!state) return originalRenderGameState();
+
+    const key = turnKey(state);
+    const answer = $('answer');
+    const sameTurn = runtime.renderedTurnKey === key;
+    const draft = sameTurn && !state.locked && answer ? answer.value : '';
+
+    const result = originalRenderGameState();
+
+    if (answer) {
+      if (sameTurn && !state.locked) answer.value = draft;
+      else answer.value = '';
+    }
+
+    runtime.renderedTurnKey = key;
+
+    const preparing = Number(state.prepare_until) > Date.now() &&
+      Number(state.revealed || 0) === 0;
+    if (preparing) setCountdownControlsDisabled(true);
+
+    return result;
+  };
+
+  // Não enviar pedidos antes do fim da contagem. Serializar pedidos locais e
+  // aplicar intervalo de recuperação se o servidor ainda não confirmar a pista.
+  networkHostReveal = async function networkHostRevealV2() {
+    if (!networkRoom || !networkGameActive || !networkGameState ||
+        networkGameState.mode !== 'challenges') return;
+
+    const prepareUntil = Number(networkGameState.prepare_until) || 0;
+    if (prepareUntil && Date.now() < prepareUntil) {
+      networkMessage('feedback', 'Aguarda que a contagem decrescente termine.');
+      return;
+    }
+
+    if (runtime.revealInFlight || Date.now() < runtime.nextRevealAttemptAt) return;
+
+    runtime.revealInFlight = true;
+    const before = Number(networkGameState.revealed || 0);
+    try {
+      await originalHostReveal();
+    } finally {
+      const after = Number(networkGameState?.revealed || 0);
+      runtime.nextRevealAttemptAt = after > before ? 0 : Date.now() + 1200;
+      runtime.revealInFlight = false;
+    }
+  };
+
+  // O contador só sai do estado de preparação quando o servidor confirma
+  // a primeira pista. Uma falha não apaga o countdown nem bloqueia a sala.
+  networkDrawClock = function networkDrawClockV2() {
+    if (!networkGameState || !networkGameActive) return originalDrawClock();
+
+    const state = networkGameState;
+    const prepareUntil = Number(state.prepare_until) || 0;
+
+    if (prepareUntil && Number(state.revealed || 0) === 0) {
+      const left = Math.max(0, Math.ceil((prepareUntil - Date.now()) / 1000));
+      $('timerDisplay').innerHTML =
+        'PREPARA-TE<br><span>00:' + String(left).padStart(2, '0') + '</span>';
+      $('timerDisplay').classList.toggle('urgent', left <= 3);
+      $('clueProgress').textContent = left > 0
+        ? 'A partida começa em ' + left + ' segundos'
+        : 'A iniciar o desafio…';
+      setCountdownControlsDisabled(true);
+
+      if (
+        left === 0 &&
+        networkIsTurnDriver() &&
+        !state._startingChallenge &&
+        Date.now() >= runtime.nextRevealAttemptAt
+      ) {
+        state._startingChallenge = true;
+        const before = Number(state.revealed || 0);
+
+        Promise.resolve(networkHostReveal()).then(() => {
+          const current = networkGameState;
+          const after = Number(current?.revealed || 0);
+
+          if (after > before) {
+            runtime.nextRevealAttemptAt = 0;
+            if (current) current.prepare_until = 0;
+          } else {
+            runtime.nextRevealAttemptAt = Date.now() + 1200;
+          }
+        }).catch(error => {
+          runtime.nextRevealAttemptAt = Date.now() + 1500;
+          networkMessage(
+            'feedback',
+            error?.message || 'Não foi possível iniciar o desafio. A tentar novamente.'
+          );
+        }).finally(() => {
+          if (networkGameState) networkGameState._startingChallenge = false;
+          if (networkGameActive) networkDrawClock();
+        });
+      }
+      return;
+    }
+
+    if (prepareUntil && Number(state.revealed || 0) > 0) {
+      state.prepare_until = 0;
+    }
+    return originalDrawClock();
+  };
+
+  // Um único ciclo de polling, sem pedidos sobrepostos. Mantém intervalos
+  // moderados para não saturar o RPC nem atrasar a sincronização dos turnos.
+  networkStartPolling = function networkStartPollingV2() {
+    if (networkPollHandle) clearInterval(networkPollHandle);
+    runtime.lastPollAt = 0;
+    runtime.pollInFlight = false;
+
+    networkPollHandle = setInterval(() => {
+      if (!networkRoom || runtime.pollInFlight) return;
+
+      const delay = document.hidden ? 10000 : (networkGameActive ? 1500 : 5000);
+      const now = Date.now();
+      if (now - runtime.lastPollAt < delay) return;
+
+      runtime.lastPollAt = now;
+      runtime.pollInFlight = true;
+      Promise.resolve(networkRefreshRoom())
+        .catch(() => {})
+        .finally(() => { runtime.pollInFlight = false; });
+    }, 250);
+  };
+
+  networkStartGame = async function networkStartGameV2() {
+    reset();
+    return originalStartGame.apply(this, arguments);
+  };
+
+  networkLeaveRoom = async function networkLeaveRoomV2() {
+    try {
+      return await originalLeaveRoom.apply(this, arguments);
+    } finally {
+      reset();
+    }
+  };
+
+  // Os handlers onclick guardavam referências às funções antigas.
+  if ($('networkStartGame')) $('networkStartGame').onclick = networkStartGame;
+  if ($('leaveNetworkRoom')) $('leaveNetworkRoom').onclick = networkLeaveRoom;
+
+  // Substituir callbacks de relógio/polling que possam ter sido criados durante
+  // o arranque da página antes de este runtime dedicado ser carregado.
+  if (networkPollHandle) {
+    clearInterval(networkPollHandle);
+    networkPollHandle = null;
+  }
+  if (networkClockHandle) {
+    clearInterval(networkClockHandle);
+    networkClockHandle = null;
+  }
+  if (networkRoom) networkStartPolling();
+  if (networkGameActive) ensureNetworkClock();
+
+  window.ATINARoomRuntime = Object.freeze({ turnKey, reset });
+})();
