@@ -36,6 +36,7 @@ function harness() {
     networkPollHandle: null,
     networkClockHandle: null,
     networkIsTurnDriver: () => false,
+    networkCanControlTurn: () => true,
     networkCanControlTurn() {
       const mine = String(context.networkLobbyData?.team || '').trim().toLocaleLowerCase('pt-PT');
       const active = String(context.networkGameState?.active_team || '').trim().toLocaleLowerCase('pt-PT');
@@ -221,7 +222,7 @@ test('a failed first reveal keeps the countdown state and backs off retries', as
   context.networkGameState = {
     mode: 'challenges', prepare_until: Date.now() - 1000, revealed: 0
   };
-  context.networkHostReveal = async () => { calls += 1; };
+  context.networkCall = async () => { calls += 1; return { status: 'revealed' }; };
   vm.runInContext(source, context);
 
   context.networkDrawClock();
