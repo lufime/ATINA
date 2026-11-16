@@ -103,5 +103,20 @@ Antes de entregar cada lote:
 - Responder em português de Portugal, de forma clara, direta e prática. Evitar perguntas desnecessárias quando as instruções permitem avançar.
 - Priorizar correção, reconhecimento visual, prevenção de duplicações e continuidade.
 
+## 15. Respostas numéricas
+- Quando a solução de um desafio for numérica, é permitido representar a resposta através de objetos contáveis e/ou do próprio número escrito em algarismos.
+- O número apresentado deve corresponder rigorosamente à solução correta.
+- Os algarismos devem ser grandes, nítidos, legíveis e visualmente integrados na composição.
+- É permitido combinar a representação visual da quantidade com o número escrito.
+- Nunca apresentar números incorretos, aproximados ou ambíguos.
+- Em desafios de contagem, apresentar exatamente a quantidade indicada na solução.
+- Garantir que todos os elementos são identificáveis, distinguíveis e facilmente contáveis.
+- Evitar sobreposições, elementos parcialmente ocultos ou composições que dificultem a contagem.
+- Em operações matemáticas, respeitar rigorosamente os valores e as relações matemáticas da solução.
+- Não confundir o número da resposta com o ID do desafio.
+- Não introduzir algarismos, números escritos ou fórmulas na imagem, salvo quando expressamente exigidos pelo desafio.
+- Antes de finalizar, verificar que a representação visual corresponde à resposta numérica correta.
+- Nunca alterar, arredondar ou aproximar o valor da solução.
+
 ## Objetivo
 Construir uma biblioteca exclusiva do ATINA, com imagens originais geradas aqui, corretamente associadas aos desafios, reconhecíveis, coerentes com as obras, tecnicamente uniformes e prontas para carregar na plataforma.
