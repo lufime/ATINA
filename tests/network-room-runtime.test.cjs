@@ -309,6 +309,8 @@ test('manual next-clue button calls the original room action and restores its st
   context.networkGameActive = true;
   context.networkRoom = { room_id: 'room-1', token: 'token-1' };
   context.networkGameState = { mode: 'challenges', revealed: 1, locked: false };
+  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkGameState.active_team = 'Equipa A';
   context.networkHostReveal = async () => { calls += 1; };
   vm.runInContext(source, context);
   await context.networkHostReveal();
@@ -326,10 +328,9 @@ test('manual next-clue button reports server errors and becomes usable again', a
     revealed: 1, total_clues: 5, locked: false, revision: 1
   };
   context.networkLobbyData = { team: 'Equipa A' };
-  context.networkCanControlTurn = () => true;
   let message = '';
   context.networkMessage = (id, value) => { if (id === 'feedback') message = value; };
-  context.networkCall = async () => { throw new Error('Falha simulada do servidor.'); };
+  context.networkHostReveal = async () => { throw new Error('Falha simulada do servidor.'); };
   context.networkRefreshRoom = async () => {};
   vm.runInContext(source, context);
   await context.networkHostReveal();
