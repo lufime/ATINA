@@ -890,14 +890,27 @@ $('listenCurrentClue').addEventListener('click', (event) => {
   if (feedback) feedback.textContent = 'A leitura de voz não está disponível nesta página.';
 }, true);
 $('listenAnswer').onclick = () => {
-  const answer = atinaServerState?.challenge?.answer || networkGameState?.answer;
+  const serverRoundLocked = !!atinaServerState?.round_locked;
+  const networkRoundLocked = !!networkGameState?.locked;
+  if (!serverRoundLocked && !networkRoundLocked) return;
+  const answer = serverRoundLocked
+    ? atinaServerState?.challenge?.answer
+    : networkGameState?.answer;
   if (!answer) return;
-  if ('speechSynthesis' in window) {
+  const speechAvailable = !!window.speechSynthesis
+    && typeof window.SpeechSynthesisUtterance === 'function';
+  if (!speechAvailable) {
+    atinaServerMessage('A leitura em voz alta não está disponível neste navegador.');
+    return;
+  }
+  try {
     window.speechSynthesis.cancel();
-    const speech = new SpeechSynthesisUtterance('A resposta correta é: ' + answer);
+    const speech = new window.SpeechSynthesisUtterance('A resposta correta é: ' + answer);
     speech.lang = 'pt-PT';
     window.speechSynthesis.speak(speech);
-  } else atinaServerMessage('A leitura em voz alta não está disponível neste navegador.');
+  } catch (_) {
+    atinaServerMessage('Não foi possível iniciar a leitura em voz alta neste navegador.');
+  }
 };
 $('back').onclick = () => {
   if (networkRoom) { networkLeaveRoom(); return; }
