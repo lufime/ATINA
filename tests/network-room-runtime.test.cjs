@@ -223,6 +223,9 @@ test('a failed first reveal keeps the countdown state and backs off retries', as
     mode: 'challenges', prepare_until: Date.now() - 1000, revealed: 0
   };
   context.networkCall = async () => { calls += 1; return { status: 'revealed' }; };
+  // Simula a função original da página: a rotina automática deve passar
+  // pelo mesmo caminho de revelação que o botão manual.
+  context.networkHostReveal = async () => context.networkCall('atina_v2_reveal_room_clue', {});
   vm.runInContext(source, context);
 
   context.networkDrawClock();
