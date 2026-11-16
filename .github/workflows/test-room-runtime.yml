@@ -1,0 +1,32 @@
+name: Validar runtime do modo sala
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/network-room-runtime.js'
+      - 'tests/network-room-runtime.test.cjs'
+      - '.github/workflows/test-room-runtime.yml'
+  push:
+    branches:
+      - 'fix/rebuild-network-room-mode-final'
+
+permissions:
+  contents: read
+
+jobs:
+  room-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verificar sintaxe do runtime
+        run: node --check assets/network-room-runtime.js
+      - name: Verificar sintaxe dos testes
+        run: node --check tests/network-room-runtime.test.cjs
+      - name: Executar testes do modo sala
+        run: node --test tests/network-room-runtime.test.cjs
