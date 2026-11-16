@@ -11,8 +11,6 @@ const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)];
 const mainScript = inlineScripts.find(([, body]) => body.includes('function start(m,chosen=null)') && body.includes('function mixDraw'));
 if (!mainScript) throw new Error('Não foi possível localizar o JavaScript principal.');
 new vm.Script(mainScript[1], { filename: 'index.html inline script' });
-if (!mainScript) throw new Error('Não foi possível localizar o JavaScript principal.');
-new vm.Script(mainScript[2], { filename: 'index.html inline script' });
 new vm.Script(client, { filename: 'atina-server-client.js' });
 
 const localStart = html.match(/function start\(m,chosen=null\)\{([^]*?)\}\s*function mixDraw/);
