@@ -676,7 +676,7 @@ function atinaServerApplyState(state, announce = false) {
       else if (challenge.answer) atinaSpeakClue('A resposta correta é: ' + challenge.answer, true);
     }
   }
-  if (locked) atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position);
+  if (locked) { const guestChallengeKey = 'server:' + state.session_id + ':' + state.position; atinaRecordChallengeCompletion(guestChallengeKey); if (typeof atinaIsGuest === 'function' && atinaIsGuest() && typeof atinaGuestRecordCompletion === 'function') atinaGuestRecordCompletion(guestChallengeKey); }
   if (locked && ['correct', 'wrong', 'incorrect'].includes(result.outcome)) atinaProgressClaim(state);
   if (locked) {
     atinaShowSolutionImage(
@@ -767,7 +767,7 @@ async function atinaServerStart(gameMode, category = null) {
     atinaServerBusy = false;
   }
 }
-start = function(gameMode, category = null) { if (typeof atinaActivateAutomaticSpeech === 'function') atinaActivateAutomaticSpeech(); return atinaServerStart(gameMode, category); };
+start = function(gameMode, category = null) { if (typeof atinaGuestLimitReached === 'function' && atinaGuestLimitReached()) { if (typeof atinaShowGuestRegistration === 'function') atinaShowGuestRegistration(); return Promise.resolve(); } if (typeof atinaActivateAutomaticSpeech === 'function') atinaActivateAutomaticSpeech(); return atinaServerStart(gameMode, category); };
 submit = async function() {
   if (!atinaServerState || locked || atinaServerBusy) return;
   const answer = $('answer').value.trim();
