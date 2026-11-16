@@ -1483,7 +1483,79 @@ function networkDrawClock(){
 }
 function ensureNetworkClock(){if(networkClockHandle!==null)return;networkClockHandle=setInterval(networkDrawClock,100);networkDrawClock();}
 let networkChallengeIndexById={};function networkReceiveState(st){if(!st||(!st.queue&&st.mode!=='mimicas'&&st.mode!=='challenges'&&st.mode!=='completed'))return;if(st.mode==='completed'){networkGameState={...st,queue:[],pos:0};networkGameActive=false;networkGameHost=!!networkLobbyData?.is_host;networkRenderGameState();return;}if(st.mode==='challenges'&&!Array.isArray(st.queue)){const key=String(st.challenge_id);let idx=networkChallengeIndexById[key];const clueTotal=Number(st.total_clues)||5;const clueList=Array.from({length:clueTotal},(_,i)=>st.clues?.[i]||'');const virtualGame=[st.category||'Desafio',st.emoji||'🎯',clueList,st.answer||'',[],st.image_url||null];if(idx===undefined){idx=games.length;networkChallengeIndexById[key]=idx;games.push(virtualGame);}else games[idx]=virtualGame;st={...st,queue:Array(Math.max(1,Number(st.queue_length)||1)).fill(idx),scores:scores||[0,0],answeredCount:Number(st.answeredCount)||0};}const sameChallenge=!!(networkGameState&&networkGameState.pos===st.pos&&networkGameState.challenge_id===st.challenge_id);if(networkGameState&&sameChallenge&&(Number(st.revision||0)<networkLastRevision||(Number(st.revision||0)===networkLastRevision&&String(st.active_team||'')===String(networkGameState.active_team||'')&&!!st.locked===!!networkGameState.locked&&Number(st.revealed||0)===Number(networkGameState.revealed||0)&&String(st.feedback||'')===String(networkGameState.feedback||''))))return;networkGameState=st;networkLastRevision=st.revision||0;networkGameActive=!st.finished;if(!sameChallenge)networkAnsweredThisChallenge=false;networkGameHost=!!networkLobbyData?.is_host;if(st.mode==='mimicas'){if(networkClockHandle!==null&&st.finished){clearInterval(networkClockHandle);networkClockHandle=null;}networkRenderMimeState();if(!st.finished)ensureNetworkClock();return;}if($('game').classList.contains('hidden')&&localStorage.getItem('atinaGameClosed')!=='1')screen('game');networkRenderGameState();ensureNetworkClock();}
-function renderTeamProposal(){const host=$('teamVotePanel');if(!host)return;host.replaceChildren();host.classList.add('hidden');const p=networkLobbyData?.team_proposal;if(!networkLobbyData?.team||!p)return;host.classList.remove('hidden');const title=document.createElement('strong');title.textContent='Votação da '+p.team;host.appendChild(title);const answer=document.createElement('p');answer.textContent=p.proposer+' propôs: «'+p.answer+'»';host.appendChild(answer);const votes=p.votes||[];const mine=votes.find(v=>v.player_id===networkLobbyData.player_id);const summary=document.createElement('p');summary.className='muted small';summary.textContent='Votos: '+votes.length+' · '+votes.filter(v=>v.agrees).length+' concordam · '+votes.filter(v=>!v.agrees).length+' não concordam';host.appendChild(summary);const status=document.createElement('p');status.textContent=p.status==='accepted'?'✓ Todos concordaram. Resposta aceite.':p.status==='rejected'?'✕ A proposta foi rejeitada.':p.proposer_id===networkLobbyData.player_id?'A aguardar os votos dos teus colegas.':mine?'Voto registado. A aguardar os restantes colegas.':'Concordas com esta resposta?';host.appendChild(status);if(p.status==='pending'&&p.proposer_id!==networkLobbyData.player_id&&!mine){for(const [label,agrees,cls] of [['Concordo',true,'btn full'],['Não concordo',false,'btn secondary full']]){const b=document.createElement('button');b.className=cls;b.textContent=label;b.style.marginTop='7px';b.onclick=async()=>{b.disabled=true;try{await networkCall('atina_v2_vote_team_proposal',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_proposal_id:p.id,p_agrees:agrees});await networkRefreshRoom();}catch(e){b.disabled=false;status.textContent=e.message;}};host.appendChild(b);}}if(p.status==='accepted'){networkAnsweredThisChallenge=true;$('answer').disabled=true;$('submit').disabled=true;}else if(p.status==='rejected'){networkAnsweredThisChallenge=false;const paused=!!networkGameState?.pause;$('answer').disabled=paused;$('submit').disabled=paused;$('answer').value='';}}
+function renderTeamProposal(){
+ const host=$('teamVotePanel');
+ if(!host)return;
+ host.replaceChildren();
+ host.classList.add('hidden');
+ const p=networkLobbyData?.team_proposal;
+ if(!networkLobbyData?.team||!p)return;
+ host.classList.remove('hidden');
+ const teamPlayers=(networkLobbyData.players||[]).filter(player=>player.team===p.team);
+ const requiredVotes=Math.max(0,teamPlayers.length-1);
+ const votes=p.votes||[];
+ const mine=votes.find(v=>v.player_id===networkLobbyData.player_id);
+ const title=document.createElement('strong');
+ title.textContent='Votação da '+p.team;
+ host.appendChild(title);
+ const answer=document.createElement('p');
+ answer.textContent=p.proposer+' propôs: «'+p.answer+'»';
+ host.appendChild(answer);
+ const summary=document.createElement('p');
+ summary.className='muted small';
+ summary.textContent='Votos registados: '+votes.length+' de '+requiredVotes+' necessários · '+votes.filter(v=>v.agrees).length+' concordam · '+votes.filter(v=>!v.agrees).length+' não concordam.';
+ host.appendChild(summary);
+ const status=document.createElement('p');
+ if(p.status==='accepted'){
+  status.textContent='✓ Todos os colegas concordaram. A resposta foi validada pelo servidor e a pontuação foi atribuída.';
+ }else if(p.status==='rejected'){
+  status.textContent='✕ A proposta foi rejeitada. A equipa pode discutir e apresentar uma nova resposta.';
+ }else if(p.proposer_id===networkLobbyData.player_id){
+  status.textContent='A tua proposta está em votação. O autor não vota; todos os outros membros têm de concordar.';
+ }else if(mine){
+  status.textContent='O teu voto foi registado. A aguardar os restantes colegas.';
+ }else{
+  status.textContent='Tens de votar. A resposta só será validada depois de todos os restantes membros concordarem.';
+ }
+ host.appendChild(status);
+ if(p.status==='pending'&&p.proposer_id!==networkLobbyData.player_id&&!mine){
+  for(const [label,agrees,cls] of [['Concordo',true,'btn full'],['Não concordo',false,'btn secondary full']]){
+   const b=document.createElement('button');
+   b.className=cls;
+   b.textContent=label;
+   b.style.marginTop='7px';
+   b.onclick=async()=>{
+    b.disabled=true;
+    try{
+     const result=await networkCall('atina_v2_vote_team_proposal',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_proposal_id:p.id,p_agrees:agrees});
+     if(result?.status==='accepted')atinaNetworkFeedback='Todos concordaram e o servidor confirmou a resposta certa.';
+     else if(result?.status==='rejected')atinaNetworkFeedback=result?.correct===false?'Todos os votos foram recolhidos, mas a resposta estava incorreta.':'A proposta foi rejeitada por falta de unanimidade.';
+     else atinaNetworkFeedback='Voto registado. A aguardar os restantes membros.';
+     await networkRefreshRoom();
+    }catch(e){
+     b.disabled=false;
+     status.textContent=e.message||'Não foi possível registar o voto.';
+    }
+   };
+   host.appendChild(b);
+  }
+ }
+ if(p.status==='pending'){
+  networkAnsweredThisChallenge=true;
+  $('answer').disabled=true;
+  $('submit').disabled=true;
+ }else if(p.status==='accepted'){
+  networkAnsweredThisChallenge=true;
+  $('answer').disabled=true;
+  $('submit').disabled=true;
+ }else if(p.status==='rejected'){
+  networkAnsweredThisChallenge=false;
+  $('answer').value='';
+  const canRetry=!networkGameState?.locked&&!networkGameState?.pause&&(!networkGameState?.active_team||networkGameState.active_team===networkLobbyData.team);
+  $('answer').disabled=!canRetry;
+  $('submit').disabled=!canRetry;
+ }
+}
 async function networkHostPass(){
  if(!networkRoom||!networkCanControlTurn()||!networkGameActive||!networkGameState||networkGameState.mode!=='challenges'||networkGameState.locked)return;
  const button=$('pass');if(button)button.disabled=true;
@@ -3033,7 +3105,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível carregar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261116-06">
+</script><script src="./atina-server-client.js?v=20261116-07">
 /* Confirmar saída de uma partida antes de mudar de página */
 document.addEventListener('click',function(event){
  const nav=event.target.closest('[data-home-target]');
@@ -4124,5 +4196,5 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 @media(max-width:480px){.atina-beta-version{top:max(6px,env(safe-area-inset-top));right:max(6px,env(safe-area-inset-right));gap:5px;padding:5px 7px;font-size:9px}.atina-beta-version strong{font-size:10px}}
 </style>
 
-<script src="./assets/network-room-runtime.js?v=20261116-06"></script>
+<script src="./assets/network-room-runtime.js?v=20261116-07"></script>
 </body></html>
