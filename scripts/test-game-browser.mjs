@@ -39,11 +39,13 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
       session_id: session.id, mode: session.mode, position: session.position,
       queue_size: 3, status: 'playing', scores: session.scores, current_player: 1,
       answered_count: session.answered, round_locked: session.locked,
+      deadline_at: session.deadlineAt ? new Date(session.deadlineAt).toISOString() : null,
       difficulty: 'medium', last_result: session.result,
       challenge: {
         id: 1000 + session.position, category: session.category || 'Cultura geral',
         emoji: '🎯', clues: session.clues, total_clues: 5,
-        answer: 'Resposta ATINA', tags: [], image_url: null
+        // Igual à RPC real: a solução nunca é enviada antes de a ronda fechar.
+        answer: session.locked ? 'Resposta ATINA' : null, tags: [], image_url: null
       }
     });
     const auth = {
@@ -65,6 +67,7 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
           return {data:{token:'t'.repeat(64),state:state()},error:null};
         }
         if (name === 'atina_v2_local_reveal_clue') {
+          if (!session.deadlineAt) session.deadlineAt = Date.now() + 60000;
           session.clues.push('Pista de teste número '+(session.clues.length+1));
           return {data:state(),error:null};
         }
@@ -114,8 +117,17 @@ try {
     await page.locator('#categories [data-category]').filter({hasText: category}).click();
     await page.locator('#game').waitFor({state:'visible'});
     await page.waitForFunction(name => document.querySelector('#category')?.textContent.includes(name), category);
+    assert.equal(await page.evaluate(() => atinaServerState.challenge.answer), null,
+      category + ': a resposta não pode ser enviada antes do fecho da ronda.');
     await page.locator('#nextClue').click();
     await page.waitForFunction(() => document.querySelector('#clues .clue:not(.hidden-clue)'));
+    const firstDeadline = await page.evaluate(() => atinaServerState.deadline_at);
+    assert.equal(await page.evaluate(() => atinaServerState.challenge.answer), null,
+      category + ': revelar uma pista não pode revelar a solução.');
+    await page.locator('#nextClue').click();
+    await page.waitForFunction(() => document.querySelectorAll('#clues .clue:not(.hidden-clue)').length === 2);
+    assert.equal(await page.evaluate(() => atinaServerState.deadline_at), firstDeadline,
+      category + ': revelar outra pista não pode reiniciar o prazo da ronda.');
     await page.locator('#answer').fill('Resposta ATINA');
     await page.locator('#submit').click();
     await page.waitForFunction(() => document.querySelector('#feedback')?.textContent.includes('Certo! Resposta ATINA'), null, {timeout:10000}).catch(async () => {
