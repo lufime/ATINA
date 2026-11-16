@@ -11,6 +11,7 @@ on:
     paths:
       - 'supabase/**'
       - '.github/workflows/replay-supabase-migrations.yml'
+  workflow_dispatch:
 
 concurrency:
   group: supabase-local-stack-${{ github.ref }}
@@ -27,7 +28,7 @@ jobs:
       - name: Set up Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 3.0.0
 
       - name: Initialize disposable local Supabase configuration
         run: |
@@ -36,6 +37,9 @@ jobs:
           # 54323 here: that is Supabase Studio's default port.
           sed -i '/^\[db\]/,/^\[/ s/^port = 54322$/port = 55322/' supabase/config.toml
           sed -i '/^\[studio\]/,/^\[/ s/^port = 54323$/port = 55323/' supabase/config.toml
+
+      - name: Normalize duplicate migration IDs in the disposable runner copy
+        run: node scripts/prepare-migration-replay.mjs
 
       - name: Start disposable local Supabase stack
         run: supabase start

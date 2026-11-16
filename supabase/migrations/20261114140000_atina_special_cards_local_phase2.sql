@@ -7,9 +7,18 @@ begin
   v_def := pg_get_functiondef('public.atina_v2_local_next_challenge(uuid,text)'::regprocedure);
   v_def := replace(v_def, 'v_roll:=floor(random()*3)::integer;', 'v_roll:=floor(random()*8)::integer;');
   v_old := $old$  v_card:=case v_roll
-      when 0 then jsonb_build_object('id','double_points','name','PONTOS A DOBRAR','icon','💎','description','Duplica os pontos deste desafio se acertares.','multiplier',2,'bonus',0)
-      when 1 then jsonb_build_object('id','speed_bonus','name','BÓNUS DE VELOCIDADE','icon','⚡','description','Recebes mais 10 pontos se acertares.','multiplier',1,'bonus',10)
-      else jsonb_build_object('id','correct_prize','name','PRÉMIO DE ACERTO','icon','🏆','description','Recebes 15 pontos extra se acertares.','multiplier',1,'bonus',15)
+      when 0 then jsonb_build_object(
+        'id','double_points','name','PONTOS A DOBRAR','icon','💎',
+        'description','Duplica os pontos deste desafio se acertares.',
+        'multiplier',2,'bonus',0)
+      when 1 then jsonb_build_object(
+        'id','speed_bonus','name','BÓNUS DE VELOCIDADE','icon','⚡',
+        'description','Recebes mais 10 pontos se acertares.',
+        'multiplier',1,'bonus',10)
+      else jsonb_build_object(
+        'id','correct_prize','name','PRÉMIO DE ACERTO','icon','🏆',
+        'description','Recebes 15 pontos extra se acertares.',
+        'multiplier',1,'bonus',15)
     end;$old$;
   v_def := replace(v_def, v_old, $new$  v_card:=case v_roll
       when 0 then jsonb_build_object('id','double_points','name','PONTOS A DOBRAR','icon','💎','description','Duplica os pontos deste desafio se acertares.','multiplier',2,'bonus',0)
@@ -32,7 +41,7 @@ begin
   -- sequência protegida mantém a sequência atual.
   v_def := pg_get_functiondef('public.atina_v2_local_submit_answer(uuid,text,text)'::regprocedure);
   v_def := replace(v_def, 'v_round integer;', 'v_round integer;'||chr(10)||'  v_penalty integer:=10;'||chr(10)||'  v_protect_streak boolean:=false;');
-  v_def := replace(v_def, 'v_round:=v_session.answered_count+1;', 'v_round:=v_session.answered_count+1;'||chr(10)||'  v_penalty:=case v_session.special_card->>''id'' when ''shield'' then 0 when ''reduced_penalty'' then 5 else 10 end;'||chr(10)||'  v_protect_streak:=v_session.special_card->>''id''=''protected_streak'';');
+  v_def := replace(v_def, 'v_round:=v_session.answered_count+1;', 'v_round:=v_session.answered_count+1;'||chr(10)||'  v_penalty:=case v_session.special_card->>''id'' when ''shield'' then 0 when ''reduced_penalty'' then 5 else 10 end;'||chr(10)||'  v_protect_streak:=coalesce(v_session.special_card->>''id''=''protected_streak'',false);');
   v_def := replace(v_def, 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-10;', 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-v_penalty;');
   v_def := replace(v_def, 'v_session.streaks[v_session.current_player]:=0;', 'if not v_protect_streak then v_session.streaks[v_session.current_player]:=0; end if;');
   v_def := replace(v_def, '''penalty'',10', '''penalty'',v_penalty');
@@ -44,14 +53,30 @@ begin
   execute v_def;
 
   -- Timeout ao passar também respeita escudo, penalização reduzida e sequência protegida.
+  -- Esta versão-base não declara v_round/v_challenge; inserir as variáveis no DECLARE
+  -- e aplicar os efeitos diretamente ao ramo de timeout.
   v_def := pg_get_functiondef('public.atina_v2_local_pass_challenge(uuid,text)'::regprocedure);
-  v_def := replace(v_def, 'v_round integer;', 'v_round integer;'||chr(10)||'  v_penalty integer:=10;'||chr(10)||'  v_protect_streak boolean:=false;');
-  v_def := replace(v_def, 'v_challenge:=v_session.challenge_queue[v_session.position]; v_round:=v_session.answered_count+1;', 'v_challenge:=v_session.challenge_queue[v_session.position]; v_round:=v_session.answered_count+1;'||chr(10)||'  v_penalty:=case v_session.special_card->>''id'' when ''shield'' then 0 when ''reduced_penalty'' then 5 else 10 end;'||chr(10)||'  v_protect_streak:=v_session.special_card->>''id''=''protected_streak'';');
-  v_def := replace(v_def, 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-10;', 'v_session.scores[v_session.current_player]:=v_session.scores[v_session.current_player]-v_penalty;');
-  v_def := replace(v_def, 'v_session.streaks[v_session.current_player]:=0;', 'if not v_protect_streak then v_session.streaks[v_session.current_player]:=0; end if;');
-  v_def := replace(v_def, '''penalty'',10', '''penalty'',v_penalty');
-  v_def := replace(v_def, '''timeout'',-10', '''timeout'',-v_penalty');
-  if position('v_penalty' in v_def)=0 or position('v_protect_streak' in v_def)=0 then
+  v_def := replace(v_def,
+    'v_session private.atina_v2_local_sessions;',
+    'v_session private.atina_v2_local_sessions;'||chr(10)||'  v_penalty integer:=10;'||chr(10)||'  v_protect_streak boolean:=false;');
+  v_def := replace(v_def,
+    '  if v_session.status <> ''active'' or v_session.round_locked then',
+    '  v_penalty:=case v_session.special_card->>''id'' when ''shield'' then 0 when ''reduced_penalty'' then 5 else 10 end;'||chr(10)||
+    '  v_protect_streak:=v_session.special_card->>''id''=''protected_streak'';'||chr(10)||
+    '  if v_session.status <> ''active'' or v_session.round_locked then');
+  v_def := replace(v_def,
+    'v_session.scores[v_session.current_player]-10;',
+    'v_session.scores[v_session.current_player]-v_penalty;');
+  v_def := replace(v_def,
+    'v_session.streaks[v_session.current_player] := 0;',
+    'if not v_protect_streak then v_session.streaks[v_session.current_player] := 0; end if;');
+  v_def := replace(v_def,
+    '''outcome'',''timeout'',''penalty'',10',
+    '''outcome'',''timeout'',''penalty'',v_penalty');
+  if position('v_penalty integer' in v_def)=0
+     or position('v_protect_streak boolean' in v_def)=0
+     or position('v_penalty:=' in v_def)=0
+     or position('v_session.scores[v_session.current_player]-v_penalty' in v_def)=0 then
     raise exception 'Não foi possível atualizar o timeout ao passar.';
   end if;
   execute v_def;
