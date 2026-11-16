@@ -115,8 +115,6 @@ test('polling render preserves an unfinished answer within the same turn', () =>
 test('manual clue reveal is blocked until the server countdown ends', async () => {
   const { context } = harness();
   const source = fs.readFileSync('assets/network-room-runtime.js', 'utf8');
-  vm.runInContext(source, context);
-
   let calls = 0;
   context.networkRoom = { room_id: 'room' };
   context.networkGameActive = true;
