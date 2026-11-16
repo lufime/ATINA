@@ -589,7 +589,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   }
   $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeList").nextElementSibling?.classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
   $("cancelChallenge").addEventListener("click",()=>{if(challengeFormDirty&&!confirm("Existem alterações por guardar. Queres descartá-las?"))return;resetChallengeForm();});
-  document.querySelectorAll("[data-admin-tab]").forEach(link=>link.addEventListener("click",event=>{if(challengeFormDirty&&!confirm("Existem alterações por guardar. Queres sair sem guardar?")){event.preventDefault();return;}setFormDirty(false);}));
+  document.querySelectorAll("[data-admin-tab]").forEach(link=>link.addEventListener("click",event=>{if(challengeFormDirty&&!confirm("Existem alterações por guardar. Queres sair sem guardar?")){event.preventDefault();return;}setFormDirty(false);const tab=link.dataset.adminTab;activateTab(tab);if(tab==="challenges"&&location.hash==="#challenges")loadChallenges();}));
 
   $("imageScrollTop").addEventListener("click",()=>{const frame=$("imageManagerFrame");if(!frame)return;window.scrollTo({top:frame.getBoundingClientRect().top+window.scrollY-8,behavior:"smooth"});});
   $("imageScrollBottom").addEventListener("click",()=>{const frame=$("imageManagerFrame");if(!frame)return;window.scrollTo({top:frame.getBoundingClientRect().bottom+window.scrollY-window.innerHeight+8,behavior:"smooth"});});
