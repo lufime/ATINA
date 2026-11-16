@@ -62,6 +62,9 @@ function harness() {
       element('answer').value = '';
     },
     networkHostReveal: async () => {},
+    networkSubmitAnswer: async () => {},
+    networkHostPass: async () => {},
+    networkHostNext: async () => {},
     networkDrawClock() {},
     networkStartPolling() {},
     networkStartGame: async () => {},
@@ -240,4 +243,56 @@ test('a server-side turn conflict refreshes the room before returning', async ()
     /O turno mudou\. A sala foi sincronizada/
   );
   assert.equal(refreshes, 1);
+});
+
+
+test('answer controls stay disabled when the turn changes during submit', async () => {
+  const { context, element } = harness();
+  let submissions = 0;
+  context.networkRoom = { room_id: 'room' };
+  context.networkGameActive = true;
+  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkGameState = {
+    mode: 'challenges', pos: 1, challenge_id: 10,
+    active_team: 'Equipa A', revision: 1, revealed: 2,
+    total_clues: 5, locked: false
+  };
+  context.networkSubmitAnswer = async () => {
+    submissions += 1;
+    context.networkLobbyData.team = 'Equipa B';
+    context.networkGameState = {
+      ...context.networkGameState,
+      active_team: 'Equipa B', revision: 2
+    };
+    element('answer').disabled = false;
+    element('submit').disabled = false;
+  };
+  vm.runInContext(source, context);
+  await context.networkSubmitAnswer();
+  assert.equal(submissions, 1);
+  assert.equal(element('answer').disabled, true);
+  assert.equal(element('submit').disabled, true);
+  assert.equal(element('nextClue').disabled, true);
+  assert.equal(element('pass').disabled, true);
+});
+
+test('inactive team cannot submit even if a stale button is enabled', async () => {
+  const { context, element } = harness();
+  let submissions = 0;
+  context.networkRoom = { room_id: 'room' };
+  context.networkGameActive = true;
+  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkGameState = {
+    mode: 'challenges', pos: 1, challenge_id: 10,
+    active_team: 'Equipa B', revision: 2, revealed: 2,
+    total_clues: 5, locked: false
+  };
+  context.networkSubmitAnswer = async () => { submissions += 1; };
+  vm.runInContext(source, context);
+  element('answer').disabled = false;
+  element('submit').disabled = false;
+  await context.networkSubmitAnswer();
+  assert.equal(submissions, 0);
+  assert.equal(element('answer').disabled, true);
+  assert.equal(element('submit').disabled, true);
 });

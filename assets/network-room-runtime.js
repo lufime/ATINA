@@ -15,6 +15,9 @@
   const originalReceiveState = networkReceiveState;
   const originalRenderGameState = networkRenderGameState;
   const originalHostReveal = networkHostReveal;
+  const originalSubmitAnswer = networkSubmitAnswer;
+  const originalHostPass = networkHostPass;
+  const originalHostNext = networkHostNext;
   const originalNetworkCall = networkCall;
   const originalDrawClock = networkDrawClock;
   const originalStartGame = networkStartGame;
@@ -96,6 +99,64 @@
     return originalReceiveState(state);
   };
 
+
+  // Restaurar sempre os controlos a partir do estado autoritativo da sala.
+  // Evita reativar a resposta de uma equipa quando o turno já passou para outra.
+  function syncTurnControls() {
+    const state = networkGameState;
+    if (!state || state.mode === 'mimicas') return;
+    const active = networkCanControlTurn();
+    const locked = !!state.locked;
+    const paused = !!(state.pause && Date.parse(state.pause.ends_at) > Date.now());
+    const preparing = Number(state.prepare_until) > Date.now() &&
+      Number(state.revealed || 0) === 0;
+    const unavailable = !networkGameActive || !active || paused || preparing;
+    const total = Number(state.total_clues) ||
+      (Number(state.queue?.[state.pos]) >= 0 &&
+       typeof isImageChallenge === 'function' &&
+       isImageChallenge(state.queue[state.pos]) ? 6 : 5);
+    const revealed = Number(state.revealed || 0);
+    const setDisabled = (id, disabled) => {
+      const control = $(id);
+      if (control) control.disabled = !!disabled;
+    };
+    setDisabled('nextClue', unavailable || locked || revealed >= total);
+    setDisabled('answer', unavailable || locked || networkAnsweredThisChallenge);
+    setDisabled('submit', unavailable || locked || networkAnsweredThisChallenge);
+    setDisabled('voice', unavailable || locked);
+    setDisabled('pass', unavailable || locked);
+    setDisabled('continue', unavailable || !locked);
+  }
+
+  networkSubmitAnswer = async function networkSubmitAnswerV2() {
+    if (!networkRoom || !networkGameActive || !networkGameState ||
+        networkGameState.mode === 'mimicas' || !networkCanControlTurn()) {
+      syncTurnControls();
+      return;
+    }
+    try {
+      return await originalSubmitAnswer.apply(this, arguments);
+    } finally {
+      syncTurnControls();
+    }
+  };
+
+  networkHostPass = async function networkHostPassV2() {
+    try {
+      return await originalHostPass.apply(this, arguments);
+    } finally {
+      syncTurnControls();
+    }
+  };
+
+  networkHostNext = async function networkHostNextV2() {
+    try {
+      return await originalHostNext.apply(this, arguments);
+    } finally {
+      syncTurnControls();
+    }
+  };
+
   // Se o servidor já mudou o turno, sincronizar antes de devolver o erro à UI.
   // Isto evita deixar os botões presos num estado antigo durante o polling seguinte.
   networkCall = async function networkCallV2(name, args) {
@@ -132,6 +193,7 @@
     }
 
     runtime.renderedTurnKey = key;
+    syncTurnControls();
 
     const preparing = Number(state.prepare_until) > Date.now() &&
       Number(state.revealed || 0) === 0;
@@ -162,6 +224,7 @@
       const after = Number(networkGameState?.revealed || 0);
       runtime.nextRevealAttemptAt = after > before ? 0 : Date.now() + 1200;
       runtime.revealInFlight = false;
+      syncTurnControls();
     }
   };
 
@@ -274,5 +337,5 @@
   if (networkRoom) networkStartPolling();
   if (networkGameActive) ensureNetworkClock();
 
-  window.ATINARoomRuntime = Object.freeze({ turnKey, teamForIndex, reset });
+  window.ATINARoomRuntime = Object.freeze({ turnKey, teamForIndex, reset, syncTurnControls });
 })();
