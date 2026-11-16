@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(9);
+SELECT plan(10);
 
 -- The clean migration replay intentionally has no production challenge seed.
 -- Build a deterministic, isolated fixture with six categories and all levels.
@@ -35,6 +35,14 @@ FROM (VALUES
   (-991017, '__mix_test_f__', 'medium'),
   (-991018, '__mix_test_f__', 'hard')
 ) AS fixture(challenge_id, category, difficulty);
+
+SELECT is(
+  (SELECT player_id::text
+     FROM private.atina_xp_session_owners
+    WHERE session_id=(SELECT (result->'state'->>'session_id')::uuid FROM atina_mix_test_seed)),
+  (SELECT id::text FROM atina_mix_test_player),
+  'The device token is bound to the local session owner'
+);
 
 -- Register a disposable test profile and mark three medium cards as recently seen.
 -- Both modes must avoid these IDs while other cards remain available.
