@@ -1088,27 +1088,53 @@ networkSubmitAnswer = async function() {
     return;
   }
   const answer = $('answer').value.trim();
-  if (!answer) { $('feedback').textContent = 'Escreve primeiro a tua resposta.'; return; }
+  if (!answer) { $('feedback').textContent = 'Escreve primeiro a resposta.'; return; }
+  $('submit').disabled = true;
   try {
     if (networkLobbyData?.team) {
-      await networkCall('atina_v2_submit_team_proposal', {
+      const result = await networkCall('atina_v2_submit_team_proposal', {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token,
         p_challenge: networkGameState.pos, p_answer: answer
       });
-      networkAnsweredThisChallenge = true;
-      $('answer').value = '';
+      if (result.status === 'pending') {
+        networkAnsweredThisChallenge = true;
+        atinaNetworkFeedback = 'Proposta enviada. Aguarda a votação dos restantes membros da equipa.';
+        $('answer').value = '';
+      } else if (result.status === 'accepted' || result.status === 'already_correct') {
+        networkAnsweredThisChallenge = true;
+        atinaNetworkFeedback = '✓ Resposta certa! ' + Number(result.points_per_player || result.points || 0) + ' pontos atribuídos por jogador.';
+        $('answer').value = '';
+        playAtinaSound('correct');
+      } else if (result.status === 'rejected') {
+        networkAnsweredThisChallenge = false;
+        atinaNetworkFeedback = result.message || (result.correct === false ? 'Resposta incorreta. Podes tentar novamente.' : 'A proposta foi rejeitada. A equipa pode apresentar outra resposta.');
+      } else if (result.status === 'locked') {
+        networkAnsweredThisChallenge = true;
+        atinaNetworkFeedback = 'O tempo terminou. A ronda foi fechada.';
+      } else {
+        networkAnsweredThisChallenge = false;
+        atinaNetworkFeedback = result.message || 'Não foi possível validar a resposta. Tenta novamente.';
+      }
     } else {
       const result = await networkCall('atina_v2_submit_room_answer', {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token, p_answer: answer
       });
-      atinaNetworkFeedback = result.status === 'correct' ? '✓ Resposta certa! +' + Number(result.points || 0) + ' pontos atribuídos pelo servidor.' : result.status === 'wrong' ? 'Resposta errada: −10 pontos. Tenta novamente.' : result.status === 'already_correct' ? 'Esta resposta já foi contabilizada.' : result.status === 'locked' ? 'A ronda já terminou.' : 'Resposta recebida pelo servidor.';
+      atinaNetworkFeedback = result.status === 'correct' ? '✓ Resposta certa! +' + Number(result.points || 0) + ' pontos atribuídos pelo servidor.' : result.status === 'wrong' ? 'Resposta errada: −' + Number(result.penalty || 10) + ' pontos. Tenta novamente.' : result.status === 'already_correct' ? 'Esta resposta já foi contabilizada.' : result.status === 'locked' ? 'A ronda já terminou.' : 'Resposta recebida pelo servidor.';
       if (result.status === 'correct' || result.status === 'already_correct') networkAnsweredThisChallenge = true;
       if (result.status === 'correct') playAtinaSound('correct');
       else if (result.status === 'wrong') playAtinaSound('wrong');
       $('answer').value = '';
     }
+    $('feedback').textContent = atinaNetworkFeedback;
     await networkRefreshRoom();
-  } catch (error) { $('feedback').textContent = error.message || 'Não foi possível enviar a resposta.'; }
+  } catch (error) {
+    $('feedback').textContent = error.message || 'Não foi possível enviar a resposta.';
+    networkAnsweredThisChallenge = false;
+  } finally {
+    const canRetry = !networkAnsweredThisChallenge && !networkGameState?.locked && !networkGameState?.pause;
+    $('submit').disabled = !canRetry;
+    $('answer').disabled = !canRetry;
+  }
 };
 networkHostReveal = async function() {
   if (!(networkGameState?.active_team ? networkCanControlTurn() : networkGameHost) || !networkGameState || networkGameState.locked) return;
