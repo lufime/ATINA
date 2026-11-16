@@ -2189,11 +2189,11 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  finally{if(button){button.dataset.saving='0';button.disabled=false;}}
 }
 async function atinaFetchPointsRanking(mode){
- const {data:humanRows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',mode).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
+ const {data:humanRows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',mode).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(20);
  if(error)throw error;
  let botRows=[];
  if(mode==='solo'){
-  const {data,error:botError}=await supabaseClient.rpc('atina_v2_bot_points_leaderboard',{p_limit:10});
+  const {data,error:botError}=await supabaseClient.rpc('atina_v2_bot_points_leaderboard',{p_limit:20});
   if(botError)throw botError;
   botRows=Array.isArray(data)?data:[];
  }
@@ -2202,7 +2202,7 @@ async function atinaFetchPointsRanking(mode){
   ...botRows.map(row=>({id:null,nickname:row.nickname,score:Number(row.points||0),created_at:row.created_at,_score:Number(row.points||0)}))
  ];
  combined.sort((a,b)=>b._score-a._score||new Date(a.created_at||0)-new Date(b.created_at||0));
- return combined.slice(0,10);
+ return combined.slice(0,20);
 }
 async function loadOnlineRanking(){
  const list=$('rankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';const m=$('rankingMode')?.value||'solo';
@@ -2226,7 +2226,7 @@ async function loadXpRanking(){
  const list=$('menuXpRankingList');if(!list)return;
  try{
   if(!supabaseClient)throw new Error('Supabase indisponível');
-  const {data:rows,error}=await supabaseClient.rpc('atina_progress_leaderboard',{p_limit:10});
+  const {data:rows,error}=await supabaseClient.rpc('atina_progress_leaderboard',{p_limit:20});
   if(error)throw error;list.replaceChildren();
   if(!Array.isArray(rows)||!rows.length){list.innerHTML='<li>Ainda não há perfis na classificação de XP.</li>';return;}
   rows.forEach(row=>{const li=document.createElement('li');li.textContent=(row.nickname||'Jogador')+' — '+Number(row.xp||0)+' XP · nível '+Number(row.level||1);list.appendChild(li);});
