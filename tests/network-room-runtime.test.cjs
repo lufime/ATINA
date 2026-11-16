@@ -108,6 +108,26 @@ test('a team change in the same challenge unlocks the new team turn', () => {
 });
 
 
+test('a new team turn is accepted even if a concurrent response has an older revision', () => {
+  const { context } = harness();
+  vm.runInContext(source, context);
+
+  context.networkReceiveState({
+    pos: 1, challenge_id: 10, active_team: 'Equipa A',
+    revision: 12, revealed: 2, mode: 'challenges'
+  });
+  context.networkAnsweredThisChallenge = true;
+
+  context.networkReceiveState({
+    pos: 1, challenge_id: 10, active_team: 'Equipa B',
+    revision: 11, revealed: 2, mode: 'challenges'
+  });
+
+  assert.equal(context.networkGameState.active_team, 'Equipa B');
+  assert.equal(context.networkAnsweredThisChallenge, false);
+  assert.equal(context.networkLastRevision, 11);
+});
+
 test('passing a challenge is accepted even when the server revision is unchanged', () => {
   const { context } = harness();
   vm.runInContext(source, context);
