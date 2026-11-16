@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(11);
+SELECT plan(12);
 
 -- The clean migration replay intentionally has no production challenge seed.
 -- Build a deterministic, isolated fixture with six categories and all levels.
@@ -205,6 +205,11 @@ SELECT is(
 SELECT ok(
   position('v_session.game_mode <> ''solo''' in pg_get_functiondef('private.atina_apply_adaptive_difficulty()'::regprocedure)) > 0,
   'Adaptive difficulty does not replace a mixed Mix queue'
+);
+
+SELECT ok(
+  position('private.atina_challenge_exposures' in pg_get_functiondef('private.atina_apply_adaptive_difficulty()'::regprocedure)) > 0,
+  'Adaptive Solo difficulty respects the no-repeat exposure ledger'
 );
 
 SELECT ok(
