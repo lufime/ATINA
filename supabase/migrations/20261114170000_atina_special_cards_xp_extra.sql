@@ -15,21 +15,28 @@ begin
   end if;
   execute v_def;
 
-  v_def := pg_get_functiondef('public.atina_v2_record_local_progress(uuid,text)'::regprocedure);
+  -- The live account progression API is atina_progress_claim_local.
+  -- Grant the XP card only after a correct answer, alongside normal daily bonuses.
+  v_def := pg_get_functiondef('public.atina_progress_claim_local(text,uuid,text,integer)'::regprocedure);
   v_def := replace(v_def,
-    '  if v_player.daily_count >= 3 and v_player.rewarded_date is distinct from v_today then'||chr(10)||
-    '    v_points := 60;'||chr(10)||
-    '    v_player.rewarded_date := v_today;'||chr(10)||
-    '  end if;',
-    '  if v_player.daily_count >= 3 and v_player.rewarded_date is distinct from v_today then'||chr(10)||
-    '    v_points := 60;'||chr(10)||
-    '    v_player.rewarded_date := v_today;'||chr(10)||
-    '  end if;'||chr(10)||
-    '  if v_session.special_card->>''id'' = ''xp_extra'' then'||chr(10)||
-    '    v_points := v_points + 10;'||chr(10)||
-    '  end if;');
-  if position('v_points := v_points + 10' in v_def)=0 then
-    raise exception 'Não foi possível integrar o bónus de XP.';
+    '  v_milestone_bonus integer := 0;',
+    '  v_milestone_bonus integer := 0;'||chr(10)||'  v_special_bonus integer := 0;');
+  v_def := replace(v_def,
+    '  update private.atina_players'||chr(10)||
+    '     set total_xp=total_xp+v_xp+v_daily_bonus+v_mission_bonus+v_streak_bonus+'||
+    'v_category_bonus+v_hard_bonus+v_milestone_bonus,',
+    '  v_special_bonus:=case when v_outcome=''correct'' and v_session.special_card->>''id''=''xp_extra'' then 10 else 0 end;'||chr(10)||
+    '  update private.atina_players'||chr(10)||
+    '     set total_xp=total_xp+v_xp+v_daily_bonus+v_mission_bonus+v_streak_bonus+'||
+    'v_category_bonus+v_hard_bonus+v_milestone_bonus+v_special_bonus,');
+  v_def := replace(v_def,
+    '''bonus_total'',v_daily_bonus+v_mission_bonus+v_streak_bonus+v_category_bonus+v_hard_bonus+v_milestone_bonus,',
+    '''bonus_total'',v_daily_bonus+v_mission_bonus+v_streak_bonus+v_category_bonus+v_hard_bonus+v_milestone_bonus+v_special_bonus,'||chr(10)||
+    '    ''special_card_bonus'',v_special_bonus,');
+  if position('v_special_bonus' in v_def)=0
+     or position('special_card_bonus' in v_def)=0
+     or position('v_session.special_card' in v_def)=0 then
+    raise exception 'Não foi possível integrar o bónus de XP na progressão da conta.';
   end if;
   execute v_def;
 end
