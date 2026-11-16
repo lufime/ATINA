@@ -38,3 +38,5 @@ jobs:
         run: node scripts/validate-global-challenge-animation.mjs
       - name: Validar missão diária e progressão do jogador
         run: node scripts/validate-daily-progression.mjs
+      - name: Testar runtime de salas multiplayer (turnos, equipas e sincronização)
+        run: node --test tests/network-room-runtime.test.cjs
