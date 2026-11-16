@@ -4,8 +4,20 @@
   "label": "BETA · TESTES",
   "display": "v0.1.0",
   "versioning": {
+    "scheme": "MAJOR.MINOR.PATCH",
     "initial": "0.1.0",
-    "rule": "Incrementar o terceiro número (patch) em cada nova alteração publicada no ATINA: 0.1.0, 0.1.1, 0.1.2, ...",
-    "next_version": "0.1.1"
+    "rules": {
+      "patch": "Correções pequenas, erros, ajustes visuais, manutenção e melhorias sem nova funcionalidade relevante.",
+      "minor": "Novas funcionalidades, melhorias relevantes ou alterações que ampliem capacidades sem quebrar compatibilidade.",
+      "major": "Alterações estruturais de grande impacto, mudanças incompatíveis ou reformulação substancial do funcionamento."
+    },
+    "increment": {
+      "patch": "Incrementar PATCH: 0.1.0 → 0.1.1.",
+      "minor": "Incrementar MINOR e repor PATCH a zero: 0.1.1 → 0.2.0.",
+      "major": "Incrementar MAJOR e repor MINOR e PATCH a zero: 0.9.0 → 1.0.0."
+    },
+    "classification": "Avaliar o impacto real da alteração, não o número de ficheiros. Quando uma publicação incluir alterações de vários níveis, aplicar apenas o incremento do nível mais elevado.",
+    "releaseRule": "Atualizar a versão apresentada no selo do jogo e este ficheiro em conjunto em cada publicação do jogo. Não alterar a versão apresentada por alterações exclusivamente administrativas/documentais que não constituam uma nova publicação do jogo.",
+    "nextVersion": "Determinar conforme o impacto da próxima alteração publicada."
   }
 }
