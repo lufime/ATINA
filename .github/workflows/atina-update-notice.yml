@@ -31,6 +31,7 @@ jobs:
       - name: Incrementar automaticamente a versão beta
         run: |
           python3 - <<'PY'
+          import json
           import re
           from pathlib import Path
 
@@ -45,6 +46,17 @@ jobs:
           replacement = f"{match.group(1)}{next_version}{match.group(5)}{next_version}{match.group(9)}"
           html = html[:match.start()] + replacement + html[match.end():]
           path.write_text(html, encoding="utf-8")
+
+          version_path = Path(".atina-interno/versao-beta.json")
+          if version_path.exists():
+              metadata = json.loads(version_path.read_text(encoding="utf-8"))
+              metadata["version"] = next_version
+              metadata["display"] = f"v{next_version}"
+              version_path.write_text(
+                  json.dumps(metadata, ensure_ascii=False, indent=2) + "\\n",
+                  encoding="utf-8"
+              )
+
           print(f"Versão ATINA atualizada automaticamente: {next_version}")
           PY
           git config user.name "github-actions[bot]"
