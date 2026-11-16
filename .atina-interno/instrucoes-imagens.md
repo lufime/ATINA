@@ -13,11 +13,14 @@
 - Estados: Pending, Approved, Rejected, Broken, Generated e Published.
 - Não inventar IDs, soluções, imagens ou estados. Se não houver acesso atual, informar.
 - Nesta consulta, não analisar qualidade, autoria, licença ou formato.
+- Verificar também se cada desafio está ativo ou desativado. Desafios desativados ficam excluídos da geração, mesmo que não tenham imagem.
 
 ## 3. Geração e lotes
 - Gerar lotes de 20 imagens, cada lote num ZIP, prosseguindo sem pedir confirmação.
 - Se faltarem menos de 20 desafios, gerar apenas os necessários. Nunca inventar desafios para completar lotes.
 - Usar apenas desafios e IDs reais. Consultar o estado atual antes de começar.
+- Gerar imagens apenas para desafios ativos que ainda precisem de imagem. Nunca gerar, reaproveitar ou incluir num lote imagens destinadas a desafios desativados.
+- Se um desafio for desativado durante o trabalho, interromper a geração da respetiva imagem e excluí-lo dos lotes ainda não entregues.
 - Retomar do último trabalho concluído, sem repetir imagens nem perder progresso.
 
 ## 4. Origem exclusiva
@@ -81,7 +84,7 @@ Todas as imagens finais devem ser:
 
 ## 12. Validação e entrega
 Antes de entregar cada lote:
-- Confirmar que cada ID existe, corresponde à solução e ainda precisa de imagem.
+- Confirmar que cada ID existe, corresponde à solução, está ativo e ainda precisa de imagem.
 - Verificar duplicados com imagens existentes e dentro do lote.
 - Validar WebP, 1920 × 1080, 16:9, qualidade 85%, sRGB e integridade.
 - Verificar nitidez, cores, composição e qualidade visual em tamanho grande.
