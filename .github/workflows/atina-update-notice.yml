@@ -53,7 +53,7 @@ jobs:
               metadata["version"] = next_version
               metadata["display"] = f"v{next_version}"
               version_path.write_text(
-                  json.dumps(metadata, ensure_ascii=False, indent=2) + "\\n",
+                  json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
                   encoding="utf-8"
               )
 
