@@ -110,7 +110,10 @@
     const paused = !!(state.pause && Date.parse(state.pause.ends_at) > Date.now());
     const preparing = Number(state.prepare_until) > Date.now() &&
       Number(state.revealed || 0) === 0;
-    const unavailable = !networkGameActive || !active || paused || preparing;
+    // A equipa ativa pode mudar no servidor antes de o polling atualizar
+    // este dispositivo. Não bloquear o botão por um active_team local antigo:
+    // a ação atualiza primeiro o estado e a RPC continua a validar a equipa.
+    const unavailable = !networkGameActive || paused || preparing;
     const total = Number(state.total_clues) ||
       (Number(state.queue?.[state.pos]) >= 0 &&
        typeof isImageChallenge === 'function' &&
@@ -120,6 +123,8 @@
       const control = $(id);
       if (control) control.disabled = !!disabled;
     };
+    const clueButton = $('nextClue');
+    if (clueButton) clueButton.textContent = active ? 'Revelar próxima pista' : 'Aguarda a tua vez';
     setDisabled('nextClue', unavailable || locked || revealed >= total);
     setDisabled('answer', unavailable || locked || networkAnsweredThisChallenge);
     setDisabled('submit', unavailable || locked || networkAnsweredThisChallenge);
@@ -207,6 +212,17 @@
   // O bloqueio evita duplo clique e o finally recupera sempre o controlo visual.
   networkHostReveal = async function networkHostRevealV2() {
     const button = $('nextClue');
+    // Antes de rejeitar uma equipa localmente, sincronizar com o servidor.
+    // Evita que um active_team antigo deixe a Equipa B (ou A) sem ação.
+    if (!arguments[0]?.automatic && networkRoom && !networkCanControlTurn()) {
+      try { await networkRefreshRoom(); } catch (_) {}
+    }
+    if (!networkCanControlTurn()) {
+      const activeTeam = networkGameState?.active_team || 'por determinar';
+      networkMessage('feedback', 'Ainda não é a vez da tua equipa. Equipa ativa: ' + activeTeam + '.');
+      syncTurnControls();
+      return;
+    }
     if (!arguments[0]?.automatic && Number(networkGameState?.prepare_until) > Date.now() &&
         Number(networkGameState?.revealed || 0) === 0) {
       syncTurnControls();
