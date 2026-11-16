@@ -7,9 +7,9 @@ const client = readFileSync(new URL('../atina-server-client.js', import.meta.url
 // O HTML contém JSON-LD, scripts de arranque e scripts inline secundários.
 // Localizar o script principal pelo conteúdo, não pela posição de uma tag
 // adjacente (que muda quando se acrescentam scripts ou atributos).
-const inlineScripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)];
+const inlineScripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
 const mainScript = inlineScripts.find(([, attrs, body]) =>
-  !/\\bsrc\\s*=/.test(attrs) && body.includes('function start(m,chosen=null)') && body.includes('function mixDraw')
+  !/\bsrc\s*=/.test(attrs) && body.includes('function start(m,chosen=null)') && body.includes('function mixDraw')
 );
 if (!mainScript) throw new Error('Não foi possível localizar o JavaScript principal.');
 new vm.Script(mainScript[2], { filename: 'index.html inline script' });
