@@ -137,6 +137,11 @@ try {
         ' · erros: ' + JSON.stringify(pageErrors));
     });
     assert.equal(await page.locator('#continue').isVisible(), true, category + ': deve permitir avançar após resposta certa.');
+    assert.equal(await page.evaluate(() => atinaServerState.challenge.answer), 'Resposta ATINA',
+      category + ': a solução só deve estar disponível no estado fechado da ronda.');
+    await page.locator('#listenAnswer').click();
+    assert.match(await page.locator('#feedback').textContent(), /leitura em voz alta não está disponível/i,
+      category + ': o botão de leitura deve apresentar fallback sem API de voz.');
   }
 
   // Confirmar que Mix inicia uma sessão própria e que PASSO e CONTINUAR funcionam.
