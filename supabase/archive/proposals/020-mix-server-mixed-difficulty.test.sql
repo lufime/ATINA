@@ -36,14 +36,6 @@ FROM (VALUES
   (-991018, '__mix_test_f__', 'hard')
 ) AS fixture(challenge_id, category, difficulty);
 
-SELECT is(
-  (SELECT player_id::text
-     FROM private.atina_xp_session_owners
-    WHERE session_id=(SELECT (result->'state'->>'session_id')::uuid FROM atina_mix_test_seed)),
-  (SELECT id::text FROM atina_mix_test_player),
-  'The device token is bound to the local session owner'
-);
-
 -- Register a disposable test profile and mark three medium cards as recently seen.
 -- Both modes must avoid these IDs while other cards remain available.
 CREATE TEMP TABLE atina_mix_test_player AS
@@ -61,6 +53,14 @@ CREATE TEMP TABLE atina_mix_test_seed AS
 SELECT public.atina_v2_start_local_game(
   'mix','medium',NULL,0,repeat('a',64)
 ) AS result;
+
+SELECT is(
+  (SELECT player_id::text
+     FROM private.atina_xp_session_owners
+    WHERE session_id=(SELECT (result->'state'->>'session_id')::uuid FROM atina_mix_test_seed)),
+  (SELECT id::text FROM atina_mix_test_player),
+  'The device token is bound to the local session owner'
+);
 
 INSERT INTO private.atina_difficulty_history
   (player_id,session_id,challenge_position,challenge_id,difficulty,outcome)
