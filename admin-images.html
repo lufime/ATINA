@@ -41,6 +41,7 @@ button{min-height:var(--control-h);padding:11px 16px;font-size:16px;line-height:
 .panel{padding:18px;margin:14px 0}
 .challenge-item{padding:14px;margin:10px 0;border-radius:14px}
 .challenge-actions{gap:var(--space)}
+.bulk-tools{margin:12px 0;padding:12px;border:1px solid #36516e;border-radius:12px;background:#10253a}.bulk-selection{display:flex;flex-wrap:wrap;gap:8px}.bulk-selection button{width:auto;flex:1 1 140px}.bulk-item-select{display:flex;align-items:center;gap:8px;margin:0 0 9px;font-size:13px;color:var(--muted)}.bulk-item-select input{width:20px;height:20px;min-height:20px;accent-color:#d8b16a}.bulk-tools .challenge-actions button{flex:1}.bulk-tools .note{margin:8px 0}
 .challenge-actions button{min-height:var(--control-h)}
 input:focus,select:focus,textarea:focus,button:focus-visible,.admin-nav a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @media(max-width:600px){
@@ -210,8 +211,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   <section class="panel hidden tab-panel" id="challengesPanel" data-tab-panel="challenges">
     <h2>Base de dados dos desafios</h2>
     <p class="note">Consulta, pesquisa, cria e edita desafios. A opção Apagar desativa o desafio, preservando o registo e o histórico; podes reativá-lo mais tarde.</p>
-    <div class="form-grid"><div><label for="challengeSearch">Pesquisar por ID, solução ou categoria</label><input id="challengeSearch" type="search" placeholder="Pesquisar desafios…"></div><div><label for="challengeActiveFilter">Estado do desafio</label><select id="challengeActiveFilter"><option value="">Todos</option><option value="active">Ativos</option><option value="inactive">Inativos</option></select></div><div><label for="challengeDifficultyFilter">Dificuldade</label><select id="challengeDifficultyFilter"><option value="">Todas</option><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div></div>
+    <div class="form-grid"><div><label for="challengeSearch">Pesquisar por ID, solução ou categoria</label><input id="challengeSearch" type="search" placeholder="Pesquisar desafios…"></div><div><label for="challengeActiveFilter">Estado do desafio</label><select id="challengeActiveFilter"><option value="">Todos</option><option value="active">Ativados</option><option value="inactive">Desativados</option></select></div><div><label for="challengeDifficultyFilter">Dificuldade</label><select id="challengeDifficultyFilter"><option value="">Todas</option><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div></div>
     <div class="challenge-actions"><button id="newChallenge" type="button">Criar novo desafio</button><button id="reloadChallenges" class="secondary" type="button">Atualizar lista</button></div>
+    <div class="bulk-tools" id="bulkTools"><div class="bulk-selection"><button type="button" class="secondary" id="selectVisibleChallenges">Selecionar página</button><button type="button" class="secondary" id="selectFilteredChallenges">Selecionar todos os filtrados</button><button type="button" class="secondary" id="clearChallengeSelection">Limpar seleção</button></div><p class="note" id="bulkSelectionCount" aria-live="polite">0 desafios selecionados</p><div class="challenge-actions"><button type="button" id="bulkActivateChallenges">Ativar selecionados</button><button type="button" class="secondary" id="bulkDeactivateChallenges">Desativar selecionados</button></div></div>
     <p class="note" id="challengeCount">A carregar desafios…</p>
     <div id="challengeList"></div>
     <h2 class="subsection-title">Histórico recente neste navegador</h2><p class="note">Regista edições e ativações de desafios neste navegador. Não altera nem substitui o histórico da base de dados.</p><div id="adminHistory" class="hint">Ainda sem operações registadas.</div>
@@ -531,6 +533,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     } catch(error) { $("challengeCount").textContent="Erro: "+error.message; }
   }
   let challengePage=0; const CHALLENGES_PER_PAGE=30;
+  const selectedChallengeIds=new Set();
   let challengeFormDirty=false;
   const historyKey="atina_admin_history_v1";
   function recordAdminAction(action,detail){try{const rows=JSON.parse(localStorage.getItem(historyKey)||"[]");rows.unshift({action,detail,time:new Date().toISOString()});localStorage.setItem(historyKey,JSON.stringify(rows.slice(0,30)));renderAdminHistory();}catch(error){console.warn("Não foi possível guardar o histórico local",error);}}
@@ -540,17 +543,20 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("challengeForm").addEventListener("input",()=>setFormDirty(true));
   $("challengeForm").addEventListener("change",()=>setFormDirty(true));
   renderAdminHistory();
+  function updateBulkSelection(){const count=selectedChallengeIds.size;$("bulkSelectionCount").textContent=count+" desafio"+(count===1?"":"s")+" selecionado"+(count===1?"":"s");$("bulkActivateChallenges").disabled=count===0;$("bulkDeactivateChallenges").disabled=count===0;}
   function renderChallenges() {
     const term=$("challengeSearch").value.trim().toLocaleLowerCase("pt-PT");
     const activeFilter=$("challengeActiveFilter").value,difficultyFilter=$("challengeDifficultyFilter").value;
-    const rows=challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)&&(!activeFilter||(activeFilter==="active"?x.active:!x.active))&&(!difficultyFilter||x.difficulty===difficultyFilter));
+    const isChallengeActive=x=>x.active===true||x.active===1||["true","1","active","ativado","ativada"].includes(String(x.active??"").trim().toLocaleLowerCase("pt-PT"));
+    const rows=challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)&&(!activeFilter||(activeFilter==="active"?isChallengeActive(x):!isChallengeActive(x)))&&(!difficultyFilter||x.difficulty===difficultyFilter));
     const pageCount=Math.max(1,Math.ceil(rows.length/CHALLENGES_PER_PAGE)); challengePage=Math.min(challengePage,pageCount-1);
     const visible=rows.slice(challengePage*CHALLENGES_PER_PAGE,(challengePage+1)*CHALLENGES_PER_PAGE);
     $("challengeCount").textContent=rows.length+" de "+challengeCache.length+" desafios · a mostrar "+(rows.length?challengePage*CHALLENGES_PER_PAGE+1:0)+"–"+Math.min((challengePage+1)*CHALLENGES_PER_PAGE,rows.length);
     $("challengePageInfo").textContent="Página "+(challengePage+1)+" / "+pageCount;
     $("challengePrev").disabled=challengePage===0; $("challengeNext").disabled=challengePage>=pageCount-1;
     $("challengePagination").classList.toggle("hidden",rows.length<=CHALLENGES_PER_PAGE);
-    $("challengeList").innerHTML=visible.map(x=>'<article class="challenge-item"><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(x.active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-actions"><button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!x.active)+'">'+(x.active?"Apagar / desativar":"Reativar")+'</button></div></article>').join("")||'<p>Não foram encontrados desafios.</p>';
+    $("challengeList").innerHTML=visible.map(x=>{const active=isChallengeActive(x),id=String(x.challenge_id);return '<article class="challenge-item"><label class="bulk-item-select"><input type="checkbox" data-select-challenge="'+esc(id)+'" '+(selectedChallengeIds.has(id)?"checked":"")+'><span>Selecionar</span></label><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-actions"><button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!active)+'">'+(active?"Apagar / desativar":"Reativar")+'</button></div></article>';}).join("")||'<p>Não foram encontrados desafios.</p>';
+    updateBulkSelection(rows);
   }
   function renderClueFields(clues) {
     const values = Array.isArray(clues) && clues.length ? clues : [""];
@@ -594,6 +600,19 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   ["challengeActiveFilter","challengeDifficultyFilter"].forEach(id=>$(id).addEventListener("change",()=>{challengePage=0;renderChallenges();}));
   $("challengePrev").addEventListener("click",()=>{challengePage=Math.max(0,challengePage-1);renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
   $("challengeNext").addEventListener("click",()=>{challengePage++;renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
+  $("selectVisibleChallenges").addEventListener("click",()=>{document.querySelectorAll("[data-select-challenge]").forEach(input=>selectedChallengeIds.add(input.dataset.selectChallenge));renderChallenges();});
+  $("selectFilteredChallenges").addEventListener("click",()=>{const term=$("challengeSearch").value.trim().toLocaleLowerCase("pt-PT"),af=$("challengeActiveFilter").value,df=$("challengeDifficultyFilter").value;const active=x=>x.active===true||x.active===1||["true","1","active","ativado","ativada"].includes(String(x.active??"").trim().toLocaleLowerCase("pt-PT"));challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)&&(!af||(af==="active"?active(x):!active(x)))&&(!df||x.difficulty===df)).forEach(x=>selectedChallengeIds.add(String(x.challenge_id)));renderChallenges();});
+  $("clearChallengeSelection").addEventListener("click",()=>{selectedChallengeIds.clear();renderChallenges();});
+  $("challengeList").addEventListener("change",event=>{const input=event.target.closest("[data-select-challenge]");if(!input)return;if(input.checked)selectedChallengeIds.add(input.dataset.selectChallenge);else selectedChallengeIds.delete(input.dataset.selectChallenge);updateBulkSelection();});
+  async function bulkSetChallengeState(active){
+    const ids=Array.from(selectedChallengeIds);if(!ids.length)return;const label=active?"ativar":"desativar";
+    if(!confirm("Queres "+label+" "+ids.length+" desafios selecionados? Os registos e históricos serão preservados."))return;
+    $("bulkActivateChallenges").disabled=true;$("bulkDeactivateChallenges").disabled=true;let succeeded=0,failed=[];
+    for(const id of ids){try{const item=challengeCache.find(x=>String(x.challenge_id)===id);if(!item)continue;const current=item.active===true||item.active===1||["true","1","active","ativado","ativada"].includes(String(item.active??"").trim().toLocaleLowerCase("pt-PT"));if(current===active){succeeded++;selectedChallengeIds.delete(id);continue;}await challengeRequest({action:"challenge_toggle",challenge_id:Number(id),active});succeeded++;selectedChallengeIds.delete(id);}catch(error){failed.push("#"+id+": "+error.message);}}
+    recordAdminAction(active?"Ativou desafios em massa":"Desativou desafios em massa",succeeded+" concluídos"+(failed.length?", "+failed.length+" falharam":""));await loadChallenges();if(failed.length)alert(succeeded+" desafios atualizados. Falhas: "+failed.join("\n"));else alert(succeeded+" desafios "+(active?"ativados":"desativados")+".");updateBulkSelection();
+  }
+  $("bulkActivateChallenges").addEventListener("click",()=>bulkSetChallengeState(true));
+  $("bulkDeactivateChallenges").addEventListener("click",()=>bulkSetChallengeState(false));
   $("challengeList").addEventListener("click",async event=>{
     const edit=event.target.closest("[data-edit-challenge]"); if(edit){editChallenge(edit.dataset.editChallenge);return;}
     const toggle=event.target.closest("[data-toggle-challenge]"); if(!toggle)return;
