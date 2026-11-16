@@ -229,7 +229,8 @@ try {
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
-  await page.locator('#networkNickname').fill('BrowserTester');
+  assert.equal(await page.locator('#networkNickname').isEditable(), false,
+    'O pseudónimo da sala deve ser apenas de leitura e vir da conta ATINA.');
   await page.locator('.network-room-options summary').click();
   await page.locator('#createNetworkRoom').click();
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
