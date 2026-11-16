@@ -1052,7 +1052,7 @@ label.section{line-height:1.35!important}
   <div class="home-welcome-kicker">BEM-VINDO AO ATINA</div>
   <h2>Pensa. Descobre. Atina.</h2>
   <p>O ATINA é um jogo de desafios, enigmas e pistas. Escolhe respostas, testa os teus conhecimentos e soma pontos enquanto descobres algo novo.</p>
-  <p class="atina-entry-prompt">Cria a tua conta ou inicia sessão para entrar no jogo.</p>
+  <p class="atina-entry-prompt">Cria uma conta, inicia sessão ou continua como convidado. A conta é opcional para jogar.</p><button type="button" class="btn full" id="atinaGuestContinue">▶ Continuar como convidado</button>
  </div>
  <div id="atinaAccessAccountMount"></div>
  <section class="card atina-legal-inline" aria-labelledby="atinaLegalInlineTitle">
@@ -1882,7 +1882,7 @@ function showHomePage(page,restore=false){
  if(!atinaHomePageIsValid(page))page='access';
  let hasSession=false,hasAcknowledgement=false;
  try{hasSession=!!localStorage.getItem('atinaAccountSessionV1');hasAcknowledgement=localStorage.getItem('atinaLegalAcknowledgedV2')==='1';}catch(e){}
- if(page!=='access'&&(!hasSession||!hasAcknowledgement))page='access';
+ if(page==='profile'&&!hasSession)page='access';
  document.body.classList.toggle('atina-logged-out',page==='access');
  // O painel de conta muda de contentor conforme o separador, para que o botão de terminar sessão fique sempre no Perfil.
  const accountPanel=document.getElementById('atinaCloudProgressPanel');
@@ -1920,6 +1920,7 @@ function showHomePage(page,restore=false){
  if(page==='ranking'&&typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
+document.getElementById('atinaGuestContinue')?.addEventListener('click',()=>showHomePage('dashboard'));
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
 // Atualiza automaticamente os rankings visíveis, sem exigir botões manuais.
@@ -3107,7 +3108,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível carregar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261116-08">
+</script><script src="./atina-server-client.js?v=20261116-09">
 /* Confirmar saída de uma partida antes de mudar de página */
 document.addEventListener('click',function(event){
  const nav=event.target.closest('[data-home-target]');
@@ -4198,5 +4199,5 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 @media(max-width:480px){.atina-beta-version{top:max(6px,env(safe-area-inset-top));right:max(6px,env(safe-area-inset-right));gap:5px;padding:5px 7px;font-size:9px}.atina-beta-version strong{font-size:10px}}
 </style>
 
-<script src="./assets/network-room-runtime.js?v=20261116-08"></script>
+<script src="./assets/network-room-runtime.js?v=20261116-09"></script>
 </body></html>
