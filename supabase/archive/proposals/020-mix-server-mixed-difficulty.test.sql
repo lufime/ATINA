@@ -94,18 +94,6 @@ SELECT public.atina_v2_start_local_game(
   'solo','medium',NULL,0,repeat('a',64)
 ) AS result;
 
-CREATE TEMP TABLE atina_mix_test_answer AS
-SELECT public.atina_v2_local_submit_answer(
-  (run.result->'state'->>'session_id')::uuid,
-  run.result->>'token',
-  challenge.answer
-) AS result
-FROM atina_mix_test_run run
-JOIN private.atina_v2_local_sessions session
-  ON session.id=(run.result->'state'->>'session_id')::uuid
-JOIN private.atina_challenges challenge
-  ON challenge.challenge_id=session.challenge_queue[session.position];
-
 SELECT is(
   (SELECT (result->'state'->>'queue_size')::integer FROM atina_mix_test_run),
   (SELECT count(DISTINCT category)::integer FROM private.atina_challenges WHERE active),
@@ -162,6 +150,18 @@ SELECT is(
   0,
   'Solo avoids the player recent challenge history'
 );
+
+CREATE TEMP TABLE atina_mix_test_answer AS
+SELECT public.atina_v2_local_submit_answer(
+  (run.result->'state'->>'session_id')::uuid,
+  run.result->>'token',
+  challenge.answer
+) AS result
+FROM atina_mix_test_run run
+JOIN private.atina_v2_local_sessions session
+  ON session.id=(run.result->'state'->>'session_id')::uuid
+JOIN private.atina_challenges challenge
+  ON challenge.challenge_id=session.challenge_queue[session.position];
 
 SELECT is(
   (SELECT result->'state'->>'difficulty' FROM atina_mix_test_run),
