@@ -133,6 +133,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 .image-manager-scroll{display:none;position:fixed;right:12px;bottom:18px;z-index:50;flex-direction:column;gap:7px}
 .image-manager-scroll button{width:auto;min-width:64px;min-height:38px;padding:7px 10px;border:1px solid var(--gold);border-radius:999px;background:#1b344d;color:var(--text);font-size:12px;font-weight:800;box-shadow:0 4px 16px #0008}
 @media(max-width:600px){.image-manager-scroll{right:7px;bottom:9px;gap:5px}.image-manager-scroll button{min-width:54px;min-height:34px;padding:6px 8px;font-size:11px}}
+
+.challenge-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.challenge-filter-grid label{margin:8px 0 5px}
+@media(max-width:600px){.challenge-filter-grid{grid-template-columns:1fr;gap:5px}.challenge-filter-grid label{margin:8px 0 4px}}
 </style>
 </head>
 <body>
@@ -211,7 +214,19 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   <section class="panel hidden tab-panel" id="challengesPanel" data-tab-panel="challenges">
     <h2>Base de dados dos desafios</h2>
     <p class="note">Consulta, pesquisa, cria e edita desafios. A opção Apagar desativa o desafio, preservando o registo e o histórico; podes reativá-lo mais tarde.</p>
-    <div class="form-grid"><div><label for="challengeSearch">Pesquisar por ID, solução ou categoria</label><input id="challengeSearch" type="search" placeholder="Pesquisar desafios…"></div><div><label for="challengeActiveFilter">Estado do desafio</label><select id="challengeActiveFilter"><option value="">Todos</option><option value="active">Ativados</option><option value="inactive">Desativados</option></select></div><div><label for="challengeDifficultyFilter">Dificuldade</label><select id="challengeDifficultyFilter"><option value="">Todas</option><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div></div>
+    <div class="form-grid challenge-filter-grid">
+      <div><label for="challengeSearch">Pesquisar por ID, solução ou categoria</label><input id="challengeSearch" type="search" placeholder="Pesquisar desafios…"></div>
+      <div><label for="challengeActiveFilter">Estado do desafio</label><select id="challengeActiveFilter"><option value="">Todos</option><option value="active">Ativados</option><option value="inactive">Desativados</option></select></div>
+      <div><label for="challengeImageStatusFilter">Estado da imagem</label><select id="challengeImageStatusFilter"><option value="">Todos os estados</option><option value="pending">Pendente</option><option value="approved">Aprovada</option><option value="rejected">Rejeitada</option><option value="broken">Com erro</option><option value="generated">Gerada</option><option value="published">Publicada</option><option value="none">Sem imagem registada</option></select></div>
+      <div><label for="challengeAuthorFilter">Autor</label><input id="challengeAuthorFilter" type="search" placeholder="Pesquisar autor"></div>
+      <div><label for="challengeRightsFilter">Direitos de utilização</label><select id="challengeRightsFilter"><option value="">Todos os estados dos direitos</option><option value="atina">Direitos ATINA identificados</option><option value="open">Licença aberta indicada</option><option value="pending">Direitos por confirmar</option><option value="restricted">Restrita / não autorizada</option></select></div>
+      <div><label for="challengeOriginFilter">Origem</label><select id="challengeOriginFilter"><option value="">Todas as origens</option><option value="ai">Gerada por IA</option><option value="own">Imagem própria</option><option value="other">Outra origem identificada</option><option value="unknown">Origem não indicada</option></select></div>
+      <div><label for="challengeTypeFilter">Formato</label><select id="challengeTypeFilter"><option value="">Todos os formatos</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option><option value="none">Sem ficheiro associado</option></select></div>
+      <div><label for="challengeQualityFilter">Qualidade</label><select id="challengeQualityFilter"><option value="">Todas as qualidades</option><option value="Muito alta">Muito alta</option><option value="Alta">Alta</option><option value="Boa">Boa</option><option value="Média">Média</option><option value="Baixa">Baixa</option><option value="unknown">Não determinada</option></select></div>
+      <div><label for="challengeDifficultyFilter">Dificuldade</label><select id="challengeDifficultyFilter"><option value="">Todas</option><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div>
+      <div><label for="challengeSort">Ordenar por</label><select id="challengeSort"><option value="id">ID do desafio</option><option value="newest">Data mais recente</option><option value="largest">Maior tamanho</option><option value="smallest">Menor tamanho</option></select></div>
+    </div>
+    <div class="challenge-actions"><button type="button" class="secondary" id="clearChallengeFilters">Limpar todos os filtros</button></div>
     <div class="challenge-actions"><button id="newChallenge" type="button">Criar novo desafio</button><button id="reloadChallenges" class="secondary" type="button">Atualizar lista</button></div>
     <div class="bulk-tools" id="bulkTools"><div class="bulk-selection"><button type="button" class="secondary" id="selectVisibleChallenges">Selecionar página</button><button type="button" class="secondary" id="selectFilteredChallenges">Selecionar todos os filtrados</button><button type="button" class="secondary" id="clearChallengeSelection">Limpar seleção</button></div><p class="note" id="bulkSelectionCount" aria-live="polite">0 desafios selecionados</p><div class="challenge-actions"><button type="button" id="bulkActivateChallenges">Ativar selecionados</button><button type="button" class="secondary" id="bulkDeactivateChallenges">Desativar selecionados</button></div></div>
     <p class="note" id="challengeCount">A carregar desafios…</p>
@@ -525,10 +540,31 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     return data;
   }
   async function loadChallenges() {
-    $("challengeCount").textContent="A carregar desafios…";
+    $("challengeCount").textContent="A carregar desafios e metadados das imagens…";
     try {
-      const data=await challengeRequest({action:"challenge_list"});
-      challengeCache=data.challenges||[];
+      const [data,imageData]=await Promise.all([
+        challengeRequest({action:"challenge_list"}),
+        challengeRequest({action:"list"}).catch(error=>({assets:[],_metadataError:error.message}))
+      ]);
+      const imageById=new Map((imageData.assets||[]).map(asset=>[String(asset.challenge_id),asset]));
+      challengeCache=(data.challenges||[]).map(challenge=>{
+        const asset=imageById.get(String(challenge.challenge_id))||null;
+        return {...challenge,_imageAsset:asset,_imageQuality:"unknown"};
+      });
+      await Promise.all(challengeCache.map(challenge=>new Promise(resolve=>{
+        const url=challenge._imageAsset?.image_url||challenge.solution_image_url;
+        if(!url){resolve();return;}
+        const probe=new Image();
+        probe.onload=()=>{
+          const pixels=probe.naturalWidth*probe.naturalHeight;
+          challenge._imageQuality=pixels>=8000000?"Muito alta":pixels>=2000000?"Alta":pixels>=1000000?"Boa":pixels>=400000?"Média":"Baixa";
+          resolve();
+        };
+        probe.onerror=()=>resolve();
+        probe.src=url;
+      })));
+      if(imageData._metadataError) $("challengeCount").dataset.metadataWarning="Não foi possível carregar os metadados das imagens: "+imageData._metadataError;
+      else delete $("challengeCount").dataset.metadataWarning;
       renderChallenges();
     } catch(error) { $("challengeCount").textContent="Erro: "+error.message; }
   }
@@ -544,18 +580,65 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("challengeForm").addEventListener("change",()=>setFormDirty(true));
   renderAdminHistory();
   function updateBulkSelection(){const count=selectedChallengeIds.size;$("bulkSelectionCount").textContent=count+" desafio"+(count===1?"":"s")+" selecionado"+(count===1?"":"s");$("bulkActivateChallenges").disabled=count===0;$("bulkDeactivateChallenges").disabled=count===0;}
-  function renderChallenges() {
+  function imageRightsClass(a){
+    if(!a)return "pending";
+    const source=String(a.source||"").trim(),license=String(a.license||"").toLowerCase(),attribution=String(a.attribution||"");
+    if(/^atina(?:\\s|$)/i.test(source)||/^imagem própria(?:\\s|$)/i.test(source)||/imagem gerada por ia.*chatgpt/i.test(source)||/©\\s*atina/i.test(attribution))return "atina";
+    if(/não autorizad|nao autorizad|não publicar|nao publicar|proibida|proibido|permission required|restricted|all rights reserved|todos os direitos reservados/i.test(license))return "restricted";
+    if(/^(cc0(?:\\s|$)|public domain$|domínio público$|dominio publico$|cc by(?:-sa)?(?:\\s|$))/i.test(license))return "open";
+    return "pending";
+  }
+  function imageOriginClass(a){
+    if(!a)return "unknown";
+    const source=String(a.source||"");
+    if(/gerad[ao] por ia|inteligência artificial|chatgpt/i.test(source))return "ai";
+    if(/^imagem própria(?:\\s|$)/i.test(source.trim())||/^própria(?:\\s|$)/i.test(source.trim()))return "own";
+    return source.trim()?"other":"unknown";
+  }
+  function challengeIsActive(x){return x.active===true||x.active===1||["true","1","active","ativado","ativada"].includes(String(x.active??"").trim().toLocaleLowerCase("pt-PT"));}
+  function filteredChallengeRows(){
     const term=$("challengeSearch").value.trim().toLocaleLowerCase("pt-PT");
     const activeFilter=$("challengeActiveFilter").value,difficultyFilter=$("challengeDifficultyFilter").value;
-    const isChallengeActive=x=>x.active===true||x.active===1||["true","1","active","ativado","ativada"].includes(String(x.active??"").trim().toLocaleLowerCase("pt-PT"));
-    const rows=challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)&&(!activeFilter||(activeFilter==="active"?isChallengeActive(x):!isChallengeActive(x)))&&(!difficultyFilter||x.difficulty===difficultyFilter));
+    const imageStatus=$("challengeImageStatusFilter").value,author=$("challengeAuthorFilter").value.trim().toLocaleLowerCase("pt-PT");
+    const rights=$("challengeRightsFilter").value,origin=$("challengeOriginFilter").value,type=$("challengeTypeFilter").value,quality=$("challengeQualityFilter").value;
+    return challengeCache.filter(x=>{
+      const asset=x._imageAsset,active=challengeIsActive(x),mime=asset?.mime_type||"";
+      return [x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)
+        &&(!activeFilter||(activeFilter==="active"?active:!active))
+        &&(!difficultyFilter||x.difficulty===difficultyFilter)
+        &&(!imageStatus||(imageStatus==="none"?!asset:asset?.status===imageStatus))
+        &&(!author||String(asset?.author||"").toLocaleLowerCase("pt-PT").includes(author))
+        &&(!rights||imageRightsClass(asset)===rights)
+        &&(!origin||imageOriginClass(asset)===origin)
+        &&(!type||(type==="none"?!asset: mime===type))
+        &&(!quality||(quality==="unknown"?!asset||x._imageQuality==="unknown":x._imageQuality===quality));
+    });
+  }
+  function renderChallenges() {
+    const rows=filteredChallengeRows();
+    const sort=$("challengeSort").value;
+    rows.sort((a,b)=>{
+      if(sort==="newest")return new Date(b._imageAsset?.created_at||0)-new Date(a._imageAsset?.created_at||0);
+      if(sort==="largest")return (Number(b._imageAsset?.file_size_bytes)||0)-(Number(a._imageAsset?.file_size_bytes)||0);
+      if(sort==="smallest")return (Number(a._imageAsset?.file_size_bytes)||0)-(Number(b._imageAsset?.file_size_bytes)||0);
+      return Number(a.challenge_id)-Number(b.challenge_id);
+    });
     const pageCount=Math.max(1,Math.ceil(rows.length/CHALLENGES_PER_PAGE)); challengePage=Math.min(challengePage,pageCount-1);
     const visible=rows.slice(challengePage*CHALLENGES_PER_PAGE,(challengePage+1)*CHALLENGES_PER_PAGE);
-    $("challengeCount").textContent=rows.length+" de "+challengeCache.length+" desafios · a mostrar "+(rows.length?challengePage*CHALLENGES_PER_PAGE+1:0)+"–"+Math.min((challengePage+1)*CHALLENGES_PER_PAGE,rows.length);
+    $("challengeCount").textContent=rows.length+" de "+challengeCache.length+" desafios · a mostrar "+(rows.length?challengePage*CHALLENGES_PER_PAGE+1:0)+"–"+Math.min((challengePage+1)*CHALLENGES_PER_PAGE,rows.length)+($("challengeCount").dataset.metadataWarning?" · "+$("challengeCount").dataset.metadataWarning:"");
     $("challengePageInfo").textContent="Página "+(challengePage+1)+" / "+pageCount;
     $("challengePrev").disabled=challengePage===0; $("challengeNext").disabled=challengePage>=pageCount-1;
     $("challengePagination").classList.toggle("hidden",rows.length<=CHALLENGES_PER_PAGE);
-    $("challengeList").innerHTML=visible.map(x=>{const active=isChallengeActive(x),id=String(x.challenge_id);return '<article class="challenge-item"><label class="bulk-item-select"><input type="checkbox" data-select-challenge="'+esc(id)+'" '+(selectedChallengeIds.has(id)?"checked":"")+'><span>Selecionar</span></label><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-actions"><button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!active)+'">'+(active?"Apagar / desativar":"Reativar")+'</button></div></article>';}).join("")||'<p>Não foram encontrados desafios.</p>';
+    $("challengeList").innerHTML=visible.map(x=>{
+      const active=challengeIsActive(x),id=String(x.challenge_id),asset=x._imageAsset;
+      const imageStatus=asset?.status||"Sem imagem registada";
+      const size=asset?.file_size_bytes!=null?(Number(asset.file_size_bytes)/1048576).toFixed(2)+" MB":"—";
+      const author=asset?.author||"Não indicado";
+      const rights=imageRightsClass(asset),rightsLabel=rights==="atina"?"ATINA":rights==="open"?"Licença aberta indicada":rights==="restricted"?"Restrita / não autorizada":"Por confirmar";
+      const origin=imageOriginClass(asset),originLabel=origin==="ai"?"Gerada por IA":origin==="own"?"Imagem própria":origin==="other"?"Outra origem":"Não indicada";
+      const mime=asset?.mime_type||"—",quality=asset?x._imageQuality==="unknown"?"Não determinada":x._imageQuality:"—";
+      return '<article class="challenge-item"><label class="bulk-item-select"><input type="checkbox" data-select-challenge="'+esc(id)+'" '+(selectedChallengeIds.has(id)?"checked":"")+'><span>Selecionar</span></label><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-meta">Imagem: '+esc(imageStatus)+' · Autor: '+esc(author)+' · Direitos: '+esc(rightsLabel)+' · Origem: '+esc(originLabel)+' · Formato: '+esc(mime)+' · Qualidade: '+esc(quality)+' · Tamanho: '+esc(size)+'</div><div class="challenge-actions"><button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!active)+'">'+(active?"Apagar / desativar":"Reativar")+'</button></div></article>';
+    }).join("")||'<p>Não foram encontrados desafios.</p>';
     updateBulkSelection(rows);
   }
   function renderClueFields(clues) {
@@ -597,11 +680,12 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("challengeScrollBottom").addEventListener("click",()=>{if(location.hash==="#images"){const frame=$("imageManagerFrame");window.scrollTo({top:frame.getBoundingClientRect().bottom+window.scrollY-window.innerHeight+8,behavior:"smooth"});return;}const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().bottom+window.scrollY,behavior:"smooth"});});
   $("reloadChallenges").addEventListener("click",loadChallenges);
   $("challengeSearch").addEventListener("input",()=>{challengePage=0;renderChallenges();});
-  ["challengeActiveFilter","challengeDifficultyFilter"].forEach(id=>$(id).addEventListener("change",()=>{challengePage=0;renderChallenges();}));
+  ["challengeActiveFilter","challengeImageStatusFilter","challengeAuthorFilter","challengeRightsFilter","challengeOriginFilter","challengeTypeFilter","challengeQualityFilter","challengeDifficultyFilter","challengeSort"].forEach(id=>$(id).addEventListener(id==="challengeAuthorFilter"?"input":"change",()=>{challengePage=0;renderChallenges();}));
+  $("clearChallengeFilters").addEventListener("click",()=>{["challengeSearch","challengeAuthorFilter"].forEach(id=>$(id).value="");["challengeActiveFilter","challengeImageStatusFilter","challengeRightsFilter","challengeOriginFilter","challengeTypeFilter","challengeQualityFilter","challengeDifficultyFilter"].forEach(id=>$(id).value="");$("challengeSort").value="id";challengePage=0;renderChallenges();});
   $("challengePrev").addEventListener("click",()=>{challengePage=Math.max(0,challengePage-1);renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
   $("challengeNext").addEventListener("click",()=>{challengePage++;renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
   $("selectVisibleChallenges").addEventListener("click",()=>{document.querySelectorAll("[data-select-challenge]").forEach(input=>selectedChallengeIds.add(input.dataset.selectChallenge));renderChallenges();});
-  $("selectFilteredChallenges").addEventListener("click",()=>{const term=$("challengeSearch").value.trim().toLocaleLowerCase("pt-PT"),af=$("challengeActiveFilter").value,df=$("challengeDifficultyFilter").value;const active=x=>x.active===true||x.active===1||["true","1","active","ativado","ativada"].includes(String(x.active??"").trim().toLocaleLowerCase("pt-PT"));challengeCache.filter(x=>[x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)&&(!af||(af==="active"?active(x):!active(x)))&&(!df||x.difficulty===df)).forEach(x=>selectedChallengeIds.add(String(x.challenge_id)));renderChallenges();});
+  $("selectFilteredChallenges").addEventListener("click",()=>{filteredChallengeRows().forEach(x=>selectedChallengeIds.add(String(x.challenge_id)));renderChallenges();});
   $("clearChallengeSelection").addEventListener("click",()=>{selectedChallengeIds.clear();renderChallenges();});
   $("challengeList").addEventListener("change",event=>{const input=event.target.closest("[data-select-challenge]");if(!input)return;if(input.checked)selectedChallengeIds.add(input.dataset.selectChallenge);else selectedChallengeIds.delete(input.dataset.selectChallenge);updateBulkSelection();});
   async function bulkSetChallengeState(active){
