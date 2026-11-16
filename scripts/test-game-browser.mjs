@@ -112,7 +112,12 @@ try {
     await page.waitForFunction(() => document.querySelector('#clues .clue:not(.hidden-clue)'));
     await page.locator('#answer').fill('Resposta ATINA');
     await page.locator('#submit').click();
-    await page.getByText(/Certo! Resposta ATINA/).waitFor();
+    await page.waitForFunction(() => document.querySelector('#feedback')?.textContent.includes('Certo! Resposta ATINA'), null, {timeout:10000}).catch(async () => {
+      throw new Error(category + ': resposta certa não foi confirmada. Feedback: ' +
+        await page.locator('#feedback').textContent() + ' · RPC: ' +
+        JSON.stringify(await page.evaluate(() => window.__rpcCalls.slice(-5))) +
+        ' · erros: ' + JSON.stringify(pageErrors));
+    });
     assert.equal(await page.locator('#continue').isVisible(), true, category + ': deve permitir avançar após resposta certa.');
   }
 
