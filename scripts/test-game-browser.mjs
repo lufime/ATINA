@@ -23,6 +23,9 @@ await page.addInitScript(() => {
   localStorage.setItem('atinaLegalAcknowledgedV2', '1');
   localStorage.setItem('atinaClueSpeechConsent', 'false');
   localStorage.setItem('atinaClueSpeechEnabled', 'false');
+  // Headless CI has no guaranteed system voice; disable the browser TTS API deterministically.
+  try { Object.defineProperty(window, 'speechSynthesis', {value: undefined, configurable: true}); } catch {}
+  try { Object.defineProperty(window, 'SpeechSynthesisUtterance', {value: undefined, configurable: true}); } catch {}
 });
 const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(error.message));
