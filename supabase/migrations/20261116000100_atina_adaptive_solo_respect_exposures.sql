@@ -12,7 +12,7 @@ declare
             limit 20
          ) recent
         where recent.challenge_id=c.challenge_id
-     )
+     );
 $old$;
   v_new text := $new$
      and not exists (
@@ -21,7 +21,7 @@ $old$;
         where exposure.scope_type='player'
           and exposure.scope_key=new.player_id::text
           and exposure.challenge_id=c.challenge_id
-     )
+     );
 $new$;
 begin
   v_def := pg_get_functiondef('private.atina_apply_adaptive_difficulty()'::regprocedure);
