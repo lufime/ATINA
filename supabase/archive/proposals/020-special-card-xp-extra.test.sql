@@ -15,6 +15,19 @@ VALUES (
   'xp-extra-test'
 );
 
+INSERT INTO private.atina_player_accounts (
+  player_id,nickname,password_hash,recovery_key_hash,session_token_hash,session_expires_at
+)
+SELECT
+  player.id,
+  'xp-extra-test',
+  'test-password-hash',
+  'test-recovery-hash',
+  extensions.digest(convert_to(repeat('d',64),'UTF8'),'sha256'),
+  clock_timestamp()+interval '1 hour'
+FROM private.atina_players player
+WHERE player.device_token_hash=extensions.digest(convert_to(repeat('c',64),'UTF8'),'sha256');
+
 CREATE TEMP TABLE atina_xp_extra_session AS
 SELECT public.atina_v2_start_local_game(
   'solo','medium','__xp_extra_test__',0,repeat('c',64)
@@ -31,7 +44,7 @@ CREATE TEMP TABLE atina_xp_extra_claim AS
 SELECT public.atina_progress_claim_local(
   repeat('c',64),
   (result->'state'->>'session_id')::uuid,
-  result->>'token',
+  repeat('d',64),
   1
 ) AS result
 FROM atina_xp_extra_session;
