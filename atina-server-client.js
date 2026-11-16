@@ -1116,7 +1116,7 @@ networkHostReveal = async function() {
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível revelar a pista.'); }
 };
 networkHostPass = async function() {
-  if (!networkGameHost || !networkGameState || networkGameState.locked) return;
+  if (!(networkGameState?.active_team ? networkCanControlTurn() : networkGameHost) || !networkGameState || networkGameState.locked) return;
   try { await networkCall('atina_v2_pass_room_challenge', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível passar o desafio.'); }
 };
