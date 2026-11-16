@@ -16,7 +16,6 @@
   const originalRenderGameState = networkRenderGameState;
   const originalHostReveal = networkHostReveal;
   const originalDrawClock = networkDrawClock;
-  const originalStartPolling = networkStartPolling;
   const originalStartGame = networkStartGame;
   const originalLeaveRoom = networkLeaveRoom;
 
