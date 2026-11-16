@@ -162,7 +162,7 @@ try {
   // pela atualização evita capturar categorias provisórias que serão removidas.
   await page.waitForFunction(() => {
     const panel = document.querySelector('#categories');
-    return !!panel && panel.dataset.activeCountsLoaded === 'true';
+    return typeof atinaActiveCategoryCounts !== 'undefined' && atinaActiveCategoryCounts instanceof Map;
   }, null, {timeout:10000}).catch(() => {});
   const categories = await page.locator('#categories [data-category]').evaluateAll(nodes =>
     nodes.map(node => node.getAttribute('data-category')).filter(name => name && name !== 'Mímicas'));
