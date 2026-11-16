@@ -20,6 +20,10 @@
   const originalStartGame = networkStartGame;
   const originalLeaveRoom = networkLeaveRoom;
 
+  function teamForIndex(index) {
+    return Number(index) % 2 === 0 ? 'Equipa A' : 'Equipa B';
+  }
+
   function turnKey(state) {
     if (!state) return '';
     return [
@@ -56,16 +60,37 @@
       previous.challenge_id === state.challenge_id
     );
     const incomingRevision = Number(state.revision || 0);
-    if (previous && sameChallenge && incomingRevision < Number(networkLastRevision || 0)) {
+    const teamChanged = !!(
+      previous &&
+      sameChallenge &&
+      String(previous.active_team || '') !== String(state.active_team || '')
+    );
+    if (
+      previous &&
+      sameChallenge &&
+      incomingRevision < Number(networkLastRevision || 0) &&
+      !teamChanged
+    ) {
       return;
     }
 
     const nextTurnKey = turnKey(state);
-    if (previous && turnKey(previous) !== nextTurnKey) {
+    const turnChanged = !!previous && turnKey(previous) !== nextTurnKey;
+    if (turnChanged) {
       networkAnsweredThisChallenge = false;
       const answer = $('answer');
       if (answer) answer.value = '';
       runtime.renderedTurnKey = nextTurnKey;
+
+      // Uma alteração de equipa no mesmo desafio é uma nova vez.
+      // A resposta do servidor prevalece sobre uma revisão antiga recebida
+      // por uma chamada concorrente; sem isto, o turno novo pode ficar preso.
+      if (String(previous.active_team || '') !== String(state.active_team || '')) {
+        networkLastRevision = Math.min(
+          Number(networkLastRevision || 0),
+          Number(state.revision || 0) - 1
+        );
+      }
     }
 
     return originalReceiveState(state);
@@ -207,7 +232,7 @@
     networkPollHandle = setInterval(() => {
       if (!networkRoom || runtime.pollInFlight) return;
 
-      const delay = document.hidden ? 15000 : (networkGameActive ? 1800 : 8000);
+      const delay = document.hidden ? 15000 : (networkGameActive ? 1000 : 6000);
       const now = Date.now();
       if (now - runtime.lastPollAt < delay) return;
 
@@ -249,5 +274,5 @@
   if (networkRoom) networkStartPolling();
   if (networkGameActive) ensureNetworkClock();
 
-  window.ATINARoomRuntime = Object.freeze({ turnKey, reset });
+  window.ATINARoomRuntime = Object.freeze({ turnKey, teamForIndex, reset });
 })();

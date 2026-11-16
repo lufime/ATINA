@@ -86,6 +86,16 @@ test('turn identity includes active team, not only challenge position', () => {
   );
 });
 
+test('automatic team assignment alternates Equipa A and Equipa B', () => {
+  const { context } = harness();
+  vm.runInContext(source, context);
+  const assign = context.ATINARoomRuntime.teamForIndex;
+  assert.deepEqual(
+    [0, 1, 2, 3, 4, 5].map(assign),
+    ['Equipa A', 'Equipa B', 'Equipa A', 'Equipa B', 'Equipa A', 'Equipa B']
+  );
+});
+
 test('a team change in the same challenge unlocks the new team turn', () => {
   const { context, element } = harness();
   const source = fs.readFileSync('assets/network-room-runtime.js', 'utf8');
@@ -107,6 +117,26 @@ test('a team change in the same challenge unlocks the new team turn', () => {
   assert.equal(element('answer').value, '');
 });
 
+
+test('a new team turn is accepted even if a concurrent response has an older revision', () => {
+  const { context } = harness();
+  vm.runInContext(source, context);
+
+  context.networkReceiveState({
+    pos: 1, challenge_id: 10, active_team: 'Equipa A',
+    revision: 12, revealed: 2, mode: 'challenges'
+  });
+  context.networkAnsweredThisChallenge = true;
+
+  context.networkReceiveState({
+    pos: 1, challenge_id: 10, active_team: 'Equipa B',
+    revision: 11, revealed: 2, mode: 'challenges'
+  });
+
+  assert.equal(context.networkGameState.active_team, 'Equipa B');
+  assert.equal(context.networkAnsweredThisChallenge, false);
+  assert.equal(context.networkLastRevision, 11);
+});
 
 test('passing a challenge is accepted even when the server revision is unchanged', () => {
   const { context } = harness();
