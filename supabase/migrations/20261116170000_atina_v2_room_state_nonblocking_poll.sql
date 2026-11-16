@@ -22,6 +22,12 @@ BEGIN
  SELECT * INTO v_me FROM public.atina_v2_room_players
  WHERE room_id=p_room_id AND token_hash=extensions.digest(coalesce(p_token,''),'sha256');
  IF NOT FOUND THEN RAISE EXCEPTION 'Sessão da sala inválida.'; END IF;
+
+ -- Refresh presence at most once every 15 seconds, before acquiring room/game locks.
+ v_now:=clock_timestamp();
+ UPDATE public.atina_v2_room_players SET last_seen_at=v_now
+  WHERE id=v_me.id AND (last_seen_at IS NULL OR last_seen_at < v_now-interval '15 seconds');
+
  SELECT * INTO v_room FROM public.atina_v2_rooms WHERE id=p_room_id;
  IF NOT FOUND THEN RAISE EXCEPTION 'Sala não encontrada.'; END IF;
 
@@ -84,8 +90,6 @@ BEGIN
   END IF;
  END IF;
 
- v_now:=clock_timestamp();
- UPDATE public.atina_v2_room_players SET last_seen_at=v_now WHERE id=v_me.id;
  SELECT coalesce(jsonb_agg(jsonb_build_object('id',p.id,'nickname',p.nickname,'is_host',p.is_host,'ready',p.ready,'team',p.team_label,'score',p.score) ORDER BY p.created_at,p.id),'[]'::jsonb)
  INTO v_players FROM public.atina_v2_room_players p WHERE p.room_id=p_room_id;
  v_team:=v_me.team_label;
