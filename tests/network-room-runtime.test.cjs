@@ -127,3 +127,40 @@ test('manual clue reveal is blocked until the server countdown ends', async () =
   await context.networkHostReveal();
   assert.equal(calls, 0);
 });
+
+
+test('countdown locks every game action until it expires', () => {
+  const { context, element } = harness();
+  vm.runInContext(source, context);
+  context.networkGameActive = true;
+  context.networkGameState = {
+    mode: 'challenges', prepare_until: Date.now() + 10000, revealed: 0
+  };
+  context.networkDrawClock();
+  for (const id of ['nextClue', 'answer', 'submit', 'voice', 'pass', 'continue']) {
+    assert.equal(element(id).disabled, true, id + ' must stay disabled during preparation');
+  }
+});
+
+test('a failed first reveal keeps the countdown state and backs off retries', async () => {
+  const { context } = harness();
+  let calls = 0;
+  context.networkGameActive = true;
+  context.networkRoom = { room_id: 'room' };
+  context.networkIsTurnDriver = () => true;
+  context.networkGameState = {
+    mode: 'challenges', prepare_until: Date.now() - 1000, revealed: 0
+  };
+  context.networkHostReveal = async () => { calls += 1; };
+  vm.runInContext(source, context);
+
+  context.networkDrawClock();
+  await new Promise(resolve => setTimeout(resolve, 0));
+  const retryAt = context.ATINARoomRuntime && Date.now() + 1000;
+
+  assert.equal(calls, 1);
+  assert.ok(Number(context.networkGameState.prepare_until) > 0);
+  context.networkDrawClock();
+  assert.equal(calls, 1);
+  assert.ok(retryAt > Date.now());
+});
