@@ -207,11 +207,6 @@
   // O bloqueio evita duplo clique e o finally recupera sempre o controlo visual.
   networkHostReveal = async function networkHostRevealV2() {
     const button = $('nextClue');
-    if (Number(networkGameState?.prepare_until) > Date.now() &&
-        Number(networkGameState?.revealed || 0) === 0) {
-      syncTurnControls();
-      return;
-    }
     if (runtime.revealInFlight) {
       networkMessage('feedback', 'A pista já está a ser carregada. Aguarda um instante.');
       return;
