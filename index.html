@@ -1683,7 +1683,7 @@ function renderNetworkTimeoutPanel(){
  if(!panel||!actions||!info)return;
  if(!networkGameActive||!networkRoom||!networkLobbyData||networkLobbyData.status!=='playing'){panel.classList.add('hidden');networkTimeoutPanelSignature='';return;}
  const state=networkGameState||{},pause=state.pause,budgets=networkLobbyData.timeouts||{};
- const signature=JSON.stringify([networkRoom.room_id,networkGameActive,networkLobbyData.status,networkLobbyData.team||'',networkLobbyData.is_host,!!state.locked,pause?.ends_at||'',pause?.requester||'',budgets.player_remaining_seconds||0,budgets.team_remaining_seconds||0]);
+ const signature=JSON.stringify([networkRoom.room_id,networkGameActive,networkLobbyData.status,networkLobbyData.team||'',networkLobbyData.is_host,!!state.locked,pause?.ends_at||'',Date.parse(pause?.ends_at||'')>Date.now(),pause?.requester||'',budgets.player_remaining_seconds||0,budgets.team_remaining_seconds||0]);
  if(signature===networkTimeoutPanelSignature)return;
  networkTimeoutPanelSignature=signature;
  panel.classList.remove('hidden');actions.replaceChildren();
@@ -1693,7 +1693,7 @@ function renderNetworkTimeoutPanel(){
   info.textContent='Pausa global ativa'+(pause.requester?' · pedida por '+pause.requester:'')+'. Todos os jogadores retomam automaticamente às '+until+'.';
   return;
  }
- const budgets=networkLobbyData.timeouts||{},personal=Number(budgets.player_remaining_seconds)||0,team=Number(budgets.team_remaining_seconds)||0;
+ const personal=Number(budgets.player_remaining_seconds)||0,team=Number(budgets.team_remaining_seconds)||0;
  info.textContent='Cada pausa dura 15 minutos e pára a partida para todos. Cada jogador tem 60 minutos pessoais (4 períodos); cada equipa tem mais 60 minutos partilhados (4 períodos).';
  const add=(label,scope,remaining)=>{
   const b=document.createElement('button');b.className='btn secondary full';b.style.marginTop='7px';
