@@ -131,6 +131,16 @@ SELECT is(
   'Mix contains easy, medium and hard challenges'
 );
 
+SELECT diag(
+  'Mix player='||(SELECT id::text FROM atina_mix_test_player)||
+  ' queue='||(SELECT array_to_string(session.challenge_queue,',')
+               FROM private.atina_v2_local_sessions session
+               JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid)||
+  ' history='||(SELECT string_agg(challenge_id::text,',')
+                 FROM private.atina_difficulty_history
+                WHERE player_id=(SELECT id FROM atina_mix_test_player))
+);
+
 SELECT is(
   (SELECT count(*)::integer
      FROM private.atina_v2_local_sessions session
