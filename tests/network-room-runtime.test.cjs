@@ -37,6 +37,7 @@ function harness() {
     networkIsTurnDriver: () => false,
     networkMessage() {},
     networkRefreshRoom: async () => {},
+    networkCall: async () => {},
     ensureNetworkClock() {},
     $: element,
     networkReceiveState(state) {
@@ -161,4 +162,21 @@ test('a failed first reveal keeps the countdown state and backs off retries', as
   assert.ok(Number(context.networkGameState.prepare_until) > 0);
   context.networkDrawClock();
   assert.equal(calls, 1);
+});
+
+
+test('a server-side turn conflict refreshes the room before returning', async () => {
+  const { context } = harness();
+  let refreshes = 0;
+  context.networkRefreshRoom = async () => { refreshes += 1; };
+  context.networkCall = async () => {
+    throw new Error('Só a equipa que tem a vez pode passar este desafio.');
+  };
+  vm.runInContext(source, context);
+
+  await assert.rejects(
+    context.networkCall('atina_v2_pass_room_challenge', {}),
+    /O turno mudou\. A sala foi sincronizada/
+  );
+  assert.equal(refreshes, 1);
 });
