@@ -42,9 +42,9 @@ UPDATE private.atina_v2_local_sessions
 
 CREATE TEMP TABLE atina_xp_extra_claim AS
 SELECT public.atina_progress_claim_local(
-  repeat('c',64),
-  (result->'state'->>'session_id')::uuid,
   repeat('d',64),
+  (result->'state'->>'session_id')::uuid,
+  result->>'token',
   1
 ) AS result
 FROM atina_xp_extra_session;
