@@ -67,8 +67,9 @@ const licenseDetail=addDetail("Licença",a.license||"Não indicada",true);
 if(a.license_url){const link=document.createElement("a");link.href=a.license_url;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Consultar licença";licenseDetail.append(document.createElement("br"),link)}
 
 addDetail("Crédito / atribuição",a.attribution||"Não indicado",true);
-const ownAtina=/^atina(?:\s|$)/i.test(String(a.source||"").trim())||/^imagem própria(?:\s|$)/i.test(String(a.source||"").trim())||/imagem gerada por ia.*chatgpt/i.test(String(a.source||""))||/©\s*atina/i.test(String(a.attribution||""));
-const rightsNote=addDetail("Publicação",ownAtina?"© ATINA — Todos os direitos reservados. Uso exclusivo no projeto ATINA; sem link externo.":(isReusableLicense(a.license)?"Reutilização permitida, cumprindo a licença":"Não publicar até confirmar os direitos"),true);
+const rights=rightsClass(a);
+const rightsLabel=rights==="atina"?"Direitos ATINA identificados":rights==="open"?"Licença aberta indicada — verificar condições":rights==="restricted"?"Restrita / não autorizada — não publicar":"Direitos por confirmar — não publicar";
+addDetail("Estado dos direitos",rightsLabel,true);
 img.addEventListener("load",()=>{const w=img.naturalWidth,h=img.naturalHeight;const mp=(w*h/1000000).toFixed(2);const grade=(w*h>=8000000?"Muito alta":w*h>=2000000?"Alta":w*h>=1000000?"Boa":w*h>=400000?"Média":"Baixa");dimensions.textContent=w+" × "+h+" px · "+mp+" MP · "+grade;});
 img.addEventListener("error",()=>{dimensions.textContent="Não foi possível ler a resolução";});
 left.append(details);const right=document.createElement("div");const info=document.createElement("p");info.className="meta";info.textContent="Origem: "+(a.source||"—")+"\nLicença: "+(a.license||"—")+"\nFicheiro: "+(a.storage_path||"URL externa")+"\nEstado de publicação: "+(isPublished?"Publicado no jogo":a.status==="approved"?"Aprovado — por publicar":"Ainda não publicado");right.append(info);
