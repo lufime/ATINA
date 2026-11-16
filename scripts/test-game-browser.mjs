@@ -18,6 +18,10 @@ const server = createServer((request, response) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
+await page.addInitScript(() => {
+  localStorage.setItem('atinaAccountSessionV1', 's'.repeat(64));
+  localStorage.setItem('atinaLegalAcknowledgedV2', '1');
+});
 const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(error.message));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
@@ -76,6 +80,10 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
           session.position++; session.clues=[]; session.locked=false; session.result=null;
           return {data:state(),error:null};
         }
+        if (name === 'atina_account_profile') return {data:{player_id:'00000000-0000-4000-8000-000000000002',nickname:'BrowserTester',xp:0,level:1,total_challenges:0},error:null};
+        if (name === 'atina_progress_claim_local') return {data:{nickname:'BrowserTester',xp:10,level:1,total_challenges:1,awarded:true,challenge_xp:10},error:null};
+        if (name === 'atina_points_leaderboard') return {data:[],error:null};
+        if (name === 'atina_progress_leaderboard') return {data:[],error:null};
         if (name === 'atina_image_credit') return {data:null,error:null};
         return {data:null,error:null};
       }
@@ -141,6 +149,7 @@ try {
   await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
 
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
+  await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
   await page.locator('#networkNickname').fill('BrowserTester');
   await page.locator('#createNetworkRoom').click();
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
