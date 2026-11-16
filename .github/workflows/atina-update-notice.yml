@@ -42,7 +42,7 @@ jobs:
               raise SystemExit("Não foi possível localizar a versão beta no index.html; atualização cancelada.")
           major, minor, patch = map(int, match.group(2, 3, 4))
           next_version = f"{major}.{minor}.{patch + 1}"
-          replacement = f"{match.group(1)}{next_version}{match.group(5)}{next_version}{match.group(8)}"
+          replacement = f"{match.group(1)}{next_version}{match.group(5)}{next_version}{match.group(9)}"
           html = html[:match.start()] + replacement + html[match.end():]
           path.write_text(html, encoding="utf-8")
           print(f"Versão ATINA atualizada automaticamente: {next_version}")
