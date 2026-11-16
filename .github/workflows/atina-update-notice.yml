@@ -28,6 +28,34 @@ jobs:
         with:
           ref: main
 
+      - name: Incrementar automaticamente a versão beta
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          path = Path("index.html")
+          html = path.read_text(encoding="utf-8")
+          pattern = r'(<div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes )(\d+)\.(\d+)\.(\d+)(">.*?<strong>v)(\d+)\.(\d+)\.(\d+)(</strong>)'
+          match = re.search(pattern, html, re.S)
+          if not match:
+              raise SystemExit("Não foi possível localizar a versão beta no index.html; atualização cancelada.")
+          major, minor, patch = map(int, match.group(2, 3, 4))
+          next_version = f"{major}.{minor}.{patch + 1}"
+          replacement = f"{match.group(1)}{next_version}{match.group(5)}{next_version}{match.group(8)}"
+          html = html[:match.start()] + replacement + html[match.end():]
+          path.write_text(html, encoding="utf-8")
+          print(f"Versão ATINA atualizada automaticamente: {next_version}")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if ! git diff --cached --quiet; then
+            VERSION=$(grep -oE 'aria-label="Versão beta de testes [0-9]+\.[0-9]+\.[0-9]+"' index.html | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+            git commit -m "Atualiza versão ATINA para v${VERSION} [skip ci]"
+            git push
+          fi
+
       - name: Ativar aviso público
         run: |
           cat > atina-update-status.json <<JSON
