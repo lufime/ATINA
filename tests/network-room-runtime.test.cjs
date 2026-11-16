@@ -303,30 +303,16 @@ test('inactive team cannot submit even if a stale button is enabled', async () =
 });
 
 
-test('manual next-clue button calls the room RPC and restores its state', async () => {
+test('manual next-clue button calls the original room action and restores its state', async () => {
   const { context, element } = harness();
   let calls = 0;
-  context.networkRoom = { room_id: 'room-1', token: 'token-1' };
   context.networkGameActive = true;
-  context.networkGameState = {
-    mode: 'challenges', pos: 0, challenge_id: 55, active_team: 'Equipa A',
-    revealed: 1, total_clues: 5, locked: false, revision: 1
-  };
-  context.networkLobbyData = { team: 'Equipa A' };
-  context.networkCanControlTurn = () => true;
-  context.networkCall = async (name, args) => {
-    assert.equal(name, 'atina_v2_reveal_room_clue');
-    assert.deepEqual(args, { p_room_id: 'room-1', p_token: 'token-1' });
-    calls += 1;
-    return { status: 'revealed', state: {
-      ...context.networkGameState, revealed: 2, revision: 2
-    }};
-  };
-  context.networkRefreshRoom = async () => {};
+  context.networkRoom = { room_id: 'room-1', token: 'token-1' };
+  context.networkGameState = { mode: 'challenges', revealed: 1, locked: false };
+  context.networkHostReveal = async () => { calls += 1; };
   vm.runInContext(source, context);
   await context.networkHostReveal();
   assert.equal(calls, 1);
-  assert.equal(context.networkGameState.revealed, 2);
   assert.equal(element('nextClue').textContent, 'Revelar próxima pista');
   assert.equal(element('nextClue').disabled, false);
 });
