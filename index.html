@@ -1210,7 +1210,7 @@ let networkRoom=null, networkPollHandle=null, networkLobbyData=null, networkFina
 let networkLastSpokenClueState='';
 let networkRoomRefreshInFlight=false, networkRoomRefreshPromise=null;
 let networkLastPollAt=0,networkPollBackoffUntil=0,networkPollBackoffMs=0;
-function networkStartPolling(){if(networkPollHandle)clearInterval(networkPollHandle);networkLastPollAt=0;networkPollBackoffUntil=0;networkPollBackoffMs=0;networkPollHandle=setInterval(()=>{if(!networkRoom)return;const delay=document.hidden?10000:networkGameActive?1800:5000,now=Date.now();if(now<networkPollBackoffUntil||now-networkLastPollAt<delay)return;networkLastPollAt=now;networkRefreshRoom();},250);}
+function networkStartPolling(){if(networkPollHandle)clearInterval(networkPollHandle);networkLastPollAt=0;networkPollBackoffUntil=0;networkPollBackoffMs=0;networkPollHandle=setInterval(()=>{if(!networkRoom)return;const delay=document.hidden?10000:networkGameActive?1800:5000,now=Date.now();if(now<networkPollBackoffUntil||now-networkLastPollAt<delay)return;networkLastPollAt=now;networkRefreshRoom();},500);}
 let networkGameActive=false,networkGameHost=false,networkGameState=null,networkLastRevision=0,networkClockHandle=null,networkMyScore=0,networkAnsweredThisChallenge=false;
 let networkAnimatedChallengeKey='';
 async function networkPublishGameState(){if(!networkRoom||!networkGameHost||!networkGameState)return;networkGameState.revision=(networkGameState.revision||0)+1;const {error}=await supabaseClient.rpc('atina_v2_publish_game_state',{p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_state:networkGameState});if(error)throw error;}
