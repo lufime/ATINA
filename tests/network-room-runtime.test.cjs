@@ -86,6 +86,16 @@ test('turn identity includes active team, not only challenge position', () => {
   );
 });
 
+test('automatic team assignment alternates Equipa A and Equipa B', () => {
+  const { context } = harness();
+  vm.runInContext(source, context);
+  const assign = context.ATINARoomRuntime.teamForIndex;
+  assert.deepEqual(
+    [0, 1, 2, 3, 4, 5].map(assign),
+    ['Equipa A', 'Equipa B', 'Equipa A', 'Equipa B', 'Equipa A', 'Equipa B']
+  );
+});
+
 test('a team change in the same challenge unlocks the new team turn', () => {
   const { context, element } = harness();
   const source = fs.readFileSync('assets/network-room-runtime.js', 'utf8');
