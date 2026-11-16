@@ -114,6 +114,7 @@
     // este dispositivo. Não bloquear o botão por um active_team local antigo:
     // a ação atualiza primeiro o estado e a RPC continua a validar a equipa.
     const unavailable = !networkGameActive || paused || preparing;
+    const turnUnavailable = unavailable || !active;
     const total = Number(state.total_clues) ||
       (Number(state.queue?.[state.pos]) >= 0 &&
        typeof isImageChallenge === 'function' &&
@@ -126,11 +127,11 @@
     const clueButton = $('nextClue');
     if (clueButton) clueButton.textContent = active ? 'Revelar próxima pista' : 'Aguarda a tua vez';
     setDisabled('nextClue', unavailable || locked || revealed >= total);
-    setDisabled('answer', unavailable || locked || networkAnsweredThisChallenge);
-    setDisabled('submit', unavailable || locked || networkAnsweredThisChallenge);
-    setDisabled('voice', unavailable || locked);
-    setDisabled('pass', unavailable || locked);
-    setDisabled('continue', unavailable || !locked);
+    setDisabled('answer', turnUnavailable || locked || networkAnsweredThisChallenge);
+    setDisabled('submit', turnUnavailable || locked || networkAnsweredThisChallenge);
+    setDisabled('voice', turnUnavailable || locked);
+    setDisabled('pass', turnUnavailable || locked);
+    setDisabled('continue', turnUnavailable || !locked);
   }
 
   networkSubmitAnswer = async function networkSubmitAnswerV2() {
