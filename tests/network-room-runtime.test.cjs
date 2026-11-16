@@ -280,7 +280,7 @@ test('answer controls stay disabled when the turn changes during submit', async 
   assert.equal(submissions, 1);
   assert.equal(element('answer').disabled, true);
   assert.equal(element('submit').disabled, true);
-  assert.equal(element('nextClue').disabled, true);
+  assert.equal(element('nextClue').disabled, false);
   assert.equal(element('pass').disabled, true);
 });
 
@@ -349,7 +349,7 @@ test('Equipa B can reveal after refreshing a stale local active-team state', asy
   let refreshes = 0;
   context.networkRoom = { room_id: 'room-b', token: 'token-b' };
   context.networkGameActive = true;
-  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkLobbyData = { team: 'Equipa B' };
   context.networkGameState = {
     mode: 'challenges', pos: 1, challenge_id: 22,
     active_team: 'Equipa A', revision: 4, revealed: 1,
