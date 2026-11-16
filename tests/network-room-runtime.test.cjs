@@ -36,6 +36,11 @@ function harness() {
     networkPollHandle: null,
     networkClockHandle: null,
     networkIsTurnDriver: () => false,
+    networkCanControlTurn() {
+      const mine = String(context.networkLobbyData?.team || '').trim().toLocaleLowerCase('pt-PT');
+      const active = String(context.networkGameState?.active_team || '').trim().toLocaleLowerCase('pt-PT');
+      return !!mine && !!active && mine === active;
+    },
     networkMessage() {},
     networkRefreshRoom: async () => {},
     networkCall: async () => {},
