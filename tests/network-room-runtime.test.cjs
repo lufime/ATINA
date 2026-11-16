@@ -341,3 +341,54 @@ test('manual next-clue button reports server errors and becomes usable again', a
   assert.equal(element('nextClue').textContent, 'Revelar próxima pista');
   assert.equal(element('nextClue').disabled, false);
 });
+
+
+test('Equipa B can reveal after refreshing a stale local active-team state', async () => {
+  const { context, element } = harness();
+  let calls = 0;
+  let refreshes = 0;
+  context.networkRoom = { room_id: 'room-b', token: 'token-b' };
+  context.networkGameActive = true;
+  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkGameState = {
+    mode: 'challenges', pos: 1, challenge_id: 22,
+    active_team: 'Equipa A', revision: 4, revealed: 1,
+    total_clues: 5, locked: false
+  };
+  context.networkHostReveal = async () => { calls += 1; };
+  context.networkRefreshRoom = async () => {
+    refreshes += 1;
+    context.networkLobbyData = { team: 'Equipa B' };
+    context.networkGameState = {
+      ...context.networkGameState, active_team: 'Equipa B', revision: 5
+    };
+  };
+  vm.runInContext(source, context);
+  await context.networkHostReveal();
+  assert.equal(refreshes, 1);
+  assert.equal(calls, 1);
+  assert.equal(element('nextClue').textContent, 'Revelar próxima pista');
+  assert.equal(element('nextClue').disabled, false);
+});
+
+test('inactive team refreshes and receives a clear turn message without revealing', async () => {
+  const { context, element } = harness();
+  let calls = 0;
+  let message = '';
+  context.networkRoom = { room_id: 'room-a', token: 'token-a' };
+  context.networkGameActive = true;
+  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkGameState = {
+    mode: 'challenges', pos: 1, challenge_id: 22,
+    active_team: 'Equipa B', revision: 5, revealed: 1,
+    total_clues: 5, locked: false
+  };
+  context.networkHostReveal = async () => { calls += 1; };
+  context.networkRefreshRoom = async () => {};
+  context.networkMessage = (id, value) => { if (id === 'feedback') message = value; };
+  vm.runInContext(source, context);
+  await context.networkHostReveal();
+  assert.equal(calls, 0);
+  assert.match(message, /Equipa ativa: Equipa B/);
+  assert.equal(element('nextClue').textContent, 'Aguarda a tua vez');
+});
