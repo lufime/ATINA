@@ -1005,7 +1005,8 @@ networkRenderGameState = function() {
   const paused = !!(st.pause && Date.parse(st.pause.ends_at) > Date.now());
   const activeTeam = st.active_team || null;
   const myTeam = networkLobbyData?.team || null;
-  const myTeamTurn = !activeTeam || !myTeam || activeTeam === myTeam;
+  const myTeamTurn = !activeTeam || (!!myTeam && activeTeam.trim().toLocaleLowerCase('pt-PT') === String(myTeam).trim().toLocaleLowerCase('pt-PT'));
+  const canControlTurn = activeTeam ? networkCanControlTurn() : !!networkGameHost;
   $('category').textContent = (st.emoji || '') + ' ' + (st.category || 'Desafio');
   const onlineCard = st.special_card || null;
   const cardPopupKey = onlineCard ? [networkRoom?.room_id || '', st.pos, onlineCard.name || '', onlineCard.icon || ''].join('|') : '';
@@ -1052,10 +1053,10 @@ networkRenderGameState = function() {
   }
   teamTurnNotice.textContent = activeTeam ? (myTeamTurn ? 'É a vez da ' + activeTeam + '.' : 'Aguarda: é a vez da ' + activeTeam + '.') : '';
   teamTurnNotice.classList.toggle('hidden', !activeTeam);
-  $('nextClue').disabled = !networkGameHost || st.locked || Number(st.revealed) >= total || paused;
-  $('pass').disabled = !networkGameHost || st.locked || paused;
-  $('pass').classList.toggle('hidden', !networkGameHost);
-  $('continue').classList.toggle('hidden', !networkGameHost || !st.locked || paused);
+  $('nextClue').disabled = !canControlTurn || st.locked || Number(st.revealed) >= total || paused;
+  $('pass').disabled = !canControlTurn || st.locked || paused;
+  $('pass').classList.toggle('hidden', !canControlTurn);
+  $('continue').classList.toggle('hidden', !canControlTurn || !st.locked || paused);
   $('answer').disabled = !!st.locked || paused || networkAnsweredThisChallenge || !myTeamTurn;
   $('submit').disabled = !!st.locked || paused || networkAnsweredThisChallenge || !myTeamTurn;
   $('feedback').textContent = st.locked ? 'Resposta: ' + (st.answer || 'ronda terminada') : (atinaNetworkFeedback || 'A resposta será validada pelo servidor.');
@@ -1110,7 +1111,7 @@ networkSubmitAnswer = async function() {
   } catch (error) { $('feedback').textContent = error.message || 'Não foi possível enviar a resposta.'; }
 };
 networkHostReveal = async function() {
-  if (!networkGameHost || !networkGameState || networkGameState.locked) return;
+  if (!(networkGameState?.active_team ? networkCanControlTurn() : networkGameHost) || !networkGameState || networkGameState.locked) return;
   try { await networkCall('atina_v2_reveal_room_clue', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível revelar a pista.'); }
 };
@@ -1120,7 +1121,7 @@ networkHostPass = async function() {
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível passar o desafio.'); }
 };
 networkHostNext = async function() {
-  if (!networkGameHost || !networkGameState || !networkGameState.locked) return;
+  if (!(networkGameState?.active_team ? networkCanControlTurn() : networkGameHost) || !networkGameState || !networkGameState.locked) return;
   try { await networkCall('atina_v2_next_room_challenge', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível avançar o desafio.'); }
 };
