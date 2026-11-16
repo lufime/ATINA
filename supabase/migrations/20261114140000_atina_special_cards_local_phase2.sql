@@ -7,9 +7,18 @@ begin
   v_def := pg_get_functiondef('public.atina_v2_local_next_challenge(uuid,text)'::regprocedure);
   v_def := replace(v_def, 'v_roll:=floor(random()*3)::integer;', 'v_roll:=floor(random()*8)::integer;');
   v_old := $old$  v_card:=case v_roll
-      when 0 then jsonb_build_object('id','double_points','name','PONTOS A DOBRAR','icon','💎','description','Duplica os pontos deste desafio se acertares.','multiplier',2,'bonus',0)
-      when 1 then jsonb_build_object('id','speed_bonus','name','BÓNUS DE VELOCIDADE','icon','⚡','description','Recebes mais 10 pontos se acertares.','multiplier',1,'bonus',10)
-      else jsonb_build_object('id','correct_prize','name','PRÉMIO DE ACERTO','icon','🏆','description','Recebes 15 pontos extra se acertares.','multiplier',1,'bonus',15)
+      when 0 then jsonb_build_object(
+        'id','double_points','name','PONTOS A DOBRAR','icon','💎',
+        'description','Duplica os pontos deste desafio se acertares.',
+        'multiplier',2,'bonus',0)
+      when 1 then jsonb_build_object(
+        'id','speed_bonus','name','BÓNUS DE VELOCIDADE','icon','⚡',
+        'description','Recebes mais 10 pontos se acertares.',
+        'multiplier',1,'bonus',10)
+      else jsonb_build_object(
+        'id','correct_prize','name','PRÉMIO DE ACERTO','icon','🏆',
+        'description','Recebes 15 pontos extra se acertares.',
+        'multiplier',1,'bonus',15)
     end;$old$;
   v_def := replace(v_def, v_old, $new$  v_card:=case v_roll
       when 0 then jsonb_build_object('id','double_points','name','PONTOS A DOBRAR','icon','💎','description','Duplica os pontos deste desafio se acertares.','multiplier',2,'bonus',0)
