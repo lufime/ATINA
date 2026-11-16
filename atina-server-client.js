@@ -611,19 +611,10 @@ function atinaServerApplyState(state, announce = false) {
   difficultyMode = state.difficulty || difficultyMode;
   const challenge = state.challenge;
   const specialCard = state.special_card || null;
-  let cardNotice = document.getElementById('atinaSpecialCardNotice');
-  if (!cardNotice) {
-    cardNotice = document.createElement('div');
-    cardNotice.id = 'atinaSpecialCardNotice';
-    cardNotice.setAttribute('role', 'status');
-    cardNotice.setAttribute('aria-live', 'polite');
-    cardNotice.style.cssText = 'margin:12px 0;padding:12px 16px;border:1px solid #d6b45c;border-radius:12px;background:rgba(214,180,92,.12);font-weight:700;text-align:center';
-    const categoryNode = $('category');
-    if (categoryNode?.parentNode) categoryNode.parentNode.insertBefore(cardNotice, categoryNode.nextSibling);
-  }
-  if (cardNotice) {
-    cardNotice.textContent = specialCard ? (specialCard.icon || '🃏') + ' CARTA ESPECIAL: ' + (specialCard.name || 'Efeito ativo') + (specialCard.description ? ' — ' + specialCard.description : '') : '';
-    cardNotice.hidden = !specialCard;
+  const localCardPopupKey = specialCard ? [state.session_id || '', state.position || 0, specialCard.id || specialCard.name || ''].join('|') : '';
+  if (specialCard && localCardPopupKey !== window.__atinaLastLocalCardPopupKey) {
+    window.__atinaLastLocalCardPopupKey = localCardPopupKey;
+    if (typeof window.showAtinaSpecialCardPopup === 'function') window.showAtinaSpecialCardPopup(specialCard);
   }
   atinaRenderChallengeImageCredit(challenge.id);
   const total = Number(challenge.total_clues || (challenge.image_url ? 6 : 5));
@@ -1016,19 +1007,7 @@ networkRenderGameState = function() {
   const myTeam = networkLobbyData?.team || null;
   const myTeamTurn = !activeTeam || !myTeam || activeTeam === myTeam;
   $('category').textContent = (st.emoji || '') + ' ' + (st.category || 'Desafio');
-  let onlineCardNotice = document.getElementById('atinaOnlineSpecialCardNotice');
-  if (!onlineCardNotice) {
-    onlineCardNotice = document.createElement('div');
-    onlineCardNotice.id = 'atinaOnlineSpecialCardNotice';
-    onlineCardNotice.setAttribute('role', 'status');
-    onlineCardNotice.setAttribute('aria-live', 'polite');
-    onlineCardNotice.style.cssText = 'margin:12px 0;padding:12px 16px;border:1px solid #d6b45c;border-radius:12px;background:rgba(214,180,92,.12);font-weight:700;text-align:center';
-    const categoryNode = $('category');
-    if (categoryNode?.parentNode) categoryNode.parentNode.insertBefore(onlineCardNotice, categoryNode.nextSibling);
-  }
   const onlineCard = st.special_card || null;
-  onlineCardNotice.textContent = onlineCard ? (onlineCard.icon || '🃏') + ' ' + (onlineCard.name || 'CARTA ESPECIAL') + ' — ' + (onlineCard.description || '') : '';
-  onlineCardNotice.classList.toggle('hidden', !onlineCard);
   const cardPopupKey = onlineCard ? [networkRoom?.room_id || '', st.pos, onlineCard.name || '', onlineCard.icon || ''].join('|') : '';
   if (onlineCard && cardPopupKey !== window.__atinaLastOnlineCardPopupKey) {
     window.__atinaLastOnlineCardPopupKey = cardPopupKey;
