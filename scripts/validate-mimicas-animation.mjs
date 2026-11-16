@@ -3,9 +3,12 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const scriptStart = html.indexOf('<script>') + '<script>'.length;
-const scriptEnd = html.indexOf('</script><script src=', scriptStart);
-if (scriptStart < '<script>'.length || scriptEnd < 0) throw new Error('Não foi possível localizar o JavaScript principal.');
+const supabaseScript = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>';
+const supabaseEnd = html.indexOf(supabaseScript);
+const inlineOpen = supabaseEnd < 0 ? -1 : html.indexOf('<script>', supabaseEnd + supabaseScript.length);
+const scriptStart = inlineOpen < 0 ? -1 : inlineOpen + '<script>'.length;
+const scriptEnd = scriptStart < 0 ? -1 : html.indexOf('</script>', scriptStart);
+if (scriptStart < 0 || scriptEnd < 0) throw new Error('Não foi possível localizar o JavaScript principal após o carregamento do Supabase.');
 new vm.Script(html.slice(scriptStart, scriptEnd), { filename: 'index.html inline script' });
 
 const body = (name, async = false) => {
