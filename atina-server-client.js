@@ -676,7 +676,7 @@ function atinaServerApplyState(state, announce = false) {
       else if (challenge.answer) atinaSpeakClue('A resposta correta é: ' + challenge.answer, true);
     }
   }
-  if (locked) { const guestChallengeKey = 'server:' + state.session_id + ':' + state.position; atinaRecordChallengeCompletion(guestChallengeKey); if (typeof atinaIsGuest === 'function' && atinaIsGuest() && typeof atinaGuestRecordCompletion === 'function') atinaGuestRecordCompletion(guestChallengeKey); }
+  if (locked) { const guestChallengeKey = 'server:' + state.session_id + ':' + state.position; atinaRecordChallengeCompletion(guestChallengeKey); if (typeof atinaIsGuest === 'function' && atinaIsGuest() && typeof atinaGuestRecordCompletion === 'function') { const guestCount = atinaGuestRecordCompletion(guestChallengeKey); if (guestCount >= 10 && $('continue')) $('continue').textContent = 'Criar conta para continuar'; } }
   if (locked && ['correct', 'wrong', 'incorrect'].includes(result.outcome)) atinaProgressClaim(state);
   if (locked) {
     atinaShowSolutionImage(
@@ -818,6 +818,7 @@ pass = async function() {
   finally { atinaServerBusy = false; }
 };
 next = async function() {
+  if (typeof atinaGuestLimitReached === 'function' && atinaGuestLimitReached()) { if (typeof atinaShowGuestRegistration === 'function') atinaShowGuestRegistration(); return; }
   if (!atinaServerState || !locked || atinaServerBusy) return;
 
   atinaServerBusy = true;
