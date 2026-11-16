@@ -54,8 +54,7 @@ BEGIN
   WHERE id=p_room_id;
   RETURN jsonb_build_object('status','revealed','state',v_state);
 END;
-$function$
-
+$function$;
 
 CREATE OR REPLACE FUNCTION public.atina_v2_pass_room_challenge(p_room_id uuid, p_token text)
  RETURNS jsonb
@@ -88,8 +87,7 @@ BEGIN
  UPDATE public.atina_v2_rooms SET game_state=v_state,state_version=state_version+1,updated_at=v_now WHERE id=p_room_id;
  RETURN jsonb_build_object('status',v_status,'state',v_state);
 END;
-$function$
-
+$function$;
 
 CREATE OR REPLACE FUNCTION public.atina_v2_next_room_challenge(p_room_id uuid, p_token text)
  RETURNS jsonb
@@ -166,5 +164,4 @@ begin
   state_version=state_version+1,updated_at=v_now where id=p_room_id;
  return jsonb_build_object('status','completed','results',v_results);
 end;
-$function$
-
+$function$;
