@@ -144,6 +144,7 @@ try {
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#party').click();
   await page.locator('#networkModeHint').getByText(/Modo Equipas/).waitFor();
+  // Mímicas encaminha para o fluxo de sala online.
   await page.evaluate(() => showHomePage('categories'));
   await page.locator('#categories [data-category="Mímicas"]').click();
   await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
