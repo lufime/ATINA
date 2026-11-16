@@ -1033,6 +1033,7 @@ label.section{line-height:1.35!important}
 <body><main class="wrap">
 <div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.32"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.32</strong></div>
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina." decoding="async" fetchpriority="high"><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
+<div id="atinaOnlinePlayerCount" role="status" aria-live="polite" style="display:inline-flex;align-items:center;gap:6px;margin:7px auto 0;padding:5px 10px;border:1px solid #4d806a;border-radius:999px;background:#123b32;color:#baf3d0;font-size:12px;font-weight:800">● A atualizar jogadores online…</div>
 </header>
 <nav class="home-page-nav" id="atinaMainNav" aria-label="Navegação principal">
 <button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
@@ -1908,23 +1909,35 @@ function atinaHomePageIsValid(page){return ['access','dashboard','play','howto',
 async function atinaLoadOnlinePlayers(){
  const list=document.getElementById('atinaOnlinePlayersList');
  const status=document.getElementById('atinaOnlinePlayersStatus');
- if(!list||!status)return;
- if(!supabaseClient){status.textContent='O serviço online não está disponível.';return;}
- status.textContent='A atualizar a lista…';
+ const topCount=document.getElementById('atinaOnlinePlayerCount');
+ if(!list&&!status&&!topCount)return;
+ if(!supabaseClient){
+  if(status)status.textContent='O serviço online não está disponível.';
+  if(topCount)topCount.textContent='● Estado online indisponível';
+  return;
+ }
+ if(status)status.textContent='A atualizar a lista…';
  try{
   const {data,error}=await supabaseClient.rpc('atina_v2_online_players');
   if(error)throw error;
   const players=Array.isArray(data)?data:[];
-  list.replaceChildren();
-  players.slice(0,15).forEach(player=>{
-   const item=document.createElement('li');
-   item.textContent=String(player.nickname||'Jogador')+' · online';
-   list.appendChild(item);
-  });
-  if(players.length===0)status.textContent='Não há jogadores online neste momento.';
-  else status.textContent=players.length+' jogadores online'+(players.length>15?' · '+(players.length-15)+' mais':'');
+  if(list){
+   list.replaceChildren();
+   players.slice(0,15).forEach(player=>{
+    const item=document.createElement('li');
+    item.textContent=String(player.nickname||'Jogador')+' · online';
+    list.appendChild(item);
+   });
+  }
+  const count=players.length;
+  if(topCount)topCount.textContent='● '+count+' '+(count===1?'jogador':'jogadores')+' online';
+  if(status){
+   if(count===0)status.textContent='Não há jogadores online neste momento.';
+   else status.textContent=count+' jogadores online'+(count>15?' · '+(count-15)+' mais':'');
+  }
  }catch(e){
-  status.textContent='Não foi possível atualizar a lista. '+(e?.message||'');
+  if(status)status.textContent='Não foi possível atualizar a lista. '+(e?.message||'');
+  if(topCount)topCount.textContent='● Não foi possível atualizar os jogadores online';
  }
 }
 function showHomePage(page,restore=false){
@@ -1972,6 +1985,8 @@ function showHomePage(page,restore=false){
 }
 document.getElementById('atinaGuestContinue')?.addEventListener('click',()=>{start('solo');});
 document.getElementById('atinaOnlinePlayersRefresh')?.addEventListener('click',atinaLoadOnlinePlayers);
+atinaLoadOnlinePlayers();
+setInterval(()=>{if(!document.hidden)atinaLoadOnlinePlayers();},30000);
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
 // Atualiza automaticamente os rankings visíveis, sem exigir botões manuais.
