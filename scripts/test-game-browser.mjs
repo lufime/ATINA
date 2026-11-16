@@ -152,7 +152,7 @@ try {
   // Navegação principal, definições e páginas de perfil/classificação sem erros JS.
   for (const target of ['howto','profile','ranking','settings','online','dashboard']) {
     await page.evaluate(name => showHomePage(name), target);
-    await page.locator(`[data-home-page="${target}"]`).waitFor({state:'visible'});
+    await page.locator(`[data-home-page="${target}"]`).first().waitFor({state:'visible'});
   }
 
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
