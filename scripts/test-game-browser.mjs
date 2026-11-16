@@ -5,6 +5,7 @@ import { chromium } from 'playwright';
 
 const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const serverClient = await readFile(new URL('../atina-server-client.js', import.meta.url), 'utf8');
+const roomRuntime = await readFile(new URL('../assets/network-room-runtime.js', import.meta.url), 'utf8');
 const server = createServer((request, response) => {
   const pathname = new URL(request.url || '/', 'http://127.0.0.1').pathname;
   if (pathname === '/' || pathname === '/index.html') {
@@ -13,6 +14,9 @@ const server = createServer((request, response) => {
   } else if (pathname === '/atina-server-client.js') {
     response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' });
     response.end(serverClient);
+  } else if (pathname === '/assets/network-room-runtime.js') {
+    response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' });
+    response.end(roomRuntime);
   } else { response.writeHead(404); response.end('Not found'); }
 });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -101,7 +105,34 @@ await page.route('https://commons.wikimedia.org/**', route => route.fulfill({
 await page.route('https://images.unsplash.com/**', route => route.abort());
 
 try {
-  await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
+  await page.goto(\`http://127.0.0.1:\${server.address().port}/\`, {waitUntil:'load'});
+  assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
+    'O runtime reconstruído do modo sala tem de carregar no browser.');
+
+  // Countdown de sala: os controlos permanecem bloqueados e a revelação manual
+  // não pode chamar a RPC antes de a contagem terminar.
+  await page.evaluate(async () => {
+    networkRoom = {room_id:'room-test',token:'t'.repeat(64)};
+    networkGameActive = true;
+    networkGameState = {
+      mode:'challenges',pos:0,challenge_id:1001,active_team:'Equipa A',
+      prepare_until:Date.now()+15000,revealed:0,locked:false
+    };
+    networkLobbyData = {team:'Equipa A',player_id:'player-a',players:[{id:'player-a',team:'Equipa A'}]};
+    networkDrawClock();
+    await networkHostReveal();
+  });
+  for (const id of ['nextClue','answer','submit','voice','pass','continue']) {
+    assert.equal(await page.locator('#'+id).isDisabled(), true,
+      id + ' deve ficar bloqueado durante a contagem da sala.');
+  }
+  assert.equal(await page.evaluate(() => window.__rpcCalls.some(call => call.name === 'atina_v2_reveal_room_clue')), false,
+    'A revelação da primeira pista não pode ser enviada antes do fim do countdown.');
+  await page.evaluate(() => {
+    networkGameActive = false;
+    networkGameState = null;
+    networkRoom = null;
+  });
   // O turno ativo controla os botões em todos os dispositivos; o anfitrião não pode ignorar a rotação.
   const turnAccess = await page.evaluate(() => {
     networkGameState = {active_team:'Equipa B',pos:0};
