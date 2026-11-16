@@ -133,6 +133,8 @@ SELECT is(
 
 SELECT diag(
   'Mix player='||(SELECT id::text FROM atina_mix_test_player)||
+  ' token_lookup='||coalesce((SELECT id::text FROM private.atina_players
+    WHERE device_token_hash=extensions.digest(convert_to(repeat('a',64),'UTF8'),'sha256')),'null')||
   ' queue='||(SELECT array_to_string(session.challenge_queue,',')
                FROM private.atina_v2_local_sessions session
                JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid)||
