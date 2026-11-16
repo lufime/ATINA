@@ -42,6 +42,16 @@ function harness() {
     ensureNetworkClock() {},
     $: element,
     networkReceiveState(state) {
+      const previous = context.networkGameState;
+      const sameChallenge = !!(previous && previous.pos === state.pos &&
+        previous.challenge_id === state.challenge_id);
+      if (previous && sameChallenge &&
+          (Number(state.revision || 0) < Number(context.networkLastRevision || 0) ||
+           (Number(state.revision || 0) === Number(context.networkLastRevision || 0) &&
+            String(state.active_team || '') === String(previous.active_team || '') &&
+            !!state.locked === !!previous.locked &&
+            Number(state.revealed || 0) === Number(previous.revealed || 0) &&
+            String(state.feedback || '') === String(previous.feedback || ''))) return;
       context.networkGameState = state;
       context.networkLastRevision = Number(state.revision || 0);
       context.networkRenderGameState();
@@ -93,6 +103,24 @@ test('a team change in the same challenge unlocks the new team turn', () => {
 
   assert.equal(context.networkAnsweredThisChallenge, false);
   assert.equal(element('answer').value, '');
+});
+
+
+test('passing a challenge is accepted even when the server revision is unchanged', () => {
+  const { context } = harness();
+  vm.runInContext(source, context);
+
+  context.networkReceiveState({
+    pos: 2, challenge_id: 20, active_team: 'Equipa A',
+    revision: 7, revealed: 2, locked: false, feedback: '', mode: 'challenges'
+  });
+  context.networkReceiveState({
+    pos: 2, challenge_id: 20, active_team: 'Equipa A',
+    revision: 7, revealed: 2, locked: true, feedback: 'Desafio passado.', mode: 'challenges'
+  });
+
+  assert.equal(context.networkGameState.locked, true);
+  assert.equal(context.networkGameState.feedback, 'Desafio passado.');
 });
 
 test('polling render preserves an unfinished answer within the same turn', () => {
