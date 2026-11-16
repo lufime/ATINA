@@ -208,7 +208,7 @@ SELECT ok(
 );
 
 SELECT ok(
-  position('private.atina_challenge_exposures' in pg_get_functiondef('private.atina_apply_adaptive_difficulty()'::regprocedure)) > 0,
+  position('exposure.scope_key=new.player_id::text' in pg_get_functiondef('private.atina_apply_adaptive_difficulty()'::regprocedure)) > 0,
   'Adaptive Solo difficulty respects the no-repeat exposure ledger'
 );
 
