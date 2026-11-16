@@ -1047,8 +1047,8 @@ networkRenderGameState = function() {
     teamTurnNotice.id = 'atinaOnlineTeamTurnNotice';
     teamTurnNotice.setAttribute('role', 'status');
     teamTurnNotice.style.cssText = 'margin:8px 0;padding:9px 12px;border-radius:10px;background:rgba(80,130,180,.12);font-weight:700;text-align:center';
-    const cardNode = document.getElementById('atinaOnlineSpecialCardNotice');
-    if (cardNode?.parentNode) cardNode.parentNode.insertBefore(teamTurnNotice, cardNode.nextSibling);
+    const categoryNode = $('category');
+    if (categoryNode?.parentNode) categoryNode.parentNode.insertBefore(teamTurnNotice, categoryNode.nextSibling);
   }
   teamTurnNotice.textContent = activeTeam ? (myTeamTurn ? 'É a vez da ' + activeTeam + '.' : 'Aguarda: é a vez da ' + activeTeam + '.') : '';
   teamTurnNotice.classList.toggle('hidden', !activeTeam);
