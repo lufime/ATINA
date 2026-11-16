@@ -133,6 +133,14 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 .image-manager-scroll{display:none;position:fixed;right:12px;bottom:18px;z-index:50;flex-direction:column;gap:7px}
 .image-manager-scroll button{width:auto;min-width:64px;min-height:38px;padding:7px 10px;border:1px solid var(--gold);border-radius:999px;background:#1b344d;color:var(--text);font-size:12px;font-weight:800;box-shadow:0 4px 16px #0008}
 @media(max-width:600px){.image-manager-scroll{right:7px;bottom:9px;gap:5px}.image-manager-scroll button{min-width:54px;min-height:34px;padding:6px 8px;font-size:11px}}
+
+/* Navegação administrativa: mostrar todos os separadores sem scroll horizontal */
+.admin-nav .submenu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;overflow-x:visible}
+.admin-nav .submenu a{min-width:0;white-space:normal;line-height:1.25;overflow-wrap:anywhere}
+@media(max-width:600px){
+  .admin-nav .submenu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));flex-wrap:initial;overflow:visible;gap:6px}
+  .admin-nav .submenu a{font-size:12px;padding:8px 9px;white-space:normal;min-width:0}
+}
 </style>
 </head>
 <body>
