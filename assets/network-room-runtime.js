@@ -15,6 +15,7 @@
   const originalReceiveState = networkReceiveState;
   const originalRenderGameState = networkRenderGameState;
   const originalHostReveal = networkHostReveal;
+  const originalNetworkCall = networkCall;
   const originalDrawClock = networkDrawClock;
   const originalStartGame = networkStartGame;
   const originalLeaveRoom = networkLeaveRoom;
@@ -68,6 +69,24 @@
     }
 
     return originalReceiveState(state);
+  };
+
+  // Se o servidor já mudou o turno, sincronizar antes de devolver o erro à UI.
+  // Isto evita deixar os botões presos num estado antigo durante o polling seguinte.
+  networkCall = async function networkCallV2(name, args) {
+    try {
+      return await originalNetworkCall(name, args);
+    } catch (error) {
+      const message = String(error?.message || error || '');
+      const turnConflict = /Só a equipa que tem a vez|Ainda não é a vez da tua equipa|Só a equipa que tem a vez pode/i.test(message);
+      if (turnConflict) {
+        try { await networkRefreshRoom(); } catch (_) {}
+        const syncError = new Error('O turno mudou. A sala foi sincronizada; aguarda a tua vez.');
+        syncError.code = 'ATINA_STALE_TURN';
+        throw syncError;
+      }
+      throw error;
+    }
   };
 
   // O polling não pode apagar texto que o jogador ainda está a escrever.
