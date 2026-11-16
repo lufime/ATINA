@@ -21,6 +21,8 @@ const page = await browser.newPage();
 await page.addInitScript(() => {
   localStorage.setItem('atinaAccountSessionV1', 's'.repeat(64));
   localStorage.setItem('atinaLegalAcknowledgedV2', '1');
+  localStorage.setItem('atinaClueSpeechConsent', 'false');
+  localStorage.setItem('atinaClueSpeechEnabled', 'false');
 });
 const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(error.message));
@@ -98,6 +100,7 @@ await page.route('https://images.unsplash.com/**', route => route.abort());
 try {
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   await page.evaluate(() => showHomePage('categories'));
+  assert.equal(await page.evaluate(() => atinaClueSpeechEnabled), false, 'O teste browser não deve depender de síntese de voz do dispositivo.');
   const categories = await page.locator('#categories [data-category]').evaluateAll(nodes =>
     nodes.map(node => node.getAttribute('data-category')).filter(name => name && name !== 'Mímicas'));
   assert.equal(categories.length, 22, 'Todas as 22 modalidades de desafios devem estar disponíveis no seletor.');
