@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
+const source = fs.readFileSync('assets/network-room-runtime.js', 'utf8');
 
 function harness() {
   const elements = new Map();
