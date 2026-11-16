@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - 'atina-server-client.js'
       - 'scripts/test-cloud-progression-browser.mjs'
+      - 'scripts/test-game-browser.mjs'
       - '.github/workflows/test-cloud-progression-browser.yml'
 
 jobs:
@@ -26,3 +27,5 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Executar testes reais em Chromium
         run: node scripts/test-cloud-progression-browser.mjs
+      - name: Testar fluxos de jogo e todas as modalidades no Chromium
+        run: node scripts/test-game-browser.mjs
