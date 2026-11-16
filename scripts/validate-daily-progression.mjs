@@ -6,7 +6,7 @@ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
 // Localizar o script principal pelo conteúdo, sem depender da posição
 // de tags externas ou de scripts auxiliares adicionados ao HTML.
-const inlineScripts = [...html.matchAll(/<script[^>]*>([\\s\\S]*?)<\\/script>/gi)];
+const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)];
 const mainScript = inlineScripts.find(([, body]) => body.includes('function start(m,chosen=null)') && body.includes('function mixDraw'));
 if (!mainScript) throw new Error('Não foi possível localizar o JavaScript principal.');
 new vm.Script(mainScript[1], { filename: 'index.html inline script' });
