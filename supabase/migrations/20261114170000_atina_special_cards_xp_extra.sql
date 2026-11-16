@@ -22,17 +22,15 @@ begin
     '  v_milestone_bonus integer := 0;',
     '  v_milestone_bonus integer := 0;'||chr(10)||'  v_special_bonus integer := 0;');
   v_def := replace(v_def,
-    '  update private.atina_players'||chr(10)||
-    '     set total_xp=total_xp+v_xp+v_daily_bonus+v_mission_bonus+v_streak_bonus+'||
-    '                  v_category_bonus+v_hard_bonus+v_milestone_bonus,',
+    '  update private.atina_players',
     '  v_special_bonus:=case when v_outcome=''correct'' and v_session.special_card->>''id''=''xp_extra'' then 10 else 0 end;'||chr(10)||
-    '  update private.atina_players'||chr(10)||
-    '     set total_xp=total_xp+v_xp+v_daily_bonus+v_mission_bonus+v_streak_bonus+'||
-    'v_category_bonus+v_hard_bonus+v_milestone_bonus+v_special_bonus,');
+    '  update private.atina_players');
   v_def := replace(v_def,
-    '''bonus_total'',v_daily_bonus+v_mission_bonus+v_streak_bonus+v_category_bonus+v_hard_bonus+v_milestone_bonus,',
-    '''bonus_total'',v_daily_bonus+v_mission_bonus+v_streak_bonus+v_category_bonus+v_hard_bonus+v_milestone_bonus+v_special_bonus,'||chr(10)||
-    '    ''special_card_bonus'',v_special_bonus,');
+    'v_milestone_bonus,',
+    'v_milestone_bonus+v_special_bonus,');
+  v_def := replace(v_def,
+    '''bonus_total'',',
+    '''special_card_bonus'',v_special_bonus,''bonus_total'',');
   if position('v_special_bonus' in v_def)=0
      or position('special_card_bonus' in v_def)=0
      or position('v_session.special_card' in v_def)=0 then
