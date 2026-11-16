@@ -20,6 +20,10 @@
   const originalStartGame = networkStartGame;
   const originalLeaveRoom = networkLeaveRoom;
 
+  function teamForIndex(index) {
+    return Number(index) % 2 === 0 ? 'Equipa A' : 'Equipa B';
+  }
+
   function turnKey(state) {
     if (!state) return '';
     return [
@@ -270,5 +274,5 @@
   if (networkRoom) networkStartPolling();
   if (networkGameActive) ensureNetworkClock();
 
-  window.ATINARoomRuntime = Object.freeze({ turnKey, reset });
+  window.ATINARoomRuntime = Object.freeze({ turnKey, teamForIndex, reset });
 })();
