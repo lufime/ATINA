@@ -217,7 +217,7 @@
     if (!arguments[0]?.automatic && networkRoom && !networkCanControlTurn()) {
       try { await networkRefreshRoom(); } catch (_) {}
     }
-    if (!networkCanControlTurn()) {
+    if (!arguments[0]?.automatic && !networkCanControlTurn()) {
       const activeTeam = networkGameState?.active_team || 'por determinar';
       networkMessage('feedback', 'Ainda não é a vez da tua equipa. Equipa ativa: ' + activeTeam + '.');
       syncTurnControls();
