@@ -19,6 +19,5 @@
     "classification": "Avaliar o impacto real da alteração, não o número de ficheiros. Quando uma publicação incluir alterações de vários níveis, aplicar apenas o incremento do nível mais elevado.",
     "releaseRule": "Atualizar a versão apresentada no selo do jogo e este ficheiro em conjunto em cada publicação do jogo. Não alterar a versão apresentada por alterações exclusivamente administrativas/documentais que não constituam uma nova publicação do jogo.",
     "nextVersion": "Determinar conforme o impacto da próxima alteração publicada."
-  },
-  "nextVersion": "Determinar conforme o impacto da próxima alteração publicada."
+  }
 }
