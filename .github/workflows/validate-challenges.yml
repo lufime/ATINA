@@ -26,6 +26,8 @@ jobs:
         run: node scripts/validate-server-client.mjs
       - name: Verificar sintaxe do cliente de jogo
         run: node --check atina-server-client.js
+      - name: Verificar sintaxe do preparador de replay local
+        run: node --check scripts/prepare-migration-replay.mjs
       - name: Testar motor de regras Detetive
         run: node scripts/validate-detective-engine.mjs
       - name: Validar progressão pseudónima e XP na nuvem
