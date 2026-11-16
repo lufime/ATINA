@@ -124,6 +124,7 @@ test('manual clue reveal is blocked until the server countdown ends', async () =
     mode: 'challenges', prepare_until: Date.now() + 10000, revealed: 0
   };
   context.networkHostReveal = async () => { calls += 1; };
+  vm.runInContext(source, context);
 
   await context.networkHostReveal();
   assert.equal(calls, 0);
