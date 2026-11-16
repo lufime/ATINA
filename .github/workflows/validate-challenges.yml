@@ -40,3 +40,9 @@ jobs:
         run: node scripts/validate-daily-progression.mjs
       - name: Testar runtime de salas multiplayer (turnos, equipas e sincronização)
         run: node --test tests/network-room-runtime.test.cjs
+      - name: Instalar Playwright para testes reais de browser
+        run: npm install --no-save playwright
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Testar fluxos completos no browser
+        run: node scripts/test-game-browser.mjs
