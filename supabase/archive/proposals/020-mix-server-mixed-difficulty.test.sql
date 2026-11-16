@@ -36,7 +36,7 @@ FROM (VALUES
   (-991018, '__mix_test_f__', 'hard')
 ) AS fixture(challenge_id, category, difficulty);
 
--- Register a disposable test profile and mark three medium cards as recently seen.
+-- Register a disposable test profile and mark three cards as already exposed.
 -- Both modes must avoid these IDs while other cards remain available.
 CREATE TEMP TABLE atina_mix_test_player AS
 WITH inserted AS (
@@ -62,22 +62,18 @@ SELECT is(
   'The device token is bound to the local session owner'
 );
 
-INSERT INTO private.atina_difficulty_history
-  (player_id,session_id,challenge_position,challenge_id,difficulty,outcome)
+INSERT INTO private.atina_challenge_exposures (scope_type,scope_key,challenge_id)
 SELECT
-  player.id,
-  (seed.result->'state'->>'session_id')::uuid,
-  recent.position,
-  recent.challenge_id,
-  'medium',
-  'correct'
+  'player',
+  player.id::text,
+  recent.challenge_id
 FROM atina_mix_test_player player
-CROSS JOIN atina_mix_test_seed seed
 CROSS JOIN (VALUES
-  (1,-991002),
-  (2,-991005),
-  (3,-991008)
-) AS recent(position,challenge_id);
+  (-991002),
+  (-991005),
+  (-991008)
+) AS recent(challenge_id)
+ON CONFLICT (scope_type,scope_key,challenge_id) DO NOTHING;
 
 -- Check level distribution in a separate registered disposable session so
 -- the recent-history fixture cannot force a category to use its fallback.
@@ -142,18 +138,11 @@ SELECT diag(
   ' queue='||(SELECT array_to_string(session.challenge_queue,',')
                FROM private.atina_v2_local_sessions session
                JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid)||
-  ' history='||(SELECT string_agg(challenge_id::text,',')
-                 FROM private.atina_difficulty_history
-                WHERE player_id=(SELECT id FROM atina_mix_test_player))||
-  ' function_filter='||position('v_player_id is null or not exists' in
-    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))||
-  ' nonrecent_a='||coalesce((SELECT string_agg(c.challenge_id::text,',')
-    FROM private.atina_challenges c
-    WHERE c.active AND c.category='__mix_test_a__'
-      AND NOT EXISTS (SELECT 1 FROM (SELECT h.challenge_id FROM private.atina_difficulty_history h
-        WHERE h.player_id=(SELECT id FROM atina_mix_test_player)
-        ORDER BY h.created_at DESC,h.id DESC LIMIT 30) recent
-        WHERE recent.challenge_id=c.challenge_id)),'none')
+  ' exposures='||(SELECT string_agg(challenge_id::text,',')
+                 FROM private.atina_challenge_exposures
+                WHERE scope_type='player' AND scope_key=(SELECT id::text FROM atina_mix_test_player))||
+  ' exposure_filter='||position('private.atina_challenge_exposures' in
+    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))
 );
 
 SELECT is(
@@ -163,7 +152,7 @@ SELECT is(
      CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)
      WHERE q.challenge_id IN (-991002,-991005,-991008)),
   0,
-  'Mix avoids the player recent challenge history'
+  'Mix avoids the player previously exposed challenges'
 );
 
 SELECT is(
@@ -173,7 +162,7 @@ SELECT is(
      CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)
      WHERE q.challenge_id IN (-991002,-991005,-991008)),
   0,
-  'Solo avoids the player recent challenge history'
+  'Solo avoids the player previously exposed challenges'
 );
 
 CREATE TEMP TABLE atina_mix_test_answer AS
