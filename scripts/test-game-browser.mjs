@@ -132,6 +132,12 @@ try {
     networkGameActive = false;
     networkGameState = null;
     networkRoom = null;
+    // O cenário acima simula uma sala isolada; repor os controlos antes dos
+    // testes seguintes de jogo solo, sem transportar o bloqueio do countdown.
+    for (const id of ['nextClue','answer','submit','voice','pass','continue']) {
+      const control = document.getElementById(id);
+      if (control) control.disabled = false;
+    }
   });
   // O turno ativo controla os botões em todos os dispositivos; o anfitrião não pode ignorar a rotação.
   const turnAccess = await page.evaluate(() => {
