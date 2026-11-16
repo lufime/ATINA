@@ -2169,7 +2169,7 @@ $('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo
   }
  }catch(error){if(resultStatus)resultStatus.textContent='Não foi possível guardar automaticamente. Podes tentar novamente no ecrã de resultados.';return;}
  screen('home');update();
-};renderCategories();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
+};renderCategories();atinaRefreshActiveChallengeCounts();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
 // Recupera o ecrã e o separador que estavam abertos antes da atualização.
 restoreLastScreen();
 /* Sincroniza o relógio quando a página volta a estar visível */
