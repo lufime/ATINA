@@ -202,75 +202,24 @@
     return result;
   };
 
-  // Revelação manual: impedir pedidos duplicados, mas nunca ignorar um clique
-  // silenciosamente. A resposta do servidor e o refresh determinam o estado final.
+  // Envolver a implementação original sem a substituir: esta também é usada
+  // pelo fluxo automático que inicia a primeira pista após a contagem decrescente.
+  // O bloqueio evita duplo clique e o finally recupera sempre o controlo visual.
   networkHostReveal = async function networkHostRevealV2() {
-    const state = networkGameState;
     const button = $('nextClue');
-    const rejectAction = message => {
-      if (message) networkMessage('feedback', message);
-      syncTurnControls();
-    };
-
-    if (!networkRoom || !networkGameActive || !state || state.mode !== 'challenges') {
-      rejectAction('A sala ainda não está pronta para revelar uma pista.');
-      return;
-    }
-    if (!networkCanControlTurn()) {
-      rejectAction('Ainda não é a vez da tua equipa.');
-      return;
-    }
-    if (state.locked) {
-      rejectAction('Este desafio já foi fechado.');
-      return;
-    }
-    const prepareUntil = Number(state.prepare_until) || 0;
-    if (prepareUntil && Date.now() < prepareUntil) {
-      rejectAction('Aguarda que a contagem decrescente termine.');
-      return;
-    }
-    if (state.pause && Date.parse(state.pause.ends_at) > Date.now()) {
-      rejectAction('A partida está em pausa.');
-      return;
-    }
-    const total = Number(state.total_clues) ||
-      (Number(state.queue?.[state.pos]) >= 0 &&
-       typeof isImageChallenge === 'function' &&
-       isImageChallenge(state.queue[state.pos]) ? 6 : 5);
-    if (Number(state.revealed || 0) >= total) {
-      rejectAction('Já foram reveladas todas as pistas deste desafio.');
-      return;
-    }
     if (runtime.revealInFlight) {
-      rejectAction('A pista já está a ser carregada. Aguarda um instante.');
+      networkMessage('feedback', 'A pista já está a ser carregada. Aguarda um instante.');
       return;
     }
-
     runtime.revealInFlight = true;
     if (button) {
       button.disabled = true;
       button.textContent = 'A revelar pista…';
     }
     try {
-      const result = await networkCall('atina_v2_reveal_room_clue', {
-        p_room_id: networkRoom.room_id,
-        p_token: networkRoom.token
-      });
-      if (result?.state) networkReceiveState(result.state);
-      await networkRefreshRoom();
-
-      const latest = networkGameState;
-      if (latest && turnKey(latest) === turnKey(state) &&
-          Number(latest.revealed || 0) <= Number(state.revealed || 0) &&
-          !latest.locked) {
-        networkMessage('feedback', 'O servidor ainda não confirmou a nova pista. Podes tentar novamente.');
-      }
+      return await originalHostReveal.apply(this, arguments);
     } catch (error) {
-      networkMessage(
-        'feedback',
-        error?.message || 'Não foi possível revelar a próxima pista. Tenta novamente.'
-      );
-      try { await networkRefreshRoom(); } catch (_) {}
+      networkMessage('feedback', error?.message || 'Não foi possível revelar a próxima pista. Tenta novamente.');
     } finally {
       runtime.revealInFlight = false;
       if (button) button.textContent = 'Revelar próxima pista';
