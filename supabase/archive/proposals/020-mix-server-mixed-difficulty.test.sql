@@ -141,7 +141,12 @@ SELECT diag(
   ' exposures='||(SELECT string_agg(challenge_id::text,',')
                  FROM private.atina_challenge_exposures
                 WHERE scope_type='player' AND scope_key=(SELECT id::text FROM atina_mix_test_player))||
+  ' solo_queue='||(SELECT array_to_string(session.challenge_queue,',')
+               FROM private.atina_v2_local_sessions session
+               JOIN atina_solo_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid)||
   ' exposure_filter='||position('private.atina_challenge_exposures' in
+    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))||
+  ' difficulty_history_filter='||position('private.atina_difficulty_history' in
     pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))
 );
 
