@@ -960,6 +960,75 @@ label.section{line-height:1.35!important}
 }
 </style>
 
+
+<style id="atina-play-without-scroll-20261116">
+/* Jogar sem percorrer o ecrã: ações principais no primeiro ecrã. */
+#home [data-home-page="dashboard"]{display:flex!important;flex-direction:column!important;gap:9px!important}
+#home .home-welcome{
+ min-height:0!important;height:auto!important;padding:13px 16px!important;
+ margin:0 auto!important;border-radius:14px!important;
+}
+#home .home-welcome h2{font-size:clamp(21px,4vw,27px)!important;margin:5px 0 6px!important}
+#home .home-welcome p{font-size:12px!important;line-height:1.35!important;margin:0 0 7px!important}
+#home .home-welcome>.btn{min-height:36px!important;width:auto!important;min-width:0!important;padding:7px 12px!important;margin:0!important;font-size:12px!important}
+.atina-fast-play{
+ width:100%;max-width:760px;margin:0 auto!important;padding:12px!important;
+ border:1px solid #69558f;border-radius:15px;
+ background:linear-gradient(145deg,#1b1a39,#101a30);
+ box-shadow:0 8px 22px #02030b55;
+}
+.atina-fast-play-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.atina-fast-play-title strong{font-size:12px;letter-spacing:.12em;color:#f6cf82}
+.atina-fast-play-title span{font-size:11px;color:#b9bdd4}
+.atina-fast-play-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.atina-fast-play-grid .btn{min-width:0;min-height:46px!important;padding:8px 7px!important;font-size:13px!important}
+.atina-fast-play-grid [data-atina-launch="solo"]{grid-column:1/-1;min-height:50px!important;font-size:15px!important}
+.atina-fast-categories{
+ display:block;width:100%;margin:8px 0 0;padding:6px;border:0;
+ background:transparent;color:#e9ca8b;font-size:12px;font-weight:750;text-align:center;
+ text-decoration:underline;text-underline-offset:3px;
+}
+#home .daily-mission{padding:10px 12px!important;margin:0 auto!important}
+#home .daily-mission-top h3{font-size:14px!important}
+#home .daily-mission>p{font-size:11px!important;margin:3px 0 6px!important}
+#home .daily-progress{height:6px!important}
+#home .daily-stats,#home .atina-xp-panel{display:none!important}
+#home #dailyMissionStart{min-height:35px!important;margin-top:5px!important;padding:7px 10px!important;font-size:11px!important}
+#atinaMainNav,.home-page-nav{
+ position:relative!important;top:auto!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:4px!important;padding:5px!important;margin:7px 0 10px!important;
+}
+#atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn{
+ min-height:35px!important;padding:5px 3px!important;font-size:11px!important;
+}
+.brand{padding:10px 14px!important;margin-bottom:6px!important}
+.brand .logo-image{max-height:48px!important;margin:2px auto!important}
+.brand .eyebrow{font-size:9px!important}
+.brand .tag{font-size:11px!important;margin:0!important}
+.brand .stats{margin-top:5px!important;padding-top:5px!important;font-size:11px!important}
+#atinaSignedInUser{margin:4px auto 0!important;padding:4px 9px!important;font-size:11px!important}
+@media(max-width:420px){
+ .wrap{padding-top:8px!important}
+ .atina-fast-play{padding:10px!important}
+ .atina-fast-play-grid{gap:6px}
+ .atina-fast-play-grid .btn{min-height:43px!important;font-size:12px!important}
+ #atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn{font-size:10px!important;min-height:33px!important}
+}
+</style>
+<script>
+(function(){
+ const launchMap={solo:"solo",mix:"mix",duel:"duel",party:"party"};
+ document.addEventListener("click",function(event){
+  const button=event.target.closest("[data-atina-launch]");
+  if(!button)return;
+  const target=launchMap[button.getAttribute("data-atina-launch")];
+  const original=target&&document.getElementById(target);
+  if(original&&!original.disabled&&!original.hidden)original.click();
+ });
+})();
+</script>
+
 </head>
 <body><main class="wrap">
 <div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.13"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.13</strong></div>
@@ -1018,8 +1087,17 @@ label.section{line-height:1.35!important}
    <p class="muted small">Este texto é uma informação provisória e não substitui os termos e a política de privacidade finais. Será atualizado à medida que o projeto evoluir.</p>
   </div>
  </section>
-</section><div class="sound-control home-page-panel" data-home-page="dashboard"><div class="home-welcome"><div class="home-welcome-kicker">BEM-VINDO AO ATINA</div><h2>Está na hora de pôr a mente à prova.</h2><p>Escolhe um modo de jogo, descobre pistas e soma pontos. Podes jogar sozinho, em equipa ou com amigos à distância.</p><button type="button" class="btn full" data-home-target="play">Começar a jogar →</button></div>
-
+</section><div class="sound-control home-page-panel" data-home-page="dashboard"><div class="home-welcome"><div class="home-welcome-kicker">BEM-VINDO AO ATINA</div><h2>Está na hora de pôr a mente à prova.</h2><p>Escolhe um modo de jogo, descobre pistas e soma pontos. Podes jogar sozinho, em equipa ou com amigos à distância.</p><button type="button" class="btn full" data-home-target="play">Ver todos os modos →</button></div>
+<section class="atina-fast-play" aria-label="Começar a jogar rapidamente">
+ <div class="atina-fast-play-title"><strong>JOGAR AGORA</strong><span>Escolhe e começa</span></div>
+ <div class="atina-fast-play-grid">
+  <button type="button" class="btn" data-atina-launch="solo">🎯 Jogar sozinho</button>
+  <button type="button" class="btn secondary" data-atina-launch="mix">🔀 Modo Mix</button>
+  <button type="button" class="btn secondary" data-atina-launch="duel">⚔️ Duelo</button>
+  <button type="button" class="btn secondary" data-atina-launch="party">🎉 Modo Festa</button>
+ </div>
+ <button type="button" class="atina-fast-categories" data-home-target="categories">Ver todas as modalidades →</button>
+</section>
 <section class="daily-mission" aria-labelledby="dailyMissionTitle"><div class="daily-mission-top"><div><div class="daily-kicker">A TUA MISSÃO DE HOJE</div><h3 id="dailyMissionTitle">Três desafios. Uma nova conquista.</h3></div><div aria-hidden="true" style="font-size:32px">🎯</div></div><p id="dailyMissionCopy">Completa três desafios em qualquer modalidade e mantém o ritmo.</p><div class="daily-progress" role="progressbar" aria-label="Progresso da missão diária" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" id="dailyMissionBar"><span id="dailyMissionFill"></span></div><div class="daily-meta"><span id="dailyMissionProgress">0 de 3 desafios</span><span id="dailyMissionStatus">Missão por começar</span></div><div class="daily-stats"><div class="daily-stat"><b id="dailyStreak">0 dias</b><small>Sequência de dias</small></div><div class="daily-stat"><b id="dailyTotal">0</b><small>Desafios concluídos neste dispositivo</small></div></div><div class="atina-xp-panel"><div class="daily-mission-top"><strong id="atinaLevelValue">Nível 1</strong><strong id="atinaXpValue">0 XP</strong></div><div class="daily-progress"><span id="atinaXpFill"></span></div><div class="daily-meta"><span id="atinaXpMeta">0 / 250 XP para o próximo nível</span><span>+10 XP por desafio</span></div><div id="atinaBadges" class="atina-badges" aria-label="Conquistas"></div></div><button type="button" class="btn secondary full" id="dailyMissionStart">Jogar desafio do dia →</button></section></div><section class="home-page-panel hidden" data-home-page="howto" id="atinaHowToPage">
  <div class="home-welcome"><div class="home-welcome-kicker">GUIA DO JOGADOR</div><h2>📖 Como jogar ATINA</h2><p>O objetivo é descobrir a resposta através das pistas, acertar e acumular pontos.</p></div>
  <section class="card atina-howto-card">
