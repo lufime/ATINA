@@ -102,6 +102,23 @@ await page.route('https://images.unsplash.com/**', route => route.abort());
 
 try {
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
+  // O turno ativo controla os botões em todos os dispositivos; o anfitrião não pode ignorar a rotação.
+  const turnAccess = await page.evaluate(() => {
+    networkGameState = {active_team:'Equipa B',pos:0};
+    networkLobbyData = {team:'Equipa A'};
+    networkGameHost = false;
+    const inactiveTeam = networkCanControlTurn();
+    networkLobbyData.team = 'Equipa B';
+    const activeTeam = networkCanControlTurn();
+    networkLobbyData.team = 'Equipa A';
+    networkGameHost = true;
+    const hostWhenOtherTeamPlays = networkCanControlTurn();
+    return {inactiveTeam,activeTeam,hostWhenOtherTeamPlays};
+  });
+  assert.deepEqual(turnAccess,{inactiveTeam:false,activeTeam:true,hostWhenOtherTeamPlays:false},'Só a equipa ativa pode controlar a ronda, mesmo quando o anfitrião pertence à outra equipa.');
+  assert.match(indexHtml, /\$\('nextClue'\)\.disabled=!canControlTurn/, 'A revelação de pistas deve respeitar a equipa ativa.');
+  assert.match(indexHtml, /\$\('submit'\)\.disabled=!canControlTurn/, 'O envio de respostas deve respeitar a equipa ativa.');
+
   await page.evaluate(() => showHomePage('categories'));
   assert.equal(await page.evaluate(() => atinaClueSpeechEnabled), false, 'O teste browser não deve depender de síntese de voz do dispositivo.');
   const categories = await page.locator('#categories [data-category]').evaluateAll(nodes =>
