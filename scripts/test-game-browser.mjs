@@ -149,17 +149,18 @@ try {
   await page.locator('#categories [data-category="Mímicas"]').click();
   await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
 
-  // Ações online sem sessão devem ser recusadas de forma explícita e segura.
-  await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
-  await page.locator('#networkNickname').fill('BrowserTester');
-  await page.locator('#createNetworkRoom').click();
-  await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
-
   // Navegação principal, definições e páginas de perfil/classificação sem erros JS.
   for (const target of ['howto','profile','ranking','settings','online','dashboard']) {
     await page.evaluate(name => showHomePage(name), target);
     await page.locator(`[data-home-page="${target}"]`).waitFor({state:'visible'});
   }
+
+  // Ações online sem sessão devem ser recusadas de forma explícita e segura.
+  await page.evaluate(() => showHomePage('online'));
+  await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
+  await page.locator('#networkNickname').fill('BrowserTester');
+  await page.locator('#createNetworkRoom').click();
+  await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
   const starts = await page.evaluate(() => window.__rpcCalls.filter(call => call.name === 'atina_v2_start_local_game').length);
   assert.equal(starts, categories.length + 2, 'Cada modalidade, Mix e Solo devem iniciar exatamente uma sessão.');
   assert.deepEqual(pageErrors, [], 'A aplicação não deve produzir erros JavaScript durante os fluxos principais.');
