@@ -1138,19 +1138,18 @@ label.section{line-height:1.35!important}
  #game #timerDisplay{min-height:39px!important;font-size:28px!important}
  #mimicaGame #mimePictureClue{min-height:70px!important}
 }
-/* A última pista fica fora da lista com scroll e é sincronizada pelo JavaScript. */
+/* A pista mais recentemente revelada fica fixa fora da lista percorrível. */
 #game .clues{overscroll-behavior:contain}
 #game .clue-last-pinned{display:none}
 @media(max-width:600px){
  #game .clues{max-height:24vh!important;overflow-y:auto!important;display:grid!important;overscroll-behavior:contain}
- #game .clues>.clue:last-child{display:none!important}
+ #game .clues>.clue.atina-pinned-source{display:none!important}
  #game .clue-last-pinned{
   display:block!important;position:relative;z-index:3;margin:4px 0 7px!important;
   padding:8px 10px!important;border-left:4px solid #eac05d!important;
   border-radius:0 10px 10px 0!important;background:linear-gradient(110deg,#203c56,#1a3047)!important;
   box-shadow:0 3px 12px #0004!important;font-size:13px!important;line-height:1.3!important
  }
- #game .clue-last-pinned.hidden-clue{color:#d5e0eb!important;border-left-color:#eac05d!important}
 }
 </style>
 
@@ -4406,24 +4405,33 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 </style>
 
 <script>
-/* Mantém a última pista visível, fora da área que percorre as pistas anteriores. */
-(function atinaPinFinalClue(){
+/* Mantém visível a pista mais recentemente revelada (não a última posição da lista). */
+(function atinaPinMostRecentlyRevealedClue(){
  const list=document.getElementById('clues');
- if(!list||list.dataset.finalCluePinned==='1')return;
- list.dataset.finalCluePinned='1';
+ if(!list||list.dataset.latestCluePinned==='1')return;
+ list.dataset.latestCluePinned='1';
  const pinned=document.createElement('div');
  pinned.className='clue clue-last-pinned hidden-clue';
  pinned.id='clueLastPinned';
  pinned.setAttribute('aria-live','polite');
- pinned.textContent='Última pista: ainda escondida';
+ pinned.textContent='A primeira pista aparecerá aqui quando for revelada.';
  list.insertAdjacentElement('afterend',pinned);
+ let previous=null;
  const sync=()=>{
-  const items=list.querySelectorAll(':scope > .clue');
-  if(!items.length){pinned.textContent='Última pista: ainda escondida';pinned.className='clue clue-last-pinned hidden-clue';return;}
-  const last=items[items.length-1];
-  pinned.textContent=last.textContent;
-  pinned.className='clue clue-last-pinned'+(last.classList.contains('hidden-clue')?' hidden-clue':'');
-  if(last.classList.contains('clue-revealed'))pinned.classList.add('clue-revealed');
+  const items=Array.from(list.querySelectorAll(':scope > .clue'));
+  const latest=items.filter(item=>!item.classList.contains('hidden-clue')).at(-1)||null;
+  if(previous&&previous!==latest)previous.classList.remove('atina-pinned-source');
+  previous=latest;
+  items.forEach(item=>{if(item!==latest)item.classList.remove('atina-pinned-source');});
+  if(!latest){
+   pinned.textContent='A primeira pista aparecerá aqui quando for revelada.';
+   pinned.className='clue clue-last-pinned hidden-clue';
+   return;
+  }
+  latest.classList.add('atina-pinned-source');
+  pinned.textContent=latest.textContent;
+  pinned.className='clue clue-last-pinned'+(latest.classList.contains('hidden-clue')?' hidden-clue':'');
+  if(latest.classList.contains('clue-revealed'))pinned.classList.add('clue-revealed');
  };
  new MutationObserver(sync).observe(list,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
  sync();
