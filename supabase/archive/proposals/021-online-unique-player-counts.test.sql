@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(9);
+SELECT plan(10);
 
 INSERT INTO private.atina_site_presence (session_id, last_seen_at, nickname, account_player_id)
 VALUES
@@ -78,6 +78,16 @@ SELECT ok(
     WHERE player->>'type' <> 'bot'
   ),
   'Humans and bots are explicitly typed in the directory'
+);
+
+SELECT ok(
+  NOT EXISTS (
+    SELECT 1
+    FROM atina_online_test_snapshot,
+         jsonb_array_elements(stats->'humans') AS entry(player)
+    WHERE player->>'id' LIKE 'account:%' OR player->>'id' LIKE 'guest:%'
+  ),
+  'Public player identifiers do not expose account or browser session IDs'
 );
 
 SELECT * FROM finish();
