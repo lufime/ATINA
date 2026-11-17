@@ -76,6 +76,11 @@ begin
   if v_target_id is null then raise exception 'Não foi encontrada uma conta ATINA com esse pseudónimo.' using errcode='P0002'; end if;
   if v_target_id=v_player_id then raise exception 'Não podes enviar um pedido de amizade a ti próprio.' using errcode='22023'; end if;
 
+  if (select count(*) from private.atina_player_friendships f
+       where f.requester_player_id=v_player_id and f.status='pending') >= 20 then
+    raise exception 'Tens demasiados pedidos pendentes. Aguarda algumas respostas antes de enviar mais.' using errcode='54000';
+  end if;
+
   select * into v_existing from private.atina_player_friendships f
    where (f.requester_player_id=v_player_id and f.addressee_player_id=v_target_id)
       or (f.requester_player_id=v_target_id and f.addressee_player_id=v_player_id) for update;
