@@ -19,7 +19,7 @@ for (const token of ['atinaReadEngagement','atinaRenderDailyMission','atinaRecor
   if (!html.includes(token)) throw new Error('Falta a lógica de progressão: ' + token);
 }
 if (!html.includes("atinaRecordChallengeCompletion('local:'+atinaRunId+':'+pos)")) throw new Error('As rondas locais não são registadas.');
-if (!client.includes("atinaRecordChallengeCompletion('server:' + state.session_id + ':' + state.position)")) throw new Error('As sessões individuais não registam progresso.');
+if (!client.includes("const guestChallengeKey = 'server:' + state.session_id + ':' + state.position; atinaRecordChallengeCompletion(guestChallengeKey);")) throw new Error('As sessões individuais não registam progresso.');
 if (!client.includes("atinaRecordChallengeCompletion('room:' + (networkRoom?.room_id || 'online') + ':' + st.pos)")) throw new Error('As salas online não registam progresso.');
 if (!html.includes("$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};")) throw new Error('O atalho não inicia o desafio diário selecionado.');
 if (!html.includes('count/3*100') || !html.includes("data.dailyCount>=3&&data.rewardedDate!==today")) throw new Error('A missão diária não recompensa a conclusão uma única vez.');
