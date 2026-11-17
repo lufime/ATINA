@@ -1068,6 +1068,78 @@ label.section{line-height:1.35!important}
 }
 </style>
 
+
+<style id="atina-mobile-game-focus-20261117">
+/* No telemóvel, o jogo ocupa o ecrã: retirar navegação e decoração durante a partida. */
+@media(max-width:600px){
+ body:has(#game:not(.hidden)) .brand,
+ body:has(#game:not(.hidden)) #atinaMainNav,
+ body:has(#game:not(.hidden)) #home,
+ body:has(#game:not(.hidden)) #atinaSocialShare,
+ body:has(#game:not(.hidden)) .wrap>.footer,
+ body:has(#mimicaGame:not(.hidden)) .brand,
+ body:has(#mimicaGame:not(.hidden)) #atinaMainNav,
+ body:has(#mimicaGame:not(.hidden)) #home,
+ body:has(#mimicaGame:not(.hidden)) #atinaSocialShare,
+ body:has(#mimicaGame:not(.hidden)) .wrap>.footer{display:none!important}
+ body:has(#game:not(.hidden)) .wrap,
+ body:has(#mimicaGame:not(.hidden)) .wrap{padding:4px 7px 10px!important;max-width:100%!important}
+ #game>.row:first-child,
+ #mimicaGame>.row:first-child{
+  position:sticky!important;top:0!important;z-index:30!important;
+  padding:4px 0 7px!important;margin:0!important;
+  background:#081727f2!important;backdrop-filter:blur(8px);
+ }
+ #game>.row:first-child .btn,
+ #mimicaGame>.row:first-child .btn{min-height:36px!important;padding:6px 10px!important;font-size:12px!important}
+ #game>.card,#mimicaGame>.card{
+  margin:0!important;padding:9px!important;border-radius:13px!important;
+  box-shadow:none!important;
+ }
+ #game .card>.row:first-child{margin:0 0 5px!important}
+ #game .atina-live-stats{gap:5px!important;margin:4px 0!important;font-size:10px!important}
+ #game #player{font-size:12px!important;margin:3px 0!important}
+ #game #question{font-size:19px!important;line-height:1.15!important;margin:3px 0 6px!important}
+ #game #surprisePanel{margin:5px 0!important;padding:7px!important}
+ #game #visualWrap .visual{height:clamp(82px,22vh,145px)!important;margin:5px 0!important}
+ #game #challengeImageCredit{margin:2px 0 5px!important;font-size:9px!important}
+ #game .card>.row:has(#timerDisplay){margin:5px 0!important;gap:6px!important}
+ #game #timerDisplay{min-width:92px!important;min-height:43px!important;padding:4px 10px!important;font-size:32px!important;border-width:1px!important}
+ #game .card>.row:has(#clueProgress){margin:5px 0 2px!important}
+ #game .clues{display:grid!important;gap:4px!important;margin:4px 0!important;max-height:24vh!important;overflow-y:auto!important}
+ #game .clue{padding:6px 8px!important;font-size:12px!important;line-height:1.25!important;border-radius:7px!important}
+ #game .game-control-row{gap:5px!important;margin:5px 0!important}
+ #game .game-control-row .btn{min-height:38px!important;padding:6px 5px!important;font-size:11px!important;line-height:1.15!important}
+ #game label.section{font-size:12px!important;margin:5px 0 2px!important}
+ #game #answer{min-height:42px!important;padding:7px 10px!important;margin:3px 0 5px!important;font-size:16px!important}
+ #game .feedback{min-height:0!important;margin:4px 0!important;font-size:11px!important;line-height:1.25!important}
+ #game #solutionImage,#game #teamVotePanel,#game #networkTimeoutPanel{margin:5px 0!important;padding:7px!important}
+ #game .actions{gap:5px!important;margin-top:5px!important}
+ #game .actions .btn{min-height:38px!important;padding:6px!important;font-size:12px!important}
+ #game #listenAnswer{min-height:34px!important;margin:4px 0!important;padding:5px!important;font-size:11px!important}
+ #mimicaGame .card{padding:9px!important}
+ #mimicaGame #mimeRound{margin:2px 0!important;font-size:10px!important}
+ #mimicaGame #mimePlayer{font-size:18px!important;margin:4px 0!important}
+ #mimicaGame #mimeTimer{font-size:34px!important;min-height:48px!important;margin:5px auto!important;padding:5px 12px!important}
+ #mimicaGame #mimeDrawStage{padding:4px!important}
+ #mimicaGame #mimeWord{font-size:clamp(22px,6vw,30px)!important;margin:4px 0!important}
+ #mimicaGame #mimePictureClue{min-height:90px!important;padding:7px!important;margin:5px 0!important}
+ #mimicaGame #mimePictureClue span{font-size:42px!important}
+ #mimicaGame .card>p{margin:5px 0!important;font-size:11px!important;line-height:1.25!important}
+ #mimicaGame #mimeReveal,#mimicaGame #mimeNext{min-height:38px!important;margin:5px 0!important;padding:6px!important}
+ #mimicaGame .actions{gap:5px!important;margin-top:5px!important}
+ #mimicaGame .actions .btn{min-height:38px!important;padding:6px!important;font-size:12px!important}
+ #mimicaGame #mimeFeedback{min-height:0!important;margin:4px 0!important}
+ #mimicaGame .row:has(#mimeScore1){margin:4px 0!important;font-size:12px!important}
+}
+@media(max-height:740px) and (max-width:600px){
+ #game #visualWrap .visual{height:78px!important}
+ #game .clues{max-height:20vh!important}
+ #game #timerDisplay{min-height:39px!important;font-size:28px!important}
+ #mimicaGame #mimePictureClue{min-height:70px!important}
+}
+</style>
+
 </head>
 <body><main class="wrap">
 <div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.46"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.46</strong></div>
