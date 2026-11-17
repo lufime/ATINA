@@ -140,33 +140,59 @@ revoke all on function private.atina_v2_simulate_bot_games() from public, anon, 
 
 create or replace function public.atina_progress_leaderboard(p_limit integer default 50)
 returns table(nickname text, xp integer, level integer, challenges integer)
-language sql
+language plpgsql
 stable
 security definer
 set search_path = ''
 as $function$
-  with all_players as (
-    select p.nickname, p.total_xp as xp,
-           private.atina_level_for_xp(p.total_xp) as level,
-           p.total_challenges as challenges, p.created_at
-      from private.atina_players p
-    union all
-    select p.nickname, p.xp,
-           private.atina_level_for_xp(p.xp) as level,
-           p.total_challenges as challenges, p.created_at
-      from private.atina_v2_players p
-    union all
-    select b.nickname, s.xp,
-           private.atina_level_for_xp(s.xp) as level,
-           s.total_challenges as challenges, s.created_at
-      from private.atina_v2_bot_competition_stats s
-      join private.atina_v2_bot_profiles b on b.id=s.bot_profile_id
-     where s.xp>0
-  )
-  select all_players.nickname, all_players.xp, all_players.level, all_players.challenges
-    from all_players
-   order by all_players.xp desc, all_players.challenges desc, all_players.created_at asc
-   limit least(greatest(coalesce(p_limit,50),1),100);
+begin
+  -- Older production projects may contain this legacy table, while clean
+  -- migration replays do not. Keep the compatibility path optional.
+  if to_regclass('private.atina_v2_players') is not null then
+    return query
+      with all_players as (
+        select p.nickname, p.total_xp as xp,
+               private.atina_level_for_xp(p.total_xp) as level,
+               p.total_challenges as challenges, p.created_at
+          from private.atina_players p
+        union all
+        select p.nickname, p.xp,
+               private.atina_level_for_xp(p.xp) as level,
+               p.total_challenges as challenges, p.created_at
+          from private.atina_v2_players p
+        union all
+        select b.nickname, s.xp,
+               private.atina_level_for_xp(s.xp) as level,
+               s.total_challenges as challenges, s.created_at
+          from private.atina_v2_bot_competition_stats s
+          join private.atina_v2_bot_profiles b on b.id=s.bot_profile_id
+         where s.xp>0
+      )
+      select all_players.nickname, all_players.xp, all_players.level, all_players.challenges
+        from all_players
+       order by all_players.xp desc, all_players.challenges desc, all_players.created_at asc
+       limit least(greatest(coalesce(p_limit,50),1),100);
+  else
+    return query
+      with all_players as (
+        select p.nickname, p.total_xp as xp,
+               private.atina_level_for_xp(p.total_xp) as level,
+               p.total_challenges as challenges, p.created_at
+          from private.atina_players p
+        union all
+        select b.nickname, s.xp,
+               private.atina_level_for_xp(s.xp) as level,
+               s.total_challenges as challenges, s.created_at
+          from private.atina_v2_bot_competition_stats s
+          join private.atina_v2_bot_profiles b on b.id=s.bot_profile_id
+         where s.xp>0
+      )
+      select all_players.nickname, all_players.xp, all_players.level, all_players.challenges
+        from all_players
+       order by all_players.xp desc, all_players.challenges desc, all_players.created_at asc
+       limit least(greatest(coalesce(p_limit,50),1),100);
+  end if;
+end;
 $function$;
 
 create or replace function public.atina_points_leaderboard(p_limit integer default 50)
