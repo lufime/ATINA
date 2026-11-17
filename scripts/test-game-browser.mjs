@@ -41,7 +41,7 @@ const diagnostic = async (name, action, timeout = 12000) => {
   try { return await Promise.race([action(), new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Timeout diagnóstico: ' + name)), timeout); })]); }
   finally { clearTimeout(timer); }
 };
-page.on('console', message => { if (message.text().includes('[ATINA-TRACE]')) process.stdout.write(`[browser-console] ${message.text()}\\n`); });
+page.on('console', message => { if (message.text().includes('[ATINA-TRACE]') || message.text().includes('[ATINA-DOM-TRACE]')) process.stdout.write(`[browser-console] ${message.text()}\\n`); });
 page.on('pageerror', error => pageErrors.push(error.message));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
   status: 200,
