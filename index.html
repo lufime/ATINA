@@ -1325,8 +1325,7 @@ const supabaseClient=window.supabase?.createClient?window.supabase.createClient(
 // O popup legal fica diretamente no body para não herdar ocultação/recortes dos painéis de navegação.
 const atinaLegalModalElement=document.getElementById('atinaLegalModal');
 if(atinaLegalModalElement&&atinaLegalModalElement.parentElement!==document.body)document.body.appendChild(atinaLegalModalElement);
-// Mostrar o formulário de conta logo no ecrã inicial de acesso.
-document.getElementById('atinaAccessAccountMount')?.appendChild(document.getElementById('atinaCloudProgressPanel'));
+// O formulário de conta permanece na página Perfil, acessível pela navegação principal.
 // A chave da sessão é partilhada com atina-server-client.js.
 function atinaAccountMessage(message){const el=$('atinaCloudStatus');if(el)el.textContent=message;}
 function atinaAccountSetSession(data){
@@ -3322,7 +3321,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível carregar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261117-21">
+</script><script src="./atina-server-client.js?v=20261117-22">
 /* Confirmar saída de uma partida antes de mudar de página */
 document.addEventListener('click',function(event){
  const nav=event.target.closest('[data-home-target]');
