@@ -1138,20 +1138,19 @@ label.section{line-height:1.35!important}
  #game #timerDisplay{min-height:39px!important;font-size:28px!important}
  #mimicaGame #mimePictureClue{min-height:70px!important}
 }
-/* Pistas: manter a última pista fixa no fundo enquanto as restantes são percorridas. */
-#game .clues{
-  overscroll-behavior:contain;
-  scroll-padding-bottom:58px;
-}
-#game .clues>.clue:last-child{
-  position:sticky!important;
-  bottom:0!important;
-  z-index:2!important;
-  box-shadow:0 -7px 12px #08172755!important;
-  border-top:1px solid #5a7895!important;
-}
-#game .clues>.clue:last-child.hidden-clue{
-  background:linear-gradient(110deg,#203c56,#1a3047)!important;
+/* A última pista fica fora da lista com scroll e é sincronizada pelo JavaScript. */
+#game .clues{overscroll-behavior:contain}
+#game .clue-last-pinned{display:none}
+@media(max-width:600px){
+ #game .clues{max-height:24vh!important;overflow-y:auto!important;display:grid!important;overscroll-behavior:contain}
+ #game .clues>.clue:last-child{display:none!important}
+ #game .clue-last-pinned{
+  display:block!important;position:relative;z-index:3;margin:4px 0 7px!important;
+  padding:8px 10px!important;border-left:4px solid #eac05d!important;
+  border-radius:0 10px 10px 0!important;background:linear-gradient(110deg,#203c56,#1a3047)!important;
+  box-shadow:0 3px 12px #0004!important;font-size:13px!important;line-height:1.3!important
+ }
+ #game .clue-last-pinned.hidden-clue{color:#d5e0eb!important;border-left-color:#eac05d!important}
 }
 </style>
 
@@ -4405,6 +4404,31 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 .atina-beta-version strong{font-size:11px;font-variant-numeric:tabular-nums}
 @media(max-width:480px){.atina-beta-version{top:max(6px,env(safe-area-inset-top));right:max(6px,env(safe-area-inset-right));gap:5px;padding:5px 7px;font-size:9px}.atina-beta-version strong{font-size:10px}}
 </style>
+
+<script>
+/* Mantém a última pista visível, fora da área que percorre as pistas anteriores. */
+(function atinaPinFinalClue(){
+ const list=document.getElementById('clues');
+ if(!list||list.dataset.finalCluePinned==='1')return;
+ list.dataset.finalCluePinned='1';
+ const pinned=document.createElement('div');
+ pinned.className='clue clue-last-pinned hidden-clue';
+ pinned.id='clueLastPinned';
+ pinned.setAttribute('aria-live','polite');
+ pinned.textContent='Última pista: ainda escondida';
+ list.insertAdjacentElement('afterend',pinned);
+ const sync=()=>{
+  const items=list.querySelectorAll(':scope > .clue');
+  if(!items.length){pinned.textContent='Última pista: ainda escondida';pinned.className='clue clue-last-pinned hidden-clue';return;}
+  const last=items[items.length-1];
+  pinned.textContent=last.textContent;
+  pinned.className='clue clue-last-pinned'+(last.classList.contains('hidden-clue')?' hidden-clue':'');
+  if(last.classList.contains('clue-revealed'))pinned.classList.add('clue-revealed');
+ };
+ new MutationObserver(sync).observe(list,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
+ sync();
+})();
+</script>
 
 <script src="./assets/network-room-runtime.js?v=20261116-13"></script>
 </body></html>
