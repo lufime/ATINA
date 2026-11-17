@@ -51,8 +51,11 @@ BEGIN
     (p_session_id, statement_timestamp(), v_nickname, v_account_player_id)
   ON CONFLICT (session_id) DO UPDATE
     SET last_seen_at = EXCLUDED.last_seen_at,
-        nickname = coalesce(EXCLUDED.nickname, private.atina_site_presence.nickname),
-        account_player_id = EXCLUDED.account_player_id;
+        nickname = CASE
+          WHEN EXCLUDED.account_player_id IS NOT NULL THEN EXCLUDED.nickname
+          ELSE coalesce(private.atina_site_presence.nickname, EXCLUDED.nickname)
+        END,
+        account_player_id = coalesce(EXCLUDED.account_player_id, private.atina_site_presence.account_player_id);
 
   DELETE FROM private.atina_site_presence
    WHERE last_seen_at < statement_timestamp() - interval '30 days';
