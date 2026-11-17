@@ -213,6 +213,11 @@ try {
       if (el) observer.observe(el, {attributes:true, attributeFilter:['class','hidden','style','aria-hidden']});
     }
     report('before-click');
+    // Heartbeats no contexto da página permitem distinguir uma espera do
+    // Playwright de um bloqueio da própria thread JavaScript do browser.
+    for (const delay of [100, 500, 1000, 2000, 4000]) {
+      setTimeout(() => report('event-loop-heartbeat:'+delay), delay);
+    }
   });
   step('Solo: botão localizado; agendar clique sem bloquear o protocolo Playwright');
   await diagnostic('Agendar clique Solo', () => page.evaluate(() => {
