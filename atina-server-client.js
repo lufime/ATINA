@@ -157,34 +157,40 @@ async function atinaProgressLoadPointsLeaderboard() {
   const list = $('atinaPointsLeaderboard');
   if (!list) return;
   try {
-    const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 25 });
-    list.replaceChildren();
+    const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 15 });
     const rankedRows = Array.isArray(rows)
-      ? rows.filter(row => Number(row.points || 0) > 0).slice(0, 25)
+      ? rows.filter(row => Number(row.points || 0) > 0).slice(0, 15)
       : [];
+    list.replaceChildren();
     if (!rankedRows.length) {
-      const empty = document.createElement('tr');
-      const cell = document.createElement('td');
-      cell.colSpan = 3;
-      cell.textContent = 'Ainda não há Pontos globais registados.';
-      empty.appendChild(cell);
+      const empty = document.createElement('p');
+      empty.className = 'muted small';
+      empty.textContent = 'Ainda não há Pontos globais registados.';
       list.appendChild(empty);
       return;
     }
     rankedRows.forEach((row, index) => {
-      const item = document.createElement('tr');
-      const rank = document.createElement('td');
-      const nickname = document.createElement('td');
-      const points = document.createElement('td');
-      rank.textContent = String(index + 1);
-      nickname.textContent = row.nickname;
-      points.textContent = Number(row.points || 0).toLocaleString('pt-PT');
-      item.append(rank, nickname, points);
-      list.appendChild(item);
+      const card = document.createElement('article');
+      card.className = 'atina-ranking-card';
+      const top = document.createElement('div');
+      top.className = 'atina-ranking-card-top';
+      const rank = document.createElement('span');
+      rank.className = 'atina-ranking-position';
+      rank.textContent = String(index + 1).padStart(2, '0');
+      top.appendChild(rank);
+      const nickname = document.createElement('strong');
+      nickname.className = 'atina-ranking-name';
+      nickname.textContent = row.nickname || 'Jogador';
+      const points = document.createElement('span');
+      points.className = 'atina-ranking-score';
+      points.textContent = Number(row.points || 0).toLocaleString('pt-PT') + ' pts';
+      card.append(top, nickname, points);
+      list.appendChild(card);
     });
   } catch (error) {
     list.replaceChildren();
-    const item = document.createElement('li');
+    const item = document.createElement('p');
+    item.className = 'muted small';
     item.textContent = error.message || 'Não foi possível carregar a classificação de Pontos.';
     list.appendChild(item);
   }
@@ -358,44 +364,44 @@ async function atinaProgressLoadLeaderboard() {
   const list = $('atinaCloudLeaderboard');
   if (!list) return;
   try {
-    const rows = await atinaServerRpc('atina_progress_leaderboard', { p_limit: 50 });
-    list.replaceChildren();
+    const rows = await atinaServerRpc('atina_progress_leaderboard', { p_limit: 15 });
     const rankedRows = Array.isArray(rows)
-      ? rows.filter(row => Number(row.xp || 0) > 0).slice(0, 50)
+      ? rows.filter(row => Number(row.xp || 0) > 0).slice(0, 15)
       : [];
+    list.replaceChildren();
     if (!rankedRows.length) {
-      const empty = document.createElement('tr');
-      const cell = document.createElement('td');
-      cell.colSpan = 4;
-      cell.textContent = 'Ainda não há jogadores com XP registado.';
-      empty.appendChild(cell);
+      const empty = document.createElement('p');
+      empty.className = 'muted small';
+      empty.textContent = 'Ainda não há jogadores com XP registado.';
       list.appendChild(empty);
       return;
     }
     rankedRows.forEach((row, index) => {
-      const item = document.createElement('tr');
-      const rank = document.createElement('td');
-      const nickname = document.createElement('td');
-      const xp = document.createElement('td');
-      const level = document.createElement('td');
-      rank.textContent = String(index + 1);
-      nickname.textContent = row.nickname;
-      xp.textContent = Number(row.xp || 0).toLocaleString('pt-PT');
+      const card = document.createElement('article');
+      card.className = 'atina-ranking-card';
+      const top = document.createElement('div');
+      top.className = 'atina-ranking-card-top';
+      const rank = document.createElement('span');
+      rank.className = 'atina-ranking-position';
+      rank.textContent = String(index + 1).padStart(2, '0');
       const levelNumber = Math.max(1, Number(row.level) || 1);
-      const levelBadge = document.createElement('span');
-      levelBadge.className = 'atina-level-medal';
-      levelBadge.appendChild(atinaCreateKnowledgeLevelIcon(levelNumber, true));
-      levelBadge.setAttribute('aria-label', 'Nível ' + levelNumber);
-      const levelTitle = document.createElement('span');
-      levelTitle.className = 'atina-level-title';
-      levelTitle.textContent = atinaLevelDesignation(levelNumber);
-      level.append(levelBadge, levelTitle);
-      item.append(rank, nickname, xp, level);
-      list.appendChild(item);
+      const level = document.createElement('span');
+      level.className = 'atina-ranking-level';
+      level.textContent = 'Nível ' + levelNumber;
+      top.append(rank, level);
+      const nickname = document.createElement('strong');
+      nickname.className = 'atina-ranking-name';
+      nickname.textContent = row.nickname || 'Jogador';
+      const score = document.createElement('span');
+      score.className = 'atina-ranking-score';
+      score.textContent = Number(row.xp || 0).toLocaleString('pt-PT') + ' XP';
+      card.append(top, nickname, score);
+      list.appendChild(card);
     });
   } catch (error) {
     list.replaceChildren();
-    const item = document.createElement('li');
+    const item = document.createElement('p');
+    item.className = 'muted small';
     item.textContent = error.message || 'Não foi possível carregar a classificação global.';
     list.appendChild(item);
   }
