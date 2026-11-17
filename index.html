@@ -1214,6 +1214,46 @@ const $=id=>document.getElementById(id);
 const ATINA_GAME_SUPABASE_URL='https://qvvlqrgbtjujsejvenld.supabase.co';
 const ATINA_GAME_SUPABASE_KEY='sb_publishable_hNav9TfG49in13UfflVdUw_O-_s2-0t';
 const supabaseClient=window.supabase?.createClient?window.supabase.createClient(ATINA_GAME_SUPABASE_URL,ATINA_GAME_SUPABASE_KEY):null;
+// Presença global do site: renova a sessão a cada 20 s para o contador online
+// reconhecer também quem está no menu, sem precisar de entrar numa sala.
+const ATINA_SITE_PRESENCE_KEY='atinaSitePresenceSessionV1';
+function atinaGetSitePresenceSessionId(){
+ try{
+  let id=localStorage.getItem(ATINA_SITE_PRESENCE_KEY);
+  if(!id){
+   id=window.crypto?.randomUUID?.()||'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+    const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16);
+   });
+   localStorage.setItem(ATINA_SITE_PRESENCE_KEY,id);
+  }
+  return id;
+ }catch(e){return null;}
+}
+let atinaPresenceHeartbeatInFlight=false;
+async function atinaSitePresenceHeartbeat(){
+ if(!supabaseClient||document.visibilityState==='hidden'||atinaPresenceHeartbeatInFlight)return;
+ const sessionId=atinaGetSitePresenceSessionId();
+ if(!sessionId)return;
+ atinaPresenceHeartbeatInFlight=true;
+ try{
+  let nickname='';
+  try{nickname=String(localStorage.getItem('atinaProgressNicknameV1')||'').trim();}catch(e){}
+  const {error}=await supabaseClient.rpc('atina_site_presence_heartbeat',{
+   p_session_id:sessionId,
+   p_nickname:nickname||null
+  });
+  if(error)throw error;
+ }catch(e){
+  console.warn('[ATINA] Não foi possível atualizar a presença online.',e);
+ }finally{atinaPresenceHeartbeatInFlight=false;}
+}
+atinaSitePresenceHeartbeat();
+window.setInterval(atinaSitePresenceHeartbeat,20000);
+document.addEventListener('visibilitychange',()=>{
+ if(document.visibilityState==='visible')atinaSitePresenceHeartbeat();
+});
+window.addEventListener('pageshow',atinaSitePresenceHeartbeat);
+window.addEventListener('focus',atinaSitePresenceHeartbeat);
 // O popup legal fica diretamente no body para não herdar ocultação/recortes dos painéis de navegação.
 const atinaLegalModalElement=document.getElementById('atinaLegalModal');
 if(atinaLegalModalElement&&atinaLegalModalElement.parentElement!==document.body)document.body.appendChild(atinaLegalModalElement);
