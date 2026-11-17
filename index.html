@@ -2028,7 +2028,7 @@ function restoreLastScreen(){
  }
  // Após atualizar a página, regressar sempre ao menu, sem reabrir a partida.
  // O progresso pode continuar guardado para referência, mas não força a entrada no jogo.
- if(wasReloaded||id==='game'||id===||localStorage.getItem('atinaGameClosed')==='1')id='home';
+ if(wasReloaded||id==='game'||localStorage.getItem('atinaGameClosed')==='1')id='home';
  if(!['home','rankingPage','result'].includes(id))id='home';
  screen(id);
  if(id==='home')showHomePage(page,true);
