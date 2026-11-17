@@ -30,6 +30,7 @@ function harness() {
     networkRoom: null,
     networkLobbyData: null,
     networkGameActive: false,
+    networkGameHost: false,
     networkGameState: null,
     networkLastRevision: 0,
     networkAnsweredThisChallenge: true,
@@ -189,6 +190,7 @@ test('manual clue reveal is blocked until the server countdown ends', async () =
   let calls = 0;
   context.networkRoom = { room_id: 'room' };
   context.networkGameActive = true;
+  context.networkGameHost = true;
   context.networkGameState = {
     mode: 'challenges', prepare_until: Date.now() + 10000, revealed: 0
   };
