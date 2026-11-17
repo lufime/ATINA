@@ -1233,7 +1233,53 @@ label.section{line-height:1.35!important}
   <button class="btn secondary full" id="detectiveJoinRoom">Entrar na sala</button>
   <p class="feedback" id="detectiveStatus" aria-live="polite"></p>
  </section>
+ <section class="card hidden" id="detectiveAdventureLobby" style="margin-top:12px">
+  <div class="row"><strong>🏠 Sala de investigação</strong><span class="pill" id="detectiveLobbyCode"></span></div>
+  <p class="muted small" id="detectiveLobbyText">Partilha o código com os participantes.</p>
+  <label class="section" for="detectiveSelection">Escolha do detetive</label><select class="answer" id="detectiveSelection"><option value="random">Sorteio automático</option><option value="manual">Escolher participante</option></select>
+  <label class="section hidden" for="detectiveManualPlayer" id="detectiveManualPlayerLabel">Detetive escolhido</label><select class="answer hidden" id="detectiveManualPlayer"></select>
+  <ol id="detectiveLobbyPlayers"></ol>
+  <button class="btn full" id="detectiveStartButton">Iniciar investigação</button>
+  <p class="feedback" id="detectiveLobbyStatus" aria-live="polite"></p>
+ </section>
+ <section class="card hidden" id="detectiveAdventurePlay" style="margin-top:12px">
+  <div class="row"><span class="pill" id="detectiveRolePill">DETETIVE</span><span class="pill" id="detectiveTurn">Turno 0</span></div>
+  <div class="detective-story" aria-labelledby="detectiveStoryHeading">
+   <h3 id="detectiveStoryHeading">📖 O que aconteceu naquela noite?</h3>
+   <p>A tempestade caiu sobre a Ponta da Névoa e isolou o antigo farol. Quando a luz voltou a falhar, o faroleiro <strong>Duarte Vale</strong> foi encontrado morto no interior do edifício.</p>
+   <p>A porta principal estava trancada por dentro. Não há uma explicação evidente para o que aconteceu — e sete pessoas estiveram no farol nessa noite. Cada uma conhece apenas uma parte da história; algumas escondem informações e nem todas serão totalmente sinceras.</p>
+   <p>Entre divisões abandonadas, objetos fora do lugar e registos antigos, há pistas que podem reconstruir os acontecimentos.</p>
+   <h4>🎯 A tua missão</h4>
+   <ul>
+    <li>Explorar o átrio, a sala da lanterna, a oficina e o arquivo.</li>
+    <li>Examinar os objetos e reunir as quatro provas do caso.</li>
+    <li>Interrogar as sete personagens e comparar os seus testemunhos.</li>
+    <li>Descobrir quem matou Duarte Vale e apresentar uma acusação fundamentada.</li>
+   </ul>
+   <p class="detective-story-note">A solução não é revelada nesta introdução. Descobre-a durante a investigação.</p>
+  </div>
 
+  <div id="detectivePrivateRole" class="clue hidden" aria-live="polite"></div>
+  <h2 id="detectiveSceneTitle">Átrio</h2><p id="detectiveSceneDescription" class="muted"></p>
+  <div class="detective-map" id="detectiveMap" aria-label="Mapa de locais do farol"></div>
+  <h3>🔍 Examinar objetos</h3><div id="detectiveObjects" class="detective-stack"></div>
+  <h3>🗣️ Interrogar suspeitos</h3><p class="muted small">Escolhe uma personagem e um tema. As respostas são produzidas pelas regras do caso, sem serviços externos.</p>
+  <div id="detectiveInterrogationControls">
+   <label class="section" for="detectiveCharacter">Personagem</label><select class="answer" id="detectiveCharacter"><option value="bia">Beatriz Vale</option><option value="celia">Célia Nunes</option><option value="elias">Elias Pires</option><option value="ines">Inês Moura</option><option value="marta">Marta Lobo</option><option value="raul">Raul Faria</option><option value="tomas">Tomás Reis</option></select>
+   <label class="section" for="detectiveTopic">Tema</label><select class="answer" id="detectiveTopic"><option value="general">Pergunta geral</option><option value="whereabouts">Onde esteve?</option><option value="timeline">Cronologia</option><option value="relationships">Relações com Duarte</option><option value="object">Objetos e ferramentas</option><option value="motive">Motivo</option></select>
+   <label class="section" for="detectiveEvidencePresent">Apresentar prova (opcional)</label><select class="answer" id="detectiveEvidencePresent"><option value="">Não apresentar prova</option></select>
+   <button class="btn full" id="detectiveAsk">Fazer pergunta</button>
+  </div>
+  <div id="detectiveReply" class="clue hidden" aria-live="polite"></div>
+  <div id="detectiveConversationLog" class="detective-stack"></div>
+  <section id="detectiveHumanReply" class="clue hidden"><strong id="detectiveQuestionTitle">Pergunta do detetive</strong><p id="detectiveQuestionText"></p><label class="section" for="detectiveHumanReplyText">A tua resposta</label><textarea class="answer" id="detectiveHumanReplyText" maxlength="1000" rows="3" placeholder="Responde como a tua personagem…"></textarea><button class="btn full" id="detectiveSendHumanReply">Enviar resposta</button></section>
+  <h3>🧾 Quadro de provas</h3><div id="detectiveEvidenceBoard" class="detective-stack"><p class="muted">Ainda não foram descobertas provas.</p></div>
+  <h3>🧠 Adjunto ATINA</h3><button class="btn secondary full" id="detectiveAdjunctButton">Analisar provas descobertas</button><div id="detectiveAdjunct" class="detective-stack"></div>
+  <h3>⚖️ Acusação final</h3><label class="section" for="detectiveAccuseSelect">Quem acusas?</label><select class="answer" id="detectiveAccuseSelect"><option value="bia">Beatriz Vale</option><option value="celia">Célia Nunes</option><option value="elias">Elias Pires</option><option value="ines">Inês Moura</option><option value="marta">Marta Lobo</option><option value="raul">Raul Faria</option><option value="tomas">Tomás Reis</option></select><button class="btn danger full" id="detectiveAccuse">Apresentar acusação</button>
+  <div class="feedback" id="detectiveResult" aria-live="polite"></div>
+  <button class="btn secondary full" id="detectiveExit" style="margin-top:12px">Sair da aventura</button>
+ </section>
+</section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const $=id=>document.getElementById(id);
