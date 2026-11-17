@@ -202,7 +202,7 @@ try {
       };
     };
     const report = reason => console.info('[ATINA-DOM-TRACE]', JSON.stringify({
-      reason, hash:location.hash, game:describe('game'), home:describe('home')
+      reason, at:Math.round(performance.now()), hash:location.hash, game:describe('game'), home:describe('home')
     }));
     const observer = new MutationObserver(records => {
       const targets = [...new Set(records.map(record => record.target))];
@@ -218,7 +218,7 @@ try {
   await diagnostic('Agendar clique Solo', () => page.evaluate(() => {
     const button = document.querySelector('[data-atina-launch="solo"]');
     if (!button) throw new Error('Botão Solo desapareceu antes do clique.');
-    setTimeout(() => button.click(), 0);
+    setTimeout(() => { console.info('[ATINA-DOM-TRACE]', JSON.stringify({reason:'click-dispatch',at:Math.round(performance.now())})); button.click(); }, 0);
     return true;
   }), 5000);
   step('Solo: clique agendado; aguardar ecrã de jogo');
