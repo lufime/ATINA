@@ -190,20 +190,29 @@ try {
   step('Solo: dashboard aberto; localizar botão');
   await diagnostic('Localizar botão Solo', () => page.locator('[data-atina-launch="solo"]').waitFor({state:'visible', timeout:8000}), 10000);
   await page.evaluate(() => {
-    window.__screenTrace = [];
-    window.__gameVisibilityTrace = [];
-    const game = document.querySelector('#game');
-    const snapshot = () => ({
-      at: performance.now(), hidden: game.hidden, className: game.className,
-      display: getComputedStyle(game).display,
-      visibility: getComputedStyle(game).visibility,
-      rect: game.getBoundingClientRect().toJSON()
+    const describe = id => {
+      const el = document.getElementById(id);
+      if (!el) return {missing:true};
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return {
+        id, hidden:el.hidden, className:el.className,
+        display:style.display, visibility:style.visibility, opacity:style.opacity,
+        rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height}
+      };
+    };
+    const report = reason => console.info('[ATINA-DOM-TRACE]', JSON.stringify({
+      reason, hash:location.hash, game:describe('game'), home:describe('home')
+    }));
+    const observer = new MutationObserver(records => {
+      const targets = [...new Set(records.map(record => record.target))];
+      report('mutation:'+targets.map(target => target.id || target.nodeName).join(','));
     });
-    const observer = new MutationObserver(() => window.__gameVisibilityTrace.push(snapshot()));
-    observer.observe(game, {attributes:true, attributeFilter:['class','hidden','style']});
-    // window.screen é uma API nativa do browser; não tentar substituí-la.
-    // O MutationObserver regista diretamente o efeito da função screen() no DOM.
-    window.__gameVisibilityTrace.push(snapshot());
+    for (const id of ['game','home']) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el, {attributes:true, attributeFilter:['class','hidden','style','aria-hidden']});
+    }
+    report('before-click');
   });
   step('Solo: botão localizado; agendar clique sem bloquear o protocolo Playwright');
   await diagnostic('Agendar clique Solo', () => page.evaluate(() => {
@@ -214,21 +223,7 @@ try {
   }), 5000);
   step('Solo: clique agendado; aguardar ecrã de jogo');
   await diagnostic('Aguardar ecrã de jogo', async () => {
-    try {
-      await page.locator('#game').waitFor({state:'visible', timeout:8000});
-    } catch (error) {
-      const snapshot = await page.evaluate(() => ({
-        game: (() => { const el=document.querySelector('#game'); const s=getComputedStyle(el); return {
-          hidden:el.hidden, className:el.className, display:s.display, visibility:s.visibility,
-          opacity:s.opacity, rect:el.getBoundingClientRect().toJSON()
-        }; })(),
-        home: (() => { const el=document.querySelector('#home'); return {hidden:el.hidden,className:el.className,display:getComputedStyle(el).display}; })(),
-        screens:window.__screenTrace, mutations:window.__gameVisibilityTrace,
-        errors:window.__screenTrace?.filter(x=>x.error)
-      }));
-      stage('Diagnóstico transição Solo: '+JSON.stringify(snapshot));
-      throw error;
-    }
+    await page.locator('#game').waitFor({state:'visible', timeout:8000});
   }, 12000);
   step('Solo: ecrã de jogo visível');
   assert.equal(await page.evaluate(() => window.__profileResolved), false,
