@@ -760,7 +760,10 @@ async function atinaServerRefresh() {
   }
 }
 async function atinaServerStart(gameMode, category = null) {
-  if (atinaServerBusy) return;
+  if (atinaServerBusy) {
+    atinaServerMessage('Já existe um pedido de início em curso. Aguarda um momento.');
+    return;
+  }
   const attempt = ++atinaServerStartAttempt;
   atinaServerStopTimers();
   atinaServerBusy = true;
