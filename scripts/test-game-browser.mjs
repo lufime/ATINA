@@ -189,10 +189,50 @@ try {
   await diagnostic('Abrir dashboard', () => page.evaluate(() => showHomePage('dashboard')), 12000);
   step('Solo: dashboard aberto; localizar botão');
   await diagnostic('Localizar botão Solo', () => page.locator('[data-atina-launch="solo"]').waitFor({state:'visible', timeout:8000}), 10000);
+  await page.evaluate(() => {
+    window.__screenTrace = [];
+    window.__gameVisibilityTrace = [];
+    const game = document.querySelector('#game');
+    const observer = new MutationObserver(() => window.__gameVisibilityTrace.push({
+      at: performance.now(), hidden: game.hidden, className: game.className,
+      display: getComputedStyle(game).display, rect: game.getBoundingClientRect().toJSON()
+    }));
+    observer.observe(game, {attributes:true, attributeFilter:['class','hidden','style']});
+    const originalScreen = window.screen;
+    if (typeof originalScreen === 'function') {
+      window.screen = function(id) {
+        window.__screenTrace.push({id, before: {hidden: game.hidden, className: game.className}});
+        const result = originalScreen.apply(this, arguments);
+        window.__screenTrace[window.__screenTrace.length - 1].after = {
+          hidden: game.hidden, className: game.className,
+          display: getComputedStyle(game).display, rect: game.getBoundingClientRect().toJSON()
+        };
+        return result;
+      };
+    } else {
+      window.__screenTrace.push({error: 'window.screen não é função', type: typeof originalScreen});
+    }
+  });
   step('Solo: botão localizado; disparar clique');
   await diagnostic('Disparar clique Solo', () => page.locator('[data-atina-launch="solo"]').dispatchEvent('click'), 12000);
   step('Solo: clique disparado; aguardar ecrã de jogo');
-  await diagnostic('Aguardar ecrã de jogo', () => page.locator('#game').waitFor({state:'visible', timeout:8000}), 12000);
+  await diagnostic('Aguardar ecrã de jogo', async () => {
+    try {
+      await page.locator('#game').waitFor({state:'visible', timeout:8000});
+    } catch (error) {
+      const snapshot = await page.evaluate(() => ({
+        game: (() => { const el=document.querySelector('#game'); const s=getComputedStyle(el); return {
+          hidden:el.hidden, className:el.className, display:s.display, visibility:s.visibility,
+          opacity:s.opacity, rect:el.getBoundingClientRect().toJSON()
+        }; })(),
+        home: (() => { const el=document.querySelector('#home'); return {hidden:el.hidden,className:el.className,display:getComputedStyle(el).display}; })(),
+        screens:window.__screenTrace, mutations:window.__gameVisibilityTrace,
+        errors:window.__screenTrace?.filter(x=>x.error)
+      }));
+      stage('Diagnóstico transição Solo: '+JSON.stringify(snapshot));
+      throw error;
+    }
+  }, 12000);
   step('Solo: ecrã de jogo visível');
   assert.equal(await page.evaluate(() => window.__profileResolved), false,
     'O início do jogo não pode esperar pelo carregamento do perfil/galeria.');
