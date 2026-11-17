@@ -1237,14 +1237,12 @@ function atinaOnlineCountBoot() {
         p_session_token: accountToken || null
       });
       const stats = await atinaServerRpc('atina_online_player_stats', {});
-      const humans = Math.max(0, Number(stats?.counts?.humans) || 0);
-      const bots = Math.max(0, Number(stats?.counts?.bots) || 0);
-      const total = Math.max(0, Number(stats?.counts?.total) || humans + bots);
-      counter.textContent = '● ' + humans + ' humanos · ' + bots + ' bots · ' + total + ' online';
-      counter.title = 'Humanos e bots ativos. Cada identidade é contada uma única vez, independentemente do número de sessões.';
+      const total = Math.max(0, Number(stats?.counts?.total) || 0);
+      counter.textContent = '● ' + total + ' jogadores online';
+      counter.title = 'Total de jogadores online, sem duplicações.';
       counter.dataset.count = String(total);
-      counter.dataset.humans = String(humans);
-      counter.dataset.bots = String(bots);
+      delete counter.dataset.humans;
+      delete counter.dataset.bots;
     } catch (error) {
       console.warn('ATINA: não foi possível atualizar a presença online.', error);
       counter.textContent = '● Presença online indisponível';
