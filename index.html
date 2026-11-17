@@ -1016,18 +1016,7 @@ label.section{line-height:1.35!important}
  #atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn{font-size:10px!important;min-height:33px!important}
 }
 </style>
-<script>
-(function(){
- const launchMap={solo:"solo",mix:"mix",duel:"duel",party:"party"};
- document.addEventListener("click",function(event){
-  const button=event.target.closest("[data-atina-launch]");
-  if(!button)return;
-  const target=launchMap[button.getAttribute("data-atina-launch")];
-  const original=target&&document.getElementById(target);
-  if(original&&!original.disabled&&!original.hidden)original.click();
- });
-})();
-</script>
+
 
 
 <style id="atina-compact-layout-20261117">
@@ -3319,7 +3308,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível carregar uma imagem neste momento.';}
 }
 
-</script><script src="./atina-server-client.js?v=20261117-14">
+</script><script src="./atina-server-client.js?v=20261117-15">
 /* Confirmar saída de uma partida antes de mudar de página */
 document.addEventListener('click',function(event){
  const nav=event.target.closest('[data-home-target]');
