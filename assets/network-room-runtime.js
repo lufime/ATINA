@@ -104,7 +104,7 @@
   // Evita reativar a resposta de uma equipa quando o turno já passou para outra.
   function syncTurnControls() {
     const state = networkGameState;
-    if (!state || state.mode === 'mimicas') return;
+    if (!state) return;
     const active = state.active_team ? networkCanControlTurn() : !!networkGameHost;
     const locked = !!state.locked;
     const paused = !!(state.pause && Date.parse(state.pause.ends_at) > Date.now());
@@ -130,7 +130,7 @@
 
   networkSubmitAnswer = async function networkSubmitAnswerV2() {
     if (!networkRoom || !networkGameActive || !networkGameState ||
-        networkGameState.mode === 'mimicas' || !networkCanControlTurn()) {
+        !networkCanControlTurn()) {
       syncTurnControls();
       return;
     }
