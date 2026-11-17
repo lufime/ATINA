@@ -193,29 +193,26 @@ try {
     window.__screenTrace = [];
     window.__gameVisibilityTrace = [];
     const game = document.querySelector('#game');
-    const observer = new MutationObserver(() => window.__gameVisibilityTrace.push({
+    const snapshot = () => ({
       at: performance.now(), hidden: game.hidden, className: game.className,
-      display: getComputedStyle(game).display, rect: game.getBoundingClientRect().toJSON()
-    }));
+      display: getComputedStyle(game).display,
+      visibility: getComputedStyle(game).visibility,
+      rect: game.getBoundingClientRect().toJSON()
+    });
+    const observer = new MutationObserver(() => window.__gameVisibilityTrace.push(snapshot()));
     observer.observe(game, {attributes:true, attributeFilter:['class','hidden','style']});
-    const originalScreen = window.screen;
-    if (typeof originalScreen === 'function') {
-      window.screen = function(id) {
-        window.__screenTrace.push({id, before: {hidden: game.hidden, className: game.className}});
-        const result = originalScreen.apply(this, arguments);
-        window.__screenTrace[window.__screenTrace.length - 1].after = {
-          hidden: game.hidden, className: game.className,
-          display: getComputedStyle(game).display, rect: game.getBoundingClientRect().toJSON()
-        };
-        return result;
-      };
-    } else {
-      window.__screenTrace.push({error: 'window.screen não é função', type: typeof originalScreen});
-    }
+    // window.screen é uma API nativa do browser; não tentar substituí-la.
+    // O MutationObserver regista diretamente o efeito da função screen() no DOM.
+    window.__gameVisibilityTrace.push(snapshot());
   });
-  step('Solo: botão localizado; disparar clique');
-  await diagnostic('Disparar clique Solo', () => page.locator('[data-atina-launch="solo"]').dispatchEvent('click'), 12000);
-  step('Solo: clique disparado; aguardar ecrã de jogo');
+  step('Solo: botão localizado; agendar clique sem bloquear o protocolo Playwright');
+  await diagnostic('Agendar clique Solo', () => page.evaluate(() => {
+    const button = document.querySelector('[data-atina-launch="solo"]');
+    if (!button) throw new Error('Botão Solo desapareceu antes do clique.');
+    setTimeout(() => button.click(), 0);
+    return true;
+  }), 5000);
+  step('Solo: clique agendado; aguardar ecrã de jogo');
   await diagnostic('Aguardar ecrã de jogo', async () => {
     try {
       await page.locator('#game').waitFor({state:'visible', timeout:8000});
