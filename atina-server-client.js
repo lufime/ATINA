@@ -769,20 +769,28 @@ async function atinaServerStart(gameMode, category = null) {
     const duration = Number($('timerMode')?.value ?? 60);
     const selectedDifficulty = $('difficultyMode')?.value || 'medium';
     const difficulty = ['easy', 'medium', 'hard', 'mixed'].includes(selectedDifficulty) ? selectedDifficulty : 'medium';
-    if (['solo', 'mix'].includes(gameMode) && atinaAccountSessionToken() && !atinaCloudProfile) {
-      try { atinaCloudProfile = await atinaServerRpc('atina_account_profile', {p_session_token: atinaAccountSessionToken()}); atinaProgressRender(atinaCloudProfile); } catch (_) {}
+    // O perfil/galeria é acessório: nunca pode bloquear o arranque da partida.
+    // O servidor associa a sessão à conta através do token já fornecido.
+    const startRequest = atinaServerRpc('atina_v2_start_local_game', {
+      p_game_mode: gameMode,
+      p_difficulty: difficulty,
+      p_category: category,
+      p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
+      p_device_token: ['solo', 'mix'].includes(gameMode) && atinaAccountSessionToken()
+        ? atinaAccountSessionToken() : null
+    });
+    let startTimeout;
+    let response;
+    try {
+      response = await Promise.race([
+        startRequest,
+        new Promise((_, reject) => {
+          startTimeout = setTimeout(() => reject(new Error('O servidor demorou demasiado a iniciar a partida. Podes cancelar e tentar novamente.')), 12000);
+        })
+      ]);
+    } finally {
+      if (startTimeout) clearTimeout(startTimeout);
     }
-    const response = await Promise.race([
-      atinaServerRpc('atina_v2_start_local_game', {
-        p_game_mode: gameMode,
-        p_difficulty: difficulty,
-        p_category: category,
-        p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
-        p_device_token: ['solo', 'mix'].includes(gameMode) && atinaCloudProfile
-          ? atinaAccountSessionToken() : null
-      }),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('O servidor demorou demasiado a iniciar a partida. Podes cancelar e tentar novamente.')), 12000))
-    ]);
     if (attempt !== atinaServerStartAttempt) return;
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
     atinaServerSession = { session_id: response.state.session_id, token: response.token };
