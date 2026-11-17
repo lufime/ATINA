@@ -190,7 +190,7 @@ try {
   await page.evaluate(() => { window.__holdStart = false; });
 
   // Uma sessão de conta expirada deve permitir continuar como convidado.
-  await page.evaluate(() => { window.__rejectDeviceToken = true; });
+  await page.evaluate(() => { window.__rejectDeviceToken = true; showHomePage('play'); });
   await page.locator('#solo').click();
   await page.locator('#game').waitFor({state:'visible'});
   const fallbackCalls = await page.evaluate(() => window.__rpcCalls.filter(call =>
