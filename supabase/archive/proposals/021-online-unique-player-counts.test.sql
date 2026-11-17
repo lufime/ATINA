@@ -1,9 +1,6 @@
 BEGIN;
 SELECT plan(10);
 
-CREATE TEMP TABLE atina_online_test_baseline AS
-SELECT public.atina_online_player_stats() AS stats;
-
 INSERT INTO private.atina_site_presence (session_id, last_seen_at, nickname, account_player_id)
 VALUES
   ('a1000000-0000-4000-8000-000000000001', statement_timestamp(), 'Nome repetido', 'b1000000-0000-4000-8000-000000000001'),
@@ -15,8 +12,11 @@ CREATE TEMP TABLE atina_online_test_snapshot AS
 SELECT public.atina_online_player_stats() AS stats;
 
 SELECT is(
-  (SELECT (stats->'counts'->>'humans')::integer FROM atina_online_test_snapshot),
-  (SELECT (stats->'counts'->>'humans')::integer + 3 FROM atina_online_test_baseline),
+  (SELECT count(*)::integer
+     FROM atina_online_test_snapshot,
+          jsonb_array_elements(stats->'humans') AS entry(player)
+    WHERE player->>'nickname' = 'Nome repetido'),
+  3,
   'Two sessions for one account count as one human; another account and one guest count separately'
 );
 
