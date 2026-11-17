@@ -225,10 +225,13 @@ try {
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#party').click();
   await page.locator('#networkModeHint').getByText(/Modo Equipas/).waitFor();
-  // Mímicas encaminha para o fluxo de sala online.
+  // Mímicas foi removido por completo: não deve surgir como categoria nem
+  // encaminhar o utilizador para um modo online inexistente.
   await page.evaluate(() => showHomePage('categories'));
-  await page.locator('#categories [data-category="Mímicas"]').click();
-  await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
+  assert.equal(await page.locator('#categories [data-category="Mímicas"]').count(), 0,
+    'A categoria Mímicas não deve estar disponível.');
+  assert.equal(await page.locator('#networkStartMimicas').count(), 0,
+    'O botão online de Mímicas não deve existir.');
 
   // Navegação principal, definições e páginas de perfil/classificação sem erros JS.
   for (const target of ['howto','profile','ranking','settings','online','dashboard']) {
