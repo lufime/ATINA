@@ -183,8 +183,9 @@ STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
-  SELECT coalesce(private.atina_online_snapshot()->'humans', '[]'::jsonb)
-       || coalesce(private.atina_online_snapshot()->'bots', '[]'::jsonb);
+  SELECT coalesce(snapshot->'humans', '[]'::jsonb)
+       || coalesce(snapshot->'bots', '[]'::jsonb)
+  FROM (SELECT private.atina_online_snapshot() AS snapshot) AS current_snapshot;
 $function$;
 
 REVOKE ALL ON FUNCTION public.atina_online_player_stats() FROM PUBLIC;
