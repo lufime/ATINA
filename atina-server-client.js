@@ -771,13 +771,21 @@ async function atinaServerStart(gameMode, category = null) {
     const difficulty = ['easy', 'medium', 'hard', 'mixed'].includes(selectedDifficulty) ? selectedDifficulty : 'medium';
     // O perfil/galeria é acessório: nunca pode bloquear o arranque da partida.
     // O servidor associa a sessão à conta através do token já fornecido.
-    const startRequest = atinaServerRpc('atina_v2_start_local_game', {
+    const accountToken = atinaAccountSessionToken();
+    const startArgs = {
       p_game_mode: gameMode,
       p_difficulty: difficulty,
       p_category: category,
       p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
-      p_device_token: ['solo', 'mix'].includes(gameMode) && atinaAccountSessionToken()
-        ? atinaAccountSessionToken() : null
+      p_device_token: ['solo', 'mix'].includes(gameMode) && /^[0-9a-f]{64}$/.test(accountToken)
+        ? accountToken : null
+    };
+    const startRequest = atinaServerRpc('atina_v2_start_local_game', startArgs).catch(error => {
+      // Uma chave de conta expirada não pode impedir o modo convidado.
+      if (startArgs.p_device_token && (error?.code === '28000' || /sessão expirada|sessão inválida/i.test(error?.message || ''))) {
+        return atinaServerRpc('atina_v2_start_local_game', {...startArgs, p_device_token:null});
+      }
+      throw error;
     });
     let startTimeout;
     let response;
