@@ -2095,14 +2095,17 @@ document.querySelectorAll('[data-atina-launch]').forEach(button=>button.addEvent
  event.preventDefault();
  event.stopImmediatePropagation();
  const target=button.dataset.atinaLaunch;
+ console.info('[ATINA-TRACE] quick-launch event',target);
  if(target==='solo'||target==='mix'){
   if(button.dataset.launching==='true')return;
   button.dataset.launching='true';
   button.disabled=true;
+  console.info('[ATINA-TRACE] before start',typeof start);
   Promise.resolve(start(target)).catch(error=>{
    console.error('ATINA: erro ao iniciar pelo botão rápido:',error);
    atinaServerMessage(error?.message||'Não foi possível iniciar o jogo. Tenta novamente.');
   }).finally(()=>{
+   console.info('[ATINA-TRACE] start promise settled');
    button.dataset.launching='false';
    button.disabled=false;
   });
