@@ -198,7 +198,18 @@ try {
     setTimeout(() => button.dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true,view:window})), 0);
     return true;
   }), 12000);
-  step('Solo: clique disparado; aguardar ecrã de jogo');
+  step('Solo: clique disparado; inspecionar estado do ecrã');
+  await page.waitForTimeout(150);
+  const gameVisibility = await page.evaluate(() => {
+    const game = document.querySelector('#game');
+    const rect = game?.getBoundingClientRect();
+    return {className:game?.className, hidden:game?.hidden, display:game ? getComputedStyle(game).display : null,
+      visibility:game ? getComputedStyle(game).visibility : null, height:rect?.height, parent:game?.parentElement?.tagName,
+      screenType:typeof screen, serverBusy:window.atinaServerBusy, hasServerState:!!window.atinaServerState,
+      connectionNotice:document.querySelector('#atinaConnectionNotice')?.textContent};
+  });
+  stage('Diagnóstico visibilidade #game: '+JSON.stringify(gameVisibility));
+  step('Solo: aguardar ecrã de jogo');
   await diagnostic('Aguardar ecrã de jogo', () => page.locator('#game').waitFor({state:'visible', timeout:8000}), 12000);
   step('Solo: ecrã de jogo visível');
   assert.equal(await page.evaluate(() => window.__profileResolved), false,
