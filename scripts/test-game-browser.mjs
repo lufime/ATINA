@@ -105,6 +105,7 @@ await page.route('https://commons.wikimedia.org/**', route => route.fulfill({
 await page.route('https://images.unsplash.com/**', route => route.abort());
 
 try {
+  console.log('[browser-test] abrir aplicação');
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
@@ -156,6 +157,7 @@ try {
   assert.match(indexHtml, /\$\('nextClue'\)\.disabled=!canControlTurn/, 'A revelação de pistas deve respeitar a equipa ativa.');
   assert.match(indexHtml, /\$\('submit'\)\.disabled=!canControlTurn/, 'O envio de respostas deve respeitar a equipa ativa.');
 
+  console.log('[browser-test] countdown e permissões concluídos; abrir categorias');
   await page.evaluate(() => showHomePage('categories'));
   assert.equal(await page.evaluate(() => atinaClueSpeechEnabled), false, 'O teste browser não deve depender de síntese de voz do dispositivo.');
   // A lista final depende da consulta assíncrona de desafios ativos. Esperar
@@ -169,10 +171,13 @@ try {
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
 
   // Exercitar o ciclo completo do modo individual em todas as modalidades.
+  console.log('[browser-test] categorias encontradas:', categories.join(' | '));
   for (const category of categories) {
+    console.log('[browser-test] iniciar categoria:', category);
     await page.evaluate(() => showHomePage('categories'));
     await page.locator('#categories [data-category]').filter({hasText: category}).click();
     await page.locator('#game').waitFor({state:'visible'});
+    console.log('[browser-test] jogo visível:', category);
     await page.waitForFunction(name => document.querySelector('#category')?.textContent.includes(name), category);
     await page.locator('#nextClue').click();
     await page.waitForFunction(() => document.querySelector('#clues .clue:not(.hidden-clue)'));
@@ -185,8 +190,10 @@ try {
         ' · erros: ' + JSON.stringify(pageErrors));
     });
     assert.equal(await page.locator('#continue').isVisible(), true, category + ': deve permitir avançar após resposta certa.');
+    console.log('[browser-test] categoria concluída:', category);
   }
 
+  console.log('[browser-test] categorias concluídas; testar Mix');
   // Confirmar que Mix inicia uma sessão própria e que PASSO e CONTINUAR funcionam.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#mix').click();
@@ -196,6 +203,7 @@ try {
   await page.locator('#continue').click();
   await page.waitForFunction(() => document.querySelector('#level')?.textContent.includes('DESAFIO 2'));
 
+  console.log('[browser-test] Mix concluído; testar resposta errada/certa');
   // Resposta errada não fecha a ronda; a resposta certa seguinte fecha-a.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#solo').click();
@@ -208,6 +216,7 @@ try {
   await page.locator('#submit').click();
   await page.getByText(/Certo! Resposta ATINA/).waitFor();
 
+  console.log('[browser-test] resposta errada/certa concluída; testar modos online');
   // Os modos que exigem vários dispositivos encaminham para a área online.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#duel').click();
@@ -220,12 +229,14 @@ try {
   await page.locator('#categories [data-category="Mímicas"]').click();
   await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
 
+  console.log('[browser-test] modos online concluídos; testar navegação');
   // Navegação principal, definições e páginas de perfil/classificação sem erros JS.
   for (const target of ['howto','profile','ranking','settings','online','dashboard']) {
     await page.evaluate(name => showHomePage(name), target);
     await page.locator(`[data-home-page="${target}"]`).first().waitFor({state:'visible'});
   }
 
+  console.log('[browser-test] navegação concluída; testar bloqueio sem sessão');
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
