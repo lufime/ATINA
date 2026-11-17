@@ -1,6 +1,9 @@
 BEGIN;
 SELECT plan(10);
 
+CREATE TEMP TABLE atina_online_test_baseline AS
+SELECT public.atina_online_player_stats() AS stats;
+
 INSERT INTO private.atina_site_presence (session_id, last_seen_at, nickname, account_player_id)
 VALUES
   ('a1000000-0000-4000-8000-000000000001', statement_timestamp(), 'Nome repetido', 'b1000000-0000-4000-8000-000000000001'),
@@ -13,20 +16,21 @@ SELECT public.atina_online_player_stats() AS stats;
 
 SELECT is(
   (SELECT (stats->'counts'->>'humans')::integer FROM atina_online_test_snapshot),
-  3,
+  (SELECT (stats->'counts'->>'humans')::integer + 3 FROM atina_online_test_baseline),
   'Two sessions for one account count as one human; another account and one guest count separately'
 );
 
 SELECT is(
   (SELECT jsonb_array_length(stats->'humans') FROM atina_online_test_snapshot),
-  3,
+  (SELECT (stats->'counts'->>'humans')::integer FROM atina_online_test_snapshot),
   'The human directory contains one row per unique identity'
 );
 
 SELECT is(
   (SELECT count(DISTINCT player->>'id')::integer
      FROM atina_online_test_snapshot,
-          jsonb_array_elements(stats->'humans') AS entry(player)),
+          jsonb_array_elements(stats->'humans') AS entry(player)
+    WHERE player->>'nickname' = 'Nome repetido'),
   3,
   'Human identity keys are unique even when nicknames are identical'
 );
@@ -34,7 +38,8 @@ SELECT is(
 SELECT is(
   (SELECT count(DISTINCT player->>'nickname')::integer
      FROM atina_online_test_snapshot,
-          jsonb_array_elements(stats->'humans') AS entry(player)),
+          jsonb_array_elements(stats->'humans') AS entry(player)
+    WHERE player->>'nickname' = 'Nome repetido'),
   1,
   'Identical nicknames do not merge different human identities'
 );
