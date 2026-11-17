@@ -5,6 +5,7 @@ let atinaServerState = null;
 let atinaServerTimer = null;
 let atinaServerPolling = null;
 let atinaServerBusy = false;
+let atinaServerStartAttempt = 0;
 let atinaServerAutoRevealAt = 0;
 let atinaServerAutoRevealTriggered = false;
 let atinaServerLastResult = '{}';
@@ -483,6 +484,28 @@ function atinaServerMessage(message) {
     notice.textContent = message;
   }
 }
+function atinaServerShowStartNotice(message, attempt) {
+  atinaServerMessage(message);
+  const notice = $('atinaConnectionNotice');
+  if (!notice) return;
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.textContent = 'Cancelar arranque';
+  cancel.setAttribute('aria-label', 'Cancelar o arranque da partida e voltar ao início');
+  cancel.style.cssText = 'display:block;margin-top:10px;padding:10px 16px;border:1px solid #eac05d;border-radius:10px;background:#18334b;color:#fff;font-weight:700;cursor:pointer';
+  cancel.addEventListener('click', () => {
+    if (attempt !== atinaServerStartAttempt) return;
+    atinaServerStartAttempt++;
+    atinaServerBusy = false;
+    atinaServerStopTimers();
+    atinaServerSession = null;
+    atinaServerState = null;
+    localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
+    screen('home');
+    atinaServerMessage('Arranque cancelado. Podes voltar a tentar.');
+  }, {once:true});
+  notice.appendChild(cancel);
+}
 function atinaServerStopTimers() {
   if (atinaServerTimer !== null) clearInterval(atinaServerTimer);
   if (atinaServerPolling !== null) clearInterval(atinaServerPolling);
@@ -738,9 +761,10 @@ async function atinaServerRefresh() {
 }
 async function atinaServerStart(gameMode, category = null) {
   if (atinaServerBusy) return;
+  const attempt = ++atinaServerStartAttempt;
   atinaServerStopTimers();
   atinaServerBusy = true;
-  atinaServerMessage('A preparar uma partida segura no servidor…');
+  atinaServerShowStartNotice('A preparar uma partida segura no servidor…', attempt);
   try {
     const duration = Number($('timerMode')?.value ?? 60);
     const selectedDifficulty = $('difficultyMode')?.value || 'medium';
@@ -748,25 +772,30 @@ async function atinaServerStart(gameMode, category = null) {
     if (['solo', 'mix'].includes(gameMode) && atinaAccountSessionToken() && !atinaCloudProfile) {
       try { atinaCloudProfile = await atinaServerRpc('atina_account_profile', {p_session_token: atinaAccountSessionToken()}); atinaProgressRender(atinaCloudProfile); } catch (_) {}
     }
-    const response = await atinaServerRpc('atina_v2_start_local_game', {
-      p_game_mode: gameMode,
-      p_difficulty: difficulty,
-      p_category: category,
-      p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
-      p_device_token: ['solo', 'mix'].includes(gameMode) && atinaCloudProfile
-        ? atinaAccountSessionToken() : null
-    });
+    const response = await Promise.race([
+      atinaServerRpc('atina_v2_start_local_game', {
+        p_game_mode: gameMode,
+        p_difficulty: difficulty,
+        p_category: category,
+        p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
+        p_device_token: ['solo', 'mix'].includes(gameMode) && atinaCloudProfile
+          ? atinaAccountSessionToken() : null
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('O servidor demorou demasiado a iniciar a partida. Podes cancelar e tentar novamente.')), 12000))
+    ]);
+    if (attempt !== atinaServerStartAttempt) return;
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
     atinaServerSession = { session_id: response.state.session_id, token: response.token };
     localStorage.setItem(ATINA_SERVER_SESSION_KEY, JSON.stringify(atinaServerSession));
     screen('game');
     atinaServerApplyState(response.state);
   } catch (error) {
+    if (attempt !== atinaServerStartAttempt) return;
     console.error('ATINA: falha ao iniciar a partida individual:', error);
     screen('home');
     atinaServerMessage('Não foi possível abrir a partida: ' + (error?.message || 'erro inesperado') + '. Tenta novamente.');
   } finally {
-    atinaServerBusy = false;
+    if (attempt === atinaServerStartAttempt) atinaServerBusy = false;
   }
 }
 start = function(gameMode, category = null) { if (typeof atinaGuestLimitReached === 'function' && atinaGuestLimitReached()) { if (typeof atinaShowGuestRegistration === 'function') atinaShowGuestRegistration(); return Promise.resolve(); } if (typeof atinaActivateAutomaticSpeech === 'function') atinaActivateAutomaticSpeech(); return atinaServerStart(gameMode, category); };
