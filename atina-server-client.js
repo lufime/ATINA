@@ -762,8 +762,9 @@ async function atinaServerStart(gameMode, category = null) {
     screen('game');
     atinaServerApplyState(response.state);
   } catch (error) {
-    atinaServerMessage(error.message || 'Não foi possível iniciar a partida. É necessária ligação à Internet.');
+    console.error('ATINA: falha ao iniciar a partida individual:', error);
     screen('home');
+    atinaServerMessage('Não foi possível abrir a partida: ' + (error?.message || 'erro inesperado') + '. Tenta novamente.');
   } finally {
     atinaServerBusy = false;
   }
