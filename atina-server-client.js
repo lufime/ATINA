@@ -608,6 +608,7 @@ async function atinaRenderChallengeImageCredit(challengeId) {
 }
 
 function atinaServerApplyState(state, announce = false) {
+  console.info('[ATINA-TRACE] apply state entered');
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
   const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
   if (!sameChallenge) {
@@ -718,8 +719,11 @@ function atinaServerApplyState(state, announce = false) {
   $('feedback').classList.remove('is-correct', 'is-wrong', 'is-info');
   $('feedback').classList.add(result.outcome === 'correct' ? 'is-correct' : result.outcome === 'wrong' || result.outcome === 'timeout' ? 'is-wrong' : 'is-info');
   $('networkScoreboard').classList.add('hidden');
+  console.info('[ATINA-TRACE] before update');
   update();
+  console.info('[ATINA-TRACE] before board');
   board();
+  console.info('[ATINA-TRACE] after board');
   if (announce) screen('game');
   if (state.status === 'completed') {
     atinaServerStopTimers();
@@ -728,11 +732,13 @@ function atinaServerApplyState(state, announce = false) {
   } else if (sameChallenge) {
     atinaServerStartTimers();
   } else {
+    console.info('[ATINA-TRACE] before mixDraw');
     atinaServerStopTimers();
     const expectedSession = state.session_id;
     const expectedPosition = state.position;
     const finalGame = [challenge.category || 'Desafio', challenge.emoji || '🎯'];
     mixDraw(finalGame, state.difficulty || difficultyMode).finally(() => {
+      console.info('[ATINA-TRACE] mixDraw settled');
       if (atinaServerState?.session_id === expectedSession && atinaServerState?.position === expectedPosition && atinaServerState?.status !== 'completed') atinaServerStartTimers();
     });
   }
@@ -809,8 +815,11 @@ async function atinaServerStart(gameMode, category = null) {
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
     atinaServerSession = { session_id: response.state.session_id, token: response.token };
     localStorage.setItem(ATINA_SERVER_SESSION_KEY, JSON.stringify(atinaServerSession));
+    console.info('[ATINA-TRACE] before screen game');
     screen('game');
+    console.info('[ATINA-TRACE] after screen game');
     atinaServerApplyState(response.state);
+    console.info('[ATINA-TRACE] after apply state');
   } catch (error) {
     if (attempt !== atinaServerStartAttempt) return;
     console.error('ATINA: falha ao iniciar a partida individual:', error);
