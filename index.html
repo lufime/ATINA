@@ -2197,20 +2197,9 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  finally{if(button){button.dataset.saving='0';button.disabled=false;}}
 }
 async function atinaFetchPointsRanking(mode){
- const {data:humanRows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',mode).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(20);
- if(error)throw error;
- let botRows=[];
- if(mode==='solo'){
-  const {data,error:botError}=await supabaseClient.rpc('atina_v2_bot_points_leaderboard',{p_limit:20});
-  if(botError)throw botError;
-  botRows=Array.isArray(data)?data:[];
- }
- const combined=[
-  ...(Array.isArray(humanRows)?humanRows:[]).map(row=>({...row,_score:Number(row.score||0)})),
-  ...botRows.map(row=>({id:null,nickname:row.nickname,score:Number(row.points||0),created_at:row.created_at,_score:Number(row.points||0)}))
- ];
- combined.sort((a,b)=>b._score-a._score||new Date(a.created_at||0)-new Date(b.created_at||0));
- return combined.slice(0,20);
+  const {data,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',mode).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(20);
+  if(error)throw error;
+  return Array.isArray(data)?data:[];
 }
 async function loadOnlineRanking(){
  const list=$('rankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';const m=$('rankingMode')?.value||'solo';
