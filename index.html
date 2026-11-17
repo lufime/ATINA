@@ -1155,12 +1155,17 @@ label.section{line-height:1.35!important}
 <p class="muted small" id="networkModeHint">Cada pessoa joga no seu próprio telemóvel. Cria uma sala ou entra com um código. Para Mímicas, escolhe a categoria Mímicas e o anfitrião inicia a ronda na sala.</p>
 <label class="section" for="networkNickname">O teu pseudónimo</label>
 <input id="networkNickname" class="answer" maxlength="20" placeholder="Pseudónimo da tua conta" readonly aria-readonly="true" title="Preenchido automaticamente com o pseudónimo da tua conta ATINA">
-<section class="card" id="atinaOnlinePlayersPanel" style="margin:12px 0;padding:14px">
- <div class="row" style="align-items:center;justify-content:space-between;gap:8px"><h3 style="margin:0">Jogadores online</h3><button type="button" class="btn secondary" id="atinaOnlinePlayersRefresh" style="width:auto;padding:8px 12px">Atualizar</button></div>
- <ol id="atinaOnlinePlayersList" style="padding-left:24px;margin:10px 0"></ol>
- <p class="muted small" id="atinaOnlinePlayersStatus" aria-live="polite">A carregar jogadores online…</p>
-</section>
-<div class="quick-match-panel">
+<section class="card" id="atinaFriendsPanel" style="margin:12px 0;padding:14px">
+ <h3 style="margin:0 0 6px">👥 Amigos para jogar online</h3>
+ <p class="muted small">Envia pedidos pelo pseudónimo ATINA. Depois de aceites, os amigos podem combinar uma sala e jogar em conjunto.</p>
+ <label class="section" for="atinaFriendNickname">Pseudónimo do jogador</label>
+ <input id="atinaFriendNickname" class="answer" maxlength="20" autocomplete="off" placeholder="Pseudónimo exato do amigo">
+ <button type="button" class="btn full" id="atinaFriendSend">Enviar pedido de amizade</button>
+ <p class="feedback" id="atinaFriendStatus" aria-live="polite"></p>
+ <div style="margin-top:14px"><strong>Pedidos recebidos</strong><div id="atinaFriendIncoming" class="small muted" style="margin-top:7px">A carregar…</div></div>
+ <div style="margin-top:14px"><strong>Os teus amigos</strong><div id="atinaFriendList" class="small muted" style="margin-top:7px">A carregar…</div></div>
+ <button type="button" class="btn secondary full" id="atinaFriendRefresh" style="margin-top:12px">Atualizar amizades</button>
+</section><div class="quick-match-panel">
  <h3>⚡ Partida rápida</h3>
  <p class="muted small">Encontra automaticamente outro jogador para um duelo online.</p>
  <button type="button" class="btn full" id="quickMatchStart">Encontrar adversário</button>
@@ -1857,7 +1862,7 @@ function renderNetworkTimeoutPanel(){
 }
 function networkMessage(id,msg){const el=$(id);if(el)el.textContent=msg;}
 let quickMatchTicket=null,quickMatchPoll=null,quickMatchBusy=false;
-function atinaFillNetworkNickname(value){const input=$('networkNickname');if(!input)return;let nickname=String(window.atinaCloudProfile?.nickname||value||'').trim();if(!nickname){try{nickname=String(localStorage.getItem('atinaProgressNicknameV1')||'').trim();}catch(e){}}input.value=nickname.slice(0,20);}
+function atinaFillNetworkNickname(value){const input=$('networkNickname');if(!input)return;let nickname=String(window.atinaCloudProfile?.nickname||value||'').trim();if(!nickname){try{nickname=String(localStorage.getItem('atinaProgressNicknameV1')||'').trim();}catch(e){}}input.value=nickname.slice(0,15);}
 function quickMatchStopPolling(){if(quickMatchPoll!==null)clearInterval(quickMatchPoll);quickMatchPoll=null;}
 function quickMatchSetBusy(busy,message){quickMatchBusy=busy;const start=$('quickMatchStart'),cancel=$('quickMatchCancel');if(start){start.disabled=busy;start.textContent=busy?'À procura de adversário…':'Encontrar adversário';}if(cancel)cancel.classList.toggle('hidden',!busy);if(message)$('quickMatchStatus').textContent=message;}
 function quickMatchNewTicket(){if(!window.crypto?.getRandomValues)throw new Error('Este navegador não permite criar um pedido seguro.');const bytes=new Uint8Array(32);window.crypto.getRandomValues(bytes);return Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('');}
@@ -1978,39 +1983,102 @@ function atinaRenderDailyMission(){const data=atinaReadEngagement(),today=atinaL
 function atinaRecordChallengeCompletion(key){if(!key)return;const data=atinaReadEngagement();if(data.keys.includes(key))return;const today=atinaLocalDate();if(data.dailyDate!==today){data.dailyDate=today;data.dailyCount=0;}data.dailyCount++;data.total++;if(data.dailyCount>=3&&data.rewardedDate!==today){data.missions++;data.rewardedDate=today;}if(data.lastDate!==today){data.streak=data.lastDate===atinaYesterday()?data.streak+1:1;data.lastDate=today;}data.keys.push(key);if(data.keys.length>500)data.keys=data.keys.slice(-500);try{localStorage.setItem(ATINA_ENGAGEMENT_KEY,JSON.stringify(data));}catch(e){}atinaRenderDailyMission();}
 function atinaHomePageIsValid(page){return ['access','dashboard','play','howto','categories','online','profile','ranking','settings'].includes(page);}
 async function atinaLoadOnlinePlayers(){
- const list=document.getElementById('atinaOnlinePlayersList');
- const status=document.getElementById('atinaOnlinePlayersStatus');
  const topCount=document.getElementById('atinaOnlinePlayerCount');
- if(!list&&!status&&!topCount)return;
- if(!supabaseClient){
-  if(status)status.textContent='O serviço online não está disponível.';
-  if(topCount)topCount.textContent='● Estado online indisponível';
-  return;
- }
- if(status)status.textContent='A atualizar a lista…';
+ if(!topCount||!supabaseClient)return;
  try{
   const {data,error}=await supabaseClient.rpc('atina_v2_online_players');
   if(error)throw error;
-  const players=Array.isArray(data)?data:[];
-  if(list){
-   list.replaceChildren();
-   players.slice(0,15).forEach(player=>{
-    const item=document.createElement('li');
-    item.textContent=String(player.nickname||'Jogador')+' · online';
-    list.appendChild(item);
-   });
-  }
-  const count=players.length;
-  if(topCount)topCount.textContent='● '+count+' '+(count===1?'jogador':'jogadores')+' online';
-  if(status){
-   if(count===0)status.textContent='Não há jogadores online neste momento.';
-   else status.textContent=count+' jogadores online'+(count>15?' · '+(count-15)+' mais':'');
-  }
+  const count=Array.isArray(data)?data.length:0;
+  topCount.textContent='● '+count+' '+(count===1?'jogador':'jogadores')+' online';
  }catch(e){
-  if(status)status.textContent='Não foi possível atualizar a lista. '+(e?.message||'');
-  if(topCount)topCount.textContent='● Não foi possível atualizar os jogadores online';
+  topCount.textContent='● Estado online indisponível';
  }
 }
+function atinaFriendMessage(message,isError=false){
+ const el=document.getElementById('atinaFriendStatus');
+ if(!el)return;
+ el.textContent=message||'';
+ el.classList.toggle('is-wrong',!!isError);
+ el.classList.toggle('is-correct',!!message&&!isError);
+}
+function atinaRenderFriendList(targetId,rows,kind){
+ const root=document.getElementById(targetId);
+ if(!root)return;
+ root.replaceChildren();
+ if(!Array.isArray(rows)||!rows.length){
+  const empty=document.createElement('p');
+  empty.className='muted small';
+  empty.textContent=kind==='incoming'?'Não tens pedidos por responder.':kind==='friends'?'Ainda não tens amizades ATINA.':'Sem registos.';
+  root.appendChild(empty);
+  return;
+ }
+ rows.forEach(row=>{
+  const line=document.createElement('div');
+  line.className='row';
+  line.style.cssText='justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #ffffff18;flex-wrap:wrap';
+  const name=document.createElement('span');
+  name.textContent=String(row.nickname||'Jogador');
+  line.appendChild(name);
+  if(kind==='incoming'){
+   const actions=document.createElement('span');
+   actions.style.cssText='display:flex;gap:6px';
+   const accept=document.createElement('button');
+   accept.type='button';accept.className='btn';accept.textContent='Aceitar';accept.style.cssText='padding:7px 10px';
+   accept.addEventListener('click',()=>atinaFriendRespond(row.id,true));
+   const decline=document.createElement('button');
+   decline.type='button';decline.className='btn secondary';decline.textContent='Recusar';decline.style.cssText='padding:7px 10px';
+   decline.addEventListener('click',()=>atinaFriendRespond(row.id,false));
+   actions.append(accept,decline);line.appendChild(actions);
+  }
+  root.appendChild(line);
+ });
+}
+async function atinaFriendsLoad(){
+ const token=typeof atinaAccountSessionToken==='function'?atinaAccountSessionToken():'';
+ if(!token){
+  atinaRenderFriendList('atinaFriendIncoming',[],'incoming');
+  atinaRenderFriendList('atinaFriendList',[],'friends');
+  atinaFriendMessage('Inicia sessão na tua conta ATINA para gerir amizades.',true);
+  return;
+ }
+ try{
+  const data=await atinaServerRpc('atina_friendship_list',{p_session_token:token});
+  atinaRenderFriendList('atinaFriendIncoming',data?.incoming||[],'incoming');
+  atinaRenderFriendList('atinaFriendList',data?.friends||[],'friends');
+  atinaFriendMessage('');
+ }catch(error){
+  atinaFriendMessage(error?.message||'Não foi possível carregar as amizades.',true);
+ }
+}
+async function atinaFriendSend(){
+ const token=typeof atinaAccountSessionToken==='function'?atinaAccountSessionToken():'';
+ const input=document.getElementById('atinaFriendNickname');
+ const nickname=String(input?.value||'').trim();
+ if(!token){atinaFriendMessage('Inicia sessão na tua conta ATINA antes de enviar pedidos.',true);return;}
+ if(!nickname){atinaFriendMessage('Introduz o pseudónimo exato do jogador.',true);return;}
+ const button=document.getElementById('atinaFriendSend');
+ if(button)button.disabled=true;
+ try{
+  const result=await atinaServerRpc('atina_friendship_request',{p_session_token:token,p_nickname:nickname});
+  if(input)input.value='';
+  atinaFriendMessage(result?.status==='accepted'?'Pedido correspondido: já são amigos!':'Pedido de amizade enviado a '+(result?.nickname||nickname)+'.');
+  await atinaFriendsLoad();
+ }catch(error){
+  atinaFriendMessage(error?.message||'Não foi possível enviar o pedido.',true);
+ }finally{if(button)button.disabled=false;}
+}
+async function atinaFriendRespond(requestId,accept){
+ const token=typeof atinaAccountSessionToken==='function'?atinaAccountSessionToken():'';
+ if(!token){atinaFriendMessage('Inicia sessão na tua conta ATINA.',true);return;}
+ try{
+  await atinaServerRpc('atina_friendship_respond',{p_session_token:token,p_request_id:requestId,p_accept:!!accept});
+  atinaFriendMessage(accept?'Pedido aceite. Já podem combinar uma partida online.':'Pedido recusado.');
+  await atinaFriendsLoad();
+ }catch(error){
+  atinaFriendMessage(error?.message||'Não foi possível responder ao pedido.',true);
+ }
+}
+
 function showHomePage(page,restore=false){
  if(!atinaHomePageIsValid(page))page='access';
  let hasSession=false,hasAcknowledgement=false;
@@ -2049,13 +2117,14 @@ function showHomePage(page,restore=false){
  if(location.hash!=='#'+page){
   try{history.replaceState(null,'','#'+page);}catch(e){}
  }
- if(page==='online')atinaLoadOnlinePlayers();
+ if(page==='online'){atinaLoadOnlinePlayers();atinaFriendsLoad();}
  if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
  if(page==='ranking'&&typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
 document.getElementById('atinaGuestContinue')?.addEventListener('click',()=>{start('solo');});
-document.getElementById('atinaOnlinePlayersRefresh')?.addEventListener('click',atinaLoadOnlinePlayers);
+document.getElementById('atinaFriendSend')?.addEventListener('click',atinaFriendSend);
+document.getElementById('atinaFriendRefresh')?.addEventListener('click',atinaFriendsLoad);
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
 // Atualiza automaticamente os rankings visíveis, sem exigir botões manuais.
@@ -2250,7 +2319,7 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  report('A guardar pontuação…');
  try{
   const matchSessionId=atinaServerSession?.session_id||null;
-  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,20),score:points,mode:gameMode,submission_key:submissionKey,session_id:matchSessionId,player_number:matchSessionId?playerNumber:null});
+  const {error}=await supabaseClient.from('atina_points_ranking').insert({nickname:name.slice(0,15),score:points,mode:gameMode,submission_key:submissionKey,session_id:matchSessionId,player_number:matchSessionId?playerNumber:null});
   if(error&&error.code==='23505'&&String(error.message||'').includes('atina_points_ranking_nickname_unique_idx')){report('Este pseudónimo já está a ser utilizado. Escolhe outro.');return false;}
   if(error&&error.code==='23505'){report('Esta pontuação desta partida já estava guardada.');}
   else if(error)throw error;
@@ -2261,11 +2330,11 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  finally{if(button){button.dataset.saving='0';button.disabled=false;}}
 }
 async function atinaFetchPointsRanking(mode){
- const {data:humanRows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',mode).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(20);
+ const {data:humanRows,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',mode).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(15);
  if(error)throw error;
  let botRows=[];
  if(mode==='solo'){
-  const {data,error:botError}=await supabaseClient.rpc('atina_v2_bot_points_leaderboard',{p_limit:20});
+  const {data,error:botError}=await supabaseClient.rpc('atina_v2_bot_points_leaderboard',{p_limit:15});
   if(botError)throw botError;
   botRows=Array.isArray(data)?data:[];
  }
@@ -2274,7 +2343,7 @@ async function atinaFetchPointsRanking(mode){
   ...botRows.map(row=>({id:null,nickname:row.nickname,score:Number(row.points||0),created_at:row.created_at,_score:Number(row.points||0)}))
  ];
  combined.sort((a,b)=>b._score-a._score||new Date(a.created_at||0)-new Date(b.created_at||0));
- return combined.slice(0,20);
+ return combined.slice(0,15);
 }
 async function loadOnlineRanking(){
  const list=$('rankingList');if(!list)return;list.innerHTML='<li>A carregar…</li>';const m=$('rankingMode')?.value||'solo';
@@ -2298,7 +2367,7 @@ async function loadXpRanking(){
  const list=$('menuXpRankingList');if(!list)return;
  try{
   if(!supabaseClient)throw new Error('Supabase indisponível');
-  const {data:rows,error}=await supabaseClient.rpc('atina_progress_leaderboard',{p_limit:20});
+  const {data:rows,error}=await supabaseClient.rpc('atina_progress_leaderboard',{p_limit:15});
   if(error)throw error;list.replaceChildren();
   if(!Array.isArray(rows)||!rows.length){list.innerHTML='<li>Ainda não há perfis na classificação de XP.</li>';return;}
   rows.forEach(row=>{const li=document.createElement('li');li.textContent=(row.nickname||'Jogador')+' — '+Number(row.xp||0)+' XP · nível '+Number(row.level||1);list.appendChild(li);});
