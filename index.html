@@ -1163,6 +1163,7 @@ label.section{line-height:1.35!important}
  <button type="button" class="btn full" id="atinaFriendSend">Enviar pedido de amizade</button>
  <p class="feedback" id="atinaFriendStatus" aria-live="polite"></p>
  <div style="margin-top:14px"><strong>Pedidos recebidos</strong><div id="atinaFriendIncoming" class="small muted" style="margin-top:7px">A carregar…</div></div>
+<div style="margin-top:14px"><strong>Pedidos enviados</strong><div id="atinaFriendOutgoing" class="small muted" style="margin-top:7px">A carregar…</div></div>
  <div style="margin-top:14px"><strong>Os teus amigos</strong><div id="atinaFriendList" class="small muted" style="margin-top:7px">A carregar…</div></div>
  <button type="button" class="btn secondary full" id="atinaFriendRefresh" style="margin-top:12px">Atualizar amizades</button>
 </section><div class="quick-match-panel">
@@ -2044,6 +2045,7 @@ async function atinaFriendsLoad(){
  try{
   const data=await atinaServerRpc('atina_friendship_list',{p_session_token:token});
   atinaRenderFriendList('atinaFriendIncoming',data?.incoming||[],'incoming');
+  atinaRenderFriendList('atinaFriendOutgoing',data?.outgoing||[],'outgoing');
   atinaRenderFriendList('atinaFriendList',data?.friends||[],'friends');
   atinaFriendMessage('');
  }catch(error){
