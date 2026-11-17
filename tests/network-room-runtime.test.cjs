@@ -30,6 +30,7 @@ function harness() {
     networkRoom: null,
     networkLobbyData: null,
     networkGameActive: false,
+    networkGameHost: false,
     networkGameState: null,
     networkLastRevision: 0,
     networkAnsweredThisChallenge: true,
