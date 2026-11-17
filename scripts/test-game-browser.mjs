@@ -38,6 +38,7 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
   contentType: 'application/javascript',
   body: `
     window.__rpcCalls = [];
+    window.__profileResolved = false;
     let session = null;
     const state = () => ({
       session_id: session.id, mode: session.mode, position: session.position,
@@ -89,7 +90,11 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
           session.position++; session.clues=[]; session.locked=false; session.result=null;
           return {data:state(),error:null};
         }
-        if (name === 'atina_account_profile') return {data:{player_id:'00000000-0000-4000-8000-000000000002',nickname:'BrowserTester',xp:0,level:1,total_challenges:0},error:null};
+        if (name === 'atina_account_profile') {
+          await new Promise(resolve => setTimeout(resolve, 2500));
+          window.__profileResolved = true;
+          return {data:{player_id:'00000000-0000-4000-8000-000000000002',nickname:'BrowserTester',xp:0,level:1,total_challenges:0},error:null};
+        }
         if (name === 'atina_progress_claim_local') return {data:{nickname:'BrowserTester',xp:10,level:1,total_challenges:1,awarded:true,challenge_xp:10},error:null};
         if (name === 'atina_points_leaderboard') return {data:[],error:null};
         if (name === 'atina_progress_leaderboard') return {data:[],error:null};
@@ -160,6 +165,10 @@ try {
   await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').evaluate(button => button.click());
   await page.locator('#game').waitFor({state:'visible'});
+  assert.equal(await page.evaluate(() => window.__profileResolved), false,
+    'O início do jogo não pode esperar pelo carregamento do perfil/galeria.');
+  assert.equal(await page.evaluate(() => window.__rpcCalls.some(call => call.name === 'atina_v2_start_local_game')), true,
+    'O pedido de início tem de chegar ao servidor sem depender do perfil.');
   await page.evaluate(() => showHomePage('dashboard'));
 
   await page.evaluate(() => showHomePage('categories'));
