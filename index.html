@@ -2020,6 +2020,7 @@ function showHomePage(page,restore=false){
  if(page==='online')atinaLoadOnlinePlayers();
  if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
  if(page==='ranking'&&typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();
+ if(page==='ranking'&&typeof atinaProgressLoadQiLeaderboard==='function')atinaProgressLoadQiLeaderboard();
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
 document.getElementById('atinaGuestContinue')?.addEventListener('click',()=>{start('solo');});
@@ -2041,6 +2042,7 @@ setInterval(async()=>{
   if(refreshHome){
    if(typeof atinaProgressLoadLeaderboard==='function')jobs.push(atinaProgressLoadLeaderboard());
    if(typeof atinaProgressLoadPointsLeaderboard==='function')jobs.push(atinaProgressLoadPointsLeaderboard());
+    if(typeof atinaProgressLoadQiLeaderboard==='function')jobs.push(atinaProgressLoadQiLeaderboard());
   }
   if(refreshLegacy){jobs.push(loadMenuRanking());jobs.push(loadXpRanking());}
   await Promise.allSettled(jobs);
