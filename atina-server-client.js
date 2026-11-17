@@ -157,10 +157,10 @@ async function atinaProgressLoadPointsLeaderboard() {
   const list = $('atinaPointsLeaderboard');
   if (!list) return;
   try {
-    const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 25 });
+    const rows = await atinaServerRpc('atina_points_leaderboard', { p_limit: 15 });
     list.replaceChildren();
     const rankedRows = Array.isArray(rows)
-      ? rows.filter(row => Number(row.points || 0) > 0).slice(0, 25)
+      ? rows.filter(row => Number(row.points || 0) > 0).slice(0, 15)
       : [];
     if (!rankedRows.length) {
       const empty = document.createElement('tr');
@@ -358,10 +358,10 @@ async function atinaProgressLoadLeaderboard() {
   const list = $('atinaCloudLeaderboard');
   if (!list) return;
   try {
-    const rows = await atinaServerRpc('atina_progress_leaderboard', { p_limit: 50 });
+    const rows = await atinaServerRpc('atina_progress_leaderboard', { p_limit: 15 });
     list.replaceChildren();
     const rankedRows = Array.isArray(rows)
-      ? rows.filter(row => Number(row.xp || 0) > 0).slice(0, 50)
+      ? rows.filter(row => Number(row.xp || 0) > 0).slice(0, 15)
       : [];
     if (!rankedRows.length) {
       const empty = document.createElement('tr');
