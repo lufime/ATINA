@@ -158,7 +158,7 @@ try {
 
   // Os botões de início rápido do dashboard têm de arrancar o jogo, não ficar sem ação.
   await page.evaluate(() => showHomePage('dashboard'));
-  await page.locator('[data-atina-launch="solo"]').click();
+  await page.locator('[data-atina-launch="solo"]').evaluate(button => button.click());
   await page.locator('#game').waitFor({state:'visible'});
   await page.evaluate(() => showHomePage('dashboard'));
 
