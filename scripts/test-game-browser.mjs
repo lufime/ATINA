@@ -21,7 +21,7 @@ const server = createServer((request, response) => {
 });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage();
+const page = await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
 await page.addInitScript(() => {
   localStorage.setItem('atinaAccountSessionV1', 's'.repeat(64));
   localStorage.setItem('atinaLegalAcknowledgedV2', '1');
