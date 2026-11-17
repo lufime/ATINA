@@ -105,7 +105,7 @@
   function syncTurnControls() {
     const state = networkGameState;
     if (!state || state.mode === 'mimicas') return;
-    const active = state.active_team ? networkCanControlTurn() : !!networkGameHost;
+    const active = state.active_team ? networkCanControlTurn() : (typeof networkGameHost !== 'undefined' && !!networkGameHost);
     const locked = !!state.locked;
     const paused = !!(state.pause && Date.parse(state.pause.ends_at) > Date.now());
     const preparing = Number(state.prepare_until) > Date.now() &&
