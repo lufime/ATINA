@@ -220,8 +220,19 @@ as $function$
    limit least(greatest(coalesce(p_limit,50),1),100);
 $function$;
 
-select cron.schedule(
-  'atina-v2-bot-simulated-games',
-  '* * * * *',
-  'select private.atina_v2_simulate_bot_games();'
-);
+-- Some disposable/local Supabase environments do not preload pg_cron.
+-- Keep migration replay portable; production environments with pg_cron still
+-- receive the scheduled bot simulation.
+do $schedule$
+begin
+  if to_regnamespace('cron') is not null then
+    execute $sql$
+      select cron.schedule(
+        'atina-v2-bot-simulated-games',
+        '* * * * *',
+        'select private.atina_v2_simulate_bot_games();'
+      )
+    $sql$;
+  end if;
+end;
+$schedule$;
