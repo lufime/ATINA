@@ -184,9 +184,15 @@ try {
   stage('Testar início rápido Solo e independência do perfil');
   step('Verificar arranque rápido Solo');
   // Os botões de início rápido do dashboard têm de arrancar o jogo, não ficar sem ação.
-  await diagnostic('Abrir dashboard', () => page.evaluate(() => showHomePage('dashboard')));
-  await diagnostic('Disparar clique Solo', () => page.locator('[data-atina-launch="solo"]').evaluate(button => button.click()), 8000);
-  await diagnostic('Aguardar ecrã de jogo', () => page.locator('#game').waitFor({state:'visible', timeout:8000}), 10000);
+  step('Solo: antes de abrir dashboard');
+  await diagnostic('Abrir dashboard', () => page.evaluate(() => showHomePage('dashboard')), 12000);
+  step('Solo: dashboard aberto; localizar botão');
+  await diagnostic('Localizar botão Solo', () => page.locator('[data-atina-launch="solo"]').waitFor({state:'visible', timeout:8000}), 10000);
+  step('Solo: botão localizado; disparar clique');
+  await diagnostic('Disparar clique Solo', () => page.locator('[data-atina-launch="solo"]').evaluate(button => button.click()), 12000);
+  step('Solo: clique disparado; aguardar ecrã de jogo');
+  await diagnostic('Aguardar ecrã de jogo', () => page.locator('#game').waitFor({state:'visible', timeout:8000}), 12000);
+  step('Solo: ecrã de jogo visível');
   assert.equal(await page.evaluate(() => window.__profileResolved), false,
     'O início do jogo não pode esperar pelo carregamento do perfil/galeria.');
   assert.equal(await page.evaluate(() => window.__rpcCalls.some(call => call.name === 'atina_v2_start_local_game')), true,
