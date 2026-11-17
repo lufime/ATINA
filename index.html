@@ -1034,23 +1034,24 @@ label.section{line-height:1.35!important}
 /* Colunas dos rankings alinhadas e medalhas proporcionais ao ecrã móvel. */
 .atina-ranking-table{width:100%;table-layout:fixed;border-collapse:collapse}
 .atina-ranking-table th,.atina-ranking-table td{box-sizing:border-box;padding:9px 6px;vertical-align:middle}
-.atina-ranking-table th:first-child,.atina-ranking-table td:first-child{width:9%;text-align:center}
+.atina-ranking-table th:first-child,.atina-ranking-table td:first-child{width:12%;min-width:36px;text-align:center;white-space:nowrap;overflow-wrap:normal}
 .atina-ranking-table th:nth-child(2),.atina-ranking-table td:nth-child(2){width:34%;text-align:left;overflow-wrap:anywhere}
 .atina-ranking-table th:nth-child(3),.atina-ranking-table td:nth-child(3){text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.atina-xp-ranking-table th:nth-child(1),.atina-xp-ranking-table td:nth-child(1){width:8%}
-.atina-xp-ranking-table th:nth-child(2),.atina-xp-ranking-table td:nth-child(2){width:32%}
-.atina-xp-ranking-table th:nth-child(3),.atina-xp-ranking-table td:nth-child(3){width:16%;text-align:right}
+.atina-xp-ranking-table th:nth-child(1),.atina-xp-ranking-table td:nth-child(1){width:12%;min-width:36px}
+.atina-xp-ranking-table th:nth-child(2),.atina-xp-ranking-table td:nth-child(2){width:29%}
+.atina-xp-ranking-table th:nth-child(3),.atina-xp-ranking-table td:nth-child(3){width:15%;text-align:right}
 .atina-xp-ranking-table th:nth-child(4){width:44%;text-align:left;white-space:normal}
 .atina-xp-ranking-table td:nth-child(4){width:44%;text-align:left;white-space:normal}
 .atina-xp-ranking-table td:nth-child(4) .atina-level-medal{display:inline-flex;vertical-align:middle;margin-right:6px}
 .atina-xp-ranking-table td:nth-child(4) .atina-level-title{display:inline-block;vertical-align:middle;max-width:calc(100% - 48px);overflow-wrap:anywhere;text-align:left}
-.atina-points-ranking-table th:nth-child(2),.atina-points-ranking-table td:nth-child(2){width:62%}
+.atina-points-ranking-table th:nth-child(2),.atina-points-ranking-table td:nth-child(2){width:58%}
 .atina-points-ranking-table th:nth-child(3),.atina-points-ranking-table td:nth-child(3){width:30%;text-align:right}
 .atina-ranking-table .atina-knowledge-medal{width:30px;height:30px}
 .atina-ranking-table .atina-knowledge-medal .mdi{font-size:15px}
 .atina-ranking-table .atina-knowledge-medal em{min-width:13px;height:13px;padding:0 2px;font-size:8px;border-width:1px;right:-3px;bottom:-3px}
 @media(max-width:380px){
  .atina-ranking-table{font-size:12px}
+ .atina-ranking-table th:first-child,.atina-ranking-table td:first-child{width:38px;min-width:38px;white-space:nowrap}
  .atina-ranking-table th,.atina-ranking-table td{padding:8px 4px}
  .atina-xp-ranking-table th:nth-child(2),.atina-xp-ranking-table td:nth-child(2){width:30%}
  .atina-xp-ranking-table th:nth-child(4),.atina-xp-ranking-table td:nth-child(4){width:46%}
