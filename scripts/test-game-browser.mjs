@@ -223,7 +223,25 @@ try {
   }), 5000);
   step('Solo: clique agendado; aguardar ecrã de jogo');
   await diagnostic('Aguardar ecrã de jogo', async () => {
-    await page.locator('#game').waitFor({state:'visible', timeout:8000});
+    const game = page.locator('#game');
+    try {
+      await game.waitFor({state:'visible', timeout:8000});
+    } catch (error) {
+      const locatorVisible = await game.isVisible().catch(() => null);
+      const domState = await page.evaluate(() => {
+        const nodes = [...document.querySelectorAll('#game')];
+        return nodes.map((el, index) => {
+          const style = getComputedStyle(el);
+          const rect = el.getBoundingClientRect();
+          return {index, hidden:el.hidden, className:el.className, display:style.display,
+            visibility:style.visibility, opacity:style.opacity,
+            rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height}};
+        });
+      }).catch(e => ({evaluateError:e.message}));
+      process.stdout.write('[browser-test] Solo wait diagnostic ' +
+        JSON.stringify({locatorCount:await game.count().catch(()=>null),locatorVisible,domState}) + '\\n');
+      throw error;
+    }
   }, 12000);
   step('Solo: ecrã de jogo visível');
   assert.equal(await page.evaluate(() => window.__profileResolved), false,
