@@ -1230,11 +1230,21 @@ function atinaOnlineCountBoot() {
     inFlight = true;
     try {
       const nickname = (localStorage.getItem('atinaProgressNicknameV1') || '').trim().slice(0, 40) || 'Visitante';
-      await atinaServerRpc('atina_site_presence_heartbeat', { p_session_id: sessionId, p_nickname: nickname });
-      const count = await atinaServerRpc('atina_online_player_count', {});
-      const total = Math.max(0, Number(count) || 0);
-      counter.textContent = '● ' + total + (total === 1 ? ' jogador online' : ' jogadores online');
+      const accountToken = typeof atinaAccountSessionToken === 'function' ? atinaAccountSessionToken() : null;
+      await atinaServerRpc('atina_site_presence_heartbeat', {
+        p_session_id: sessionId,
+        p_nickname: nickname,
+        p_session_token: accountToken || null
+      });
+      const stats = await atinaServerRpc('atina_online_player_stats', {});
+      const humans = Math.max(0, Number(stats?.counts?.humans) || 0);
+      const bots = Math.max(0, Number(stats?.counts?.bots) || 0);
+      const total = Math.max(0, Number(stats?.counts?.total) || humans + bots);
+      counter.textContent = '● ' + humans + ' humanos · ' + bots + ' bots · ' + total + ' online';
+      counter.title = 'Humanos e bots ativos. Cada identidade é contada uma única vez, independentemente do número de sessões.';
       counter.dataset.count = String(total);
+      counter.dataset.humans = String(humans);
+      counter.dataset.bots = String(bots);
     } catch (error) {
       console.warn('ATINA: não foi possível atualizar a presença online.', error);
       counter.textContent = '● Presença online indisponível';
