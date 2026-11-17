@@ -1138,6 +1138,21 @@ label.section{line-height:1.35!important}
  #game #timerDisplay{min-height:39px!important;font-size:28px!important}
  #mimicaGame #mimePictureClue{min-height:70px!important}
 }
+/* Pistas: manter a última pista fixa no fundo enquanto as restantes são percorridas. */
+#game .clues{
+  overscroll-behavior:contain;
+  scroll-padding-bottom:58px;
+}
+#game .clues>.clue:last-child{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:2!important;
+  box-shadow:0 -7px 12px #08172755!important;
+  border-top:1px solid #5a7895!important;
+}
+#game .clues>.clue:last-child.hidden-clue{
+  background:linear-gradient(110deg,#203c56,#1a3047)!important;
+}
 </style>
 
 </head>
