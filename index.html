@@ -2103,6 +2103,12 @@ function showHomePage(page,restore=false){
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
 document.getElementById('atinaGuestContinue')?.addEventListener('click',()=>{start('solo');});
+document.querySelectorAll('[data-atina-launch]').forEach(button=>button.addEventListener('click',()=>{
+ const target=button.dataset.atinaLaunch;
+ if(target==='solo'||target==='mix'){start(target);return;}
+ if(target==='duel'){$('duel')?.click();return;}
+ if(target==='party'){$('party')?.click();return;}
+}));
 document.getElementById('atinaOnlinePlayersRefresh')?.addEventListener('click',atinaLoadOnlinePlayers);
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
