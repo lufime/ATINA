@@ -67,7 +67,9 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
         if (name === 'atina_v2_start_local_game') {
           session = {id:'00000000-0000-4000-8000-000000000001',mode:args.p_game_mode,
             category:args.p_category || 'Cultura geral',position:1,clues:[],scores:[0,0],answered:0,locked:false,result:null};
-          return {data:{token:'t'.repeat(64),state:state()},error:null};
+          const payload = {data:{token:'t'.repeat(64),state:state()},error:null};
+          if (window.__holdStart) return new Promise(resolve => { window.__resolveStart = () => resolve(payload); });
+          return payload;
         }
         if (name === 'atina_v2_local_reveal_clue') {
           session.clues.push('Pista de teste número '+(session.clues.length+1));
@@ -170,6 +172,19 @@ try {
   assert.equal(await page.evaluate(() => window.__rpcCalls.some(call => call.name === 'atina_v2_start_local_game')), true,
     'O pedido de início tem de chegar ao servidor sem depender do perfil.');
   await page.evaluate(() => showHomePage('dashboard'));
+
+  // Um arranque pendente tem de poder ser cancelado sem fechar o Chrome.
+  await page.evaluate(() => { window.__holdStart = true; });
+  await page.locator('[data-atina-launch="solo"]').evaluate(button => button.click());
+  await page.locator('#atinaConnectionNotice button').waitFor({state:'visible',timeout:5000});
+  await page.locator('#atinaConnectionNotice button').click();
+  assert.match(await page.locator('#atinaConnectionNotice').textContent(), /Arranque cancelado/,
+    'O cancelamento deve devolver o controlo ao ecrã inicial.');
+  await page.evaluate(() => window.__resolveStart?.());
+  await page.waitForFunction(() => document.querySelector('#game')?.hidden === true);
+  assert.equal(await page.evaluate(() => window.__rpcCalls.filter(call => call.name === 'atina_v2_start_local_game').length), 2,
+    'O cancelamento não deve criar pedidos duplicados.');
+  await page.evaluate(() => { window.__holdStart = false; });
 
   await page.evaluate(() => showHomePage('categories'));
   assert.equal(await page.evaluate(() => atinaClueSpeechEnabled), false, 'O teste browser não deve depender de síntese de voz do dispositivo.');
