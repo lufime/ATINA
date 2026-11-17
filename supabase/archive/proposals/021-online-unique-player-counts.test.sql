@@ -26,7 +26,7 @@ SELECT is(
 SELECT is(
   (SELECT count(DISTINCT player->>'id')::integer
      FROM atina_online_test_snapshot,
-          jsonb_array_elements(stats->'humans') AS player),
+          jsonb_array_elements(stats->'humans') AS entry(player)),
   3,
   'Human identity keys are unique even when nicknames are identical'
 );
@@ -34,7 +34,7 @@ SELECT is(
 SELECT is(
   (SELECT count(DISTINCT player->>'nickname')::integer
      FROM atina_online_test_snapshot,
-          jsonb_array_elements(stats->'humans') AS player),
+          jsonb_array_elements(stats->'humans') AS entry(player)),
   1,
   'Identical nicknames do not merge different human identities'
 );
@@ -68,13 +68,13 @@ SELECT ok(
   NOT EXISTS (
     SELECT 1
     FROM atina_online_test_snapshot,
-         jsonb_array_elements(stats->'humans') AS player
+         jsonb_array_elements(stats->'humans') AS entry(player)
     WHERE player->>'type' <> 'human'
   )
   AND NOT EXISTS (
     SELECT 1
     FROM atina_online_test_snapshot,
-         jsonb_array_elements(stats->'bots') AS player
+         jsonb_array_elements(stats->'bots') AS entry(player)
     WHERE player->>'type' <> 'bot'
   ),
   'Humans and bots are explicitly typed in the directory'
