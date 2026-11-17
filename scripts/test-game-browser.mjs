@@ -35,7 +35,12 @@ const pageErrors = [];
 const step = name => process.stdout.write(`[browser-test] ${name}\n`);
 page.setDefaultTimeout(15000);
 page.setDefaultNavigationTimeout(20000);
-const stage = message => process.stdout.write(`[browser-test] ${message}\\n`);
+const stage = message => process.stdout.write(`[browser-test] ${message}\n`);
+const diagnostic = async (name, action, timeout = 12000) => {
+  stage(name); let timer;
+  try { return await Promise.race([action(), new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Timeout diagnóstico: ' + name)), timeout); })]); }
+  finally { clearTimeout(timer); }
+};
 page.on('pageerror', error => pageErrors.push(error.message));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
   status: 200,
@@ -179,9 +184,9 @@ try {
   stage('Testar início rápido Solo e independência do perfil');
   step('Verificar arranque rápido Solo');
   // Os botões de início rápido do dashboard têm de arrancar o jogo, não ficar sem ação.
-  await page.evaluate(() => showHomePage('dashboard'));
-  await page.locator('[data-atina-launch="solo"]').evaluate(button => button.click());
-  await page.locator('#game').waitFor({state:'visible'});
+  await diagnostic('Abrir dashboard', () => page.evaluate(() => showHomePage('dashboard')));
+  await diagnostic('Disparar clique Solo', () => page.locator('[data-atina-launch="solo"]').evaluate(button => button.click()), 8000);
+  await diagnostic('Aguardar ecrã de jogo', () => page.locator('#game').waitFor({state:'visible', timeout:8000}), 10000);
   assert.equal(await page.evaluate(() => window.__profileResolved), false,
     'O início do jogo não pode esperar pelo carregamento do perfil/galeria.');
   assert.equal(await page.evaluate(() => window.__rpcCalls.some(call => call.name === 'atina_v2_start_local_game')), true,
