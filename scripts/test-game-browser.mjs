@@ -156,6 +156,12 @@ try {
   assert.match(indexHtml, /\$\('nextClue'\)\.disabled=!canControlTurn/, 'A revelação de pistas deve respeitar a equipa ativa.');
   assert.match(indexHtml, /\$\('submit'\)\.disabled=!canControlTurn/, 'O envio de respostas deve respeitar a equipa ativa.');
 
+  // Os botões de início rápido do dashboard têm de arrancar o jogo, não ficar sem ação.
+  await page.evaluate(() => showHomePage('dashboard'));
+  await page.locator('[data-atina-launch="solo"]').click();
+  await page.locator('#game').waitFor({state:'visible'});
+  await page.evaluate(() => showHomePage('dashboard'));
+
   await page.evaluate(() => showHomePage('categories'));
   assert.equal(await page.evaluate(() => atinaClueSpeechEnabled), false, 'O teste browser não deve depender de síntese de voz do dispositivo.');
   // A lista final depende da consulta assíncrona de desafios ativos. Esperar
@@ -235,7 +241,7 @@ try {
   await page.locator('#createNetworkRoom').click();
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
   const starts = await page.evaluate(() => window.__rpcCalls.filter(call => call.name === 'atina_v2_start_local_game').length);
-  assert.equal(starts, categories.length + 2, 'Cada modalidade, Mix e Solo devem iniciar exatamente uma sessão.');
+  assert.equal(starts, categories.length + 3, 'Cada modalidade, Mix e Solo devem iniciar exatamente uma sessão.');
   assert.deepEqual(pageErrors, [], 'A aplicação não deve produzir erros JavaScript durante os fluxos principais.');
   process.stdout.write(`Game browser regression passed: ${categories.length} categorias, Solo, Mix, revelar, resposta errada/certa, PASSO, CONTINUAR, encaminhamento online, bloqueio sem sessão e navegação.\\n`);
 } finally {
