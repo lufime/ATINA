@@ -1915,7 +1915,7 @@ async function atinaLoadOnlinePlayers(){
   if(topCount)topCount.textContent='● Estado online indisponível';
   return;
  }
- if(status)status.textContent='A atualizar jogadores humanos e bots…';
+ if(status)status.textContent='A atualizar jogadores online…';
  try{
   const {data,error}=await supabaseClient.rpc('atina_online_player_stats');
   if(error)throw error;
@@ -1923,41 +1923,25 @@ async function atinaLoadOnlinePlayers(){
   const humans=Array.isArray(stats.humans)?stats.humans:[];
   const bots=Array.isArray(stats.bots)?stats.bots:[];
   const counts=stats.counts||{};
-  const humanCount=Math.max(0,Number(counts.humans)||humans.length);
-  const botCount=Math.max(0,Number(counts.bots)||bots.length);
-  const total=Math.max(0,Number(counts.total)||humanCount+botCount);
+  const total=Math.max(0,Number(counts.total)||humans.length+bots.length);
   if(list){
    list.replaceChildren();
-   const visiblePlayers=[];
-   for(let i=0;visiblePlayers.length<15&&(i<humans.length||i<bots.length);i++){
-    if(humans[i])visiblePlayers.push(humans[i]);
-    if(bots[i]&&visiblePlayers.length<15)visiblePlayers.push(bots[i]);
-   }
-   visiblePlayers.forEach(player=>{
+   [...humans,...bots].slice(0,15).forEach(player=>{
     const item=document.createElement('li');
-    if(player.type==='bot'){
-     item.textContent='🤖 '+String(player.nickname||'Bot')+' · BOT';
-     item.dataset.playerType='bot';
-    }else{
-     item.textContent=String(player.nickname||'Visitante')+' · humano';
-     item.dataset.playerType='human';
-    }
+    item.textContent=String(player.nickname||'Jogador');
     list.appendChild(item);
    });
   }
-  const summary=humanCount+' humanos · '+botCount+' bots · '+total+' online';
+  const summary=total+' jogadores online';
   if(topCount){
    topCount.textContent='● '+summary;
-   topCount.title='Contagem única de identidades humanas e bots ativos.';
+   topCount.title='Total de jogadores online, sem duplicações.';
    topCount.dataset.count=String(total);
-   topCount.dataset.humans=String(humanCount);
-   topCount.dataset.bots=String(botCount);
   }
   if(status){
    if(total===0)status.textContent='Não há jogadores online neste momento.';
    else status.textContent=summary+(total>15?' · a lista mostra os primeiros 15':'');
-  }
- }catch(e){
+  } }catch(e){
   if(status)status.textContent='Não foi possível atualizar a lista. '+(e?.message||'');
   if(topCount)topCount.textContent='● Não foi possível atualizar os jogadores online';
  }
