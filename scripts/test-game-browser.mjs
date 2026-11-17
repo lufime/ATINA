@@ -32,6 +32,9 @@ await page.addInitScript(() => {
   try { Object.defineProperty(window, 'SpeechSynthesisUtterance', {value: undefined, configurable: true}); } catch {}
 });
 const pageErrors = [];
+const step = name => process.stdout.write(`[browser-test] ${name}\n`);
+page.setDefaultTimeout(15000);
+page.setDefaultNavigationTimeout(20000);
 const stage = message => process.stdout.write(`[browser-test] ${message}\\n`);
 page.on('pageerror', error => pageErrors.push(error.message));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
@@ -117,11 +120,13 @@ await page.route('https://images.unsplash.com/**', route => route.abort());
 
 try {
   stage('Abrir aplicação e verificar runtime de salas');
+  step('Abrir aplicação');
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
 
   stage('Testar countdown e bloqueio dos controlos da sala');
+  step('Verificar countdown de sala');
   // Countdown de sala: os controlos permanecem bloqueados e a revelação manual
   // não pode chamar a RPC antes de a contagem terminar.
   await page.evaluate(async () => {
@@ -153,6 +158,7 @@ try {
     }
   });
   stage('Testar controlo de turno por equipa');
+  step('Verificar controlo de turnos');
   // O turno ativo controla os botões em todos os dispositivos; o anfitrião não pode ignorar a rotação.
   const turnAccess = await page.evaluate(() => {
     networkGameState = {active_team:'Equipa B',pos:0};
@@ -171,6 +177,7 @@ try {
   assert.match(indexHtml, /\$\('submit'\)\.disabled=!canControlTurn/, 'O envio de respostas deve respeitar a equipa ativa.');
 
   stage('Testar início rápido Solo e independência do perfil');
+  step('Verificar arranque rápido Solo');
   // Os botões de início rápido do dashboard têm de arrancar o jogo, não ficar sem ação.
   await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').evaluate(button => button.click());
@@ -182,6 +189,7 @@ try {
   await page.evaluate(() => showHomePage('dashboard'));
 
   stage('Testar cancelamento de arranque pendente');
+  step('Verificar cancelamento de arranque pendente');
   // Um arranque pendente tem de poder ser cancelado sem fechar o Chrome.
   await page.evaluate(() => { window.__holdStart = true; });
   await page.locator('[data-atina-launch="solo"]').evaluate(button => button.click());
@@ -196,6 +204,7 @@ try {
   await page.evaluate(() => { window.__holdStart = false; });
 
   stage('Testar fallback de sessão expirada para convidado');
+  step('Verificar fallback de sessão expirada para convidado');
   // Uma sessão de conta expirada deve permitir continuar como convidado.
   await page.evaluate(() => { window.__rejectDeviceToken = true; showHomePage('play'); });
   await page.locator('#solo').click();
@@ -219,6 +228,7 @@ try {
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
 
   stage(`Testar ciclo individual em ${categories.length} categorias: ${categories.join(', ')}`);
+  step('Verificar ciclo de desafios por categoria');
   // Exercitar o ciclo completo do modo individual em todas as modalidades.
   for (const category of categories) {
     stage(`Categoria: ${category}`);
@@ -240,6 +250,7 @@ try {
   }
 
   stage('Testar Modo Mix, PASSO e CONTINUAR');
+  step('Verificar modo Mix');
   // Confirmar que Mix inicia uma sessão própria e que PASSO e CONTINUAR funcionam.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#mix').click();
@@ -250,6 +261,7 @@ try {
   await page.waitForFunction(() => document.querySelector('#level')?.textContent.includes('DESAFIO 2'));
 
   stage('Testar resposta errada e resposta certa');
+  step('Verificar resposta errada e certa');
   // Resposta errada não fecha a ronda; a resposta certa seguinte fecha-a.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#solo').click();
@@ -263,6 +275,7 @@ try {
   await page.getByText(/Certo! Resposta ATINA/).waitFor();
 
   stage('Testar encaminhamento Duelo, Festa e Mímicas');
+  step('Verificar encaminhamento para modos online');
   // Os modos que exigem vários dispositivos encaminham para a área online.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#duel').click();
@@ -276,6 +289,7 @@ try {
   await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
 
   stage('Testar navegação principal e páginas');
+  step('Verificar navegação principal');
   // Navegação principal, definições e páginas de perfil/classificação sem erros JS.
   for (const target of ['howto','profile','ranking','settings','online','dashboard']) {
     await page.evaluate(name => showHomePage(name), target);
@@ -283,6 +297,7 @@ try {
   }
 
   stage('Testar proteção de ações online sem sessão');
+  step('Verificar bloqueio seguro sem sessão');
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
