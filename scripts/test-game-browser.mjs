@@ -213,6 +213,25 @@ try {
       if (el) observer.observe(el, {attributes:true, attributeFilter:['class','hidden','style','aria-hidden']});
     }
     report('before-click');
+    // Registar a execução síncrona do ciclo de temporizadores do cliente.
+    for (const name of ['atinaServerStopTimers','atinaServerRenderTimer','atinaServerStartTimers']) {
+      const original = window[name];
+      if (typeof original !== 'function') {
+        console.info('[ATINA-DOM-TRACE]', JSON.stringify({reason:'timer-hook-missing:'+name}));
+        continue;
+      }
+      window[name] = function(...args) {
+        report('before:'+name);
+        try {
+          const result = original.apply(this,args);
+          report('after:'+name);
+          return result;
+        } catch (error) {
+          report('error:'+name+':'+(error?.message||String(error)));
+          throw error;
+        }
+      };
+    }
     // Heartbeats no contexto da página permitem distinguir uma espera do
     // Playwright de um bloqueio da própria thread JavaScript do browser.
     for (const delay of [100, 500, 1000, 2000, 4000]) {
