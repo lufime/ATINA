@@ -23,7 +23,7 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
 await page.addInitScript(() => {
-  localStorage.setItem('atinaAccountSessionV1', 's'.repeat(64));
+  localStorage.setItem('atinaAccountSessionV1', 'a'.repeat(64));
   localStorage.setItem('atinaLegalAcknowledgedV2', '1');
   localStorage.setItem('atinaClueSpeechConsent', 'false');
   localStorage.setItem('atinaClueSpeechEnabled', 'false');
@@ -65,6 +65,9 @@ await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route =
       rpc: async (name,args={}) => {
         window.__rpcCalls.push({name,args});
         if (name === 'atina_v2_start_local_game') {
+          if (args.p_device_token && window.__rejectDeviceToken) {
+            return {data:null,error:{code:'28000',message:'Sessão expirada.'}};
+          }
           session = {id:'00000000-0000-4000-8000-000000000001',mode:args.p_game_mode,
             category:args.p_category || 'Cultura geral',position:1,clues:[],scores:[0,0],answered:0,locked:false,result:null};
           const payload = {data:{token:'t'.repeat(64),state:state()},error:null};
@@ -186,6 +189,16 @@ try {
     'O cancelamento não deve criar pedidos duplicados.');
   await page.evaluate(() => { window.__holdStart = false; });
 
+  // Uma sessão de conta expirada deve permitir continuar como convidado.
+  await page.evaluate(() => { window.__rejectDeviceToken = true; });
+  await page.locator('#solo').click();
+  await page.locator('#game').waitFor({state:'visible'});
+  const fallbackCalls = await page.evaluate(() => window.__rpcCalls.filter(call =>
+    call.name === 'atina_v2_start_local_game').slice(-2).map(call => call.args.p_device_token));
+  assert.deepEqual(fallbackCalls, ['a'.repeat(64), null],
+    'Uma sessão expirada deve repetir o arranque como convidado.');
+  await page.evaluate(() => { window.__rejectDeviceToken = false; showHomePage('dashboard'); });
+
   await page.evaluate(() => showHomePage('categories'));
   assert.equal(await page.evaluate(() => atinaClueSpeechEnabled), false, 'O teste browser não deve depender de síntese de voz do dispositivo.');
   // A lista final depende da consulta assíncrona de desafios ativos. Esperar
@@ -265,7 +278,7 @@ try {
   await page.locator('#createNetworkRoom').click();
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
   const starts = await page.evaluate(() => window.__rpcCalls.filter(call => call.name === 'atina_v2_start_local_game').length);
-  assert.equal(starts, categories.length + 4, 'Cada modalidade, Mix, Solo e o arranque cancelado devem enviar exatamente um pedido.');
+  assert.equal(starts, categories.length + 6, 'Cada modalidade, Mix, Solo, cancelamento e fallback devem enviar os pedidos esperados.');
   assert.deepEqual(pageErrors, [], 'A aplicação não deve produzir erros JavaScript durante os fluxos principais.');
   process.stdout.write(`Game browser regression passed: ${categories.length} categorias, Solo, Mix, revelar, resposta errada/certa, PASSO, CONTINUAR, encaminhamento online, bloqueio sem sessão e navegação.\\n`);
 } finally {
