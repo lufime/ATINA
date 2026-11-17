@@ -109,16 +109,15 @@ try {
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
 
-  // A aventura Detetive deve continuar acessível mesmo quando a categoria
-  // antiga de desafios não tem conteúdo ativo no catálogo público.
-  await page.evaluate(() => showHomePage('categories'));
-  await page.locator('#detectiveAdventureOpen').waitFor({state:'visible'});
-  await page.locator('#detectiveAdventureOpen').click();
-  await page.locator('#detectiveAdventureSetup').waitFor({state:'visible'});
-  assert.equal(await page.locator('#detectiveAdventureTitle').textContent(), 'O Último Farol');
-  await page.locator('#detectiveAdventureBack').click();
-  await page.locator('#detectiveAdventure').waitFor({state:'hidden'});
-  console.log('[browser-test] entrada e saída da aventura Detetive concluídas');
+  // A aventura Detetive foi removida; a categoria genérica de desafios
+  // não deve expor novamente a aventura narrativa.
+  assert.equal(await page.locator('#detectiveAdventureOpen').count(), 0,
+    'A entrada da aventura Detetive não deve existir.');
+  assert.equal(await page.locator('#detectiveAdventure').count(), 0,
+    'O painel da aventura Detetive não deve existir.');
+  assert.equal(await page.locator('#atina-detective-adventure').count(), 0,
+    'O runtime exclusivo da aventura Detetive não deve carregar.');
+  console.log('[browser-test] remoção da aventura Detetive confirmada');
 
   // Countdown de sala: os controlos permanecem bloqueados e a revelação manual
   // não pode chamar a RPC antes de a contagem terminar.
