@@ -109,6 +109,17 @@ try {
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
 
+  // A aventura Detetive deve continuar acessível mesmo quando a categoria
+  // antiga de desafios não tem conteúdo ativo no catálogo público.
+  await page.evaluate(() => showHomePage('categories'));
+  await page.locator('#detectiveAdventureOpen').waitFor({state:'visible'});
+  await page.locator('#detectiveAdventureOpen').click();
+  await page.locator('#detectiveAdventureSetup').waitFor({state:'visible'});
+  assert.equal(await page.locator('#detectiveAdventureTitle').textContent(), 'O Último Farol');
+  await page.locator('#detectiveAdventureBack').click();
+  await page.locator('#detectiveAdventure').waitFor({state:'hidden'});
+  console.log('[browser-test] entrada e saída da aventura Detetive concluídas');
+
   // Countdown de sala: os controlos permanecem bloqueados e a revelação manual
   // não pode chamar a RPC antes de a contagem terminar.
   await page.evaluate(async () => {
