@@ -9,6 +9,7 @@ on:
 jobs:
   validate-challenges:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Obter o repositório
         uses: actions/checkout@v4
@@ -45,4 +46,5 @@ jobs:
       - name: Instalar Chromium
         run: npx playwright install --with-deps chromium
       - name: Testar fluxos completos no browser
+        timeout-minutes: 5
         run: node scripts/test-game-browser.mjs
