@@ -1,8 +1,8 @@
 {
-  "version": "0.1.62",
+  "version": "0.1.63",
   "channel": "beta",
   "label": "BETA · TESTES",
-  "display": "v0.1.62",
+  "display": "v0.1.63",
   "versioning": {
     "scheme": "MAJOR.MINOR.PATCH",
     "initial": "0.1.0",
