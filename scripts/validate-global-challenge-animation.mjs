@@ -19,6 +19,5 @@ const localNext = html.match(/async function next\(\)\{([^]*?)\}\s*async functio
 if (!localNext || !localNext[1].includes('await challengePause()') || !localNext[1].includes('await mixDraw()')) throw new Error('A transição local não apresenta a pausa e a preparação entre desafios.');
 if (!html.includes('function mixDraw(){return Promise.resolve();}')) throw new Error('A animação de sorteio não foi removida.');
 if (!html.includes('let seconds=10') || !html.includes("challengePauseSkip")) throw new Error('A pausa de 10 segundos com opção de saltar não está disponível.');
-if (!html.includes("$('mimeFeedback').textContent='A preparar a próxima mímica…'")) throw new Error('O estado de preparação de Mímicas online não está preservado.');
 
-console.log('Animações globais: início e transições locais, multiplayer deduplicado e cliente server-authoritative validados; sintaxe JavaScript válida.');
+console.log('Animações globais: início e transições locais, runtime de salas e cliente server-authoritative validados; Mímicas removido; sintaxe JavaScript válida.');
