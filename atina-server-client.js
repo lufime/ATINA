@@ -737,6 +737,7 @@ async function atinaServerRefresh() {
   }
 }
 async function atinaServerStart(gameMode, category = null) {
+  if (atinaServerBusy) return;
   atinaServerStopTimers();
   atinaServerBusy = true;
   atinaServerMessage('A preparar uma partida segura no servidor…');
