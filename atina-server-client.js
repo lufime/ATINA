@@ -899,8 +899,6 @@ $('back').onclick = () => {
   localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
   screen('home');
 };
-// O botão local de Mímicas é gerido pelo próprio modo local em index.html.
-
 function atinaServerIsInvalidSession(error) {
   return error?.code === '28000' || /Sessão inválida ou expirada/i.test(error?.message || '');
 }
@@ -929,12 +927,6 @@ async function atinaServerRestoreSession() {
 networkDrawClock = function() {
   const st = networkGameState;
   if (!st || !networkGameActive) return;
-  if (st.mode === 'mimicas') {
-    const deadline = Number(st.deadline || 0);
-    const remaining = deadline ? Math.max(0, Math.ceil((deadline - Date.now()) / 1000)) : 0;
-    $('mimeTimer').textContent = deadline ? String(Math.floor(remaining / 60)).padStart(2, '0') + ':' + String(remaining % 60).padStart(2, '0') : '∞';
-    return;
-  }
   const pause = st.pause;
   if (pause && Date.parse(pause.ends_at) > Date.now()) {
     const left = Math.max(0, Math.ceil((Date.parse(pause.ends_at) - Date.now()) / 1000));
@@ -949,7 +941,7 @@ networkDrawClock = function() {
   timeLeft = remaining;
 };
 networkReceiveState = function(st) {
-  if (!st || (!['challenges', 'mimicas', 'completed'].includes(st.mode))) return;
+  if (!st || (!['challenges', 'completed'].includes(st.mode))) return;
   if (networkGameState && Number(st.revision || 0) <= Number(networkLastRevision || 0)) return;
   const previous = networkGameState;
   const changed = !previous || previous.pos !== st.pos || previous.challenge_id !== st.challenge_id || previous.round !== st.round || previous.mode !== st.mode;
@@ -959,11 +951,7 @@ networkReceiveState = function(st) {
   networkGameActive = st.mode !== 'completed';
   if (changed) networkAnsweredThisChallenge = false;
   networkGameHost = !!networkLobbyData?.is_host;
-  if (st.mode === 'mimicas') {
-    if (st.finished && networkClockHandle !== null) { clearInterval(networkClockHandle); networkClockHandle = null; }
-    networkRenderMimeState();
-    if (!st.finished) ensureNetworkClock();
-  } else if (st.mode === 'completed') {
+  if (st.mode === 'completed') {
     networkGameActive = false;
     if (networkClockHandle !== null) { clearInterval(networkClockHandle); networkClockHandle = null; }
     $('resultText').textContent = 'Partida multiplayer concluída. Consulta a classificação da sala.';
@@ -1152,30 +1140,14 @@ networkHostNext = async function() {
   try { await networkCall('atina_v2_next_room_challenge', { p_room_id: networkRoom.room_id, p_token: networkRoom.token }); await networkRefreshRoom(); }
   catch (error) { networkMessage('feedback', error.message || 'Não foi possível avançar o desafio.'); }
 };
-networkMimeResolveRound = async function(correct, reason) {
-  if (!networkGameHost || !networkGameState || networkGameState.mode !== 'mimicas' || networkGameState.locked) return;
-  $('mimeCorrect').disabled = true;
-  $('mimeSkip').disabled = true;
-  try {
-    await networkCall('atina_v2_resolve_mime_round', {
-      p_room_id: networkRoom.room_id, p_token: networkRoom.token,
-      p_correct: !!correct, p_points: 0, p_reason: reason || (correct ? 'correct' : 'pass')
-    });
-    await networkRefreshRoom();
-  } catch (error) {
-    $('mimeCorrect').disabled = false;
-    $('mimeSkip').disabled = false;
-    networkMessage('mimeFeedback', error.message || 'Não foi possível registar o resultado.');
-  }
-};
 $('networkStartGame').onclick = networkStartGame;
-$('networkStartMimicas').onclick = networkStartMimicas;
+
 $('createNetworkRoom').onclick = networkCreateRoom;
 $('joinNetworkRoom').onclick = networkJoinRoom;
 $('leaveNetworkRoom').onclick = networkLeaveRoom;
 $('networkReady').onclick = () => networkSetReady(!networkLobbyData?.ready);
 $('networkAutoTeams').onclick = networkAutoTeams;
-$('networkStartMimicas').onclick = networkStartMimicas;
+
 $('submit').onclick = submit;
 $('nextClue').onclick = reveal;
 $('pass').onclick = pass;
