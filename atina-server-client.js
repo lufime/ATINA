@@ -401,6 +401,52 @@ async function atinaProgressLoadLeaderboard() {
   }
 }
 
+
+async function atinaProgressLoadQiLeaderboard() {
+  const list = $('atinaQiLeaderboard');
+  if (!list) return;
+  try {
+    const rows = await atinaServerRpc('atina_qi_leaderboard', { p_limit: 15 });
+    list.replaceChildren();
+    const rankedRows = Array.isArray(rows) ? rows.slice(0, 15) : [];
+    if (!rankedRows.length) {
+      const empty = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 5;
+      cell.textContent = 'A classificação QI* começa a ser preenchida com as próximas partidas.';
+      empty.appendChild(cell);
+      list.appendChild(empty);
+      return;
+    }
+    rankedRows.forEach((row, index) => {
+      const item = document.createElement('tr');
+      [
+        String(index + 1),
+        String(row.nickname || 'Jogador'),
+        Number(row.qi_score || 0).toLocaleString('pt-PT'),
+        Number(row.challenges || 0).toLocaleString('pt-PT'),
+        Number(row.accuracy || 0).toLocaleString('pt-PT', {maximumFractionDigits:1}) + '%'
+      ].forEach(value => {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        item.appendChild(cell);
+      });
+      item.title = 'Dificuldade: ' + Number(row.difficulty_score || 0).toFixed(1) +
+        ' · Velocidade: ' + Number(row.speed_score || 0).toFixed(1) +
+        ' · Consistência: ' + Number(row.consistency_score || 0).toFixed(1);
+      list.appendChild(item);
+    });
+  } catch (error) {
+    list.replaceChildren();
+    const item = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 5;
+    cell.textContent = 'Não foi possível carregar a classificação QI*.';
+    item.appendChild(cell);
+    list.appendChild(item);
+  }
+}
+
 async function atinaProgressCopyRecovery() {
   const token = atinaProgressDeviceToken(false);
   if (!token) {
@@ -1343,6 +1389,7 @@ atinaNoticeBoot();
 atinaProgressBoot();
 // The public points ranking is visible to guests too; load it independently of login.
 void atinaProgressLoadPointsLeaderboard();
+void atinaProgressLoadQiLeaderboard();
 atinaOnlineCountBoot();
 (async function atinaServerBoot() {
   try {
