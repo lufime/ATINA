@@ -130,7 +130,7 @@ AS $function$
   human_result AS (
     SELECT
       coalesce(jsonb_agg(
-        jsonb_build_object('id', identity, 'type', 'human', 'nickname', nickname, 'online', true)
+        jsonb_build_object('id', 'human:' || encode(extensions.digest(convert_to(identity, 'UTF8'), 'sha256'), 'hex'), 'type', 'human', 'nickname', nickname, 'online', true)
         ORDER BY nickname, identity
       ), '[]'::jsonb) AS players,
       count(*)::integer AS total
@@ -139,7 +139,7 @@ AS $function$
   bot_result AS (
     SELECT
       coalesce(jsonb_agg(
-        jsonb_build_object('id', 'bot:' || bot_id::text, 'type', 'bot', 'nickname', nickname, 'online', true)
+        jsonb_build_object('id', 'bot:' || encode(extensions.digest(convert_to(bot_id::text, 'UTF8'), 'sha256'), 'hex'), 'type', 'bot', 'nickname', nickname, 'online', true)
         ORDER BY nickname, bot_id
       ), '[]'::jsonb) AS players,
       count(*)::integer AS total
