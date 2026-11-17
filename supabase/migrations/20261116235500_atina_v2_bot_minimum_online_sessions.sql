@@ -65,7 +65,28 @@ as $function$
     );
 $function$;
 
-select cron.unschedule('atina-v2-bot-presence-refresh')
-where exists (select 1 from cron.job where jobname='atina-v2-bot-presence-refresh');
-select cron.schedule('atina-v2-bot-presence-refresh','* * * * *','select private.atina_v2_bot_refresh_presence();');
+-- pg_cron is available in hosted Supabase, but may be absent in a plain
+-- local migration-replay database. Keep the scheduler optional there while
+-- still initializing bot presence immediately.
+do $cron$
+begin
+  if to_regclass('cron.job') is not null then
+    execute $sql$
+      select cron.unschedule('atina-v2-bot-presence-refresh')
+      where exists (
+        select 1 from cron.job
+        where jobname = 'atina-v2-bot-presence-refresh'
+      )
+    $sql$;
+    execute $sql$
+      select cron.schedule(
+        'atina-v2-bot-presence-refresh',
+        '* * * * *',
+        'select private.atina_v2_bot_refresh_presence();'
+      )
+    $sql$;
+  end if;
+end;
+$cron$;
+
 select private.atina_v2_bot_refresh_presence();
