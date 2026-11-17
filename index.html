@@ -1928,16 +1928,20 @@ async function atinaLoadOnlinePlayers(){
   const total=Math.max(0,Number(counts.total)||humanCount+botCount);
   if(list){
    list.replaceChildren();
-   humans.slice(0,15).forEach(player=>{
+   const visiblePlayers=[];
+   for(let i=0;visiblePlayers.length<15&&(i<humans.length||i<bots.length);i++){
+    if(humans[i])visiblePlayers.push(humans[i]);
+    if(bots[i]&&visiblePlayers.length<15)visiblePlayers.push(bots[i]);
+   }
+   visiblePlayers.forEach(player=>{
     const item=document.createElement('li');
-    item.textContent=String(player.nickname||'Visitante')+' · humano';
-    item.dataset.playerType='human';
-    list.appendChild(item);
-   });
-   bots.slice(0,Math.max(0,15-list.children.length)).forEach(player=>{
-    const item=document.createElement('li');
-    item.textContent='🤖 '+String(player.nickname||'Bot')+' · BOT';
-    item.dataset.playerType='bot';
+    if(player.type==='bot'){
+     item.textContent='🤖 '+String(player.nickname||'Bot')+' · BOT';
+     item.dataset.playerType='bot';
+    }else{
+     item.textContent=String(player.nickname||'Visitante')+' · humano';
+     item.dataset.playerType='human';
+    }
     list.appendChild(item);
    });
   }
