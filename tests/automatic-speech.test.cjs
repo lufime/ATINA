@@ -116,7 +116,7 @@ for (const client of ['anfitrião', 'participante']) {
 
 for (const client of ['anfitrião', 'participante']) {
   test(`(${client}) a Sala usa o clique virtual do botão Ouvir pista atual`, () => {
-    assert.match(html, /networkPendingSpokenClueState=spokenKey;\$\('listenCurrentClue'\)\?\.click\(\);/);
+    assert.match(html, /networkPendingSpokenClueState=spokenKey;\s*\$\('listenCurrentClue'\)\?\.click\(\);/);
     assert.match(html, /let atinaNetworkClueSpeechLifecycle=null;\$\('listenCurrentClue'\)\?\.addEventListener\('click'/);
     assert.match(html, /const lifecycle=atinaNetworkClueSpeechLifecycle\|\|\{\};atinaNetworkClueSpeechLifecycle=null;/);
     assert.match(html, /atinaSpeakVisibleCurrentClue\(true,lifecycle\)/);
