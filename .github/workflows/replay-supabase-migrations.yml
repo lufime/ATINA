@@ -11,6 +11,7 @@ on:
     branches: [main]
     paths:
       - 'supabase/**'
+      - 'scripts/prepare-migration-replay.mjs'
       - '.github/workflows/replay-supabase-migrations.yml'
   workflow_dispatch:
 
