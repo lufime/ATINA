@@ -79,7 +79,7 @@ for (const client of ['anfitrião', 'participante']) {
     c.utterances[0].onstart();
     // Simula vários renders da sala enquanto a primeira utterance continua ativa.
     for (let i = 0; i < 5; i++) {
-      assert.equal(c.context.atinaSpeechQueue.length, 1);
+      assert.equal(vm.runInContext('atinaSpeechQueue.length', c.context), 1);
       assert.equal(c.synth.calls.length, 1);
     }
     c.synth.speaking = false;
