@@ -1,4 +1,9 @@
 -- Count unique human identities and bot profiles from one server-side snapshot.
+-- Restore the account link present in the hosted V2 room-player schema.
+-- The original additive migration is missing from the repository history.
+ALTER TABLE public.atina_v2_room_players
+  ADD COLUMN IF NOT EXISTS account_player_id uuid;
+
 ALTER TABLE private.atina_site_presence
   ADD COLUMN IF NOT EXISTS account_player_id uuid;
 
