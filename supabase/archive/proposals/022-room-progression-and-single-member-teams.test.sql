@@ -5,9 +5,15 @@ INSERT INTO private.atina_challenges
 VALUES
   (-990022,'__ci_room_progress__','🧪',
    '["pista um","pista dois","pista três"]'::jsonb,
-   'Resposta de teste 022','["resposta de teste 022"]'::jsonb,'medium',true);
+   'Resposta de teste 022','["resposta de teste 022"]'::jsonb,'medium',true),
+  (-990023,'__ci_room_progress__','🧪',
+   '["pista um","pista dois","pista três"]'::jsonb,
+   'Resposta de teste 023','["resposta de teste 023"]'::jsonb,'medium',true),
+  (-990024,'__ci_room_progress__','🧪',
+   '["pista um","pista dois","pista três"]'::jsonb,
+   'Resposta de teste 024','["resposta de teste 024"]'::jsonb,'medium',true);
 
-SELECT plan(8);
+SELECT plan(16);
 
 CREATE TEMP TABLE _host AS
 SELECT public.atina_v2_create_room('Host 022',2) AS value;
@@ -54,11 +60,15 @@ SELECT public.atina_v2_start_room(
   (SELECT (value->>'room_id')::uuid FROM _host),
   (SELECT value->>'token' FROM _host)
 );
+CREATE TEMP TABLE _started AS
 SELECT public.atina_v2_start_room_challenges(
   (SELECT (value->>'room_id')::uuid FROM _host),
   (SELECT value->>'token' FROM _host),
   'medium',60,'__ci_room_progress__'
-);
+) AS value;
+
+SELECT is((SELECT value->'state'->>'active_team' FROM _started),'Equipa A',
+  'the first assigned team is exposed as the active team');
 
 CREATE TEMP TABLE _wrong AS
 SELECT public.atina_v2_submit_room_answer(
@@ -88,18 +98,63 @@ SELECT is((SELECT value->>'status' FROM _correct),'correct',
 SELECT ok((SELECT round_locked FROM private.atina_v2_room_game_state
   WHERE room_id=(SELECT (value->>'room_id')::uuid FROM _host)),
   'a correct single-member team answer closes the turn');
+SELECT ok((SELECT team_turn_advanced FROM private.atina_v2_room_game_state
+  WHERE room_id=(SELECT (value->>'room_id')::uuid FROM _host)),
+  'a correct answer marks the active team turn as completed');
 SELECT ok((SELECT total_points>0 FROM private.atina_players
   WHERE nickname='Conta de teste 022'),
   'correct room points are added to the account ranking');
 SELECT is((SELECT count(*)::integer FROM private.atina_room_progress_events
   WHERE player_id=(SELECT id FROM private.atina_players WHERE nickname='Conta de teste 022')),
   1,'room XP is counted once despite a wrong answer followed by a correct retry');
+CREATE TEMP TABLE _advance_to_b AS
+SELECT public.atina_v2_next_room_challenge(
+  (SELECT (value->>'room_id')::uuid FROM _host),
+  (SELECT value->>'token' FROM _host)
+) AS value;
+
+SELECT is((SELECT value->>'status' FROM _advance_to_b),'next',
+  'the active team can advance after a correct answer');
+SELECT is((SELECT value->'state'->>'active_team' FROM _advance_to_b),'Equipa B',
+  'the next challenge rotates the turn to the other team');
+
+SELECT is((SELECT public.atina_v2_submit_room_answer(
+  (SELECT (value->>'room_id')::uuid FROM _host),
+  (SELECT value->>'token' FROM _guest),
+  (SELECT c.answer FROM private.atina_challenges c
+    JOIN private.atina_v2_room_game_state g
+      ON c.challenge_id=g.challenge_queue[g.position]
+   WHERE g.room_id=(SELECT (value->>'room_id')::uuid FROM _host))
+)->>'status'),'correct',
+  'the non-host active team can answer its own challenge');
+
+CREATE TEMP TABLE _advance_to_a AS
+SELECT public.atina_v2_next_room_challenge(
+  (SELECT (value->>'room_id')::uuid FROM _host),
+  (SELECT value->>'token' FROM _guest)
+) AS value;
+
+SELECT is((SELECT value->>'status' FROM _advance_to_a),'next',
+  'the active non-host team can advance after its correct answer');
+SELECT is((SELECT value->'state'->>'active_team' FROM _advance_to_a),'Equipa A',
+  'the turn rotates back to the first team');
+
+SELECT is((SELECT public.atina_v2_submit_room_answer(
+  (SELECT (value->>'room_id')::uuid FROM _host),
+  (SELECT value->>'token' FROM _host),
+  (SELECT c.answer FROM private.atina_challenges c
+    JOIN private.atina_v2_room_game_state g
+      ON c.challenge_id=g.challenge_queue[g.position]
+   WHERE g.room_id=(SELECT (value->>'room_id')::uuid FROM _host))
+)->>'status'),'correct',
+  'the first team can play again after rotation');
+
 SELECT is((SELECT value->>'status' FROM (
   SELECT public.atina_v2_next_room_challenge(
     (SELECT (value->>'room_id')::uuid FROM _host),
     (SELECT value->>'token' FROM _host)
   ) AS value
-) q),'completed','the active team can advance after the correct answer');
+) q),'completed','the final active team can complete the room');
 
 SELECT * FROM finish();
 ROLLBACK;
