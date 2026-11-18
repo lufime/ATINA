@@ -28,25 +28,43 @@ jobs:
       - name: Start disposable local Supabase stack
         run: |
           supabase init --force
-          # Select currently free host ports instead of relying on a fixed port
-          # that may already be occupied by another runner process.
-          read DB_PORT STUDIO_PORT < <(python - <<'PY'
+          # Select free host ports and update the disposable config safely.
+          python - <<'PY'
           import socket
+          from pathlib import Path
+
           ports = []
           for _ in range(2):
               with socket.socket() as sock:
                   sock.bind(("0.0.0.0", 0))
                   ports.append(sock.getsockname()[1])
-          print(*ports)
+
+          config = Path("supabase/config.toml")
+          lines = config.read_text().splitlines()
+          section = ""
+          updates = {
+              ("db", "port"): str(ports[0]),
+              ("studio", "port"): str(ports[1]),
+              ("db.migrations", "enabled"): "false",
+              ("db.seed", "enabled"): "false",
+          }
+          seen = set()
+          for i, line in enumerate(lines):
+              stripped = line.strip()
+              if stripped.startswith("[") and stripped.endswith("]"):
+                  section = stripped[1:-1]
+              for (target, key), value in updates.items():
+                  if section == target and stripped.startswith(key + " ="):
+                      indent = line[:len(line) - len(line.lstrip())]
+                      lines[i] = f"{indent}{key} = {value}"
+                      seen.add((target, key))
+          missing = set(updates) - seen
+          if missing:
+              raise SystemExit(f"Missing expected Supabase config keys: {sorted(missing)}")
+          config.write_text("\\n".join(lines) + "\\n")
+          with open("$GITHUB_ENV", "a") as env:
+              env.write(f"ATINA_LEGACY_DB_PORT={ports[0]}\\n")
           PY
-          )
-          echo "ATINA_LEGACY_DB_PORT=$DB_PORT" >> "$GITHUB_ENV"
-          sed -i "/^\\[db\\]/,/^\\[/ s/^port = 54322$/port = $DB_PORT/" supabase/config.toml
-          sed -i "/^\\[studio\\]/,/^\\[/ s/^port = 54323$/port = $STUDIO_PORT/" supabase/config.toml
-          # Keep the disposable database empty: apply only the v2 compatibility
-          # migrations and pseudonym progression migration after the legacy fixture.
-          sed -i '/^\\[db\\.migrations\\]/,/^\\[/ s/^enabled = true/enabled = false/' supabase/config.toml
-          sed -i '/^\\[db\\.seed\\]/,/^\\[/ s/^enabled = true/enabled = false/' supabase/config.toml
           supabase start
       - name: Create synthetic legacy atina-ranking schema
         run: |
