@@ -91,7 +91,7 @@ for (const name of readdirSync(directory).filter(name => /^\d{14}_.+\.sql$/.test
   const output = [];
   let skippingCron = false;
   for (const line of lines) {
-    if (!skippingCron && /^[\t ]*select\s+cron\.(?:schedule|unschedule)\s*\(/i.test(line)) {
+    if (!skippingCron && /cron\.(?:schedule|unschedule)\s*\(/i.test(line)) {
       output.push('-- pg_cron statement omitted only in disposable migration replay.');
       cronStatementsRemoved++;
       skippingCron = !/;\s*(?:--.*)?$/.test(line);
