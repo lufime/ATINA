@@ -110,6 +110,25 @@ SELECT ok((SELECT total_points>0 FROM private.atina_players
 SELECT is((SELECT count(*)::integer FROM private.atina_room_progress_events
   WHERE player_id=(SELECT id FROM private.atina_players WHERE nickname='Conta de teste 022')),
   1,'room XP is counted once despite a wrong answer followed by a correct retry');
+DO $seed$
+DECLARE
+  v_i integer;
+  v_seed double precision;
+  v_first_roll double precision;
+BEGIN
+  FOR v_i IN 0..100 LOOP
+    v_seed:=-1+(v_i*0.02);
+    PERFORM setseed(v_seed);
+    v_first_roll:=random();
+    IF v_first_roll>=0.20 THEN
+      PERFORM setseed(v_seed);
+      RETURN;
+    END IF;
+  END LOOP;
+  RAISE EXCEPTION 'Could not select a deterministic no-card test seed.';
+END;
+$seed$;
+
 CREATE TEMP TABLE _advance_to_b AS
 SELECT public.atina_v2_next_room_challenge(
   (SELECT (value->>'room_id')::uuid FROM _host),
@@ -130,6 +149,25 @@ SELECT is((SELECT public.atina_v2_submit_room_answer(
    WHERE g.room_id=(SELECT (value->>'room_id')::uuid FROM _host))
 )->>'status'),'correct',
   'the non-host active team can answer its own challenge');
+
+DO $seed$
+DECLARE
+  v_i integer;
+  v_seed double precision;
+  v_first_roll double precision;
+BEGIN
+  FOR v_i IN 0..100 LOOP
+    v_seed:=-1+(v_i*0.02);
+    PERFORM setseed(v_seed);
+    v_first_roll:=random();
+    IF v_first_roll>=0.20 THEN
+      PERFORM setseed(v_seed);
+      RETURN;
+    END IF;
+  END LOOP;
+  RAISE EXCEPTION 'Could not select a deterministic no-card test seed.';
+END;
+$seed$;
 
 CREATE TEMP TABLE _advance_to_a AS
 SELECT public.atina_v2_next_room_challenge(
