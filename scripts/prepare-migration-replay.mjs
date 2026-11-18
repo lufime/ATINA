@@ -86,7 +86,7 @@ console.log('Compatibilidade local: leaderboard ignora a tabela V2 opcional quan
 const onlineCountMigration = '20261116233200_atina_online_count_includes_simulated_players.sql';
 const onlineCountPath = join(directory, onlineCountMigration);
 let onlineCountSql = readFileSync(onlineCountPath, 'utf8');
-const onlineCountPattern = /create or replace function public\\.atina_online_player_count\\(\\)[\\s\\S]*?\\$function\\$;/i;
+const onlineCountPattern = /create or replace function public\.atina_online_player_count\s*\([\s\S]*?\$function\$;/i;
 if (!onlineCountPattern.test(onlineCountSql)) {
   throw new Error('Não foi possível localizar atina_online_player_count em ' + onlineCountMigration);
 }
