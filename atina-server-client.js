@@ -39,11 +39,64 @@ function atinaProgressDeviceToken(createIfMissing = true) {
   return token;
 }
 
+let atinaQiScoreInFlight = false;
+let atinaQiScoreLastAt = 0;
+let atinaQiScorePlayerId = '';
+
+async function atinaProgressLoadMyQi(profile) {
+  const scoreNode = $('atinaCloudQi');
+  const metaNode = $('atinaCloudQiMeta');
+  if (!scoreNode) return;
+
+  const sessionToken = atinaAccountSessionToken();
+  if (!profile?.player_id || !sessionToken) {
+    scoreNode.textContent = '🧠 QI ATINA: —';
+    if (metaNode) metaNode.textContent = 'Entra na conta para consultar o teu indicador.';
+    return;
+  }
+
+  const playerId = String(profile.player_id);
+  if (atinaQiScoreInFlight) return;
+  if (atinaQiScorePlayerId === playerId && Date.now() - atinaQiScoreLastAt < 2000) return;
+
+  atinaQiScoreInFlight = true;
+  atinaQiScorePlayerId = playerId;
+  atinaQiScoreLastAt = Date.now();
+  scoreNode.textContent = '🧠 QI ATINA: a calcular…';
+  if (metaNode) metaNode.textContent = 'Indicador recreativo de 0 a 200';
+
+  try {
+    const result = await atinaServerRpc('atina_qi_my_score', {
+      p_session_token: sessionToken
+    });
+    const row = Array.isArray(result) ? result[0] : result;
+    if (!row) {
+      scoreNode.textContent = '🧠 QI ATINA: —';
+      if (metaNode) metaNode.textContent = 'Ainda não há respostas suficientes para calcular o indicador.';
+      return;
+    }
+    scoreNode.textContent = '🧠 QI ATINA: ' + Number(row.qi_score || 0).toLocaleString('pt-PT');
+    if (metaNode) {
+      metaNode.textContent = Number(row.challenges || 0).toLocaleString('pt-PT') +
+        ' desafios considerados · ' +
+        Number(row.accuracy || 0).toLocaleString('pt-PT', {maximumFractionDigits:1}) +
+        '% de precisão';
+    }
+  } catch (error) {
+    scoreNode.textContent = '🧠 QI ATINA: indisponível';
+    if (metaNode) metaNode.textContent = 'Não foi possível atualizar o indicador.';
+    console.warn('ATINA: não foi possível carregar o QI do perfil.', error);
+  } finally {
+    atinaQiScoreInFlight = false;
+  }
+}
+
 function atinaProgressRender(profile) {
   const signedInName = $('atinaSignedInUserName');
   if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
   atinaRenderLevelGallery(profile || {level:1,xp:0});
   if (!profile) return;
+  void atinaProgressLoadMyQi(profile);
   const xp = Math.max(0, Number(profile.xp) || 0);
   const points = Math.max(0, Number(profile.points) || 0);
   if ($('atinaCloudPoints')) $('atinaCloudPoints').textContent = points + ' pontos';
