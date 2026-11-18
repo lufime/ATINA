@@ -57,17 +57,28 @@ jobs:
           PY
           supabase start --exclude studio,mail
           supabase status --env --output-format text > "$RUNNER_TEMP/supabase.env"
-          grep '^DB_URL=' "$RUNNER_TEMP/supabase.env" >> "$GITHUB_ENV"
+          python - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          env_text = Path(os.environ["RUNNER_TEMP"] + "/supabase.env").read_text()
+          match = re.search(r"DB_URL=.*?:(\\d+)/postgres", env_text)
+          if not match:
+              raise SystemExit("Supabase status did not expose a valid local DB port")
+          with open(os.environ["GITHUB_ENV"], "a") as env:
+              env.write(f"ATINA_LEGACY_DB_PORT={match.group(1)}\\n")
+          PY
       - name: Create synthetic legacy atina-ranking schema
         run: |
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p "$ATINA_LEGACY_DB_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
       - name: Apply only the compatibility v2 migrations
         run: |
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p "$ATINA_LEGACY_DB_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p "$ATINA_LEGACY_DB_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p "$ATINA_LEGACY_DB_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p "$ATINA_LEGACY_DB_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p "$ATINA_LEGACY_DB_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
       - name: Assert legacy data and contracts remain intact
         run: |
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p "$ATINA_LEGACY_DB_PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
