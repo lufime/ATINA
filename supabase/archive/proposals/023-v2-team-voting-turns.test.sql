@@ -10,7 +10,7 @@ VALUES
    '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
    'Resposta V2 023 B','["resposta v2 023 b"]'::jsonb,'medium',true);
 
-SELECT plan(6);
+SELECT plan(7);
 
 CREATE TEMP TABLE _host AS
 SELECT public.atina_v2_create_room('Host Vote 023',4) AS value;
@@ -105,6 +105,13 @@ SELECT is((SELECT value->>'status' FROM _next),'next',
   'the active team advances after unanimous approval');
 SELECT ok((SELECT value->'state'->>'active_team' <> 'Equipa A' FROM _next),
   'the turn rotates away from the team that just completed its turn');
+
+SELECT throws_ok(
+  format('SELECT public.atina_v2_next_room_challenge(%L::uuid,%L)',
+    (SELECT value->>'room_id' FROM _host),
+    (SELECT value->>'token' FROM _host)),
+  'P0001','Só a equipa ativa pode avançar o desafio.',
+  'the previous team cannot advance again after its turn has rotated');
 
 SELECT * FROM finish();
 ROLLBACK;
