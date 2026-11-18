@@ -1629,13 +1629,16 @@ async function networkHostNext(){
 async function networkHostReveal(){
  if(!networkRoom||!networkCanControlTurn()||!networkGameActive||!networkGameState||networkGameState.mode!=='challenges')return;
  const total=Number(networkGameState.total_clues)||(Number(networkGameState.queue?.[networkGameState.pos]!=null&&isImageChallenge(networkGameState.queue[networkGameState.pos])?6:5));
- if(networkGameState.locked||Number(networkGameState.revealed||0)>=total)return;
+ const clueIndex=Number(networkGameState.revealed||0),challenge=games[networkGameState.queue[networkGameState.pos]],nextClue=challenge?.[2]?.[clueIndex],spokenKey=String(networkGameState.pos)+':'+String(clueIndex+1);
+ if(networkGameState.locked||clueIndex>=total)return;
+ if(nextClue&&spokenKey!==networkLastSpokenClueState){networkLastSpokenClueState=spokenKey;atinaSpeakClue('Pista '+(clueIndex+1)+': '+nextClue);}
  const button=$('nextClue');if(button)button.disabled=true;
  try{
   const result=await networkCall('atina_v2_reveal_room_clue',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});
   if(result?.state)networkReceiveState(result.state);
   await networkRefreshRoom();
  }catch(e){
+  if(spokenKey===networkLastSpokenClueState)networkLastSpokenClueState='';
   networkMessage('feedback',e.message||'Não foi possível revelar a próxima pista. Tenta novamente.');
   if(button)button.disabled=false;
  }
