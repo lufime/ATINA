@@ -255,6 +255,7 @@ grant execute on function public.atina_account_login(text,text) to anon, authent
 do $tests$
 begin
   if private.atina_nickname_is_acceptable('Caralho')
+     or private.atina_nickname_is_acceptable('Paneleiro')
      or private.atina_nickname_is_acceptable('Arsch')
      or private.atina_nickname_is_acceptable('Fodes')
      or private.atina_nickname_is_acceptable('c@r@lh0')
