@@ -419,3 +419,20 @@ test('room team ranking uses authoritative server team scores and never renders 
  assert.ok(html.includes("Pontuações das equipas indisponíveis."));
  assert.ok(html.includes("Classificação individual indisponível."));
 });
+
+
+test('manual room clue playback speaks the clue text already resolved from visible UI or room state', () => {
+ const html=fs.readFileSync('index.html','utf8');
+ assert.ok(html.includes("const ok=atinaSpeakClue(clueText,true,lifecycle);"));
+ assert.ok(!html.includes("const ok=atinaSpeakVisibleCurrentClue(true,lifecycle);"));
+});
+test('automatic room speech selects the last revealed clue, not the last item in the full clue array', () => {
+ const html=fs.readFileSync('index.html','utf8');
+ assert.ok(html.includes("const currentClue=String(clueSource[revealed-1]||g[2]?.[revealed-1]||'').trim();"));
+});
+test('room final solution uses the same answer renderer and solution description fallback as Solo', () => {
+ const html=fs.readFileSync('index.html','utf8');
+ assert.ok(html.includes("atinaRenderRevealedAnswer('feedback',revealedFeedback);"));
+ assert.ok(html.includes("String(st.solution_description||'').trim()||atinaBuildSolutionVisualDescription(g)"));
+ assert.ok(html.includes("hasAnswerInFeedback=/resposta\\s*:/i"));
+});
