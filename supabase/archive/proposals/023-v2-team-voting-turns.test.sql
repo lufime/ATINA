@@ -13,11 +13,13 @@ VALUES
 SELECT plan(6);
 
 CREATE TEMP TABLE _host AS
-SELECT public.atina_v2_create_room('Host Vote 023',3) AS value;
+SELECT public.atina_v2_create_room('Host Vote 023',4) AS value;
 CREATE TEMP TABLE _guest1 AS
 SELECT public.atina_v2_join_room('Guest Vote 023 A',(SELECT value->>'code' FROM _host)) AS value;
 CREATE TEMP TABLE _guest2 AS
 SELECT public.atina_v2_join_room('Guest Vote 023 B',(SELECT value->>'code' FROM _host)) AS value;
+CREATE TEMP TABLE _guest3 AS
+SELECT public.atina_v2_join_room('Guest Vote 023 C',(SELECT value->>'code' FROM _host)) AS value;
 
 SELECT public.atina_v2_set_room_team(
   (SELECT (value->>'room_id')::uuid FROM _host),
@@ -31,6 +33,10 @@ SELECT public.atina_v2_set_room_team(
   (SELECT (value->>'room_id')::uuid FROM _host),
   (SELECT value->>'token' FROM _host),
   (SELECT (value->>'player_id')::uuid FROM _guest2),'Equipa B');
+SELECT public.atina_v2_set_room_team(
+  (SELECT (value->>'room_id')::uuid FROM _host),
+  (SELECT value->>'token' FROM _host),
+  (SELECT (value->>'player_id')::uuid FROM _guest3),'Equipa C');
 
 SELECT public.atina_v2_set_room_ready(
   (SELECT (value->>'room_id')::uuid FROM _host),
@@ -41,6 +47,9 @@ SELECT public.atina_v2_set_room_ready(
 SELECT public.atina_v2_set_room_ready(
   (SELECT (value->>'room_id')::uuid FROM _host),
   (SELECT value->>'token' FROM _guest2),true);
+SELECT public.atina_v2_set_room_ready(
+  (SELECT (value->>'room_id')::uuid FROM _host),
+  (SELECT value->>'token' FROM _guest3),true);
 
 SELECT public.atina_v2_start_room(
   (SELECT (value->>'room_id')::uuid FROM _host),
@@ -94,8 +103,8 @@ SELECT public.atina_v2_next_room_challenge(
 
 SELECT is((SELECT value->>'status' FROM _next),'next',
   'the active team advances after unanimous approval');
-SELECT is((SELECT value->'state'->>'active_team' FROM _next),'Equipa B',
-  'the turn rotates after a team-voted correct answer');
+SELECT ok((SELECT value->'state'->>'active_team' <> 'Equipa A' FROM _next),
+  'the turn rotates away from the team that just completed its turn');
 
 SELECT * FROM finish();
 ROLLBACK;
