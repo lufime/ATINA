@@ -17,6 +17,69 @@ revoke all on table private.atina_room_progress_events from public, anon, authen
 create index if not exists atina_room_progress_events_player_created_idx
   on private.atina_room_progress_events(player_id, created_at desc);
 
+-- The V2 turn-control RPCs require these fields on the authoritative room state.
+alter table private.atina_v2_room_game_state
+  add column if not exists team_order text[] not null default '{}',
+  add column if not exists active_team_index integer not null default 1,
+  add column if not exists team_turn_advanced boolean not null default false;
+
+-- Initialize team order from the assigned room teams before the first challenge.
+do $migration$
+declare
+  v_def text;
+  v_old text;
+  v_new text;
+begin
+  v_def := pg_get_functiondef('public.atina_v2_start_room_challenges(uuid,text,text,integer,text)'::regprocedure);
+
+  v_old := '  v_challenge private.atina_challenges%rowtype;'||chr(10)||
+           '  v_state jsonb;';
+  v_new := '  v_challenge private.atina_challenges%rowtype;'||chr(10)||
+           '  v_state jsonb;'||chr(10)||
+           '  v_team_order text[];';
+  if position(v_old in v_def)=0 then
+    raise exception 'Não foi possível localizar as variáveis de atina_v2_start_room_challenges.';
+  end if;
+  v_def := replace(v_def,v_old,v_new);
+
+  v_old := '  v_now := clock_timestamp();';
+  v_new := '  SELECT array_agg(team_label ORDER BY team_label)'||chr(10)||
+           '    INTO v_team_order'||chr(10)||
+           '    FROM (SELECT DISTINCT team_label FROM public.atina_v2_room_players'||chr(10)||
+           '           WHERE room_id=p_room_id AND team_label IS NOT NULL) assigned_teams;'||chr(10)||
+           '  IF coalesce(cardinality(v_team_order),0)<2 THEN'||chr(10)||
+           '    RAISE EXCEPTION ''A partida necessita de pelo menos duas equipas atribuídas.'';'||chr(10)||
+           '  END IF;'||chr(10)||
+           '  v_now := clock_timestamp();';
+  if position(v_old in v_def)=0 then
+    raise exception 'Não foi possível localizar o início do relógio em atina_v2_start_room_challenges.';
+  end if;
+  v_def := replace(v_def,v_old,v_new);
+
+  v_old := $old$
+    revealed_clues,deadline_at,round_locked,status,created_at,updated_at
+  ) VALUES (
+    p_room_id,v_queue,1,p_difficulty,p_category,p_duration_seconds,
+    1,v_deadline,false,'active',v_now,v_now
+  );
+$old$;
+  v_new := $new$
+    revealed_clues,deadline_at,round_locked,status,created_at,updated_at,
+    team_order,active_team_index,team_turn_advanced
+  ) VALUES (
+    p_room_id,v_queue,1,p_difficulty,p_category,p_duration_seconds,
+    1,v_deadline,false,'active',v_now,v_now,
+    v_team_order,1,false
+  );
+$new$;
+  if position(v_old in v_def)=0 then
+    raise exception 'Não foi possível inicializar as equipas em atina_v2_start_room_challenges.';
+  end if;
+  v_def := replace(v_def,v_old,v_new);
+  execute v_def;
+end
+$migration$;
+
 -- Single-member teams use the same authoritative answer RPC as individual room play.
 -- Larger teams must continue through proposal + unanimous voting.
 do $migration$
