@@ -84,7 +84,7 @@ console.log('Compatibilidade local: leaderboard ignora a tabela V2 opcional quan
 // Strip cron.schedule/cron.unschedule statements from every temporary migration
 // copy. Keep all committed migrations untouched; schema/function replay remains
 // covered, while hosted scheduling is verified separately in production.
-const cronStatementPattern = /^[\\t ]*select\\s+cron\\.(?:schedule|unschedule)\\s*\\([\\s\\S]*?;[\\t ]*$/gim;
+const cronStatementPattern = /^[\t ]*select\s+cron\.(?:schedule|unschedule)\s*\([\s\S]*?;[\t ]*$/gim;
 let cronStatementsRemoved = 0;
 for (const name of readdirSync(directory).filter(name => /^\\d{14}_.+\\.sql$/.test(name))) {
   const path = join(directory, name);
