@@ -42,7 +42,7 @@ begin
   end if;
   v_def := replace(v_def,v_old,v_new);
 
-  v_old := '  v_now := clock_timestamp();';
+  v_old := '  v_now:=clock_timestamp();';
   v_new := '  SELECT array_agg(team_label ORDER BY team_label)'||chr(10)||
            '    INTO v_team_order'||chr(10)||
            '    FROM (SELECT DISTINCT team_label FROM public.atina_v2_room_players'||chr(10)||
