@@ -7,7 +7,7 @@ VALUES
    '["pista um","pista dois","pista três"]'::jsonb,
    'Resposta de teste 022','["resposta de teste 022"]'::jsonb,'medium',true);
 
-SELECT plan(9);
+SELECT plan(8);
 
 CREATE TEMP TABLE _host AS
 SELECT public.atina_v2_create_room('Host 022',2) AS value;
