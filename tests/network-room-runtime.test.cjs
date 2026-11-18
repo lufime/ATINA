@@ -371,7 +371,7 @@ test('room mode does not start the solo first-clue countdown', () => {
 
 test('visible clues suppress the solo first-clue countdown even if local state is stale', () => {
   const html = fs.readFileSync('index.html', 'utf8');
-  const line = html.split('\\n').find(value => value.includes('function atinaScheduleAutoReveal()'));
+  const line = html.split('\n').find(value => value.includes('function atinaScheduleAutoReveal()'));
   assert.ok(line, 'automatic clue scheduler must exist');
   let intervals = 0;
   const clueNodes = [
