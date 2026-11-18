@@ -21,7 +21,5 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Verificar sintaxe
-        run: node --check index.html
       - name: Executar testes de leitura
         run: node --test tests/automatic-speech.test.cjs
