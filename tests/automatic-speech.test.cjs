@@ -112,3 +112,14 @@ for (const client of ['anfitrião', 'participante']) {
     assert.equal(c.utterances[1].text, 'Segunda pista');
   });
 }
+
+
+for (const client of ['anfitrião', 'participante']) {
+  test(`(${client}) a Sala usa o clique virtual do botão Ouvir pista atual`, () => {
+    assert.match(html, /networkPendingSpokenClueState=spokenKey;\$\('listenCurrentClue'\)\?\.click\(\);/);
+    assert.match(html, /let atinaNetworkClueSpeechLifecycle=null;\$\('listenCurrentClue'\)\?\.addEventListener\('click'/);
+    assert.match(html, /const lifecycle=atinaNetworkClueSpeechLifecycle\|\|\{\};atinaNetworkClueSpeechLifecycle=null;/);
+    assert.match(html, /atinaSpeakVisibleCurrentClue\(true,lifecycle\)/);
+    assert.doesNotMatch(html, /const queued=atinaSpeakVisibleCurrentClue\(true,\{onStart:/);
+  });
+}
