@@ -92,20 +92,9 @@ AS $function$
     FROM private.atina_site_presence p
     WHERE p.last_seen_at >= statement_timestamp() - interval '60 seconds'
 
-    UNION ALL
-
-    -- A logged-in player active in a room still counts if the site heartbeat
-    -- is briefly delayed. The account key deduplicates this with site presence.
-    SELECT
-      'account:' || rp.account_player_id::text AS identity,
-      coalesce(nullif(btrim(rp.nickname), ''), 'Jogador') AS nickname,
-      rp.last_seen_at
-    FROM public.atina_v2_room_players rp
-    JOIN public.atina_v2_rooms r ON r.id = rp.room_id
-    WHERE rp.account_player_id IS NOT NULL
-      AND NOT coalesce(rp.is_bot, false)
-      AND r.status IN ('waiting', 'playing')
-      AND rp.last_seen_at >= statement_timestamp() - interval '90 seconds'
+    -- Room membership uses a room-scoped token and does not carry a verified
+    -- account_player_id. Do not infer account identity from nickname or room id:
+    -- site presence is the authoritative, account-deduplicated human heartbeat.
   ),
   unique_humans AS (
     SELECT DISTINCT ON (identity) identity, nickname
