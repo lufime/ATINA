@@ -23,6 +23,8 @@ jobs:
   replay-migrations:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      SUPABASE_EXPERIMENTAL_STACK: "1"
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
@@ -35,16 +37,14 @@ jobs:
       - name: Initialize disposable local Supabase configuration
         run: |
           supabase init --force
-          # Give Postgres and Studio dedicated non-default ports. Do not reuse
-          # 54323 here: that is Supabase Studio's default port.
-          sed -i '/^\[db\]/,/^\[/ s/^port = 54322$/port = 55322/' supabase/config.toml
-          sed -i '/^\[studio\]/,/^\[/ s/^port = 54323$/port = 55323/' supabase/config.toml
+          supabase stack --help
+
 
       - name: Normalize duplicate migration IDs in the disposable runner copy
         run: node scripts/prepare-migration-replay.mjs
 
       - name: Start disposable local Supabase stack
-        run: supabase start
+        run: supabase start --exclude studio,mail
 
       - name: Replay every migration from an empty database
         run: supabase db reset --local --no-seed
