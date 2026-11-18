@@ -1631,7 +1631,9 @@ async function networkHostReveal(){
  const total=Number(networkGameState.total_clues)||(Number(networkGameState.queue?.[networkGameState.pos]!=null&&isImageChallenge(networkGameState.queue[networkGameState.pos])?6:5));
  const clueIndex=Number(networkGameState.revealed||0),challenge=games[networkGameState.queue[networkGameState.pos]],nextClue=challenge?.[2]?.[clueIndex],spokenKey=String(networkGameState.pos)+':'+String(clueIndex+1);
  if(networkGameState.locked||clueIndex>=total)return;
- // A leitura é feita em networkRenderGameState após confirmação do servidor, igual para todos os jogadores.
+ // Inicia a voz no próprio clique, como no modo Solo, antes da chamada assíncrona ao servidor.
+ networkLastSpokenClueState=spokenKey;
+ atinaSpeakClue('Pista '+(clueIndex+1)+': '+nextClue,true);
  const button=$('nextClue');if(button)button.disabled=true;
  try{
   const result=await networkCall('atina_v2_reveal_room_clue',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});
@@ -1639,6 +1641,7 @@ async function networkHostReveal(){
   await networkRefreshRoom();
  }catch(e){
   if(spokenKey===networkLastSpokenClueState)networkLastSpokenClueState='';
+  try{window.speechSynthesis?.cancel();}catch(_){}
   networkMessage('feedback',e.message||'Não foi possível revelar a próxima pista. Tenta novamente.');
   if(button)button.disabled=false;
  }
