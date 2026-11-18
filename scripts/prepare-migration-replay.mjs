@@ -80,6 +80,47 @@ leaderboardSql = leaderboardSql.replace(leaderboardPattern, safeLeaderboard);
 writeFileSync(leaderboardPath, leaderboardSql);
 console.log('Compatibilidade local: leaderboard ignora a tabela V2 opcional quando ausente; migration original preservada.');
 
+// The online counter also depends on an optional legacy presence table.
+// Make the disposable replay resilient even if an older migration revision
+// is encountered; the committed migration remains untouched by this script.
+const onlineCountMigration = '20261116233200_atina_online_count_includes_simulated_players.sql';
+const onlineCountPath = join(directory, onlineCountMigration);
+let onlineCountSql = readFileSync(onlineCountPath, 'utf8');
+const onlineCountPattern = /create or replace function public\\.atina_online_player_count\\(\\)[\\s\\S]*?\\$function\\$;/i;
+if (!onlineCountPattern.test(onlineCountSql)) {
+  throw new Error('Não foi possível localizar atina_online_player_count em ' + onlineCountMigration);
+}
+const safeOnlineCount = `create or replace function public.atina_online_player_count()
+returns integer
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_humans integer := 0;
+  v_simulated integer := 0;
+begin
+  if to_regclass('private.atina_site_presence') is not null then
+    execute
+      'select count(*)::integer
+         from private.atina_site_presence
+        where last_seen_at >= clock_timestamp() - interval ''60 seconds'''
+      into v_humans;
+  end if;
+
+  select least(10, count(*)::integer)
+    into v_simulated
+    from private.atina_v2_bot_profiles b
+   where b.active
+     and private.atina_v2_bot_is_available(b);
+
+  return coalesce(v_humans, 0) + coalesce(v_simulated, 0);
+end;
+$function$;`;
+onlineCountSql = onlineCountSql.replace(onlineCountPattern, safeOnlineCount);
+writeFileSync(onlineCountPath, onlineCountSql);
+console.log('Compatibilidade local: contador online tolera a tabela de presença opcional; migration original preservada.');
+
 // pg_cron is not enabled in the disposable Supabase stack by default.
 // Strip cron.schedule/cron.unschedule statements from every temporary migration
 // copy. Keep all committed migrations untouched; hosted scheduling is verified
