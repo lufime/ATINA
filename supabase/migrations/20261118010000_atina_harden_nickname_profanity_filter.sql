@@ -20,7 +20,7 @@ declare
     'boiola','paneleiro','paneleira','buceta','vagabundo','vagabunda','desgraca',
     'pqp','vsf','vtc','crl','krl','fck','fuk','motherfucker','motherfucking',
     -- English variants
-    'motherfucker','motherfucking','bullshit','dumbass','jackass',' prick',
+    'motherfucker','motherfucking','bullshit','dumbass','jackass','prick',
     -- French profanity and insults (accent-normalized)
     'putain','connard','connasse','salope','encule','enculer','enculee','encules',
     'pute','bordel','merdeux','merdeuse','batard','batarde','couille','couilles',
