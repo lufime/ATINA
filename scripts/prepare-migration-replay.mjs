@@ -93,7 +93,7 @@ if (!cronSchedulePattern.test(botCompetitionSql)) {
 }
 botCompetitionSql = botCompetitionSql.replace(
   cronSchedulePattern,
-  '-- Agendamento cron omitido apenas no replay local descartável.\\n'
+  '-- Agendamento cron omitido apenas no replay local descartável.\n'
 );
 writeFileSync(botCompetitionPath, botCompetitionSql);
 console.log('Compatibilidade local: agendamento pg_cron omitido apenas no replay descartável; migração original preservada.');
