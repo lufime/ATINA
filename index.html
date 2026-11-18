@@ -1560,7 +1560,7 @@ function networkRenderGameState(){
      if(networkLastSpokenClueState===spokenKey)networkLastSpokenClueState='';
     }
    };
-   networkPendingSpokenClueState=spokenKey;$('listenCurrentClue')?.click();
+   networkPendingSpokenClueState=spokenKey;const currentClue=String(st.clues?.[st.clues.length-1]||g[2]?.[revealed-1]||'').trim();if(currentClue){const started=atinaSpeakClue('Pista '+revealed+'. '+currentClue,true,atinaNetworkClueSpeechLifecycle);if(!started)atinaNetworkClueSpeechLifecycle.onError();}
   }
  }
  $('clueProgress').textContent=locked?total+' de '+total+' reveladas':revealed+' de '+total+' reveladas';
@@ -1603,6 +1603,7 @@ function networkRenderGameState(){
  renderTeamProposal();
  const roomPlayers=networkLobbyData?.players||[];
  const teamTotals={};
+ (Array.isArray(st.team_order)?st.team_order:[]).forEach(team=>{teamTotals[team]=0;});
  roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+Number(p.score||0);});
  $('networkTeamScores').replaceChildren();
  Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,total],i)=>{

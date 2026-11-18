@@ -395,3 +395,16 @@ test('visible clues suppress the solo first-clue countdown even if local state i
   context.atinaScheduleAutoReveal();
   assert.equal(intervals, 0, 'a visible clue must prevent a duplicate countdown');
 });
+
+
+test('locked room result uses the resolved answer and server solution image', () => {
+ const html=fs.readFileSync('index.html','utf8');
+ assert.ok(html.includes("const correctAnswer=String(st.answer||st.correct_answer||st.solution||g[3]||'').trim();"));
+ assert.ok(html.includes("atinaShowSolutionImage(correctAnswer,g[0],'solutionImage',g[2],st.solution_image_url||null"));
+});
+
+test('room ranking initializes every server-declared team, including zero scores', () => {
+ const html=fs.readFileSync('index.html','utf8');
+ assert.ok(html.includes("(Array.isArray(st.team_order)?st.team_order:[]).forEach(team=>{teamTotals[team]=0;});"));
+ assert.ok(html.includes("Number(p.score||0)"));
+});
