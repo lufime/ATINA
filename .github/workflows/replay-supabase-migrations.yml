@@ -5,6 +5,7 @@ on:
     branches: [security/server-side-validation]
     paths:
       - 'supabase/**'
+      - 'scripts/prepare-migration-replay.mjs'
       - '.github/workflows/replay-supabase-migrations.yml'
   pull_request:
     branches: [main]
