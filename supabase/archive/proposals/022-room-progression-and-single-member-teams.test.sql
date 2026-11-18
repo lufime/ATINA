@@ -90,7 +90,10 @@ CREATE TEMP TABLE _correct AS
 SELECT public.atina_v2_submit_room_answer(
   (SELECT (value->>'room_id')::uuid FROM _host),
   (SELECT value->>'token' FROM _host),
-  'Resposta de teste 022'
+  (SELECT c.answer FROM private.atina_challenges c
+    JOIN private.atina_v2_room_game_state g
+      ON c.challenge_id=g.challenge_queue[g.position]
+   WHERE g.room_id=(SELECT (value->>'room_id')::uuid FROM _host))
 ) AS value;
 
 SELECT is((SELECT value->>'status' FROM _correct),'correct',
