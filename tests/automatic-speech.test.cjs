@@ -3,8 +3,9 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const { readFileSync } = require('node:fs');
+const path = require('node:path');
 
-const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const html = readFileSync(path.join(__dirname, '../index.html'), 'utf8');
 const start = html.indexOf('let atinaSpeechQueue=[]');
 const end = html.indexOf('function timerTick()', start);
 assert.ok(start >= 0 && end > start, 'Bloco de síntese de voz encontrado no index.html');
