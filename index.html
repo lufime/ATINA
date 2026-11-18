@@ -1629,9 +1629,12 @@ async function networkHostNext(){
 async function networkHostReveal(){
  if(!networkRoom||!networkCanControlTurn()||!networkGameActive||!networkGameState||networkGameState.mode!=='challenges')return;
  const total=Number(networkGameState.total_clues)||(Number(networkGameState.queue?.[networkGameState.pos]!=null&&isImageChallenge(networkGameState.queue[networkGameState.pos])?6:5));
- const clueIndex=Number(networkGameState.revealed||0),challenge=games[networkGameState.queue[networkGameState.pos]],nextClue=challenge?.[2]?.[clueIndex],spokenKey=String(networkGameState.pos)+':'+String(clueIndex+1);
+ const clueIndex=Number(networkGameState.revealed||0),challenge=games[networkGameState.queue[networkGameState.pos]],nextClue=String(challenge?.[2]?.[clueIndex]||networkGameState.clues?.[clueIndex]||'').trim(),spokenKey=String(networkGameState.pos)+':'+String(clueIndex+1);
  if(networkGameState.locked||clueIndex>=total)return;
- // Inicia a voz no próprio clique, como no modo Solo, antes da chamada assíncrona ao servidor.
+ if(!nextClue){networkMessage('feedback','A pista foi pedida, mas o texto ainda não está disponível para leitura.');return;}
+ // Desimpede a fila de uma frase de ativação anterior e inicia a pista no próprio clique, como no modo Solo.
+ try{window.speechSynthesis?.cancel();}catch(e){}
+ atinaSpeechQueue=[];atinaSpeechBusy=false;atinaSpeechUtterance=null;
  networkLastSpokenClueState=spokenKey;
  atinaSpeakClue('Pista '+(clueIndex+1)+': '+nextClue,true);
  const button=$('nextClue');if(button)button.disabled=true;
