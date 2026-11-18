@@ -1,0 +1,25 @@
+name: Validar leitura automática
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'tests/automatic-speech.test.cjs'
+      - '.github/workflows/test-automatic-speech.yml'
+  push:
+    branches:
+      - 'fix/sala-fila-voz-persistente-20261118'
+permissions:
+  contents: read
+jobs:
+  automatic-speech:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Executar testes de leitura
+        run: node --test tests/automatic-speech.test.cjs
