@@ -18,7 +18,18 @@ declare
     'estupido','nigger','faggot','retard','whore','bitch','asshole','fuck','shit',
     'dick','cunt','slut','arsch','arschloch','bastard','bastardo','bastarda','cona','cu','corno',
     'boiola','paneleiro','paneleira','buceta','vagabundo','vagabunda','desgraca',
-    'pqp','vsf','vtc','crl','krl','fck','fuk','motherfucker','motherfucking'
+    'pqp','vsf','vtc','crl','krl','fck','fuk','motherfucker','motherfucking',
+    -- English variants
+    'motherfucker','motherfucking','bullshit','dumbass','jackass',' prick',
+    -- French profanity and insults (accent-normalized)
+    'putain','connard','connasse','salope','encule','enculer','enculee','encules',
+    'pute','bordel','merdeux','merdeuse','batard','batarde','couille','couilles',
+    'con','conne','pd','ntm','fdp','nique','niquer','foutre',
+    -- German profanity and insults (umlauts normalized)
+    'scheisse','scheiss','fick','ficken','gefickt','hurensohn','hurentochter',
+    'fotze','wichser','wichsen','schlampe','schwanz','hure','miststueck',
+    -- Additional Portuguese forms
+    'filhodaputa','filhodocaralho','vai tomar no cu','vai se foder','vai a merda'
   ];
 begin
   if p_nickname is null then return false; end if;
@@ -28,6 +39,7 @@ begin
     'áàâãäéèêëíìîïóòôõöúùûüçñ',
     'aaaaaeeeeiiiiooooouuuucn'
   ));
+  v_normalized := replace(v_normalized, 'ß', 'ss');
   v_normalized := translate(v_normalized, '013457@$86', 'oieastasbg');
   v_normalized := regexp_replace(v_normalized, '[^a-z0-9]+', ' ', 'g');
   v_normalized := btrim(v_normalized);
@@ -42,10 +54,13 @@ begin
   if v_compact = any(v_blocked) then return false; end if;
 
   -- Common phrases, with or without spaces/punctuation.
-  if v_normalized ~ '(^| )(filho da puta|filho do caralho|puta que pariu|vai tomar no cu|vai se foder|vai a merda|vai para o caralho)( |$)'
+  if v_normalized ~ '(^| )(filho da puta|filho do caralho|puta que pariu|vai tomar no cu|vai se foder|vai a merda|vai para o caralho|fils de pute|va te faire foutre|nique ta mere|nique ta mere|ta gueule|trou du cul|son of a bitch|piece of shit|go fuck yourself|mother fucker|sohn einer hure|fick dich|leck mich am arsch)( |$)'
      or v_compact = any(array[
        'filhodaputa','filhodocaralho','putaquepariu','vaitomarnocu',
-       'vaisefoder','vaimerda','vaiparaocaralho'
+       'vaisefoder','vaimerda','vaiparaocaralho','filsdepute',
+       'vatefairefoutre','niquetamere','trouduc','sonofabitch',
+       'pieceofshit','gofuckyourself','sohneinerhure','fickdich',
+       'leckmichamarsch'
      ]) then
     return false;
   end if;
@@ -262,7 +277,14 @@ begin
      or private.atina_nickname_is_acceptable('p.u.t.a')
      or private.atina_nickname_is_acceptable('P0rr4')
      or private.atina_nickname_is_acceptable('Puta Que Pariu')
-     or private.atina_nickname_is_acceptable('Vai tomar no cu') then
+     or private.atina_nickname_is_acceptable('Vai tomar no cu')
+     or private.atina_nickname_is_acceptable('Putain')
+     or private.atina_nickname_is_acceptable('Connard')
+     or private.atina_nickname_is_acceptable('Fils de pute')
+     or private.atina_nickname_is_acceptable('Scheiße')
+     or private.atina_nickname_is_acceptable('Hurensohn')
+     or private.atina_nickname_is_acceptable('Fick dich')
+     or private.atina_nickname_is_acceptable('Motherfucker') then
     raise exception 'Nickname profanity regression test failed: an offensive test value was accepted.';
   end if;
 
