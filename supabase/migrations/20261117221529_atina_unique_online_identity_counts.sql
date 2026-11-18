@@ -1,3 +1,12 @@
+-- Ensure the legacy site-presence relation exists on clean installations.
+-- Existing installations keep their rows and constraints; this is a no-op there.
+CREATE TABLE IF NOT EXISTS private.atina_site_presence (
+  session_id uuid PRIMARY KEY,
+  last_seen_at timestamptz NOT NULL DEFAULT statement_timestamp(),
+  nickname text,
+  account_player_id uuid
+);
+
 -- Count unique human identities and bot profiles from one server-side snapshot.
 ALTER TABLE private.atina_site_presence
   ADD COLUMN IF NOT EXISTS account_player_id uuid;
