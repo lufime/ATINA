@@ -10,7 +10,7 @@ VALUES
    '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
    'Resposta Timeout 026','["resposta timeout 026"]'::jsonb,'medium',true);
 
-SELECT plan(5);
+SELECT plan(4);
 
 CREATE TEMP TABLE _host AS
 SELECT public.atina_v2_create_room('Host Timeout 024',2) AS value;
