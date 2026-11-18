@@ -1650,11 +1650,24 @@ async function networkSubmitAnswer(){
  
  $('submit').disabled=true;
  try{
-  const result=await networkCall('atina_v2_submit_team_proposal',{
-   p_room_id:networkRoom.room_id,p_token:networkRoom.token,
-   p_challenge:Number(networkGameState.pos),p_answer:answer
-  });
-  if(result?.status==='pending'){
+  const ownTeamSize=(networkLobbyData?.players||[]).filter(player=>player.team===networkLobbyData?.team).length;
+  const result=ownTeamSize>1
+   ? await networkCall('atina_v2_submit_team_proposal',{
+      p_room_id:networkRoom.room_id,p_token:networkRoom.token,
+      p_challenge:Number(networkGameState.pos),p_answer:answer
+     })
+   : await networkCall('atina_v2_submit_room_answer',{
+      p_room_id:networkRoom.room_id,p_token:networkRoom.token,p_answer:answer
+     });
+  if(result?.status==='correct'){
+   networkAnsweredThisChallenge=true;
+   networkMessage('feedback','Resposta certa! Pontuação atribuída pelo servidor.');
+   playAtinaSound('correct');
+  }else if(result?.status==='wrong'){
+   networkAnsweredThisChallenge=false;
+   networkMessage('feedback','Resposta errada. Podes tentar novamente.');
+   playAtinaSound('wrong');
+  }else if(result?.status==='pending'){
    networkMessage('feedback','Resposta proposta! Aguarda a votação dos restantes membros da tua equipa.');
   }else if(result?.status==='accepted'){
    networkAnsweredThisChallenge=true;
