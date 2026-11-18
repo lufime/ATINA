@@ -90,3 +90,25 @@ for (const client of ['anfitrião', 'participante']) {
     assert.equal(c.utterances[1].text, 'Segunda pista');
   });
 }
+
+for (const client of ['anfitrião', 'participante']) {
+  test(`(${client}) mantém a primeira leitura enquanto o navegador ainda não dispara onstart`, () => {
+    const c = createClient(client);
+    c.synth.speak = function (utterance) {
+      this.calls.push(utterance);
+      // Alguns motores demoram a atualizar speaking até ao evento onstart.
+      this.speaking = false;
+    };
+    assert.equal(c.context.atinaSpeakClue('Primeira pista', true), true);
+    assert.equal(c.synth.calls.length, 1);
+    assert.equal(c.context.atinaSpeakClue('Segunda pista', true), true);
+    assert.equal(c.synth.calls.length, 1);
+    c.utterances[0].onstart();
+    assert.equal(c.synth.calls.length, 1);
+    c.synth.speaking = false;
+    c.utterances[0].onend();
+    c.timers.shift()();
+    assert.equal(c.synth.calls.length, 2);
+    assert.equal(c.utterances[1].text, 'Segunda pista');
+  });
+}
