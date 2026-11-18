@@ -1279,7 +1279,6 @@ async function atinaAccountRegister(){
  finally{$('atinaAccountRegister').disabled=false;}
 }
 async function atinaAccountLogin(){
- if(!atinaRequireLegalAcknowledgement())return;
  const nickname=$('atinaCloudNickname').value.trim(),password=$('atinaAccountPassword').value;
  if(!nickname||!password){atinaAccountMessage('Preenche o pseudónimo e a palavra-passe.');return;}
  if(!atinaPasswordWithinBcryptLimit(password)){atinaAccountMessage('A palavra-passe não pode exceder 72 bytes UTF-8. Se for uma palavra-passe antiga, recupera a conta.');return;}
