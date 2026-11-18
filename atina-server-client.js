@@ -1138,7 +1138,8 @@ networkSubmitAnswer = async function() {
   if (!answer) { $('feedback').textContent = 'Escreve primeiro a resposta.'; return; }
   $('submit').disabled = true;
   try {
-    if (networkLobbyData?.team) {
+    const ownTeamSize = (networkLobbyData?.players || []).filter(player => player.team === networkLobbyData?.team).length;
+    if (networkLobbyData?.team && ownTeamSize > 1) {
       const result = await networkCall('atina_v2_submit_team_proposal', {
         p_room_id: networkRoom.room_id, p_token: networkRoom.token,
         p_challenge: networkGameState.pos, p_answer: answer
