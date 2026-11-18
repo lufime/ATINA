@@ -343,3 +343,55 @@ test('manual next-clue button reports server errors and becomes usable again', a
   assert.equal(element('nextClue').textContent, 'Revelar próxima pista');
   assert.equal(element('nextClue').disabled, false);
 });
+
+
+test('room mode does not start the solo first-clue countdown', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const line = html.split('\n').find(value => value.includes('function atinaScheduleAutoReveal()'));
+  assert.ok(line, 'automatic clue scheduler must exist');
+  let intervals = 0;
+  const context = {
+    networkGameActive: true,
+    autoRevealTimeout: null,
+    autoRevealInterval: null,
+    locked: false,
+    revealed: 0,
+    document: { getElementById: () => null },
+    clearTimeout() {},
+    clearInterval() {},
+    setInterval() { intervals += 1; return 1; },
+    $: () => ({ textContent: '' })
+  };
+  vm.createContext(context);
+  vm.runInContext(line, context);
+  context.atinaScheduleAutoReveal();
+  assert.equal(intervals, 0, 'room mode must use the server-controlled countdown');
+});
+
+
+test('visible clues suppress the solo first-clue countdown even if local state is stale', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const line = html.split('\n').find(value => value.includes('function atinaScheduleAutoReveal()'));
+  assert.ok(line, 'automatic clue scheduler must exist');
+  let intervals = 0;
+  const clueNodes = [
+    { textContent: 'Pista 1: arte marcial japonesa' },
+    { textContent: 'Pista 2: ainda escondida' }
+  ];
+  const context = {
+    networkGameActive: false,
+    autoRevealTimeout: null,
+    autoRevealInterval: null,
+    locked: false,
+    revealed: 0,
+    document: { getElementById: () => null },
+    clearTimeout() {},
+    clearInterval() {},
+    setInterval() { intervals += 1; return 1; },
+    $: id => id === 'clues' ? { children: clueNodes } : { textContent: '' }
+  };
+  vm.createContext(context);
+  vm.runInContext(line, context);
+  context.atinaScheduleAutoReveal();
+  assert.equal(intervals, 0, 'a visible clue must prevent a duplicate countdown');
+});
