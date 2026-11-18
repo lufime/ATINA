@@ -285,7 +285,7 @@ try {
   assert.equal(onlineAttempts.wrong.answered, false, 'Uma resposta errada não pode fechar o turno.');
   assert.equal(onlineAttempts.wrong.answerDisabled, false, 'O campo de resposta deve continuar disponível após um erro.');
   assert.equal(onlineAttempts.wrong.submitDisabled, false, 'O envio deve continuar disponível após um erro.');
-  assert.match(onlineAttempts.wrong.feedback, /Resposta errada\. Podes tentar novamente/);
+  assert.match(onlineAttempts.wrong.feedback, /Resposta errada:.*Tenta novamente/);
   assert.equal(onlineAttempts.correct.answered, true, 'Uma resposta certa deve fechar o turno.');
   assert.equal(onlineAttempts.correct.answerDisabled, true, 'O campo deve bloquear após uma resposta certa.');
   assert.equal(onlineAttempts.correct.submitDisabled, true, 'O envio deve bloquear após uma resposta certa.');
