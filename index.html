@@ -1560,7 +1560,7 @@ function networkRenderGameState(){
      if(networkLastSpokenClueState===spokenKey)networkLastSpokenClueState='';
     }
    };
-   networkPendingSpokenClueState=spokenKey;$('listenCurrentClue')?.click();
+   networkPendingSpokenClueState=spokenKey;const currentClue=String(st.clues?.[st.clues.length-1]||g[2]?.[revealed-1]||'').trim();if(currentClue){const started=atinaSpeakClue('Pista '+revealed+'. '+currentClue,true,atinaNetworkClueSpeechLifecycle);if(!started)atinaNetworkClueSpeechLifecycle.onError();}
   }
  }
  $('clueProgress').textContent=locked?total+' de '+total+' reveladas':revealed+' de '+total+' reveladas';
@@ -1574,7 +1574,7 @@ function networkRenderGameState(){
  $('pass').classList.toggle('hidden',!canControlTurn||locked);
  $('continue').disabled=!canControlTurn||!locked||pauseActive;
  $('continue').classList.toggle('hidden',!locked||!canControlTurn||pauseActive);
- atinaRenderRevealedAnswer('feedback',st.feedback||'Escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.');
+ const correctAnswer=String(st.answer||st.correct_answer||st.solution||g[3]||'').trim();const resultFeedback=String(st.feedback||'').trim();const revealedFeedback=locked&&correctAnswer&&!/resposta\\s*:/i.test(resultFeedback)?(resultFeedback?resultFeedback+' ':'')+'Resposta: '+correctAnswer:(resultFeedback||'Escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.');atinaRenderRevealedAnswer('feedback',revealedFeedback);
  $('feedback').classList.toggle('solution-revealed',locked);
  if(locked){
   const spokenEndKey=String(networkRoom?.room_id||'')+':'+String(st.challenge_id??challengeIndex)+':'+String(st.pos)+':fim';
@@ -1588,7 +1588,7 @@ function networkRenderGameState(){
   const card=$('game').querySelector('.card');
   card?.classList.remove('round-success','round-failure','round-neutral');
   card?.classList.add(isCorrect?'round-success':isWrong?'round-failure':'round-neutral');
-  atinaShowSolutionImage(st.answer||g[3],g[0],'solutionImage',clueSource,st.solution_image_url||null,st.solution_description||'',{source:'ATINA',challenge_id:st.challenge_id})
+  atinaShowSolutionImage(correctAnswer,g[0],'solutionImage',clueSource,st.solution_image_url||null,st.solution_description||'',{source:'ATINA',challenge_id:st.challenge_id})
    .then(()=>atinaRenderSolutionWikipedia({
     id:st.challenge_id,
     solution_description:st.solution_description||'',
@@ -1603,6 +1603,7 @@ function networkRenderGameState(){
  renderTeamProposal();
  const roomPlayers=networkLobbyData?.players||[];
  const teamTotals={};
+ (Array.isArray(st.team_order)?st.team_order:[]).forEach(team=>{teamTotals[team]=0;});
  roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+Number(p.score||0);});
  $('networkTeamScores').replaceChildren();
  Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,total],i)=>{
