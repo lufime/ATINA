@@ -1,3 +1,28 @@
+-- Restore the legacy v2 pseudonym profile table in clean migration replays.
+-- The live schema contains this table (created by an earlier, untracked baseline
+-- migration), and the leaderboard below still reads it. Keep the replay self-contained.
+create table if not exists private.atina_v2_players (
+  id uuid primary key default gen_random_uuid(),
+  token_hash bytea not null unique,
+  nickname text not null
+    check (char_length(btrim(nickname)) between 1 and 20),
+  xp integer not null default 0 check (xp >= 0),
+  total_challenges integer not null default 0 check (total_challenges >= 0),
+  daily_date date not null default (timezone('utc'::text, now()))::date,
+  daily_count integer not null default 0 check (daily_count between 0 and 3),
+  rewarded_date date,
+  last_played_date date,
+  current_streak integer not null default 0 check (current_streak >= 0),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create unique index if not exists atina_v2_players_nickname_unique_idx
+  on private.atina_v2_players (lower(btrim(nickname)));
+
+alter table private.atina_v2_players enable row level security;
+revoke all on table private.atina_v2_players from public, anon, authenticated;
+
 create table private.atina_v2_bot_competition_stats (
   bot_profile_id integer primary key references private.atina_v2_bot_profiles(id) on delete cascade,
   points integer not null default 0 check (points >= 0),
