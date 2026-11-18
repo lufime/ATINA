@@ -663,6 +663,67 @@ BEGIN
 END;
 $function$;
 
+-- A equipa ativa, incluindo uma sessão automatizada, pode revelar as suas pistas.
+CREATE OR REPLACE FUNCTION public.atina_v2_reveal_room_clue(p_room_id uuid,p_token text)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_player public.atina_v2_room_players%rowtype;
+  v_room public.atina_v2_rooms%rowtype;
+  v_game private.atina_v2_room_game_state%rowtype;
+  v_total integer;
+  v_now timestamptz;
+  v_state jsonb;
+  v_active_team text;
+BEGIN
+  SELECT * INTO v_player FROM public.atina_v2_room_players
+   WHERE room_id=p_room_id AND token_hash=extensions.digest(coalesce(p_token,''),'sha256') FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'Sessão da sala inválida.'; END IF;
+  SELECT * INTO v_room FROM public.atina_v2_rooms WHERE id=p_room_id FOR UPDATE;
+  IF NOT FOUND OR v_room.status<>'playing' THEN RAISE EXCEPTION 'A partida não está ativa.'; END IF;
+  SELECT * INTO v_game FROM private.atina_v2_room_game_state WHERE room_id=p_room_id FOR UPDATE;
+  IF NOT FOUND OR v_game.status<>'active' OR v_game.round_locked THEN
+    RAISE EXCEPTION 'A ronda não está ativa.';
+  END IF;
+  v_active_team:=CASE WHEN cardinality(v_game.team_order)>0
+    THEN v_game.team_order[v_game.active_team_index] ELSE NULL END;
+  IF v_active_team IS NOT NULL THEN
+    IF v_player.team_label IS DISTINCT FROM v_active_team THEN
+      RAISE EXCEPTION 'Só a equipa que tem a vez pode revelar pistas.';
+    END IF;
+  ELSIF NOT v_player.is_host THEN
+    RAISE EXCEPTION 'Só o anfitrião pode revelar pistas.';
+  END IF;
+  v_now:=clock_timestamp();
+  IF v_game.deadline_at IS NOT NULL AND v_game.deadline_at<=v_now THEN
+    UPDATE private.atina_v2_room_game_state
+       SET round_locked=true,team_turn_advanced=false,updated_at=v_now
+     WHERE room_id=p_room_id;
+    v_state:=private.atina_v2_room_public_state(p_room_id)
+      ||jsonb_build_object('feedback','Tempo esgotado.','locked',true);
+    UPDATE public.atina_v2_rooms SET game_state=v_state,state_version=state_version+1,updated_at=v_now
+     WHERE id=p_room_id;
+    RETURN jsonb_build_object('status','timeout','state',v_state);
+  END IF;
+  SELECT jsonb_array_length(clues) INTO v_total
+    FROM private.atina_challenges
+   WHERE challenge_id=v_game.challenge_queue[v_game.position] AND active;
+  IF v_game.revealed_clues>=v_total THEN
+    RETURN jsonb_build_object('status','unchanged','state',private.atina_v2_room_public_state(p_room_id));
+  END IF;
+  UPDATE private.atina_v2_room_game_state
+     SET revealed_clues=revealed_clues+1,updated_at=v_now
+   WHERE room_id=p_room_id;
+  v_state:=private.atina_v2_room_public_state(p_room_id);
+  UPDATE public.atina_v2_rooms SET game_state=v_state,state_version=state_version+1,updated_at=v_now
+   WHERE id=p_room_id;
+  RETURN jsonb_build_object('status','revealed','state',v_state);
+END;
+$function$;
+
 -- A sessão da equipa ativa usa o mesmo motor de resposta e pode concluir o seu turno.
 CREATE OR REPLACE FUNCTION public.atina_v2_bot_tick(p_room_id uuid,p_token text)
 RETURNS jsonb
