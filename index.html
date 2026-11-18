@@ -1631,7 +1631,7 @@ async function networkHostReveal(){
  const total=Number(networkGameState.total_clues)||(Number(networkGameState.queue?.[networkGameState.pos]!=null&&isImageChallenge(networkGameState.queue[networkGameState.pos])?6:5));
  const clueIndex=Number(networkGameState.revealed||0),challenge=games[networkGameState.queue[networkGameState.pos]],nextClue=challenge?.[2]?.[clueIndex],spokenKey=String(networkGameState.pos)+':'+String(clueIndex+1);
  if(networkGameState.locked||clueIndex>=total)return;
- if(nextClue&&spokenKey!==networkLastSpokenClueState){networkLastSpokenClueState=spokenKey;atinaSpeakClue('Pista '+(clueIndex+1)+': '+nextClue,true);}
+ // A leitura é feita em networkRenderGameState após confirmação do servidor, igual para todos os jogadores.
  const button=$('nextClue');if(button)button.disabled=true;
  try{
   const result=await networkCall('atina_v2_reveal_room_clue',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});
