@@ -4,7 +4,7 @@
 ALTER TABLE public.atina_v2_room_players
   ADD COLUMN IF NOT EXISTS account_player_id uuid;
 
-DO $
+DO $migration$
 BEGIN
   IF NOT EXISTS (
     SELECT 1
@@ -19,7 +19,7 @@ BEGIN
       ON DELETE SET NULL;
   END IF;
 END
-$;
+$migration$;
 
 ALTER TABLE private.atina_site_presence
   ADD COLUMN IF NOT EXISTS account_player_id uuid;
