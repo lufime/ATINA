@@ -1574,7 +1574,7 @@ function networkRenderGameState(){
  $('pass').classList.toggle('hidden',!canControlTurn||locked);
  $('continue').disabled=!canControlTurn||!locked||pauseActive;
  $('continue').classList.toggle('hidden',!locked||!canControlTurn||pauseActive);
- const correctAnswer=String(st.answer||st.correct_answer||st.solution||g[3]||'').trim();const resultFeedback=String(st.feedback||'').trim();const hasAnswerInFeedback=/resposta\\s*:/i.test(resultFeedback);const revealedFeedback=locked&&correctAnswer&&!hasAnswerInFeedback?(resultFeedback?resultFeedback+' ':'')+'Resposta: '+correctAnswer:(resultFeedback||'Escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.');atinaRenderRevealedAnswer('feedback',revealedFeedback);
+ const correctAnswer=String(st.answer||st.correct_answer||st.solution||g[3]||'').trim();const resultFeedback=String(st.feedback||'').trim();const hasAnswerInFeedback=/resposta\s*:/i.test(resultFeedback);const revealedFeedback=locked&&correctAnswer&&!hasAnswerInFeedback?(resultFeedback?resultFeedback+' ':'')+'Resposta: '+correctAnswer:(resultFeedback||'Escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.');atinaRenderRevealedAnswer('feedback',revealedFeedback);
  $('feedback').classList.toggle('solution-revealed',locked);
  if(locked){
   const spokenEndKey=String(networkRoom?.room_id||'')+':'+String(st.challenge_id??challengeIndex)+':'+String(st.pos)+':fim';

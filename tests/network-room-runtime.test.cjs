@@ -434,4 +434,5 @@ test('room final solution uses the same answer renderer and solution description
  const html=fs.readFileSync('index.html','utf8');
  assert.ok(html.includes("atinaRenderRevealedAnswer('feedback',revealedFeedback);"));
  assert.ok(html.includes("String(st.solution_description||'').trim()||atinaBuildSolutionVisualDescription(g)"));
+ assert.ok(html.includes("hasAnswerInFeedback=/resposta\\s*:/i"));
 });
