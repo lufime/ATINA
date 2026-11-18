@@ -4,13 +4,13 @@ INSERT INTO private.atina_challenges
   (challenge_id,category,emoji,clues,answer,accepted_answers,difficulty,active)
 VALUES
   (-990022,'__ci_room_progress__','🧪',
-   '["pista um","pista dois","pista três"]'::jsonb,
+   '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
    'Resposta de teste 022','["resposta de teste 022"]'::jsonb,'medium',true),
   (-990023,'__ci_room_progress__','🧪',
-   '["pista um","pista dois","pista três"]'::jsonb,
+   '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
    'Resposta de teste 023','["resposta de teste 023"]'::jsonb,'medium',true),
   (-990024,'__ci_room_progress__','🧪',
-   '["pista um","pista dois","pista três"]'::jsonb,
+   '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
    'Resposta de teste 024','["resposta de teste 024"]'::jsonb,'medium',true);
 
 SELECT plan(16);
