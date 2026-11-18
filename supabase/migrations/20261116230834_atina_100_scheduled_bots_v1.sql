@@ -139,12 +139,12 @@ BEGIN
  INSERT INTO public.atina_v2_room_players
   (id,room_id,token_hash,nickname,is_host,ready,team_label,score,is_bot)
  VALUES(v_bot_id,v_room_id,extensions.digest(v_bot_token,'sha256'),
-  '🤖 '||v_bot.nickname,false,true,'Equipa B',0,true);
+  v_bot.nickname,false,true,'Equipa B',0,true);
  INSERT INTO private.atina_v2_bot_matches(room_id,bot_profile_id,bot_player_id,bot_token)
  VALUES(v_room_id,v_bot.id,v_bot_id,v_bot_token);
  RETURN jsonb_build_object('room_id',v_room_id,'token',v_room_result->>'token',
   'code',v_room_result->>'code','player_id',v_human_id,
-  'bot',jsonb_build_object('nickname','🤖 '||v_bot.nickname,'age',v_bot.age,
+  'bot',jsonb_build_object('nickname',v_bot.nickname,'age',v_bot.age,
   'profession',v_bot.profession,'personality',v_bot.personality,
   'knowledge_level',v_bot.knowledge_level));
 END;
