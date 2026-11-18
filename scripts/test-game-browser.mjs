@@ -236,6 +236,62 @@ try {
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
   const starts = await page.evaluate(() => window.__rpcCalls.filter(call => call.name === 'atina_v2_start_local_game').length);
   assert.equal(starts, categories.length + 2, 'Cada modalidade, Mix e Solo devem iniciar exatamente uma sessão.');
+  // Simular um jogador online e validar tentativas no turno ativo, sem ligar à base de dados de produção.
+  await page.evaluate(async () => {
+    networkRoom = {room_id:'room-test',token:'t'.repeat(64)};
+    networkGameActive = true;
+    networkGameHost = true;
+    networkGameState = {mode:'challenges',pos:0,active_team:'Equipa A',locked:false};
+    networkLobbyData = {
+      status:'playing', player_id:'player-a', team:'Equipa A', is_host:true,
+      players:[{id:'player-a',nickname:'Jogador QA',team:'Equipa A',score:0}]
+    };
+    networkAnsweredThisChallenge = false;
+    networkRefreshRoom = async () => {};
+    const attempts = [];
+    networkCall = async (name,args) => {
+      attempts.push({name,args});
+      if (name !== 'atina_v2_submit_room_answer') throw new Error('RPC inesperada: '+name);
+      if (String(args.p_answer).trim() === 'Resposta errada') return {status:'wrong'};
+      if (String(args.p_answer).trim() === 'Resposta ATINA') return {status:'correct'};
+      throw new Error('Resposta de teste inesperada.');
+    };
+    window.__onlineAnswerAttempts = attempts;
+    document.getElementById('answer').disabled = false;
+    document.getElementById('submit').disabled = false;
+    document.getElementById('answer').value = 'Resposta errada';
+    await networkSubmitAnswer();
+    window.__onlineWrongAnswer = {
+      feedback:document.getElementById('feedback').textContent,
+      answerDisabled:document.getElementById('answer').disabled,
+      submitDisabled:document.getElementById('submit').disabled,
+      answered:networkAnsweredThisChallenge
+    };
+    document.getElementById('answer').value = 'Resposta ATINA';
+    await networkSubmitAnswer();
+    window.__onlineCorrectAnswer = {
+      feedback:document.getElementById('feedback').textContent,
+      answerDisabled:document.getElementById('answer').disabled,
+      submitDisabled:document.getElementById('submit').disabled,
+      answered:networkAnsweredThisChallenge
+    };
+  });
+  const onlineAttempts = await page.evaluate(() => ({
+    attempts:window.__onlineAnswerAttempts,
+    wrong:window.__onlineWrongAnswer,
+    correct:window.__onlineCorrectAnswer
+  }));
+  assert.equal(onlineAttempts.attempts.length, 2, 'O jogador online deve poder tentar novamente após uma resposta errada.');
+  assert.equal(onlineAttempts.wrong.answered, false, 'Uma resposta errada não pode fechar o turno.');
+  assert.equal(onlineAttempts.wrong.answerDisabled, false, 'O campo de resposta deve continuar disponível após um erro.');
+  assert.equal(onlineAttempts.wrong.submitDisabled, false, 'O envio deve continuar disponível após um erro.');
+  assert.match(onlineAttempts.wrong.feedback, /Resposta errada\. Podes tentar novamente/);
+  assert.equal(onlineAttempts.correct.answered, true, 'Uma resposta certa deve fechar o turno.');
+  assert.equal(onlineAttempts.correct.answerDisabled, true, 'O campo deve bloquear após uma resposta certa.');
+  assert.equal(onlineAttempts.correct.submitDisabled, true, 'O envio deve bloquear após uma resposta certa.');
+  assert.match(onlineAttempts.correct.feedback, /Resposta certa/);
+  assert.deepEqual(onlineAttempts.attempts.map(x=>x.name), ['atina_v2_submit_room_answer','atina_v2_submit_room_answer']);
+
   assert.deepEqual(pageErrors, [], 'A aplicação não deve produzir erros JavaScript durante os fluxos principais.');
   process.stdout.write(`Game browser regression passed: ${categories.length} categorias, Solo, Mix, revelar, resposta errada/certa, PASSO, CONTINUAR, encaminhamento online, bloqueio sem sessão e navegação.\\n`);
 } finally {
