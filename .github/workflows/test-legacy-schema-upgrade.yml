@@ -18,6 +18,8 @@ jobs:
   legacy-upgrade:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      SUPABASE_EXPERIMENTAL_STACK: "1"
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
@@ -28,55 +30,20 @@ jobs:
       - name: Start disposable local Supabase stack
         run: |
           supabase init --force
-          # Select free host ports and update the disposable config safely.
-          python - <<'PY'
-          import os
-          import socket
-          from pathlib import Path
-
-          ports = []
-          for _ in range(2):
-              with socket.socket() as sock:
-                  sock.bind(("0.0.0.0", 0))
-                  ports.append(sock.getsockname()[1])
-
-          config = Path("supabase/config.toml")
-          lines = config.read_text().splitlines()
-          section = ""
-          updates = {
-              ("db", "port"): str(ports[0]),
-              ("studio", "port"): str(ports[1]),
-              ("db.migrations", "enabled"): "false",
-              ("db.seed", "enabled"): "false",
-          }
-          seen = set()
-          for i, line in enumerate(lines):
-              stripped = line.strip()
-              if stripped.startswith("[") and stripped.endswith("]"):
-                  section = stripped[1:-1]
-              for (target, key), value in updates.items():
-                  if section == target and stripped.startswith(key + " ="):
-                      indent = line[:len(line) - len(line.lstrip())]
-                      lines[i] = f"{indent}{key} = {value}"
-                      seen.add((target, key))
-          missing = set(updates) - seen
-          if missing:
-              raise SystemExit(f"Missing expected Supabase config keys: {sorted(missing)}")
-          config.write_text("\n".join(lines) + "\n")
-          with open(os.environ["GITHUB_ENV"], "a") as env:
-              env.write(f"ATINA_LEGACY_DB_PORT={ports[0]}\n")
-          PY
-          supabase start
+          supabase stack --help
+          supabase start --exclude studio,mail
+          supabase status --env --output-format text > "$RUNNER_TEMP/supabase.env"
+          grep '^DB_URL=' "$RUNNER_TEMP/supabase.env" >> "$GITHUB_ENV"
       - name: Create synthetic legacy atina-ranking schema
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:$ATINA_LEGACY_DB_PORT/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/atina-ranking-legacy.sql
       - name: Apply only the compatibility v2 migrations
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:$ATINA_LEGACY_DB_PORT/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:$ATINA_LEGACY_DB_PORT/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:$ATINA_LEGACY_DB_PORT/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:$ATINA_LEGACY_DB_PORT/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
-          psql "postgresql://postgres:postgres@127.0.0.1:$ATINA_LEGACY_DB_PORT/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102120000_atina_progress_session_binding.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261102125000_atina_xp_session_owner_player_index.sql
       - name: Assert legacy data and contracts remain intact
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:$ATINA_LEGACY_DB_PORT/postgres" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/legacy-fixtures/legacy-upgrade-assertions.sql
