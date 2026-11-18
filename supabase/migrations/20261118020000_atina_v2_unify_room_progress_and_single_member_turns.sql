@@ -581,6 +581,7 @@ DECLARE
   v_card jsonb;
   v_active_team text;
   v_expired boolean;
+  v_next_team integer;
 BEGIN
   SELECT * INTO v_player FROM public.atina_v2_room_players
    WHERE room_id=p_room_id AND token_hash=extensions.digest(coalesce(p_token,''),'sha256') FOR UPDATE;
@@ -589,6 +590,7 @@ BEGIN
   IF NOT FOUND OR v_room.status<>'playing' THEN RAISE EXCEPTION 'A partida não está ativa.'; END IF;
   SELECT * INTO v_game FROM private.atina_v2_room_game_state WHERE room_id=p_room_id FOR UPDATE;
   IF NOT FOUND OR v_game.status<>'active' THEN RAISE EXCEPTION 'A ronda não está ativa.'; END IF;
+
   v_now:=clock_timestamp();
   v_active_team:=CASE WHEN cardinality(v_game.team_order)>0
     THEN v_game.team_order[v_game.active_team_index] ELSE NULL END;
@@ -605,35 +607,57 @@ BEGIN
     RAISE EXCEPTION 'O turno ainda não foi concluído.';
   END IF;
   IF v_expired AND NOT v_game.round_locked THEN
-    UPDATE private.atina_v2_room_game_state
-       SET round_locked=true,updated_at=v_now
+    UPDATE private.atina_v2_room_game_state SET round_locked=true,updated_at=v_now
      WHERE room_id=p_room_id;
   END IF;
 
   IF v_game.position<cardinality(v_game.challenge_queue) THEN
+    v_next_team:=v_game.active_team_index;
+    IF cardinality(v_game.team_order)>1 THEN
+      v_next_team:=mod(v_game.active_team_index,cardinality(v_game.team_order))+1;
+    END IF;
+
     v_card:=NULL;
-    IF mod(v_game.position,3)=0 THEN
-      CASE floor(random()*6)::integer
-        WHEN 0 THEN v_card:=jsonb_build_object('id','double_points','name','PONTOS A DOBRAR','icon','💎','description','Duplica os pontos deste desafio se acertares.','multiplier',2,'bonus',0);
-        WHEN 1 THEN v_card:=jsonb_build_object('id','speed_bonus','name','BÓNUS DE VELOCIDADE','icon','⚡','description','Recebes mais 10 pontos se acertares.','multiplier',1,'bonus',10);
-        WHEN 2 THEN v_card:=jsonb_build_object('id','correct_prize','name','PRÉMIO DE ACERTO','icon','🏆','description','Recebes 15 pontos extra se acertares.','multiplier',1,'bonus',15);
+    -- Sorteio independente por desafio: 20% de probabilidade de aparecer uma carta.
+    IF random()<0.20 AND cardinality(v_game.team_order)>1 THEN
+      CASE floor(random()*9)::integer
+        WHEN 0 THEN v_card:=jsonb_build_object('id','double_points','name','PONTOS A DOBRAR','icon','💎','description','Multiplica por 3 os pontos deste desafio se acertares.','multiplier',3,'bonus',0);
+        WHEN 1 THEN v_card:=jsonb_build_object('id','speed_bonus','name','BÓNUS DE VELOCIDADE','icon','⚡','description','Recebes mais 25 pontos se acertares.','multiplier',1,'bonus',25);
+        WHEN 2 THEN v_card:=jsonb_build_object('id','correct_prize','name','PRÉMIO DE ACERTO','icon','🏆','description','Recebes 40 pontos extra se acertares.','multiplier',1,'bonus',40);
         WHEN 3 THEN v_card:=jsonb_build_object('id','shield','name','ESCUDO','icon','🛡️','description','Anula a penalização se errares.');
         WHEN 4 THEN v_card:=jsonb_build_object('id','reduced_penalty','name','PENALIZAÇÃO REDUZIDA','icon','➖','description','A penalização por erro passa de 10 para 5 pontos.');
-        ELSE v_card:=jsonb_build_object('id','bonus_clue','name','PISTA BÓNUS','icon','💡','description','Recebes imediatamente mais uma pista.');
+        WHEN 5 THEN v_card:=jsonb_build_object('id','bonus_clue','name','PISTA BÓNUS','icon','💡','description','Recebes imediatamente mais uma pista.');
+        WHEN 6 THEN v_card:=jsonb_build_object('id','extra_time','name','TEMPO EXTRA','icon','⏱️','description','Recebes mais 30 segundos neste desafio.');
+        WHEN 7 THEN v_card:=jsonb_build_object('id','pass_team','name','PASSAR A EQUIPA','icon','⏭️','description','A equipa que recebe esta carta perde a vez; o desafio é saltado.');
+        ELSE v_card:=jsonb_build_object('id','steal_turn','name','ROUBAR A VEZ','icon','🔄','description','A equipa seguinte assume imediatamente este desafio.');
       END CASE;
     END IF;
+    IF v_card->>'id'='steal_turn' THEN
+      v_next_team:=mod(v_next_team,cardinality(v_game.team_order))+1;
+    END IF;
+
     UPDATE private.atina_v2_room_game_state
        SET position=position+1,
+           active_team_index=v_next_team,
+           team_turn_advanced=coalesce(v_card->>'id'='pass_team',false),
            revealed_clues=CASE WHEN v_card->>'id'='bonus_clue' THEN 2 ELSE 1 END,
-           round_locked=false,
-           deadline_at=CASE WHEN timed_mode_seconds=0 THEN NULL
-             ELSE v_now+make_interval(secs=>timed_mode_seconds+CASE WHEN v_card->>'id'='extra_time' THEN 15 ELSE 0 END) END,
+           round_locked=coalesce(v_card->>'id'='pass_team',false),
            special_card=v_card,
-           active_team_index=CASE WHEN cardinality(team_order)=0 THEN active_team_index
-             WHEN active_team_index>=cardinality(team_order) THEN 1 ELSE active_team_index+1 END,
-           team_turn_advanced=false,updated_at=v_now
+           deadline_at=CASE WHEN timed_mode_seconds=0 OR v_card->>'id'='pass_team' THEN NULL
+             ELSE v_now+make_interval(secs=>timed_mode_seconds+
+               CASE WHEN v_card->>'id'='extra_time' THEN 30 ELSE 0 END) END,
+           updated_at=v_now
      WHERE room_id=p_room_id;
+
+    PERFORM private.atina_record_room_challenge_exposure(
+      p_room_id,v_game.challenge_queue[v_game.position+1]
+    );
     v_state:=private.atina_v2_room_public_state(p_room_id);
+    IF v_card->>'id'='pass_team' THEN
+      v_state:=v_state||jsonb_build_object(
+        'feedback','A carta PASSAR A EQUIPA saltou este desafio.','locked',true
+      );
+    END IF;
     UPDATE public.atina_v2_rooms SET game_state=v_state,state_version=state_version+1,updated_at=v_now
      WHERE id=p_room_id;
     RETURN jsonb_build_object('status','next','state',v_state);
