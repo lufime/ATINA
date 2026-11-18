@@ -30,6 +30,7 @@ jobs:
           supabase init --force
           # Select free host ports and update the disposable config safely.
           python - <<'PY'
+          import os
           import socket
           from pathlib import Path
 
@@ -61,9 +62,9 @@ jobs:
           missing = set(updates) - seen
           if missing:
               raise SystemExit(f"Missing expected Supabase config keys: {sorted(missing)}")
-          config.write_text("\\n".join(lines) + "\\n")
-          with open("$GITHUB_ENV", "a") as env:
-              env.write(f"ATINA_LEGACY_DB_PORT={ports[0]}\\n")
+          config.write_text("\n".join(lines) + "\n")
+          with open(os.environ["GITHUB_ENV"], "a") as env:
+              env.write(f"ATINA_LEGACY_DB_PORT={ports[0]}\n")
           PY
           supabase start
       - name: Create synthetic legacy atina-ranking schema
