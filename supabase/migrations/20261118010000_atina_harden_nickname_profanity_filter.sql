@@ -16,7 +16,7 @@ declare
     'caralho','merda','bosta','porra','foda','foder','fodase','fodas','fodes','puta','puto',
     'fdp','arrombado','cabrao','viado','bicha','otario','babaca','idiota','imbecil',
     'estupido','nigger','faggot','retard','whore','bitch','asshole','fuck','shit',
-    'dick','cunt','slut','bastard','bastardo','bastarda','cona','cu','corno',
+    'dick','cunt','slut','arsch','arschloch','bastard','bastardo','bastarda','cona','cu','corno',
     'boiola','paneleiro','paneleira','buceta','vagabundo','vagabunda','desgraca',
     'pqp','vsf','vtc','crl','krl','fck','fuk','motherfucker','motherfucking'
   ];
@@ -255,6 +255,7 @@ grant execute on function public.atina_account_login(text,text) to anon, authent
 do $tests$
 begin
   if private.atina_nickname_is_acceptable('Caralho')
+     or private.atina_nickname_is_acceptable('Arsch')
      or private.atina_nickname_is_acceptable('Fodes')
      or private.atina_nickname_is_acceptable('c@r@lh0')
      or private.atina_nickname_is_acceptable('p.u.t.a')
