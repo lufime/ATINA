@@ -1560,8 +1560,7 @@ function networkRenderGameState(){
      if(networkLastSpokenClueState===spokenKey)networkLastSpokenClueState='';
     }
    };
-   networkPendingSpokenClueState=spokenKey;
-   $('listenCurrentClue')?.click();
+   networkPendingSpokenClueState=spokenKey;$('listenCurrentClue')?.click();
   }
  }
  $('clueProgress').textContent=locked?total+' de '+total+' reveladas':revealed+' de '+total+' reveladas';
