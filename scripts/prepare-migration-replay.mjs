@@ -80,23 +80,26 @@ leaderboardSql = leaderboardSql.replace(leaderboardPattern, safeLeaderboard);
 writeFileSync(leaderboardPath, leaderboardSql);
 console.log('Compatibilidade local: leaderboard ignora a tabela V2 opcional quando ausente; migration original preservada.');
 
-// pg_cron is not enabled in the disposable Supabase stack by default. The
-// production migration schedules the existing worker; replay tests validate
-// schema/functions, not the hosted scheduler. Remove only that scheduling
-// statement from the temporary checkout copy.
-const botCompetitionMigration = '20261116232227_atina_v2_bot_simulated_competition.sql';
-const botCompetitionPath = join(directory, botCompetitionMigration);
-let botCompetitionSql = readFileSync(botCompetitionPath, 'utf8');
-const cronSchedulePattern = /^select\s+cron\.schedule\s*\(\s*[\s\S]*?^\);\s*/im;
-if (!cronSchedulePattern.test(botCompetitionSql)) {
-  throw new Error('Não foi possível localizar o agendamento cron esperado em ' + botCompetitionMigration);
+// pg_cron is not enabled in the disposable Supabase stack by default.
+// Strip cron.schedule/cron.unschedule statements from every temporary migration
+// copy. Keep all committed migrations untouched; schema/function replay remains
+// covered, while hosted scheduling is verified separately in production.
+const cronStatementPattern = /^[\\t ]*select\\s+cron\\.(?:schedule|unschedule)\\s*\\([\\s\\S]*?;[\\t ]*$/gim;
+let cronStatementsRemoved = 0;
+for (const name of readdirSync(directory).filter(name => /^\\d{14}_.+\\.sql$/.test(name))) {
+  const path = join(directory, name);
+  const sql = readFileSync(path, 'utf8');
+  const matches = sql.match(cronStatementPattern);
+  if (!matches) continue;
+  const stripped = sql.replace(cronStatementPattern, '-- pg_cron statement omitted only in disposable migration replay.');
+  writeFileSync(path, stripped);
+  cronStatementsRemoved += matches.length;
+  console.log('Compatibilidade local: ' + matches.length + ' instrução(ões) pg_cron omitida(s) em ' + name + '.');
 }
-botCompetitionSql = botCompetitionSql.replace(
-  cronSchedulePattern,
-  '-- Agendamento cron omitido apenas no replay local descartável.\n'
-);
-writeFileSync(botCompetitionPath, botCompetitionSql);
-console.log('Compatibilidade local: agendamento pg_cron omitido apenas no replay descartável; migração original preservada.');
+if (cronStatementsRemoved === 0) {
+  throw new Error('Não foi encontrada nenhuma instrução pg_cron para omitir no replay local.');
+}
+console.log('Compatibilidade local: ' + cronStatementsRemoved + ' instrução(ões) pg_cron omitida(s); migrations originais preservadas.');
 
 
 const finalFiles = readdirSync(directory).filter(name => /^\d{14}_.+\.sql$/.test(name));
