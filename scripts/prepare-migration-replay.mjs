@@ -82,19 +82,34 @@ console.log('Compatibilidade local: leaderboard ignora a tabela V2 opcional quan
 
 // pg_cron is not enabled in the disposable Supabase stack by default.
 // Strip cron.schedule/cron.unschedule statements from every temporary migration
-// copy. Keep all committed migrations untouched; schema/function replay remains
-// covered, while hosted scheduling is verified separately in production.
-const cronStatementPattern = /^[\t ]*select\s+cron\.(?:schedule|unschedule)\s*\([\s\S]*?;[\t ]*$/gim;
+// copy. Keep all committed migrations untouched; hosted scheduling is verified
+// separately. A line scanner avoids fragile multiline SQL regular expressions.
 let cronStatementsRemoved = 0;
-for (const name of readdirSync(directory).filter(name => /^\\d{14}_.+\\.sql$/.test(name))) {
+for (const name of readdirSync(directory).filter(name => /^\d{14}_.+\.sql$/.test(name))) {
   const path = join(directory, name);
-  const sql = readFileSync(path, 'utf8');
-  const matches = sql.match(cronStatementPattern);
-  if (!matches) continue;
-  const stripped = sql.replace(cronStatementPattern, '-- pg_cron statement omitted only in disposable migration replay.');
-  writeFileSync(path, stripped);
-  cronStatementsRemoved += matches.length;
-  console.log('Compatibilidade local: ' + matches.length + ' instrução(ões) pg_cron omitida(s) em ' + name + '.');
+  const lines = readFileSync(path, 'utf8').split(/\r?\n/);
+  const output = [];
+  let skippingCron = false;
+  for (const line of lines) {
+    if (!skippingCron && /^[\t ]*select\s+cron\.(?:schedule|unschedule)\s*\(/i.test(line)) {
+      output.push('-- pg_cron statement omitted only in disposable migration replay.');
+      cronStatementsRemoved++;
+      skippingCron = !/;\s*(?:--.*)?$/.test(line);
+      continue;
+    }
+    if (skippingCron) {
+      if (/;\s*(?:--.*)?$/.test(line)) skippingCron = false;
+      continue;
+    }
+    output.push(line);
+  }
+  if (skippingCron) {
+    throw new Error('Instrução pg_cron sem terminador em ' + name);
+  }
+  if (output.length !== lines.length) {
+    writeFileSync(path, output.join('\n'));
+    console.log('Compatibilidade local: instruções pg_cron omitidas em ' + name + '.');
+  }
 }
 if (cronStatementsRemoved === 0) {
   throw new Error('Não foi encontrada nenhuma instrução pg_cron para omitir no replay local.');
