@@ -4,7 +4,7 @@ INSERT INTO private.atina_challenges
   (challenge_id,category,emoji,clues,answer,accepted_answers,difficulty,active)
 VALUES
   (-990027,'__ci_v2_unassigned_turn__','🧪',
-   '["pista um","pista dois","pista três"]'::jsonb,
+   '["pista um","pista dois","pista três","pista quatro","pista cinco"]'::jsonb,
    'Resposta Protegida 027','["resposta protegida 027"]'::jsonb,'medium',true);
 
 SELECT plan(1);
