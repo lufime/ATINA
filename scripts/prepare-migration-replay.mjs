@@ -51,16 +51,20 @@ as $function$
 begin
   if to_regclass('private.atina_v2_players') is not null then
     return query
-      select p.nickname, p.total_xp,
-             private.atina_level_for_xp(p.total_xp),
-             p.total_challenges
-        from private.atina_players p
-      union all
-      select p.nickname, p.xp,
-             private.atina_level_for_xp(p.xp),
-             p.total_challenges
-        from private.atina_v2_players p
-       order by 2 desc, 4 desc;
+      select all_players.nickname, all_players.xp, all_players.level, all_players.challenges
+        from (
+          select p.nickname, p.total_xp as xp,
+                 private.atina_level_for_xp(p.total_xp) as level,
+                 p.total_challenges as challenges, p.created_at
+            from private.atina_players p
+          union all
+          select p.nickname, p.xp,
+                 private.atina_level_for_xp(p.xp),
+                 p.total_challenges, p.created_at
+            from private.atina_v2_players p
+        ) all_players
+       order by all_players.xp desc, all_players.challenges desc, all_players.created_at asc
+       limit least(greatest(coalesce(p_limit,50),1),100);
   else
     return query
       select p.nickname, p.total_xp,
