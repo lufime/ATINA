@@ -116,9 +116,9 @@ for (const client of ['anfitrião', 'participante']) {
 
 for (const client of ['anfitrião', 'participante']) {
   test(`(${client}) a Sala inicia diretamente a leitura da pista confirmada pelo servidor`, () => {
-    assert.match(html, /networkPendingSpokenClueState=spokenKey;const currentClue=String\\(st\\.clues\\?\\.\\[st\\.clues\\.length-1\\]\\|\\|g\\[2\\]\\?\\.\\[revealed-1\\]\\|\\|''\\)\\.trim\\(\\);/);
-    assert.match(html, /atinaSpeakClue\\('Pista '\\+revealed\\+'\\. '\\+currentClue,true,atinaNetworkClueSpeechLifecycle\\)/);
-    assert.match(html, /let atinaNetworkClueSpeechLifecycle=null;\\$\\('listenCurrentClue'\\)\\?\\.addEventListener\\('click'/);
-    assert.doesNotMatch(html, /networkPendingSpokenClueState=spokenKey;\\$\\('listenCurrentClue'\\)\\?\\.click\\(\\);/);
+    assert.ok(html.includes("networkPendingSpokenClueState=spokenKey;const currentClue=String(st.clues?.[st.clues.length-1]||g[2]?.[revealed-1]||'').trim();"));
+    assert.ok(html.includes("atinaSpeakClue('Pista '+revealed+'. '+currentClue,true,atinaNetworkClueSpeechLifecycle)"));
+    assert.ok(html.includes("let atinaNetworkClueSpeechLifecycle=null;$('listenCurrentClue')?.addEventListener('click'"));
+    assert.ok(!html.includes("networkPendingSpokenClueState=spokenKey;$('listenCurrentClue')?.click();"));
   });
 }
