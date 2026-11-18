@@ -63,11 +63,11 @@ jobs:
           from pathlib import Path
 
           env_text = Path(os.environ["RUNNER_TEMP"] + "/supabase.env").read_text()
-          match = re.search(r"DB_URL=.*?:(\\d+)/postgres", env_text)
+          match = re.search(r"127\.0\.0\.1:(\d+)/postgres", env_text)
           if not match:
               raise SystemExit("Supabase status did not expose a valid local DB port")
           with open(os.environ["GITHUB_ENV"], "a") as env:
-              env.write(f"ATINA_LEGACY_DB_PORT={match.group(1)}\\n")
+              env.write(f"ATINA_LEGACY_DB_PORT={match.group(1)}\n")
           PY
       - name: Create synthetic legacy atina-ranking schema
         run: |
