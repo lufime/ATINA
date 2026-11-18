@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readdirSync, renameSync } from 'node:fs';
+import { readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -28,6 +28,54 @@ for (const [version, duplicates] of groups) {
     renames.push({from:name,to:nextName});
   }
 }
+
+// The historical leaderboard migration references an optional legacy V2 table.
+// In a clean replay that table is absent, although it may exist in upgraded
+// installations. Patch only this disposable CI checkout; never rewrite the
+// committed migration or any remote database.
+const leaderboardMigration = '20261116232227_atina_v2_bot_simulated_competition.sql';
+const leaderboardPath = join(directory, leaderboardMigration);
+let leaderboardSql = readFileSync(leaderboardPath, 'utf8');
+const leaderboardPattern = /create or replace function public\.atina_progress_leaderboard\([\s\S]*?\$function\$;/i;
+const existingLeaderboard = leaderboardSql.match(leaderboardPattern);
+if (!existingLeaderboard) {
+  throw new Error('Não foi possível localizar a definição esperada de atina_progress_leaderboard em ' + leaderboardMigration);
+}
+const safeLeaderboard = `create or replace function public.atina_progress_leaderboard(p_limit integer default 50)
+returns table(nickname text, xp integer, level integer, challenges integer)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $function$
+begin
+  if to_regclass('private.atina_v2_players') is not null then
+    return query
+      select p.nickname, p.total_xp,
+             private.atina_level_for_xp(p.total_xp),
+             p.total_challenges
+        from private.atina_players p
+      union all
+      select p.nickname, p.xp,
+             private.atina_level_for_xp(p.xp),
+             p.total_challenges
+        from private.atina_v2_players p
+       order by 2 desc, 4 desc;
+  else
+    return query
+      select p.nickname, p.total_xp,
+             private.atina_level_for_xp(p.total_xp),
+             p.total_challenges
+        from private.atina_players p
+       order by p.total_xp desc, p.total_challenges desc, p.created_at asc
+       limit least(greatest(coalesce(p_limit,50),1),100);
+  end if;
+end;
+$function$;`;
+leaderboardSql = leaderboardSql.replace(leaderboardPattern, safeLeaderboard);
+writeFileSync(leaderboardPath, leaderboardSql);
+console.log('Compatibilidade local: leaderboard ignora a tabela V2 opcional quando ausente; migration original preservada.');
+
 const finalFiles = readdirSync(directory).filter(name => /^\d{14}_.+\.sql$/.test(name));
 const finalVersions = finalFiles.map(name => name.slice(0,14));
 if (new Set(finalVersions).size !== finalVersions.length) {
