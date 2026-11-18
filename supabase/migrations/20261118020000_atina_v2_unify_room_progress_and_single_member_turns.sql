@@ -23,6 +23,82 @@ alter table private.atina_v2_room_game_state
   add column if not exists active_team_index integer not null default 1,
   add column if not exists team_turn_advanced boolean not null default false;
 
+-- Liga cada participante à conta autenticada, sem confiar no pseudónimo enviado pelo cliente.
+ALTER TABLE public.atina_v2_room_players
+  ADD COLUMN IF NOT EXISTS account_player_id uuid
+    REFERENCES private.atina_players(id) ON DELETE SET NULL;
+
+CREATE OR REPLACE FUNCTION public.atina_v2_create_room(
+  p_nickname text,p_max_players integer,p_session_token text
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_player_id uuid;
+  v_result jsonb;
+BEGIN
+  IF p_session_token IS NULL OR p_session_token !~ '^[0-9a-f]{64}$' THEN
+    RAISE EXCEPTION 'Inicia sessão na tua conta ATINA para criar uma sala.' USING errcode='28000';
+  END IF;
+  SELECT a.player_id INTO v_player_id
+    FROM private.atina_player_accounts a
+   WHERE a.session_token_hash=extensions.digest(convert_to(p_session_token,'UTF8'),'sha256')
+     AND a.session_expires_at>clock_timestamp()
+   FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Sessão expirada. Inicia sessão novamente.' USING errcode='28000';
+  END IF;
+  v_result:=public.atina_v2_create_room(p_nickname,p_max_players);
+  UPDATE public.atina_v2_room_players
+     SET account_player_id=v_player_id
+   WHERE id=(v_result->>'player_id')::uuid
+     AND room_id=(v_result->>'room_id')::uuid;
+  IF NOT FOUND THEN RAISE EXCEPTION 'Não foi possível associar a conta à sala.'; END IF;
+  RETURN v_result;
+END;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.atina_v2_join_room(
+  p_nickname text,p_code text,p_session_token text
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_player_id uuid;
+  v_result jsonb;
+BEGIN
+  IF p_session_token IS NULL OR p_session_token !~ '^[0-9a-f]{64}$' THEN
+    RAISE EXCEPTION 'Inicia sessão na tua conta ATINA para entrar numa sala.' USING errcode='28000';
+  END IF;
+  SELECT a.player_id INTO v_player_id
+    FROM private.atina_player_accounts a
+   WHERE a.session_token_hash=extensions.digest(convert_to(p_session_token,'UTF8'),'sha256')
+     AND a.session_expires_at>clock_timestamp()
+   FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Sessão expirada. Inicia sessão novamente.' USING errcode='28000';
+  END IF;
+  v_result:=public.atina_v2_join_room(p_nickname,p_code);
+  UPDATE public.atina_v2_room_players
+     SET account_player_id=v_player_id
+   WHERE id=(v_result->>'player_id')::uuid
+     AND room_id=(v_result->>'room_id')::uuid;
+  IF NOT FOUND THEN RAISE EXCEPTION 'Não foi possível associar a conta à sala.'; END IF;
+  RETURN v_result;
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION public.atina_v2_create_room(text,integer,text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.atina_v2_join_room(text,text,text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.atina_v2_create_room(text,integer,text) TO anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.atina_v2_join_room(text,text,text) TO anon,authenticated;
+
 -- Definição completa da RPC: sem edição dinâmica de fragmentos de texto.
 -- A ordem das equipas fica persistida no estado autoritativo da sala.
 CREATE OR REPLACE FUNCTION public.atina_v2_start_room_challenges(
