@@ -87,7 +87,7 @@ console.log('Compatibilidade local: leaderboard ignora a tabela V2 opcional quan
 const botCompetitionMigration = '20261116232227_atina_v2_bot_simulated_competition.sql';
 const botCompetitionPath = join(directory, botCompetitionMigration);
 let botCompetitionSql = readFileSync(botCompetitionPath, 'utf8');
-const cronSchedulePattern = /select\s+cron\.schedule\s*\([\s\S]*?\);\s*/i;
+const cronSchedulePattern = /^select\s+cron\.schedule\s*\(\s*[\s\S]*?^\);\s*/im;
 if (!cronSchedulePattern.test(botCompetitionSql)) {
   throw new Error('Não foi possível localizar o agendamento cron esperado em ' + botCompetitionMigration);
 }
