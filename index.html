@@ -1057,7 +1057,20 @@ label.section{line-height:1.35!important}
  .atina-xp-ranking-table th:nth-child(4),.atina-xp-ranking-table td:nth-child(4){width:46%}
 }
 </style>
-<style> .atina-qi-ranking-table th:nth-child(1),.atina-qi-ranking-table td:nth-child(1){width:9%}.atina-qi-ranking-table th:nth-child(2),.atina-qi-ranking-table td:nth-child(2){width:34%;text-align:left;overflow-wrap:anywhere}.atina-qi-ranking-table th:nth-child(3),.atina-qi-ranking-table td:nth-child(3){width:15%;text-align:right;font-variant-numeric:tabular-nums}.atina-qi-ranking-table th:nth-child(4),.atina-qi-ranking-table td:nth-child(4){width:17%;text-align:right}.atina-qi-ranking-table th:nth-child(5),.atina-qi-ranking-table td:nth-child(5){width:25%;text-align:right}</style></head>
+<style> .atina-qi-ranking-table th:nth-child(1),.atina-qi-ranking-table td:nth-child(1){width:9%}.atina-qi-ranking-table th:nth-child(2),.atina-qi-ranking-table td:nth-child(2){width:34%;text-align:left;overflow-wrap:anywhere}.atina-qi-ranking-table th:nth-child(3),.atina-qi-ranking-table td:nth-child(3){width:15%;text-align:right;font-variant-numeric:tabular-nums}.atina-qi-ranking-table th:nth-child(4),.atina-qi-ranking-table td:nth-child(4){width:17%;text-align:right}.atina-qi-ranking-table th:nth-child(5),.atina-qi-ranking-table td:nth-child(5){width:25%;text-align:right}</style><style id="atina-room-layout-match-solo">
+/* A Sala conserva o mesmo ritmo visual do modo individual. */
+#networkTimeoutPanel{padding:12px 13px!important;margin:10px 0 14px!important;border-radius:16px!important}
+#networkTimeoutPanel>strong{font-size:15px}
+#networkTimeoutPanel:not(.pause-active) #networkTimeoutInfo{display:none}
+#networkTimeoutActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+#networkTimeoutActions .btn{margin:0!important;min-width:0;min-height:42px;padding:8px 6px;font-size:12px;line-height:1.25}
+#networkScoreboard{margin-top:16px}
+#networkScoreboard ol{margin:7px 0 12px;padding-left:25px}
+@media(max-width:360px){
+ #networkTimeoutActions{grid-template-columns:1fr}
+}
+</style>
+</head>
 <body><main class="wrap">
 <div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.85"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.85</strong></div>
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina." decoding="async" fetchpriority="high"><div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
@@ -1474,7 +1487,7 @@ function networkRenderGameState(){if(!networkGameState)return;const st=networkGa
    solution_wikipedia_url:st.solution_wikipedia_url||''
   },!!networkGameState?.locked,networkGameState?.challenge_id))
   .catch(()=>{});
-}else $('solutionImage').classList.add('hidden');$('networkScoreboard').classList.remove('hidden');renderTeamProposal();const roomPlayers=networkLobbyData?.players||[];const teamTotals={};roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+p.score;});$('networkTeamScores').replaceChildren();Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,total],i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+team+' — '+total+' pts';$('networkTeamScores').appendChild(li);});$('networkScores').replaceChildren();roomPlayers.slice().sort((a,b)=>b.score-a.score).forEach((p,i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+atinaDisplayPlayerName(p)+' — '+p.score+' pts'+(p.team?' · '+p.team:'');$('networkScores').appendChild(li);});$('totalScore').textContent='⭐ '+networkMyScore+' pontos';$('listenAnswer').classList.toggle('hidden',!locked);atinaSetChallengeVisual(queue[pos]);if(isImageChallenge(queue[pos])){$('mysteryImage').src=atinaFreeSolutionSvg(g[3],g[0]);$('mysteryImage').alt='Imagem do desafio da categoria '+g[0]+', parcialmente oculta.';renderPuzzle(revealed);$('mysteryImage').style.setProperty('--blur',Math.max(0,24-revealed*4)+'px');$('veil').style.setProperty('--veil',revealed===6?'0':'.12');}renderNetworkTimeoutPanel();board();update();const animationKey=(networkRoom?.room_id||'room')+':'+st.pos+':'+st.queue[st.pos];if(animationKey!==networkAnimatedChallengeKey){networkAnimatedChallengeKey=animationKey;mixDraw();}networkDrawClock();ensureNetworkClock();}
+}else $('solutionImage').classList.add('hidden');$('networkScoreboard').classList.toggle('hidden',!locked);renderTeamProposal();const roomPlayers=networkLobbyData?.players||[];const teamTotals={};roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+p.score;});$('networkTeamScores').replaceChildren();Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,total],i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+team+' — '+total+' pts';$('networkTeamScores').appendChild(li);});$('networkScores').replaceChildren();roomPlayers.slice().sort((a,b)=>b.score-a.score).forEach((p,i)=>{const li=document.createElement('li');li.textContent=(i+1)+'. '+atinaDisplayPlayerName(p)+' — '+p.score+' pts'+(p.team?' · '+p.team:'');$('networkScores').appendChild(li);});$('totalScore').textContent='⭐ '+networkMyScore+' pontos';$('listenAnswer').classList.toggle('hidden',!locked);atinaSetChallengeVisual(queue[pos]);if(isImageChallenge(queue[pos])){$('mysteryImage').src=atinaFreeSolutionSvg(g[3],g[0]);$('mysteryImage').alt='Imagem do desafio da categoria '+g[0]+', parcialmente oculta.';renderPuzzle(revealed);$('mysteryImage').style.setProperty('--blur',Math.max(0,24-revealed*4)+'px');$('veil').style.setProperty('--veil',revealed===6?'0':'.12');}renderNetworkTimeoutPanel();board();update();const animationKey=(networkRoom?.room_id||'room')+':'+st.pos+':'+st.queue[st.pos];if(animationKey!==networkAnimatedChallengeKey){networkAnimatedChallengeKey=animationKey;mixDraw();}networkDrawClock();ensureNetworkClock();}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(networkGameActive)networkDrawClock();else timerTick();if(networkRoom){networkLastPollAt=Date.now();networkRefreshRoom();}});window.addEventListener('focus',()=>{if(networkGameActive)networkDrawClock();else timerTick();if(networkRoom){networkLastPollAt=Date.now();networkRefreshRoom();}});
 let networkLastTimerBeepAt=0,networkTimerChallengeKey='';
 function networkDrawClock(){
@@ -1804,6 +1817,7 @@ function renderNetworkTimeoutPanel(){
  networkTimeoutPanelSignature=signature;
  panel.classList.remove('hidden');actions.replaceChildren();
  const active=pause&&Date.parse(pause.ends_at)>Date.now();
+ panel.classList.toggle('pause-active',!!active);
  if(active){
   const until=new Date(pause.ends_at).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
   info.textContent='Pausa global ativa'+(pause.requester?' · pedida por '+pause.requester:'')+'. Todos os jogadores retomam automaticamente às '+until+'.';
