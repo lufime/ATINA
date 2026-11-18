@@ -90,14 +90,8 @@ declare
 begin
   v_def := pg_get_functiondef('public.atina_v2_submit_room_answer(uuid,text,text)'::regprocedure);
 
-  v_old := $old$
-  IF NOT FOUND OR v_game.status<>'active' THEN RAISE EXCEPTION 'A partida não tem uma ronda ativa.'; END IF;
-
-  v_now:=clock_timestamp();
-$old$;
+  v_old := 'v_now:=clock_timestamp();';
   v_new := $new$
-  IF NOT FOUND OR v_game.status<>'active' THEN RAISE EXCEPTION 'A partida não tem uma ronda ativa.'; END IF;
-
   IF v_player.team_label IS NOT NULL THEN
     IF (SELECT count(*) FROM public.atina_v2_room_players
          WHERE room_id=p_room_id AND team_label=v_player.team_label) <> 1 THEN
@@ -111,9 +105,8 @@ $old$;
 
   v_now:=clock_timestamp();
 $new$;
-
   if position(v_old in v_def)=0 then
-    raise exception 'Não foi possível localizar a validação da ronda em atina_v2_submit_room_answer.';
+    raise exception 'Não foi possível localizar o início da validação em atina_v2_submit_room_answer.';
   end if;
   v_def := replace(v_def,v_old,v_new);
 
