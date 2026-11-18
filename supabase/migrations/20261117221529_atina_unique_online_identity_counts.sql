@@ -1,4 +1,26 @@
 -- Count unique human identities and bot profiles from one server-side snapshot.
+-- Restore the account link present in the hosted V2 room-player schema.
+-- The original additive migration is missing from the repository history.
+ALTER TABLE public.atina_v2_room_players
+  ADD COLUMN IF NOT EXISTS account_player_id uuid;
+
+DO $migration$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conrelid = 'public.atina_v2_room_players'::regclass
+      AND conname = 'atina_v2_room_players_account_player_id_fkey'
+  ) THEN
+    ALTER TABLE public.atina_v2_room_players
+      ADD CONSTRAINT atina_v2_room_players_account_player_id_fkey
+      FOREIGN KEY (account_player_id)
+      REFERENCES private.atina_players(id)
+      ON DELETE SET NULL;
+  END IF;
+END
+$migration$;
+
 ALTER TABLE private.atina_site_presence
   ADD COLUMN IF NOT EXISTS account_player_id uuid;
 
