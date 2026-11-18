@@ -1603,16 +1603,27 @@ function networkRenderGameState(){
  renderTeamProposal();
  const roomPlayers=networkLobbyData?.players||[];
  const teamTotals={};
- (Array.isArray(st.team_order)?st.team_order:[]).forEach(team=>{teamTotals[team]=0;});
- roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+Number(p.score||0);});
+ const teamOrder=Array.isArray(st.team_order)?st.team_order:[];
+ const authoritativeTeamScores=Array.isArray(st.scores)?st.scores:[];
+ if(teamOrder.length){
+  teamOrder.forEach((team,index)=>{teamTotals[team]=Number(authoritativeTeamScores[index]??0);});
+ }else{
+  roomPlayers.forEach(p=>{if(p.team)teamTotals[p.team]=(teamTotals[p.team]||0)+Number(p.score||0);});
+ }
  $('networkTeamScores').replaceChildren();
  Object.entries(teamTotals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).forEach(([team,total],i)=>{
-  const li=document.createElement('li');li.textContent=(i+1)+'. '+team+' — '+total+' pts';$('networkTeamScores').appendChild(li);
+  const li=document.createElement('li');li.textContent=(i+1)+'. '+team+' — '+total+' pontos';$('networkTeamScores').appendChild(li);
  });
+ if(!Object.keys(teamTotals).length){
+  const li=document.createElement('li');li.textContent='Pontuações das equipas indisponíveis.';$('networkTeamScores').appendChild(li);
+ }
  $('networkScores').replaceChildren();
- roomPlayers.slice().sort((a,b)=>b.score-a.score).forEach((p,i)=>{
-  const li=document.createElement('li');li.textContent=(i+1)+'. '+atinaDisplayPlayerName(p)+' — '+p.score+' pts'+(p.team?' · '+p.team:'');$('networkScores').appendChild(li);
+ roomPlayers.slice().sort((a,b)=>Number(b.score||0)-Number(a.score||0)).forEach((p,i)=>{
+  const li=document.createElement('li');li.textContent=(i+1)+'. '+atinaDisplayPlayerName(p)+' — '+Number(p.score||0)+' pontos'+(p.team?' · '+p.team:'');$('networkScores').appendChild(li);
  });
+ if(!roomPlayers.length){
+  const li=document.createElement('li');li.textContent='Classificação individual indisponível.';$('networkScores').appendChild(li);
+ }
  $('totalScore').textContent='⭐ '+networkMyScore+' pontos';
  $('listenAnswer').classList.toggle('hidden',!locked);
  const showImage=atinaSetChallengeVisual(challengeIndex);

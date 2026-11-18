@@ -408,3 +408,12 @@ test('room ranking initializes every server-declared team, including zero scores
  assert.ok(html.includes("(Array.isArray(st.team_order)?st.team_order:[]).forEach(team=>{teamTotals[team]=0;});"));
  assert.ok(html.includes("Number(p.score||0)"));
 });
+
+ 
+test('room team ranking uses authoritative server team scores and never renders empty lists', () => {
+ const html=fs.readFileSync('index.html','utf8');
+ assert.ok(html.includes("const authoritativeTeamScores=Array.isArray(st.scores)?st.scores:[];"));
+ assert.ok(html.includes("teamTotals[team]=Number(authoritativeTeamScores[index]??0);"));
+ assert.ok(html.includes("Pontuações das equipas indisponíveis."));
+ assert.ok(html.includes("Classificação individual indisponível."));
+});
