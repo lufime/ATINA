@@ -219,6 +219,9 @@ as $function$
    limit least(greatest(coalesce(p_limit,50),1),100);
 $function$;
 
+-- Ensure pg_cron exists in clean local replays as it does in the hosted project.
+create extension if not exists pg_cron;
+
 select cron.schedule(
   'atina-v2-bot-simulated-games',
   '* * * * *',
