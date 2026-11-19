@@ -349,6 +349,27 @@ test('manual next-clue button reports server errors and becomes usable again', a
 });
 
 
+test('final clue reveal keeps the terminal button label after wrapper cleanup', async () => {
+  const { context, element } = harness();
+  context.networkGameActive = true;
+  context.networkRoom = { room_id: 'room-1', token: 'token-1' };
+  context.networkLobbyData = { team: 'Equipa A' };
+  context.networkGameState = {
+    mode: 'challenges', pos: 0, challenge_id: 10,
+    active_team: 'Equipa A', revealed: 4, total_clues: 5, locked: false
+  };
+  context.networkHostReveal = async () => {
+    context.networkGameState = { ...context.networkGameState, revealed: 5 };
+    element('nextClue').textContent = 'Todas as pistas reveladas';
+    element('nextClue').disabled = true;
+  };
+  vm.runInContext(source, context);
+  await context.networkHostReveal();
+  assert.equal(element('nextClue').textContent, 'Todas as pistas reveladas');
+  assert.equal(element('nextClue').disabled, true);
+});
+
+
 test('room mode does not start the solo first-clue countdown', () => {
   const html = fs.readFileSync('index.html', 'utf8');
   const line = html.split('\n').find(value => value.includes('function atinaScheduleAutoReveal()'));
