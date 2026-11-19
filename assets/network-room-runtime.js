@@ -110,7 +110,7 @@
     const paused = !!(state.pause && Date.parse(state.pause.ends_at) > Date.now());
     const preparing = Number(state.prepare_until) > Date.now() &&
       Number(state.revealed || 0) === 0;
-    const unavailable = !networkGameActive || !active || paused || preparing;
+    const unavailable = !networkGameActive || !active || paused;
     const total = Number(state.total_clues) ||
       (Number(state.queue?.[state.pos]) >= 0 &&
        typeof isImageChallenge === 'function' &&
@@ -120,12 +120,14 @@
       const control = $(id);
       if (control) control.disabled = !!disabled;
     };
+    // A preparação é apenas visual: a equipa da vez pode revelar a primeira pista.
+    // Resposta, PASSO e avanço continuam bloqueados até terminar a preparação.
     setDisabled('nextClue', unavailable || locked || revealed >= total);
-    setDisabled('answer', unavailable || locked || networkAnsweredThisChallenge);
-    setDisabled('submit', unavailable || locked || networkAnsweredThisChallenge);
-    setDisabled('voice', unavailable || locked);
-    setDisabled('pass', unavailable || locked);
-    setDisabled('continue', unavailable || !locked);
+    setDisabled('answer', unavailable || preparing || locked || networkAnsweredThisChallenge);
+    setDisabled('submit', unavailable || preparing || locked || networkAnsweredThisChallenge);
+    setDisabled('voice', unavailable || preparing || locked);
+    setDisabled('pass', unavailable || preparing || locked);
+    setDisabled('continue', unavailable || preparing || !locked);
   }
 
   networkSubmitAnswer = async function networkSubmitAnswerV2() {
@@ -195,10 +197,6 @@
     runtime.renderedTurnKey = key;
     syncTurnControls();
 
-    const preparing = Number(state.prepare_until) > Date.now() &&
-      Number(state.revealed || 0) === 0;
-    if (preparing) setCountdownControlsDisabled(true);
-
     return result;
   };
 
@@ -207,11 +205,7 @@
   // O bloqueio evita duplo clique e o finally recupera sempre o controlo visual.
   networkHostReveal = async function networkHostRevealV2() {
     const button = $('nextClue');
-    if (!arguments[0]?.automatic && Number(networkGameState?.prepare_until) > Date.now() &&
-        Number(networkGameState?.revealed || 0) === 0) {
-      syncTurnControls();
-      return;
-    }
+
     if (runtime.revealInFlight) {
       networkMessage('feedback', 'A pista já está a ser carregada. Aguarda um instante.');
       return;
