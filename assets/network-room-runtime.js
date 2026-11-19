@@ -243,6 +243,7 @@
         ? 'A partida começa em ' + left + ' segundos'
         : 'A iniciar o desafio…';
       // O countdown não bloqueia a primeira pista; os restantes controlos mantêm-se fechados.
+      syncTurnControls();
 
       if (
         left === 0 &&
