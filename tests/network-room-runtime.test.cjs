@@ -145,7 +145,15 @@ test('a new team turn is accepted even if a concurrent response has an older rev
 
   assert.equal(context.networkGameState.active_team, 'Equipa B');
   assert.equal(context.networkAnsweredThisChallenge, false);
-  assert.equal(context.networkLastRevision, 11);
+  assert.equal(context.networkLastRevision, 12, 'accepting the team switch must not lower the revision floor');
+
+  // An older duplicate state must not overwrite the accepted team turn.
+  context.networkReceiveState({
+    pos: 1, challenge_id: 10, active_team: 'Equipa B',
+    revision: 11, revealed: 1, mode: 'challenges'
+  });
+  assert.equal(context.networkGameState.active_team, 'Equipa B');
+  assert.equal(context.networkLastRevision, 12);
 });
 
 test('passing a challenge is accepted even when the server revision is unchanged', () => {
