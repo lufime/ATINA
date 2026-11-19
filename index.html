@@ -1535,6 +1535,15 @@ function networkRenderGameState(){
   networkRenderedChallengeKey=challengeKey;
   const solutionPanel=$('solutionImage');
   if(solutionPanel){solutionPanel.replaceChildren();solutionPanel.classList.add('hidden');delete solutionPanel.dataset.solutionKey;}
+  atinaSetChallengeVisual(challengeIndex);
+  if(isImageChallenge(challengeIndex)){
+   $('mysteryImage').src=atinaFreeSolutionSvg(g[3],g[0]);
+   $('mysteryImage').alt='Imagem do desafio da categoria '+g[0]+', parcialmente oculta.';
+   $('veil').style.setProperty('--veil','.35');
+   $('mysteryImage').style.setProperty('--blur','24px');
+   renderPuzzle(1);
+   $('revealLabel').textContent='Puzzle quase todo escondido';
+  }
   $('voiceTranscript')?.classList.add('hidden');
   if($('voiceTranscriptText'))$('voiceTranscriptText').textContent='';
   $('feedback').textContent='';
@@ -1563,6 +1572,15 @@ function networkRenderGameState(){
   clue.className='clue'+(visible?' clue-revealed':' hidden-clue');
   clue.textContent=visible?'Pista '+(i+1)+': '+String(clueSource[i]||''):'Pista '+(i+1)+': ainda escondida';
   $('clues').appendChild(clue);
+ }
+ if(isImageChallenge(challengeIndex)){
+  const imageStep=locked?6:Math.max(1,Math.min(6,revealed||1));
+  renderPuzzle(imageStep);
+  const blur=locked||revealed===6?0:Math.max(4,24-(revealed*4));
+  $('veil').style.setProperty('--veil',locked||revealed===6?'0':revealed===0?'.35':'.12');
+  $('mysteryImage').style.setProperty('--blur',blur+'px');
+  $('mysteryImage').alt='Imagem do desafio da categoria '+g[0]+(locked||revealed===6?', totalmente revelada.':', parcialmente oculta.');
+  $('revealLabel').textContent=locked||revealed===6?'Imagem totalmente revelada':('Puzzle: '+Math.round(imageStep*12/6)+' de 12 peças · desfocado');
  }
  if(revealed>0){
   const spokenKey=String(networkRoom?.room_id||'')+':'+String(st.challenge_id??challengeIndex)+':'+String(st.pos)+':'+String(revealed);
