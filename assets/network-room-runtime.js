@@ -63,6 +63,7 @@
       previous.challenge_id === state.challenge_id
     );
     const incomingRevision = Number(state.revision || 0);
+    const revisionFloorBeforeReceive = Number(networkLastRevision || 0);
     const teamChanged = !!(
       previous &&
       sameChallenge &&
@@ -96,7 +97,15 @@
       }
     }
 
-    return originalReceiveState(state);
+    const result = originalReceiveState(state);
+
+    // Uma revisão atrasada pode representar uma mudança de equipa legítima,
+    // mas não deve baixar o marcador de revisão e permitir estados antigos
+    // subsequentes. Mantém o maior revision já observada.
+    if (teamChanged && incomingRevision < revisionFloorBeforeReceive) {
+      networkLastRevision = revisionFloorBeforeReceive;
+    }
+    return result;
   };
 
 
