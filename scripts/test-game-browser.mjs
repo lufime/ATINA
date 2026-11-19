@@ -109,25 +109,30 @@ try {
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
 
-  // Countdown de sala: os controlos permanecem bloqueados e a revelação manual
-  // não pode chamar a RPC antes de a contagem terminar.
+  // Countdown da sala: permitir a primeira pista manualmente, mantendo as outras ações bloqueadas.
   await page.evaluate(async () => {
     networkRoom = {room_id:'room-test',token:'t'.repeat(64)};
     networkGameActive = true;
+    games[1001] = [null, null, ['Pista válida para o teste de preparação']];
     networkGameState = {
-      mode:'challenges',pos:0,challenge_id:1001,active_team:'Equipa A',
-      prepare_until:Date.now()+15000,revealed:0,locked:false
+      mode:'challenges',pos:0,queue:[1001],challenge_id:1001,active_team:'Equipa A',
+      prepare_until:Date.now()+15000,revealed:0,locked:false,total_clues:5
     };
     networkLobbyData = {team:'Equipa A',player_id:'player-a',players:[{id:'player-a',team:'Equipa A'}]};
+    // Este cenário não simula o RPC de estado da sala: evitar que a resposta mock
+    // (null) sobrescreva o estado de teste após a revelação manual.
+    networkRefreshRoom = async () => {};
     networkDrawClock();
     await networkHostReveal();
   });
-  for (const id of ['nextClue','answer','submit','voice','pass','continue']) {
+  assert.equal(await page.locator('#nextClue').isDisabled(), false,
+    'A primeira pista deve poder ser revelada durante a preparação.');
+  for (const id of ['answer','submit','voice','pass','continue']) {
     assert.equal(await page.locator('#'+id).isDisabled(), true,
       id + ' deve ficar bloqueado durante a contagem da sala.');
   }
-  assert.equal(await page.evaluate(() => window.__rpcCalls.some(call => call.name === 'atina_v2_reveal_room_clue')), false,
-    'A revelação da primeira pista não pode ser enviada antes do fim do countdown.');
+  assert.equal(await page.evaluate(() => window.__rpcCalls.some(call => call.name === 'atina_v2_reveal_room_clue')), true,
+    'A revelação manual da primeira pista deve poder ser enviada durante o countdown.');
   await page.evaluate(() => {
     networkGameActive = false;
     networkGameState = null;
