@@ -221,7 +221,16 @@
       networkMessage('feedback', error?.message || 'Não foi possível revelar a próxima pista. Tenta novamente.');
     } finally {
       runtime.revealInFlight = false;
-      if (button) button.textContent = 'Revelar próxima pista';
+      if (button) {
+        const state = networkGameState;
+        const total = Number(state?.total_clues) ||
+          (Number(state?.queue?.[state?.pos]) >= 0 &&
+           typeof isImageChallenge === 'function' &&
+           isImageChallenge(state.queue[state.pos]) ? 6 : 5);
+        button.textContent = state?.locked || Number(state?.revealed || 0) >= total
+          ? 'Todas as pistas reveladas'
+          : 'Revelar próxima pista';
+      }
       syncTurnControls();
     }
   };
