@@ -184,7 +184,7 @@ test('polling render preserves an unfinished answer within the same turn', () =>
   assert.equal(element('answer').value, 'resposta ainda a escrever');
 });
 
-test('manual clue reveal is blocked until the server countdown ends', async () => {
+test('manual clue reveal is allowed during preparation countdown', async () => {
   const { context } = harness();
   const source = fs.readFileSync('assets/network-room-runtime.js', 'utf8');
   let calls = 0;
@@ -198,19 +198,23 @@ test('manual clue reveal is blocked until the server countdown ends', async () =
   vm.runInContext(source, context);
 
   await context.networkHostReveal();
-  assert.equal(calls, 0);
+  assert.equal(calls, 1);
 });
 
 
-test('countdown locks every game action until it expires', () => {
+test('countdown allows revealing the next clue but locks other actions', () => {
   const { context, element } = harness();
   vm.runInContext(source, context);
   context.networkGameActive = true;
+  context.networkLobbyData = { team: 'Equipa A' };
   context.networkGameState = {
-    mode: 'challenges', prepare_until: Date.now() + 10000, revealed: 0
+    mode: 'challenges', active_team: 'Equipa A',
+    prepare_until: Date.now() + 10000, revealed: 0,
+    total_clues: 5, locked: false
   };
-  context.networkDrawClock();
-  for (const id of ['nextClue', 'answer', 'submit', 'voice', 'pass', 'continue']) {
+  context.networkRenderGameState();
+  assert.equal(element('nextClue').disabled, false, 'nextClue should be enabled during preparation');
+  for (const id of ['answer', 'submit', 'voice', 'pass', 'continue']) {
     assert.equal(element(id).disabled, true, id + ' must stay disabled during preparation');
   }
 });
