@@ -469,3 +469,15 @@ test('room final solution uses the same answer renderer and solution description
  assert.ok(html.includes("String(st.solution_description||'').trim()||atinaBuildSolutionVisualDescription(g)"));
  assert.ok(html.includes("hasAnswerInFeedback=/resposta\\s*:/i"));
 });
+
+
+test('room countdown formats durations beyond one minute correctly', () => {
+  const { context } = harness();
+  vm.runInContext(source, context);
+  const format = context.ATINARoomRuntime.formatCountdown;
+  assert.equal(format(0), '00:00');
+  assert.equal(format(59), '00:59');
+  assert.equal(format(60), '01:00');
+  assert.equal(format(125), '02:05');
+  assert.equal(format(3600), '60:00');
+});
