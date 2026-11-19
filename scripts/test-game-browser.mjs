@@ -114,7 +114,7 @@ try {
     networkRoom = {room_id:'room-test',token:'t'.repeat(64)};
     networkGameActive = true;
     networkGameState = {
-      mode:'challenges',pos:0,challenge_id:1001,active_team:'Equipa A',
+      mode:'challenges',pos:0,queue:[1001],challenge_id:1001,active_team:'Equipa A',
       prepare_until:Date.now()+15000,revealed:0,locked:false,total_clues:5
     };
     networkLobbyData = {team:'Equipa A',player_id:'player-a',players:[{id:'player-a',team:'Equipa A'}]};
