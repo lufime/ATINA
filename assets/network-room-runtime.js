@@ -27,6 +27,13 @@
     return Number(index) % 2 === 0 ? 'Equipa A' : 'Equipa B';
   }
 
+  function formatCountdown(seconds) {
+    const total = Math.max(0, Math.ceil(Number(seconds) || 0));
+    const minutes = Math.floor(total / 60);
+    const remainingSeconds = total % 60;
+    return String(minutes).padStart(2, '0') + ':' + String(remainingSeconds).padStart(2, '0');
+  }
+
   function turnKey(state) {
     if (!state) return '';
     return [
@@ -255,7 +262,7 @@
     if (prepareUntil && Number(state.revealed || 0) === 0) {
       const left = Math.max(0, Math.ceil((prepareUntil - Date.now()) / 1000));
       $('timerDisplay').innerHTML =
-        'PREPARA-TE<br><span>00:' + String(left).padStart(2, '0') + '</span>';
+        'PREPARA-TE<br><span>' + formatCountdown(left) + '</span>';
       $('timerDisplay').classList.toggle('urgent', left <= 3);
       $('clueProgress').textContent = left > 0
         ? 'A partida começa em ' + left + ' segundos'
@@ -354,5 +361,5 @@
   if (networkRoom) networkStartPolling();
   if (networkGameActive) ensureNetworkClock();
 
-  window.ATINARoomRuntime = Object.freeze({ turnKey, teamForIndex, reset, syncTurnControls });
+  window.ATINARoomRuntime = Object.freeze({ turnKey, teamForIndex, formatCountdown, reset, syncTurnControls });
 })();
