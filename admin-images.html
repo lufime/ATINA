@@ -245,7 +245,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     </details>
     <div class="challenge-sort-row"><label for="challengeSort">Ordenar por</label><select id="challengeSort"><option value="id">ID do desafio</option><option value="newest">Data mais recente</option><option value="largest">Maior tamanho</option><option value="smallest">Menor tamanho</option></select></div>
     <div class="challenge-actions"><button id="newChallenge" type="button">Criar novo desafio</button><button id="reloadChallenges" class="secondary" type="button">Atualizar lista</button></div>
-    <div class="bulk-tools" id="bulkTools"><div class="bulk-selection"><button type="button" class="secondary" id="selectVisibleChallenges">Selecionar página</button><button type="button" class="secondary" id="selectFilteredChallenges">Selecionar todos os filtrados</button><button type="button" class="secondary" id="clearChallengeSelection">Limpar seleção</button></div><p class="note" id="bulkSelectionCount" aria-live="polite">0 desafios selecionados</p><div class="challenge-actions"><button type="button" id="bulkActivateChallenges">Ativar selecionados</button><button type="button" class="secondary" id="bulkDeactivateChallenges">Desativar selecionados</button></div></div>
+    <div class="bulk-tools" id="bulkTools"><div class="bulk-selection"><button type="button" class="secondary" id="selectVisibleChallenges">Selecionar página</button><button type="button" class="secondary" id="selectFilteredChallenges">Selecionar todos os filtrados</button><button type="button" class="secondary" id="clearChallengeSelection">Limpar seleção</button></div><p class="note" id="bulkSelectionCount" aria-live="polite">0 desafios selecionados</p><div class="challenge-actions"><button type="button" id="bulkActivateChallenges">Ativar selecionados</button><button type="button" class="secondary" id="bulkDeactivateChallenges">Desativar selecionados</button><button type="button" class="danger" id="bulkDeleteChallenges">Apagar selecionados</button></div></div>
     <p class="note" id="challengeCount">A carregar desafios…</p>
     <div id="challengeList"></div>
     <h2 class="subsection-title">Histórico recente neste navegador</h2><p class="note">Regista edições e ativações de desafios neste navegador. Não altera nem substitui o histórico da base de dados.</p><div id="adminHistory" class="hint">Ainda sem operações registadas.</div>
@@ -662,7 +662,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       const rights=imageRightsClass(asset),rightsLabel=rights==="atina"?"ATINA":rights==="open"?"Licença aberta indicada":rights==="restricted"?"Restrita / não autorizada":"Por confirmar";
       const origin=imageOriginClass(asset),originLabel=origin==="ai"?"Gerada por IA":origin==="own"?"Imagem própria":origin==="other"?"Outra origem":"Não indicada";
       const mime=asset?.mime_type||"—",quality=asset?x._imageQuality==="unknown"?"Não determinada":x._imageQuality:"—";
-      return '<article class="challenge-item"><label class="bulk-item-select"><input type="checkbox" data-select-challenge="'+esc(id)+'" '+(selectedChallengeIds.has(id)?"checked":"")+'><span>Selecionar</span></label><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-meta">Imagem: '+esc(imageStatus)+' · Autor: '+esc(author)+' · Direitos: '+esc(rightsLabel)+' · Origem: '+esc(originLabel)+' · Formato: '+esc(mime)+' · Qualidade: '+esc(quality)+' · Tamanho: '+esc(size)+'</div><div class="challenge-actions"><button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!active)+'">'+(active?"Apagar / desativar":"Reativar")+'</button></div></article>';
+      return '<article class="challenge-item"><label class="bulk-item-select"><input type="checkbox" data-select-challenge="'+esc(id)+'" '+(selectedChallengeIds.has(id)?"checked":"")+'><span>Selecionar</span></label><strong>#'+esc(x.challenge_id)+' · '+esc(x.emoji)+' '+esc(x.answer)+'</strong><div class="challenge-meta">'+esc(x.category)+' · '+esc(({easy:"Fácil",medium:"Média",hard:"Difícil"})[x.difficulty]||x.difficulty)+' · '+(active?"Ativo":"Inativo")+' · '+(x.clues||[]).length+' pistas</div><div class="challenge-meta">Imagem: '+esc(imageStatus)+' · Autor: '+esc(author)+' · Direitos: '+esc(rightsLabel)+' · Origem: '+esc(originLabel)+' · Formato: '+esc(mime)+' · Qualidade: '+esc(quality)+' · Tamanho: '+esc(size)+'</div><div class="challenge-actions"'<button type="button" data-edit-challenge="'+esc(x.challenge_id)+'">Editar</button><button type="button" class="secondary" data-toggle-challenge="'+esc(x.challenge_id)+'" data-active="'+(!active)+'">'+(active?"Desativar":"Reativar")+'</button><button type="button" class="danger" data-delete-challenge="'+esc(x.challenge_id)+'">Apagar</button></div></article>'utton></div></article>';
     }).join("")||'<p>Não foram encontrados desafios.</p>';
     updateBulkSelection(rows);
   }
@@ -722,8 +722,32 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   }
   $("bulkActivateChallenges").addEventListener("click",()=>bulkSetChallengeState(true));
   $("bulkDeactivateChallenges").addEventListener("click",()=>bulkSetChallengeState(false));
+  $("bulkDeleteChallenges").addEventListener("click",async()=>{
+    const ids=Array.from(selectedChallengeIds).map(Number).filter(Number.isSafeInteger);
+    if(!ids.length)return;
+    if(!confirm("Apagar definitivamente "+ids.length+" desafios selecionados? Esta ação não pode ser anulada."))return;
+    $("bulkDeleteChallenges").disabled=true;
+    try{
+      const result=await challengeRequest({action:"challenge_delete_many",challenge_ids:ids});
+      result.deleted.forEach(x=>selectedChallengeIds.delete(String(x.challenge_id)));
+      recordAdminAction("Apagou desafios em massa",result.deleted_count+" apagados"+(result.failed_count?", "+result.failed_count+" falharam":""));
+      await loadChallenges();
+      if(result.failed_count)alert(result.deleted_count+" apagados. Falhas: "+result.failed.map(x=>"#"+x.challenge_id+": "+x.error).join("\n"));
+      else alert(result.deleted_count+" desafios apagados.");
+    }catch(error){alert("Não foi possível apagar os desafios: "+error.message);}
+    finally{$("bulkDeleteChallenges").disabled=false;updateBulkSelection();}
+  });
   $("challengeList").addEventListener("click",async event=>{
     const edit=event.target.closest("[data-edit-challenge]"); if(edit){editChallenge(edit.dataset.editChallenge);return;}
+    const del=event.target.closest("[data-delete-challenge]");
+    if(del){
+      const id=Number(del.dataset.deleteChallenge),item=challengeCache.find(v=>v.challenge_id===id);
+      if(!confirm("Apagar definitivamente o desafio #"+id+" — "+(item?.answer||"")+"? Esta ação não pode ser anulada."))return;
+      del.disabled=true;
+      try{const result=await challengeRequest({action:"challenge_delete",challenge_id:id});selectedChallengeIds.delete(String(id));recordAdminAction("Apagou desafio","#"+id+" · "+(item?.answer||""));await loadChallenges();if(result.storage_warning)alert("Desafio apagado, mas houve um problema ao apagar ficheiros: "+result.storage_warning);}
+      catch(error){alert("Não foi possível apagar: "+error.message);}finally{del.disabled=false;}
+      return;
+    }
     const toggle=event.target.closest("[data-toggle-challenge]"); if(!toggle)return;
     const id=Number(toggle.dataset.toggleChallenge), active=toggle.dataset.active==="true";
     const x=challengeCache.find(v=>v.challenge_id===id);
