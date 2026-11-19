@@ -1599,7 +1599,7 @@ function networkRenderGameState(){
    networkLastSpokenClueState=spokenEndKey;
    atinaSpeakClues(clueSource.slice(0,total));
   }
-  const isCorrect=/^(?:Certo!|Resposta certa!)/i.test(String(st.feedback||''));
+  const isCorrect=/^(?:Certo!|Resposta certa!|Resposta aceite e pontuação atribuída à equipa!|A tua equipa já acertou neste desafio\.)/i.test(String(st.feedback||''));
   const isWrong=/incorret|tempo|pass/i.test(String(st.feedback||''));
   $('feedback').classList.add(isCorrect?'is-correct':isWrong?'is-wrong':'is-info');
   const card=$('game').querySelector('.card');
