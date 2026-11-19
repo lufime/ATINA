@@ -96,7 +96,16 @@
       }
     }
 
-    return originalReceiveState(state);
+    const previousRevision = Number(networkLastRevision || 0);
+    const result = originalReceiveState(state);
+
+    // Uma revisão atrasada pode representar uma mudança de equipa legítima,
+    // mas não deve baixar o marcador de revisão e permitir estados antigos
+    // subsequentes. Mantém o maior revision já observada.
+    if (teamChanged && incomingRevision < previousRevision) {
+      networkLastRevision = previousRevision;
+    }
+    return result;
   };
 
 
