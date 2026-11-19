@@ -38,7 +38,7 @@ begin
   insert into private.atina_performance_events
     (actor_id,nickname,source,source_id,challenge_position,challenge_id,difficulty,outcome,response_ms,created_at)
   values(v_player_id,v_nickname,'local',new.session_id,new.challenge_position,
-    new.challenge_id,new.difficulty,new.outcome,new.response_ms,new.created_at)
+    new.challenge_id,new.difficulty,new.outcome,null,new.created_at)
   on conflict(source,source_id,actor_id,challenge_position) do update
     set outcome=excluded.outcome,difficulty=excluded.difficulty,
         response_ms=coalesce(excluded.response_ms,private.atina_performance_events.response_ms);
