@@ -64,9 +64,12 @@ BEGIN
         END,
         account_player_id = coalesce(EXCLUDED.account_player_id, private.atina_site_presence.account_player_id);
 
+  DELETE FROM private.atina_site_presence
+   WHERE last_seen_at < v_now - interval '30 days';
+
   RETURN true;
 END;
-$$;
+$;
 
 CREATE OR REPLACE FUNCTION public.atina_player_online_time_stats()
 RETURNS jsonb
@@ -78,15 +81,15 @@ AS $$
   WITH grouped AS (
     SELECT
       coalesce('account:' || account_player_id::text, 'session:' || session_id::text) AS identity_key,
-      coalesce(nullif(btrim(nickname), ''), 'Visitante') AS nickname,
+      coalesce(max(nullif(btrim(nickname), '')), 'Visitante') AS nickname,
       max(last_seen_at) AS last_seen_at,
       sum(online_seconds_total)::bigint AS total_seconds,
-      sum(CASE WHEN last_seen_at >= statement_timestamp() - interval '60 seconds'
+      sum(CASE WHEN last_seen_at >= statement_timestamp() - interval '120 seconds'
         THEN greatest(0, floor(extract(epoch FROM (statement_timestamp() - coalesce(session_started_at, last_seen_at))))::bigint)
         ELSE 0 END)::bigint AS current_seconds,
       bool_or(last_seen_at >= statement_timestamp() - interval '60 seconds') AS online
     FROM private.atina_site_presence
-    GROUP BY identity_key, nickname
+    GROUP BY identity_key
   )
   SELECT coalesce(jsonb_agg(jsonb_build_object(
     'nickname', nickname,
