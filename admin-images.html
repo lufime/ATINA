@@ -137,7 +137,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 .challenge-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.challenge-filter-grid label{margin:8px 0 5px}
 @media(max-width:600px){.challenge-filter-grid{grid-template-columns:1fr;gap:5px}.challenge-filter-grid label{margin:8px 0 4px}}
 
-.challenge-basic-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.challenge-search-field{grid-column:1/-1}
+.challenge-basic-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.challenge-category-filter{grid-column:1/-1}.challenge-category-filter select{width:100%;min-width:0}.challenge-search-field{grid-column:1/-1}
 .challenge-advanced-filters{margin:10px 0 8px;border:1px solid #36516e;border-radius:12px;background:#10253a;overflow:hidden}
 .challenge-advanced-filters>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;color:var(--text);font-weight:800}
 .challenge-advanced-filters>summary::-webkit-details-marker{display:none}.challenge-advanced-filters>summary:after{content:"＋";color:var(--gold);font-size:18px}.challenge-advanced-filters[open]>summary:after{content:"−"}
@@ -228,7 +229,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <div class="challenge-search-field"><label for="challengeSearch">Pesquisar por ID, solução ou categoria</label><input id="challengeSearch" type="search" placeholder="Pesquisar desafios…"></div>
       <div><label for="challengeActiveFilter">Estado do desafio</label><select id="challengeActiveFilter"><option value="">Todos</option><option value="active">Ativados</option><option value="inactive">Desativados</option></select></div>
       <div><label for="challengeDifficultyFilter">Dificuldade</label><select id="challengeDifficultyFilter"><option value="">Todas</option><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div>
-      <div><label for="challengeCategoryFilter">Categoria</label><select id="challengeCategoryFilter"><option value="">Todas as categorias</option></select></div>
+      <div class="challenge-category-filter"><label for="challengeCategoryFilter">Categoria</label><select id="challengeCategoryFilter"><option value="">Todas as categorias</option></select></div>
     </div>
     <details class="challenge-advanced-filters" id="challengeAdvancedFilters">
       <summary><span>Filtros avançados</span><span class="challenge-advanced-hint">Imagem, autor, direitos, origem, formato e qualidade</span></summary>
