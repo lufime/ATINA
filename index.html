@@ -4552,7 +4552,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 /* Garantir que o toque no botão Partida rápida chega ao fluxo de matchmaking. */
 document.addEventListener('click',function(event){
  const button=event.target&&event.target.closest('#quickMatchStart');
- if(!button)return; event.preventDefault();event.stopPropagation();
+ if(!button)return; event.preventDefault();event.stopImmediatePropagation();
  if(typeof quickMatchStart==='function')quickMatchStart();
  else {const status=document.getElementById('quickMatchStatus');if(status)status.textContent='A partida rápida não carregou corretamente. Atualiza a página e tenta novamente.';}
 },true);
