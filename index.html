@@ -4531,3 +4531,21 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 
 <script src="./assets/network-room-runtime.js?v=20261116-13"></script>
 </body></html>
+
+/* Home mobile layout refinement */
+.home-page-nav{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:5px;margin:10px 0 13px;border-radius:14px;top:4px}
+.home-nav-btn{min-height:42px;padding:7px 3px;font-size:11px;line-height:1.15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:420px){.home-nav-btn{font-size:10px;min-height:40px;padding:6px 2px}.home-page-nav{gap:4px}}
+#home .home-welcome{margin:0 0 12px;padding:15px 14px;border-radius:16px}
+#home .home-welcome h2{font-size:22px;line-height:1.15;margin:7px 0}
+#home .home-welcome p{font-size:13px;line-height:1.4;margin:0 0 10px}
+#home .home-welcome>.btn{min-height:44px!important;width:100%!important;padding:10px!important;font-size:14px!important;border-radius:12px!important}
+#atinaUpdateNotice{margin:10px 0!important;padding:11px 13px!important;border-radius:14px!important;font-size:13px!important}
+#home .atina-fast-play{margin:0 0 12px!important;padding:11px!important;border-radius:16px}
+#home .atina-fast-play-title{margin-bottom:7px}
+#home .atina-fast-play-grid{gap:7px}
+#home .atina-fast-play-grid .btn{min-height:46px!important;border-radius:11px!important}
+#home .daily-mission{margin:0 0 12px!important}
+#atinaSocialShare{margin:0 0 12px!important;padding:14px!important;border-radius:16px!important}
+#home .card,#home .home-block{margin-bottom:12px}
+@media(max-width:380px){#home .home-welcome{padding:13px!important}#home .home-welcome h2{font-size:20px}#atinaUpdateNotice{font-size:12px!important}}
