@@ -242,7 +242,7 @@
       $('clueProgress').textContent = left > 0
         ? 'A partida começa em ' + left + ' segundos'
         : 'A iniciar o desafio…';
-      setCountdownControlsDisabled(true);
+      // O countdown não bloqueia a primeira pista; os restantes controlos mantêm-se fechados.
 
       if (
         left === 0 &&
