@@ -4806,6 +4806,29 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 
 /* Ensure floating version remains above game cards and overlays */
 .atina-beta-version{z-index:2147483647!important;isolation:isolate!important}
+
+/* Friends page: compact mobile layout, prioritizing the actual social controls */
+@media(max-width:600px){
+ #atinaFriendsPage .home-welcome{padding:12px 13px!important;margin:0 0 8px!important;min-height:0!important;border-radius:14px!important}
+ #atinaFriendsPage .home-welcome h2{font-size:20px!important;line-height:1.2!important;margin:5px 0 7px!important}
+ #atinaFriendsPage .home-welcome p{font-size:13px!important;line-height:1.4!important;margin:0!important}
+ #atinaFriendsPage .home-welcome-kicker{font-size:10px!important;letter-spacing:.12em!important}
+ #atinaSocialPanel{margin:0 0 8px!important;padding:11px!important;border-radius:14px!important}
+ #atinaSocialPanel h3{font-size:17px!important;margin:0 0 6px!important}
+ #atinaSocialPanel>p{margin:0 0 7px!important;font-size:12px!important;line-height:1.35!important}
+ #atinaSocialPanel .section{margin:8px 0 5px!important;font-size:13px!important}
+ #atinaSocialPanel .answer{min-height:46px!important;padding:10px 11px!important;margin:5px 0 7px!important;font-size:15px!important}
+ #atinaSocialPanel>#atinaSocialSend{min-height:46px!important;padding:10px!important;margin-bottom:8px!important}
+ #atinaSocialPanel .atina-social-columns{gap:5px!important}
+ #atinaSocialPanel .atina-social-columns details,#atinaSocialPanel .atina-social-game{padding:8px 10px!important;border-radius:10px!important}
+ #atinaSocialPanel .atina-social-columns details summary,#atinaSocialPanel .atina-social-game summary{font-size:14px!important;line-height:1.25!important}
+ #atinaSocialPanel #atinaSocialFriends{margin:7px 0 2px!important}
+ #atinaSocialPanel #atinaSocialFriends .atina-friend-row{padding:6px 7px!important;margin:4px 0!important}
+ #atinaSocialPanel #atinaSocialRefresh{min-height:44px!important;margin-top:8px!important}
+ #atinaSocialShare{margin:0!important;padding:11px!important;border-radius:13px!important}
+ #atinaSocialShare h3,#atinaSocialShare h2{margin:3px 0 6px!important;font-size:16px!important}
+ #atinaSocialShare p{margin:5px 0 8px!important;font-size:12px!important}
+}
 </style>
 <script src="./assets/atina-notifications.js?v=20261120-1" defer></script>
 <script src="./assets/atina-push.js?v=20261120-1" defer></script>
