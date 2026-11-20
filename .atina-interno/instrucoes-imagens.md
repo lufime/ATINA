@@ -143,3 +143,17 @@ Estas regras aplicam-se a todos os desafios, perguntas, enunciados, respostas, t
 - Se houver dúvidas sobre copyright ou propriedade intelectual, reescrever o desafio de raiz, preservando apenas o facto ou conceito necessário.
 - Quando for solicitado um controlo de desafios existentes, identificar duplicados, formulações muito semelhantes ou conteúdo potencialmente copiado e propor versões originais. Não alterar, apagar ou publicar desafios sem autorização explícita.
 - Objetivo: todos os desafios devem ter redação, identidade e apresentação próprias do ATINA, reduzindo riscos de violação de direitos de autor ou propriedade intelectual.
+
+## 17. Avisos, alertas e respostas — estilo visual
+Aplicar a todos os avisos, alertas, respostas, notificações, confirmações, inscrições, pagamentos, sessões, estados e mensagens de erro da plataforma.
+- Todas as mensagens devem ser curtas, claras, imediatas e fáceis de compreender.
+- Apresentar o texto principal em **negrito**.
+- Utilizar caixas visuais com estilo de interface de jogo (game UI), com contraste forte, contorno/borda e destaque suficiente para leitura rápida.
+- **Verde:** mensagens positivas, sucesso, ações concluídas, confirmações, aprovações e resultados favoráveis.
+- **Vermelho:** mensagens negativas, erros, falhas, rejeições, ações não concluídas e problemas que exigem atenção.
+- **Amarelo:** mensagens neutras, informativas, avisos, lembretes, instruções e estados sem sucesso ou falha.
+- Usar ícones adequados ao tipo de mensagem, sem depender apenas da cor para transmitir significado.
+- Garantir contraste, legibilidade e consistência em telemóveis, computadores e ecrãs grandes.
+- Manter o mesmo padrão visual e semântico em toda a plataforma; não usar cores contraditórias para o mesmo tipo de estado.
+- Classificação padrão: sucesso/positivo = verde; erro/negativo = vermelho; informação/aviso/neutro = amarelo.
+- Esta regra define o padrão visual e de apresentação; não altera por si só a lógica, permissões ou estado funcional das ações.
