@@ -53,6 +53,9 @@ BEGIN
 
   SELECT * INTO v_existing FROM private.atina_v2_matchmaking_queue WHERE ticket_hash=v_hash;
   IF FOUND THEN
+    IF v_existing.account_player_id IS DISTINCT FROM v_account.player_id THEN
+      RAISE EXCEPTION 'Este pedido não pertence à tua sessão.';
+    END IF;
     RETURN jsonb_build_object('status',CASE WHEN v_existing.status='matched' THEN 'matched' ELSE 'waiting' END,
       'room_id',CASE WHEN v_existing.status='matched' THEN v_existing.room_id ELSE NULL END,
       'token',CASE WHEN v_existing.status='matched' THEN v_existing.token ELSE NULL END);
