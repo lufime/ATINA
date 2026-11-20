@@ -1192,6 +1192,34 @@ label.section{line-height:1.35!important}
   margin:0!important;
 }
 </style>
+<style id="atina-sticky-game-clues-v1">
+#game .card>.row:has(#clueProgress){
+  position:sticky!important;
+  top:112px!important;
+  z-index:115!important;
+  padding:9px 0 7px!important;
+  margin:0!important;
+  background:var(--panel,#11152b)!important;
+  border-radius:10px 10px 0 0!important;
+}
+#game #clues{
+  position:sticky!important;
+  top:154px!important;
+  z-index:114!important;
+  max-height:42vh!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  scrollbar-width:thin!important;
+  margin:0 0 10px!important;
+  padding:5px 0 8px!important;
+  background:var(--panel,#11152b)!important;
+  border-radius:0 0 12px 12px!important;
+}
+@media(max-width:600px){
+  #game .card>.row:has(#clueProgress){top:108px!important}
+  #game #clues{top:151px!important;max-height:40vh!important}
+}
+</style>
 </head>
 <body><div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.189"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.189</strong></div><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite" style="margin:12px 0;padding:13px 15px;border:1px solid #d3ad68;border-radius:14px;background:linear-gradient(110deg,#49391f,#302a22);color:#ffe2a0;font-weight:700;line-height:1.45">
