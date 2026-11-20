@@ -174,6 +174,7 @@ try {
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
 
   // Regressão: o botão de arranque rápido Solo deve iniciar diretamente a sessão.
+  await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').click();
   await page.locator('#game').waitFor({state:'visible'});
   await page.waitForFunction(() => document.querySelector('#category')?.textContent.trim().length > 0);
@@ -239,6 +240,65 @@ try {
     await page.locator(`[data-home-page="${target}"]`).first().waitFor({state:'visible'});
   }
 
+  // Regressão: a partida rápida online faz fallback de forma segura quando a fila não encontra adversário.
+  await page.evaluate(() => showHomePage('online'));
+  await page.evaluate(async () => {
+    localStorage.setItem('atinaAccountSessionV1', 's'.repeat(64));
+    localStorage.setItem('atinaProgressNicknameV1', 'BrowserTester');
+    window.__quickOnlineCalls = [];
+    window.__quickOnlineRpcOriginal = supabaseClient.rpc;
+    window.__quickOnlineRefreshOriginal = networkRefreshRoom;
+    window.__quickOnlinePollingOriginal = networkStartPolling;
+    supabaseClient.rpc = async (name, args = {}) => {
+      window.__quickOnlineCalls.push({name, args});
+      if (name === 'atina_v2_matchmake') return {data:{status:'waiting'},error:null};
+      if (name === 'atina_v2_matchmake_status') return {data:{status:'waiting'},error:null};
+      if (name === 'atina_v2_cancel_matchmake') return {data:null,error:null};
+      if (name === 'atina_v2_create_bot_match') return {data:{room_id:'quick-fallback-room',token:'r'.repeat(64),code:'QK123'},error:null};
+      return {data:null,error:null};
+    };
+    networkRefreshRoom = async () => {};
+    networkStartPolling = () => {};
+    quickMatchStopPolling();
+    quickMatchTicket = null;
+    quickMatchBusy = false;
+    await quickMatchStart();
+  });
+  const quickStartCall = await page.evaluate(() => window.__quickOnlineCalls.find(call => call.name === 'atina_v2_matchmake'));
+  assert.ok(quickStartCall, 'Partida rápida deve criar pedido de matchmaking.');
+  assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_ticket'],
+    'O matchmaking deve enviar apenas os dois argumentos esperados pela RPC.');
+  assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
+  const fallbackState = await page.evaluate(async () => {
+    await quickMatchFallback();
+    const state = {
+      calls: window.__quickOnlineCalls.slice(),
+      lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
+      status: document.getElementById('quickMatchStatus').textContent,
+      room: networkRoom?.room_id
+    };
+    quickMatchStopPolling();
+    supabaseClient.rpc = window.__quickOnlineRpcOriginal;
+    networkRefreshRoom = window.__quickOnlineRefreshOriginal;
+    networkStartPolling = window.__quickOnlinePollingOriginal;
+    quickMatchTicket = null;
+    quickMatchBusy = false;
+    networkRoom = null;
+    localStorage.removeItem('atinaNetworkRoom');
+    screen('home');
+    showHomePage('online');
+    return state;
+  });
+  assert.ok(fallbackState.calls.some(call => call.name === 'atina_v2_cancel_matchmake'),
+    'O ticket em espera deve ser cancelado antes do fallback.');
+  const roomFallbackCall = fallbackState.calls.find(call => call.name === 'atina_v2_create_bot_match');
+  assert.ok(roomFallbackCall, 'O fallback deve preparar uma sala online.');
+  assert.deepEqual(Object.keys(roomFallbackCall.args), ['p_session_token']);
+  assert.equal(roomFallbackCall.args.p_session_token, 's'.repeat(64));
+  assert.equal(fallbackState.lobbyVisible, true, 'O fallback deve abrir a sala online.');
+  assert.equal(fallbackState.room, 'quick-fallback-room');
+  assert.match(fallbackState.status, /Partida preparada|A abrir a sala/);
+  assert.doesNotMatch(fallbackState.status, /bot/i, 'O texto da interface não deve mencionar bots.');
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
