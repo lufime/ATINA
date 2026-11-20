@@ -23,6 +23,6 @@ test('cancel migration removes a tracked bot room and tracking row', () => {
 
 test('client ignores matchmaking/fallback responses for a cancelled ticket', () => {
   const html = fs.readFileSync(branchFiles[2], 'utf8');
-  assert.match(html, /quickMatchTicket!==ticket\\|\\|!quickMatchBusy\\)return;/);
-  assert.match(html, /quickMatchTryBotFallback[\\s\\S]*?quickMatchTicket!==ticket\\|\\|!quickMatchBusy\\)return;/);
+  assert.match(html, /quickMatchTicket!==ticket\\|\\|!quickMatchBusy\)return;/);
+  assert.match(html, /quickMatchTryBotFallback[\\s\\S]*?quickMatchTicket!==ticket\\|\\|!quickMatchBusy\)return;/);
 });
