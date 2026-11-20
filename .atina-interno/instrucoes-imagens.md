@@ -35,17 +35,19 @@
 - Verificar duplicações com imagens existentes, dentro do lote e entre imagens reaproveitadas. Evitar usar a mesma imagem em vários desafios.
 - Registar IDs concluídos, por gerar, em tentativa e reaproveitados.
 
-## 6. Obras protegidas
-Aplicar a filmes, séries, livros, animação e banda desenhada.
-- Dar preferência ao livro original que deu origem à obra, quando existir e for adequado.
+## 6. Obras protegidas e copyright
+Aplicar a filmes, séries, livros, animação, banda desenhada, jogos e quaisquer obras protegidas por direitos de autor.
+- **Não incluir personagens protegidas por copyright**, nem versões redesenhadas, estilizadas, realistas, caricaturadas ou semelhantes que continuem reconhecíveis.
+- **Não reproduzir objetos icónicos ou distintivos protegidos**, adereços exclusivos, itens característicos, símbolos, logótipos, marcas, designs ou elementos identificáveis pertencentes à obra.
+- Não copiar cenas específicas, poses, enquadramentos, composições, posters, capas, ilustrações ou imagens promocionais.
+- Criar imagens inteiramente originais, sem elementos protegidos ou distintivos de terceiros.
+- Representar a ligação ao desafio através de ambientes, paisagens, arquitetura, época, atmosfera, paleta de cores, temas e objetos genéricos não protegidos, de forma original.
+- Dar preferência ao livro original que deu origem à obra, quando existir e for adequado, apenas como fonte de contexto e informação — nunca para copiar personagens, objetos, cenas ou ilustrações.
 - Confirmar existência, título, autor e relação com a obra. Não inventar livros, autores, títulos, edições ou versões, nem escolher um livro qualquer relacionado com o tema.
 - Se não existir livro original ou não for possível confirmar a referência, usar informação fiável sobre a própria obra.
-- Sempre que possível, aproveitar elementos da obra que possam ser representados legalmente.
-- Privilegiar cenários, ambientes, paisagens, arquitetura, objetos e detalhes associados, criando representações originais.
-- Não reproduzir sem autorização personagens protegidas, logótipos, símbolos exclusivos, objetos distintivos, cenas específicas, cartazes ou capas protegidas.
-- Preservar ligação à obra, época, atmosfera e contexto sem copiar a expressão artística distintiva de terceiros.
-- Respeitar a linguagem visual original (2D, 3D, ilustração ou fotografia cinematográfica); não transformar automaticamente animação em fotorealismo.
-- Substituir elementos que não possam ser utilizados por alternativas originais que mantenham a ligação à obra e à solução.
+- Preservar associação clara ao desafio, obra, época ou atmosfera sem reproduzir a expressão artística distintiva de terceiros.
+- Respeitar a linguagem visual adequada (2D, 3D, ilustração ou fotografia cinematográfica); não transformar automaticamente animação em fotorealismo.
+- Se algum elemento suscitar dúvidas de copyright, removê-lo e substituí-lo por alternativa genérica e original. A imagem final deve ficar sem personagens nem objetos distintivos protegidos.
 
 ## 7. Recusas e correções
 - Se a geração for recusada por restrições de conteúdo ou direitos de autor, tentar novamente com alternativas originais.
