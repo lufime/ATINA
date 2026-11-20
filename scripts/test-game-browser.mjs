@@ -187,11 +187,16 @@ try {
     'O arranque rápido Solo deve abrir uma partida jogável, com resposta ativa.');
   await page.evaluate(() => showHomePage('categories'));
 
+  // Usar dificuldade aleatória neste ciclo para garantir desafios em todas as categorias.
+  await page.evaluate(() => { difficultyMode='mixed'; $('difficultyMode').value='mixed'; localStorage.setItem('atinaDifficultyMode','mixed'); });
   // Exercitar o ciclo completo do modo individual em todas as modalidades.
   for (const category of categories) {
     await page.evaluate(() => showHomePage('categories'));
     await page.locator('#categories [data-category]').filter({hasText: category}).click();
-    await page.locator('#game').waitFor({state:'visible'});
+    await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
+      const state=await page.evaluate(name=>({category:name,mode,difficultyMode,queueLength:queue.length,gameCount:games.length,categoryText:document.querySelector('#category')?.textContent,dialogs:pageDialogs.slice(-3),errors:pageErrors.slice(-3}),category);
+      throw new Error('Modalidade não abriu no browser: '+JSON.stringify(state));
+    });
     await page.waitForFunction(name => document.querySelector('#category')?.textContent.includes(name), category);
     await page.locator('#nextClue').click();
     await page.waitForFunction(() => document.querySelector('#clues .clue:not(.hidden-clue)'));
