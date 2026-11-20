@@ -1022,7 +1022,14 @@ label.section{line-height:1.35!important}
  document.addEventListener("click",function(event){
   const button=event.target.closest("[data-atina-launch]");
   if(!button)return;
-  const target=launchMap[button.getAttribute("data-atina-launch")];
+  const launch=button.getAttribute("data-atina-launch");
+  // Os modos locais arrancam diretamente, sem depender de clicar num botão
+  // secundário escondido. Mantém Duelo e Festa no fluxo online.
+  if((launch==="solo"||launch==="mix")&&typeof start==="function"){
+   start(launch);
+   return;
+  }
+  const target=launchMap[launch];
   const original=target&&document.getElementById(target);
   if(original&&!original.disabled&&!original.hidden)original.click();
  });
