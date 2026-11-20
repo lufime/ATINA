@@ -4855,6 +4855,18 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <script src="./assets/atina-notifications.js?v=20261120-1" defer></script>
 <script src="./assets/atina-push.js?v=20261120-1" defer></script>
 <script src="./assets/atina-social.js?v=20261120-19" defer></script>
+
+<style id="atina-play-mobile-compact-20261120">
+/* Menu de modos: tornar escolha imediata e compacta em mobile. */
+@media(max-width:600px){
+ #home [data-home-page="play"]{padding:11px!important;margin:0 0 8px!important;border-radius:13px!important}
+ #home [data-home-page="play"]>.section{font-size:15px!important;margin:0 0 8px!important;line-height:1.25!important}
+ #home [data-home-page="play"] .actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:0!important}
+ #home [data-home-page="play"] .actions .btn{min-width:0!important;min-height:46px!important;padding:9px 7px!important;margin:0!important;font-size:12px!important;line-height:1.25!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ #home [data-home-page="play"] #solo{grid-column:1/-1!important}
+}
+@media(max-width:360px){#home [data-home-page="play"] .actions{gap:6px!important}#home [data-home-page="play"] .actions .btn{font-size:11px!important;padding:8px 5px!important;min-height:43px!important}}
+</style>
 </body></html>
 
 
