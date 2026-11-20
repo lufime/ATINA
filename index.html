@@ -2219,7 +2219,14 @@ function showHomePage(page,restore=false){
 }
 document.getElementById('atinaGuestContinue')?.addEventListener('click',async event=>{event.preventDefault();const button=event.currentTarget;if(button.disabled)return;const label=button.textContent;button.disabled=true;button.textContent='A iniciar partida…';try{await start('solo');}catch(error){console.error('Falha ao iniciar como convidado:',error);}finally{button.disabled=false;button.textContent=label;}});
 document.getElementById('atinaOnlinePlayersRefresh')?.addEventListener('click',atinaLoadOnlinePlayers);
-document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
+// Navegação resiliente no ecrã inicial: delegação em captura evita que elementos filhos/handlers atrasados bloqueiem os separadores.
+document.addEventListener('click',function(event){
+ const nav=event.target.closest('[data-home-target]');
+ if(!nav)return; const game=document.getElementById('game'),mime=document.getElementById('mimicaGame');
+ if((game&&!game.classList.contains('hidden'))||(mime&&!mime.classList.contains('hidden')))return;
+ event.preventDefault();event.stopImmediatePropagation();
+ if(typeof showHomePage==='function')showHomePage(nav.dataset.homeTarget);
+},true);
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
 // Atualiza automaticamente os rankings visíveis, sem exigir botões manuais.
 let atinaRankingRefreshInFlight=false;
