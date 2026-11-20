@@ -23,7 +23,7 @@ BEGIN
   v_player := private.atina_social_player_from_session(p_session_token);
   RETURN jsonb_build_object(
     'unread_count', (SELECT count(*) FROM public.atina_notifications n WHERE n.recipient_player_id=v_player AND n.read_at IS NULL),
-    'notifications', (SELECT coalesce(jsonb_agg(jsonb_build_object('id',n.id,'type',n.notification_type,'title',n.title,'body',n.body,'data',n.data,'created_at',n.created_at,'read_at',n.read_at) ORDER BY n.created_at DESC),'[]'::jsonb) FROM (SELECT * FROM public.atina_notifications WHERE recipient_player_id=v_player ORDER BY created_at DESC LIMIT 40) n)
+    'notifications', (SELECT coalesce(jsonb_agg(jsonb_build_object('id',n.id,'type',n.notification_type,'title',n.title,'body',n.body,'data',n.data,'created_at',n.created_at,'read_at',n.read_at) ORDER BY n.created_at DESC),'[]'::jsonb) FROM (SELECT * FROM public.atina_notifications WHERE recipient_player_id=v_player ORDER BY created_at DESC LIMIT 10) n)
   );
 END;
 $function$;
