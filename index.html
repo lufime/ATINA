@@ -1502,7 +1502,7 @@ function networkNotifyActiveTurn(st){
 }
 function networkCanControlTurn(){if(!networkGameState)return false;const mine=String(networkLobbyData?.team||'').trim().toLocaleLowerCase('pt-PT');const active=String(networkGameState.active_team||'').trim().toLocaleLowerCase('pt-PT');return !!mine&&!!active&&mine===active;}
 function networkIsTurnDriver(){if(!networkCanControlTurn())return false;const active=String(networkGameState?.active_team||'').trim().toLocaleLowerCase('pt-PT');const candidates=(networkLobbyData?.players||[]).filter(p=>String(p.team||'').trim().toLocaleLowerCase('pt-PT')===active);return !!candidates.length&&String(candidates[0].id)===String(networkLobbyData?.player_id);}
-function atinaDisplayPlayerName(player){const record=player&&typeof player==='object'?player:null;const raw=String(record?(record.nickname||record.name||'Jogador'):player||'Jogador').trim();if(/^dummy(?:\s*[-#]?\d+)?$/i.test(raw)||/^(?:placeholder|unknown|guest)$/i.test(raw))return 'Jogador';return raw||'Jogador';}
+function atinaDisplayPlayerName(player){const record=player&&typeof player==='object'?player:null;let raw=String(record?(record.nickname||record.name||'Jogador'):player||'Jogador').trim();if(/^dummy(?:\s*[-#]?\d+)?$/i.test(raw)||/^(?:placeholder|unknown|guest)$/i.test(raw)){const myId=String(networkLobbyData?.player_id||'');const isMe=record&&myId&&String(record.id)===myId;const profileName=String(window.atinaCloudProfile?.nickname||$('networkNickname')?.value||'').trim();raw=isMe&&profileName?profileName:'Jogador';}return raw||'Jogador';}
 let networkRenderedChallengeKey='';
 function networkRenderGameState(){
  if(!networkGameState)return;
