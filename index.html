@@ -4865,7 +4865,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #atinaSignedInUser{max-width:100%!important;box-sizing:border-box!important;margin:6px auto 0!important;padding:5px 9px!important;font-size:11px!important;overflow-wrap:anywhere!important}
  .brand .stats{justify-content:center!important;gap:5px!important;margin-top:7px!important}
  .brand .stats>*{padding:5px 8px!important;font-size:10px!important;line-height:1.2!important}
- #home [data-home-page="dashboard"] .home-welcome,#home .daily-mission{padding:11px!important;margin:0 0 8px!important;border-radius:14px!important}
+ #home [data-home-page="dashboard"] .home-welcome,#home [data-home-page="dashboard"] .daily-mission{padding:11px!important;margin:0 0 8px!important;border-radius:14px!important}
  #home [data-home-page="dashboard"] .home-welcome h2{font-size:21px!important;line-height:1.15!important;margin:6px 0!important}
  #home [data-home-page="dashboard"] .home-welcome p{font-size:12px!important;line-height:1.35!important;margin:0 0 8px!important}
  #home [data-home-page="dashboard"] .home-welcome>.btn,#home #dailyMissionStart{min-height:42px!important;padding:9px 12px!important}
@@ -5059,6 +5059,12 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 @media(min-width:381px) and (max-width:600px){
  #atinaSocialShare .actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
  #atinaSocialShare .actions button{font-size:12px!important}
+}
+/* Review fixes: ensure the clue stack stays in document flow and timer remains visible. */
+@media(max-width:700px){
+ #game .card>.row:has(#timerDisplay){position:sticky!important;top:max(6px,env(safe-area-inset-top))!important;z-index:120!important;background:var(--panel,#11152b)!important;padding:8px 0!important;margin:0 0 7px!important}
+ #game .card>.row:has(#clueProgress),#game #clueProgress,#game #clues{position:static!important;top:auto!important;z-index:auto!important;max-height:none!important;overflow:visible!important}
+ #game #clues{padding:5px 0 8px!important;margin:0 0 10px!important}
 }
 </style>
 
