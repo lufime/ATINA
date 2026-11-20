@@ -1290,7 +1290,7 @@ if(atinaLegalModalElement&&atinaLegalModalElement.parentElement!==document.body)
 // Mostrar o formulário de conta logo no ecrã inicial de acesso.
 document.getElementById('atinaAccessAccountMount')?.appendChild(document.getElementById('atinaCloudProgressPanel'));
 // A chave da sessão é partilhada com atina-server-client.js.
-function atinaAccountMessage(message){const el=$('atinaCloudStatus');if(el){el.textContent=message;const isError=/erro|incorret|falh|não foi possível|nao foi possivel|indispon|inválid|invalid|rejeitad|permission|timeout|expir|bloque/i.test(String(message));el.classList.toggle('atina-error-message',isError);}}
+function atinaAccountMessage(message){const el=$('atinaCloudStatus');if(el){const text=String(message||'');el.textContent=text;const isError=/erro|incorret|falh|não foi possível|nao foi possivel|indispon|inválid|invalid|rejeitad|permission|timeout|expir|bloque/i.test(text);const isPositive=/sucesso|criada|criado|recuperad|sincronizad|guardad|iniciada|iniciado|confirmad|conclu/i.test(text);el.classList.toggle('atina-error-message',isError);el.classList.toggle('atina-message-positive',!isError&&isPositive);el.classList.toggle('atina-message-neutral',!isError&&!isPositive);}}
 function atinaAccountSetSession(data){
  if(data?.session_token)localStorage.setItem(ATINA_ACCOUNT_SESSION_KEY,data.session_token);
  if(data?.profile){window.atinaCloudProfile=data.profile;if(typeof atinaProgressRender==='function')atinaProgressRender(data.profile);}
