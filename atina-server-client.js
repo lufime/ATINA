@@ -836,6 +836,7 @@ async function atinaServerRefresh() {
   }
 }
 async function atinaServerStart(gameMode, category = null) {
+  atinaServerStartRequested = true;
   atinaServerStopTimers();
   atinaServerBusy = true;
   atinaServerMessage('A preparar uma partida segura no servidor…');
@@ -864,6 +865,7 @@ async function atinaServerStart(gameMode, category = null) {
     screen('home');
   } finally {
     atinaServerBusy = false;
+    atinaServerStartRequested = false;
   }
 }
 start = function(gameMode, category = null) { if (typeof atinaGuestLimitReached === 'function' && atinaGuestLimitReached()) { if (typeof atinaShowGuestRegistration === 'function') atinaShowGuestRegistration(); return Promise.resolve(); } if (typeof atinaActivateAutomaticSpeech === 'function') atinaActivateAutomaticSpeech(); return atinaServerStart(gameMode, category); };
@@ -1444,6 +1446,7 @@ atinaProgressBoot();
 void atinaProgressLoadPointsLeaderboard();
 void atinaProgressLoadQiLeaderboard();
 atinaOnlineCountBoot();
+let atinaServerStartRequested = false;
 (async function atinaServerBoot() {
   try {
     // Uma sessão individual nunca deve ser recuperada automaticamente ao abrir/atualizar a página.
@@ -1453,6 +1456,6 @@ atinaOnlineCountBoot();
     atinaServerState = null;
     atinaServerStopTimers();
     await networkRestoreSession();
-    if (!networkRoom) screen('home');
+    if (!networkRoom && !atinaServerStartRequested && !atinaServerSession) screen('home');
   } catch (_) { screen('home'); }
 })();
