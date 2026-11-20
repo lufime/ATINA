@@ -763,7 +763,7 @@ function atinaServerApplyState(state, announce = false) {
   else if (result.outcome === 'timeout') message = '⏰ Tempo esgotado. ' + (challenge.answer ? 'Resposta: ' + challenge.answer : '');
   else if (result.outcome === 'pass') message = 'Desafio passado. ' + (challenge.answer ? 'Resposta: ' + challenge.answer : '');
   else if (locked) message = challenge.answer ? 'Resposta: ' + challenge.answer : 'Ronda terminada.';
-  else message = 'A validação é feita pelo servidor. Escreve a tua resposta.';
+  else message = 'Fala ou escreve a tua resposta.';
   $('feedback').textContent = message;
   // Lê a solução uma única vez quando o jogador erra, o tempo termina ou passa.
   // A leitura é forçada: não depende da opção de leitura automática das pistas.
