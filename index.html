@@ -1178,7 +1178,7 @@ label.section{line-height:1.35!important}
  </section>
  <section class="card atina-howto-card">
   <h3>2. Descobre a resposta</h3>
-  <ol><li>Lê a categoria e a informação apresentada no desafio.</li><li>Revela as pistas uma a uma com o botão <strong>Revelar próxima pista</strong>.</li><li>Escreve a tua resposta no campo indicado.</li><li>Carrega em <strong>Confirmar resposta</strong> para validar a tua resposta.</li></ol>
+  <ol><li>Lê a categoria e a informação apresentada no desafio.</li><li>Revela as pistas uma a uma com o botão <strong>Revelar próxima pista</strong>.</li><li>Fala ou escreve a tua resposta.</li><li>Carrega em <strong>Confirmar resposta</strong> para validar a tua resposta.</li></ol>
   <p>Se não souberes a resposta, podes usar <strong>PASSO</strong> quando essa opção estiver disponível. No final, o jogo apresenta a solução.</p>
  </section>
  <section class="card atina-howto-card">
@@ -1615,7 +1615,7 @@ function networkRenderGameState(){
  $('pass').classList.toggle('hidden',!canControlTurn||locked);
  $('continue').disabled=!canControlTurn||!locked||pauseActive;
  $('continue').classList.toggle('hidden',!locked||!canControlTurn||pauseActive);
- const correctAnswer=String(st.answer||st.correct_answer||st.solution||g[3]||'').trim();const resultFeedback=String(st.feedback||'').trim();const hasAnswerInFeedback=/resposta\s*:/i.test(resultFeedback);const revealedFeedback=locked&&correctAnswer&&!hasAnswerInFeedback?(resultFeedback?resultFeedback+' ':'')+'Resposta: '+correctAnswer:(resultFeedback||'Escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.');atinaRenderRevealedAnswer('feedback',revealedFeedback);
+ const correctAnswer=String(st.answer||st.correct_answer||st.solution||g[3]||'').trim();const resultFeedback=String(st.feedback||'').trim();const hasAnswerInFeedback=/resposta\s*:/i.test(resultFeedback);const revealedFeedback=locked&&correctAnswer&&!hasAnswerInFeedback?(resultFeedback?resultFeedback+' ':'')+'Resposta: '+correctAnswer:(resultFeedback||'Fala ou escreve a tua resposta. Em equipa, a resposta aguarda a concordância dos colegas.');atinaRenderRevealedAnswer('feedback',revealedFeedback);
  $('feedback').classList.toggle('solution-revealed',locked);
  if(locked){
   const spokenEndKey=String(networkRoom?.room_id||'')+':'+String(st.challenge_id??challengeIndex)+':'+String(st.pos)+':fim';
