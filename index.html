@@ -1299,8 +1299,6 @@ label.section{line-height:1.35!important}
 <nav class="home-page-nav" id="atinaMainNav" aria-label="Navegação principal">
 <button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
 <button type="button" class="home-nav-btn" data-home-target="play">🎮 Jogar</button>
-<button type="button" class="home-nav-btn" data-home-target="howto">📖 Como jogar</button>
-<button type="button" class="home-nav-btn" data-home-target="categories">🧩 Modalidades</button>
 <button type="button" class="home-nav-btn" data-home-target="online">🌐 Online</button>
 <button type="button" class="home-nav-btn" data-home-target="profile">👤 Perfil</button><button type="button" class="home-nav-btn" data-home-target="ranking">🏆 Classificação</button>
 <button type="button" class="home-nav-btn" data-home-target="settings">⚙️ Definições</button>
@@ -1369,7 +1367,7 @@ label.section{line-height:1.35!important}
  <button type="button" class="atina-fast-categories" data-home-target="categories">Ver todas as modalidades →</button>
 </section>
 <section class="daily-mission" aria-labelledby="dailyMissionTitle"><div class="daily-mission-top"><div><div class="daily-kicker">A TUA MISSÃO DE HOJE</div><h3 id="dailyMissionTitle">Três desafios. Uma nova conquista.</h3></div><div aria-hidden="true" style="font-size:32px">🎯</div></div><p id="dailyMissionCopy">Completa três desafios em qualquer modalidade e mantém o ritmo.</p><div class="daily-progress" role="progressbar" aria-label="Progresso da missão diária" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" id="dailyMissionBar"><span id="dailyMissionFill"></span></div><div class="daily-meta"><span id="dailyMissionProgress">0 de 3 desafios</span><span id="dailyMissionStatus">Missão por começar</span></div><div class="daily-stats"><div class="daily-stat"><b id="dailyStreak">0 dias</b><small>Sequência de dias</small></div><div class="daily-stat"><b id="dailyTotal">0</b><small>Desafios concluídos neste dispositivo</small></div></div><div class="atina-xp-panel"><div class="daily-mission-top"><strong id="atinaLevelValue">Nível 1</strong><strong id="atinaXpValue">0 XP</strong></div><div class="daily-progress"><span id="atinaXpFill"></span></div><div class="daily-meta"><span id="atinaXpMeta">0 / 250 XP para o próximo nível</span><span>+10 XP por desafio</span></div><div id="atinaBadges" class="atina-badges" aria-label="Conquistas"></div></div><button type="button" class="btn secondary full" id="dailyMissionStart">Jogar desafio do dia →</button></section></div><section class="home-page-panel hidden" data-home-page="howto" id="atinaHowToPage">
- <div class="home-welcome"><div class="home-welcome-kicker">GUIA DO JOGADOR</div><h2>📖 Como jogar ATINA</h2><p>O objetivo é descobrir a resposta através das pistas, acertar e acumular pontos.</p></div>
+ <div class="home-welcome"><div class="home-welcome-kicker">GUIA DO JOGADOR</div><h2>📖 Como jogar</h2><p>Revela pistas, responde e ganha pontos.</p></div>
  <section class="card atina-howto-card">
   <h3>1. Escolhe o modo de jogo</h3>
   <p>Em <strong>Jogar</strong>, escolhe como queres participar:</p>
@@ -2371,6 +2369,7 @@ async function atinaLoadOnlinePlayers(){
  }
 }
 function showHomePage(page,restore=false){
+ if(page==='howto'||page==='categories')page='play';
  if(!atinaHomePageIsValid(page))page='access';
  let hasSession=false;
  try{hasSession=!!localStorage.getItem('atinaAccountSessionV1');}catch(e){}
@@ -2392,7 +2391,7 @@ function showHomePage(page,restore=false){
  if(!restore)screen('home');
  // Cada separador mostra exclusivamente o seu painel.
  document.querySelectorAll('#home [data-home-page]').forEach(el=>{
-  const visible=el.dataset.homePage===page;
+  const visible=page==='play' ? ['play','howto','categories'].includes(el.dataset.homePage) : el.dataset.homePage===page;
   el.classList.toggle('hidden',!visible);
   el.hidden=!visible;
   el.setAttribute('aria-hidden',visible?'false':'true');
