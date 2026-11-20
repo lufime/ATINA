@@ -1178,6 +1178,20 @@ label.section{line-height:1.35!important}
   #home .tile{min-height:64px!important;padding:8px!important}
 }
 </style>
+<style id="atina-sticky-game-timer-v1">
+#game .card>.row:has(#timerDisplay){
+  position:sticky!important;
+  top:max(6px,env(safe-area-inset-top))!important;
+  z-index:120!important;
+  padding:8px 0!important;
+  background:var(--panel,#11152b)!important;
+  border-radius:14px!important;
+  box-shadow:0 8px 18px #0005!important;
+}
+#game .card>.row:has(#timerDisplay) #timerDisplay{
+  margin:0!important;
+}
+</style>
 </head>
 <body><div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.188"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.188</strong></div><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite" style="margin:12px 0;padding:13px 15px;border:1px solid #d3ad68;border-radius:14px;background:linear-gradient(110deg,#49391f,#302a22);color:#ffe2a0;font-weight:700;line-height:1.45">
