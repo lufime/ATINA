@@ -26,7 +26,7 @@ begin
  if v_recipient is null then raise exception 'Jogador não encontrado.';end if;
  if v_sender=v_recipient then raise exception 'Não podes convidar-te a ti próprio.';end if;
  if not exists(select 1 from private.atina_friendships where player_a=least(v_sender,v_recipient) and player_b=greatest(v_sender,v_recipient)) then raise exception 'Só podes convidar amigos para jogar.';end if;
- select id into v_room_id from public.atina_rooms where code=upper(btrim(coalesce(p_room_code,''))) and status='waiting';
+ select id into v_room_id from public.atina_rooms where code=upper(btrim(coalesce(p_room_code,''))) and status='waiting' and (select count(*) from public.atina_room_players p where p.room_id=atina_rooms.id)<max_players;
  if v_room_id is null then raise exception 'Sala inexistente ou partida já iniciada.';end if;
  insert into private.atina_game_invites(sender_player_id,recipient_player_id,room_id)
  values(v_sender,v_recipient,v_room_id) on conflict(sender_player_id,recipient_player_id,room_id) where status='pending' do nothing;
@@ -58,7 +58,7 @@ begin
  if v_me is null then raise exception 'Sessão expirada. Inicia sessão novamente.';end if;
  select * into v_inv from private.atina_game_invites where id=p_invite_id and recipient_player_id=v_me and status='pending' and expires_at>clock_timestamp() for update;
  if not found then raise exception 'Convite expirado ou indisponível.';end if;
- if not exists(select 1 from public.atina_rooms where id=v_inv.room_id and status='waiting') then raise exception 'A sala já não está disponível.';end if;
+ if not exists(select 1 from public.atina_rooms r where r.id=v_inv.room_id and r.status='waiting' and (select count(*) from public.atina_room_players p where p.room_id=r.id)<r.max_players) then raise exception 'A sala já não está disponível ou está cheia.';end if;
  if p_accept then
   update private.atina_game_invites set status='accepted',updated_at=clock_timestamp() where id=p_invite_id;
   select code into v_code from public.atina_rooms where id=v_inv.room_id;
