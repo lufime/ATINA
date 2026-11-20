@@ -32,7 +32,9 @@ await page.addInitScript(() => {
   try { Object.defineProperty(window, 'SpeechSynthesisUtterance', {value: undefined, configurable: true}); } catch {}
 });
 const pageErrors = [];
+const pageDialogs = [];
 page.on('pageerror', error => pageErrors.push(error.message));
+page.on('dialog', async dialog => { pageDialogs.push(dialog.message()); await dialog.dismiss(); });
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
   status: 200,
   contentType: 'application/javascript',
@@ -176,7 +178,10 @@ try {
   // Regressão: o botão de arranque rápido Solo deve iniciar diretamente a sessão.
   await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').click();
-  await page.locator('#game').waitFor({state:'visible'});
+  await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
+    const state = await page.evaluate(() => ({startType:typeof start,session:localStorage.getItem('atinaAccountSessionV1'),guest:atinaGuestLimitReached(),guestCount:localStorage.getItem('atinaGuestChallengesCompletedV1'),gameCount:games.length,difficulty:difficultyMode,queueLength:queue.length,mode,screen:localStorage.getItem('atinaLastScreen'),dashboardHidden:document.querySelector('[data-home-page="dashboard"]')?.hidden,launchVisible:document.querySelector('[data-atina-launch="solo"]')?.getBoundingClientRect().height>0}));
+    throw new Error('Quick Solo não abriu a partida. Diagnóstico: '+JSON.stringify({state,pageDialogs,pageErrors}));
+  });
   await page.waitForFunction(() => document.querySelector('#category')?.textContent.trim().length > 0);
   assert.equal(await page.locator('#answer').isEnabled(), true,
     'O arranque rápido Solo deve abrir uma partida jogável, com resposta ativa.');
