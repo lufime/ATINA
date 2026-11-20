@@ -4784,3 +4784,27 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <script src="./assets/atina-push.js?v=20261120-1" defer></script>
 <script src="./assets/atina-social.js?v=20261120-19" defer></script>
 </body></html>
+
+<style id="atina-mobile-home-reorganization-20261120">
+/* ATINA — compact mobile navigation and dashboard; existing sections/functions retained */
+@media(max-width:700px){
+ #atinaMainNav.home-page-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;padding:5px!important;margin:8px 0 12px!important;top:3px!important}
+ #atinaMainNav .home-nav-btn{min-height:43px!important;padding:6px 3px!important;font-size:clamp(10px,2.9vw,12px)!important;line-height:1.15!important;white-space:normal!important}
+ #home [data-home-page="dashboard"]{display:flex!important;flex-direction:column!important;gap:9px!important}
+ #home [data-home-page="dashboard"]>.home-welcome{margin:0!important;padding:14px!important;min-height:0!important}
+ #home [data-home-page="dashboard"] .atina-fast-play{margin:0!important;padding:12px!important;border-radius:14px!important}
+ #home [data-home-page="dashboard"] .atina-fast-play-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+ #home [data-home-page="dashboard"] .atina-fast-play-grid .btn{min-width:0!important;min-height:44px!important;padding:8px 6px!important;font-size:12px!important;line-height:1.2!important;overflow-wrap:anywhere!important}
+ #home [data-home-page="dashboard"] .atina-fast-play-title{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:7px!important;margin-bottom:8px!important;font-size:12px!important}
+ #home [data-home-page="dashboard"] .atina-fast-categories{display:block!important;width:100%!important;margin-top:7px!important;padding:8px!important;text-align:center!important}
+ #home [data-home-page="dashboard"] .daily-mission{margin:0!important;padding:12px!important}
+ #home [data-home-page="dashboard"] .home-block,#home [data-home-page="dashboard"] .card{margin:0 0 8px!important}
+ #home [data-home-page="dashboard"] h3{font-size:16px!important;line-height:1.25!important}
+ #home [data-home-page="dashboard"] p{font-size:13px!important;line-height:1.4!important}
+}
+@media(max-width:380px){
+ #atinaMainNav.home-page-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3px!important}
+ #atinaMainNav .home-nav-btn{font-size:10px!important;min-height:42px!important;padding:5px 1px!important}
+ #home [data-home-page="dashboard"] .atina-fast-play-grid .btn{font-size:11px!important}
+}
+</style>
