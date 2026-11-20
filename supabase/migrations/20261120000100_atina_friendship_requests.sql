@@ -54,14 +54,14 @@ begin
  and session_expires_at>clock_timestamp();
  if v_me is null then raise exception 'Sessão expirada. Inicia sessão novamente.'; end if;
  return jsonb_build_object(
-  'friends',coalesce((select jsonb_agg(jsonb_build_object('player_id',p.id,'nickname',p.nickname) order by p.nickname)
-   from private.atina_friendships f join private.atina_players p on p.id=case when f.player_a=v_me then f.player_b else f.player_a end
+  'friends',coalesce((select jsonb_agg(jsonb_build_object('player_id',p.player_id,'nickname',p.nickname) order by p.nickname)
+   from private.atina_friendships f join private.atina_player_accounts p on p.player_id=case when f.player_a=v_me then f.player_b else f.player_a end
    where f.player_a=v_me or f.player_b=v_me),'[]'::jsonb),
   'incoming',coalesce((select jsonb_agg(jsonb_build_object('id',r.id,'nickname',p.nickname,'created_at',r.created_at) order by r.created_at desc)
-   from private.atina_friend_requests r join private.atina_players p on p.id=r.sender_player_id
+   from private.atina_friend_requests r join private.atina_player_accounts p on p.player_id=r.sender_player_id
    where r.recipient_player_id=v_me and r.status='pending' and r.expires_at>clock_timestamp()),'[]'::jsonb),
   'outgoing',coalesce((select jsonb_agg(jsonb_build_object('id',r.id,'nickname',p.nickname,'created_at',r.created_at) order by r.created_at desc)
-   from private.atina_friend_requests r join private.atina_players p on p.id=r.recipient_player_id
+   from private.atina_friend_requests r join private.atina_player_accounts p on p.player_id=r.recipient_player_id
    where r.sender_player_id=v_me and r.status='pending' and r.expires_at>clock_timestamp()),'[]'::jsonb)
  );
 end $$;
