@@ -128,3 +128,18 @@ Antes de entregar cada lote:
 
 ## Objetivo
 Construir uma biblioteca exclusiva do ATINA, com imagens originais geradas aqui, corretamente associadas aos desafios, reconhecíveis, coerentes com as obras, tecnicamente uniformes e prontas para carregar na plataforma.
+
+## 16. Originalidade, copyright e propriedade intelectual dos desafios
+Estas regras aplicam-se a todos os desafios, perguntas, enunciados, respostas, textos, pistas e mecânicas do ATINA.
+- Criar perguntas e enunciados originais, redigidos de forma independente para o ATINA.
+- É permitido abordar os mesmos temas, factos de conhecimento público, acontecimentos históricos, ciência, geografia, cultura ou obras, desde que a formulação e a apresentação sejam originais.
+- Não copiar perguntas, enunciados, textos, diálogos, poemas, pistas, estruturas distintivas ou bases de dados de outros jogos, aplicações, livros, sites, concursos, serviços ou criadores.
+- Não reproduzir excertos protegidos de livros, filmes, séries, músicas, diálogos, artigos ou outros materiais. Usar apenas informação factual necessária e escrever de raiz.
+- Não copiar desafios de quiz nem os adaptar superficialmente trocando apenas algumas palavras. Recriar a pergunta, abordagem e estrutura de forma independente.
+- Não usar marcas ou nomes comerciais de forma a sugerir que o desafio pertence, é patrocinado ou está afiliado a terceiros.
+- Factos e respostas devem ser verificáveis, corretos, inequívocos e coerentes com a pergunta. Consultar fontes fiáveis para confirmar factos, mas não copiar a redação dessas fontes.
+- Se um desafio estiver relacionado com uma obra protegida, usar referências factuais sobre a obra, sem copiar texto criativo, diálogos, cenas ou conteúdo distintivo.
+- Antes de finalizar, verificar originalidade, clareza, resposta correta, ausência de duplicados e semelhança excessiva com desafios conhecidos ou existentes no ATINA.
+- Se houver dúvidas sobre copyright ou propriedade intelectual, reescrever o desafio de raiz, preservando apenas o facto ou conceito necessário.
+- Quando for solicitado um controlo de desafios existentes, identificar duplicados, formulações muito semelhantes ou conteúdo potencialmente copiado e propor versões originais. Não alterar, apagar ou publicar desafios sem autorização explícita.
+- Objetivo: todos os desafios devem ter redação, identidade e apresentação próprias do ATINA, reduzindo riscos de violação de direitos de autor ou propriedade intelectual.
