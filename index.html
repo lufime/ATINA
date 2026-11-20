@@ -1146,6 +1146,38 @@ label.section{line-height:1.35!important}
 #home [data-home-page="profile"] .atina-level-gallery-card.is-unlocked{box-shadow:inset 0 0 0 1px #8d713f33}
 @media(max-width:480px){#home [data-home-page="profile"] #atinaCloudProgressPanel .row:has(#atinaCloudXp)>*{font-size:11px!important;padding:9px 3px!important}.atina-level-gallery-grid{gap:7px!important}.atina-level-gallery-card{padding:9px 4px!important}}
 </style>
+<style id="atina-mobile-home-refinement-v1">
+@media(max-width:600px){
+  body{overflow-x:hidden!important}
+  .wrap,#home{min-width:0!important;max-width:100%!important}
+  #home .home-page-nav,.home-page-nav{
+    padding-left:max(6px,env(safe-area-inset-left))!important;
+    padding-right:max(6px,env(safe-area-inset-right))!important;
+  }
+  #home .home-nav-btn,.home-page-nav .home-nav-btn{
+    min-height:44px!important;
+    line-height:1.25!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow-wrap:anywhere!important;
+  }
+  #home .tile{
+    min-height:68px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    overflow-wrap:anywhere!important;
+  }
+  #home .stats{flex-wrap:wrap!important}
+  #home .daily-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #home .daily-stat{min-width:0!important}
+}
+@media(max-width:360px){
+  #home .home-nav-btn,.home-page-nav .home-nav-btn{font-size:10px!important;padding:6px 2px!important}
+  #home .tile{min-height:64px!important;padding:8px!important}
+}
+</style>
 </head>
 <body><div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.187"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.187</strong></div><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite" style="margin:12px 0;padding:13px 15px;border:1px solid #d3ad68;border-radius:14px;background:linear-gradient(110deg,#49391f,#302a22);color:#ffe2a0;font-weight:700;line-height:1.45">
