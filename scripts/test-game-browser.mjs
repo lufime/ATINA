@@ -194,8 +194,8 @@ try {
     await page.evaluate(() => showHomePage('categories'));
     await page.locator('#categories [data-category]').filter({hasText: category}).click();
     await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
-      const state=await page.evaluate(name=>({category:name,mode,difficultyMode,queueLength:queue.length,gameCount:games.length,categoryText:document.querySelector('#category')?.textContent}),category);
-      throw new Error('Modalidade não abriu no browser: '+JSON.stringify(state));
+      const state=await page.evaluate(name=>({category:name,mode,difficultyMode,queueLength:queue.length,gameCount:games.length,categoryText:document.querySelector('#category')?.textContent,screen:localStorage.getItem('atinaLastScreen'),matchingGames:games.filter(g=>g&&g[0]===name).length,matchingIndices:games.map((g,i)=>g&&g[0]===name?i:null).filter(i=>i!==null).slice(0,8)}),category);
+      throw new Error('Modalidade não abriu no browser: '+JSON.stringify({state,dialogs:pageDialogs.slice(-5),errors:pageErrors.slice(-5)}));
     });
     await page.waitForFunction(name => document.querySelector('#category')?.textContent.includes(name), category);
     await page.locator('#nextClue').click();
