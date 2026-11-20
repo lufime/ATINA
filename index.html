@@ -4855,6 +4855,31 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <script src="./assets/atina-notifications.js?v=20261120-1" defer></script>
 <script src="./assets/atina-push.js?v=20261120-1" defer></script>
 <script src="./assets/atina-social.js?v=20261120-19" defer></script>
+
+<style id="atina-mimicas-mobile-compact">
+/* Mímicas: palco, cronómetro e controlos ajustados ao ecrã do telemóvel. */
+@media(max-width:700px){
+ #mimicaGame>.card{padding:12px!important;margin-top:9px!important;border-radius:15px!important}
+ #mimicaGame>.row:first-child{gap:5px!important;align-items:center!important}
+ #mimicaGame>.row:first-child .btn{min-height:40px!important;padding:8px 10px!important;font-size:12px!important}
+ #mimicaGame #mimeRound{margin:4px 0!important;font-size:11px!important}
+ #mimicaGame #mimePlayer{font-size:19px!important;line-height:1.2!important;margin:6px 0!important}
+ #mimicaGame #mimeTimer{min-height:64px!important;padding:8px 12px!important;font-size:clamp(38px,12vw,50px)!important;line-height:1!important}
+ #mimicaGame #mimeWord{font-size:clamp(24px,7vw,32px)!important;line-height:1.2!important;margin:7px 0!important}
+ #mimicaGame #mimePictureClue{min-height:130px!important;padding:10px!important;margin:8px 0!important;border-radius:12px!important}
+ #mimicaGame #mimePictureClue span{font-size:52px!important}
+ #mimicaGame #mimeClueProgress,#mimicaGame #mimeCategory{font-size:11px!important;margin:5px 0!important;line-height:1.3!important}
+ #mimicaGame #mimeReveal{min-height:44px!important;margin:7px 0!important;padding:9px!important;font-size:13px!important}
+ #mimicaGame .actions{gap:6px!important;margin:8px 0!important}
+ #mimicaGame .actions .btn{min-height:48px!important;padding:9px 7px!important;font-size:13px!important}
+ #mimicaGame #mimeFeedback{font-size:13px!important;line-height:1.4!important;margin:7px 0!important}
+}
+@media(max-width:380px){
+ #mimicaGame>.card{padding:10px!important}
+ #mimicaGame #mimePictureClue{min-height:115px!important}
+ #mimicaGame>.row:first-child .btn{font-size:11px!important;padding:7px 8px!important}
+}
+</style>
 </body></html>
 
 
