@@ -35,19 +35,22 @@
 - Verificar duplicações com imagens existentes, dentro do lote e entre imagens reaproveitadas. Evitar usar a mesma imagem em vários desafios.
 - Registar IDs concluídos, por gerar, em tentativa e reaproveitados.
 
-## 6. Obras protegidas e copyright
-Aplicar a filmes, séries, livros, animação, banda desenhada, jogos e quaisquer obras protegidas por direitos de autor.
-- **Não incluir personagens protegidas por copyright**, nem versões redesenhadas, estilizadas, realistas, caricaturadas ou semelhantes que continuem reconhecíveis.
-- **Não reproduzir objetos icónicos ou distintivos protegidos**, adereços exclusivos, itens característicos, símbolos, logótipos, marcas, designs ou elementos identificáveis pertencentes à obra.
-- Não copiar cenas específicas, poses, enquadramentos, composições, posters, capas, ilustrações ou imagens promocionais.
-- Criar imagens inteiramente originais, sem elementos protegidos ou distintivos de terceiros.
-- Representar a ligação ao desafio através de ambientes, paisagens, arquitetura, época, atmosfera, paleta de cores, temas e objetos genéricos não protegidos, de forma original.
-- Dar preferência ao livro original que deu origem à obra, quando existir e for adequado, apenas como fonte de contexto e informação — nunca para copiar personagens, objetos, cenas ou ilustrações.
-- Confirmar existência, título, autor e relação com a obra. Não inventar livros, autores, títulos, edições ou versões, nem escolher um livro qualquer relacionado com o tema.
-- Se não existir livro original ou não for possível confirmar a referência, usar informação fiável sobre a própria obra.
-- Preservar associação clara ao desafio, obra, época ou atmosfera sem reproduzir a expressão artística distintiva de terceiros.
+## 6. Direitos de autor, copyright e propriedade intelectual
+Aplicar a filmes, séries, livros, animação, banda desenhada, jogos, marcas e quaisquer obras ou elementos protegidos.
+- Todas as imagens finais devem ser criações originais, geradas especificamente para o ATINA.
+- Não incluir personagens protegidas por copyright, nem versões redesenhadas, estilizadas, realistas, caricaturadas ou semelhantes que continuem reconhecíveis.
+- Não reproduzir objetos icónicos ou distintivos protegidos, adereços exclusivos, itens característicos, símbolos, logótipos, marcas, designs ou elementos identificáveis pertencentes a obras ou terceiros.
+- Não copiar cenas específicas, poses, enquadramentos, composições, posters, capas, ilustrações, fotografias ou imagens promocionais.
+- Não imitar deliberadamente a assinatura visual de artistas vivos nem replicar uma obra existente.
+- Não usar imagens retiradas da Internet, bancos de imagens, outros criadores ou fontes externas, mesmo que aparentem estar licenciadas. Não reutilizar material de terceiros.
+- Não assumir que uma imagem gerada por IA é automaticamente livre de direitos, exclusiva ou legalmente irrestrita; evitar elementos que possam infringir direitos de autor, marcas, direitos de imagem ou outros direitos de propriedade intelectual.
+- Representar o tema de forma indireta e original, recorrendo a ambientes, paisagens, arquitetura, época, atmosfera, paleta de cores, conceitos e objetos genéricos não protegidos.
+- Quando um desafio estiver associado a uma obra protegida, usar referências verificáveis apenas como contexto informativo; nunca copiar personagens, objetos, cenas, ilustrações ou designs da obra.
+- Confirmar títulos, autores e relação entre obras quando essa informação for necessária; não inventar referências.
+- Preservar a associação clara ao desafio, tema, época ou atmosfera, sem reproduzir a expressão visual distintiva de terceiros.
 - Respeitar a linguagem visual adequada (2D, 3D, ilustração ou fotografia cinematográfica); não transformar automaticamente animação em fotorealismo.
-- Se algum elemento suscitar dúvidas de copyright, removê-lo e substituí-lo por alternativa genérica e original. A imagem final deve ficar sem personagens nem objetos distintivos protegidos.
+- Se algum elemento suscitar dúvidas de copyright, direitos de imagem, marca ou propriedade intelectual, removê-lo e substituí-lo por uma alternativa genérica e original.
+- Regra final: a imagem deve ser original, sem personagens nem objetos distintivos protegidos, sem marcas/logótipos e sem cópia reconhecível de obras de terceiros.
 
 ## 7. Recusas e correções
 - Se a geração for recusada por restrições de conteúdo ou direitos de autor, tentar novamente com alternativas originais.
