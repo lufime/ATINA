@@ -319,7 +319,7 @@ try {
   await page.locator('#createNetworkRoom').click();
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
   const starts = await page.evaluate(() => window.__rpcCalls.filter(call => call.name === 'atina_v2_start_local_game').length);
-  assert.equal(starts, categories.length + 2, 'Cada modalidade, Mix e Solo devem iniciar exatamente uma sessão.');
+  assert.equal(starts, categories.length + 3, 'Cada modalidade, Solo rápido, Mix e Solo devem iniciar exatamente uma sessão.');
   assert.deepEqual(pageErrors, [], 'A aplicação não deve produzir erros JavaScript durante os fluxos principais.');
   process.stdout.write(`Game browser regression passed: ${categories.length} categorias, Solo, Mix, revelar, resposta errada/certa, PASSO, CONTINUAR, encaminhamento online, bloqueio sem sessão e navegação.\\n`);
 } finally {
