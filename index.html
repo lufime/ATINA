@@ -2240,7 +2240,7 @@ function showHomePage(page,restore=false){
  if(page==='ranking'&&typeof atinaProgressLoadQiLeaderboard==='function')atinaProgressLoadQiLeaderboard();
  if(!restore)window.scrollTo({top:0,behavior:'smooth'});
 }
-document.getElementById('atinaGuestContinue')?.addEventListener('click',()=>{start('solo');});
+document.getElementById('atinaGuestContinue')?.addEventListener('click',async event=>{event.preventDefault();const button=event.currentTarget;if(button.disabled)return;const label=button.textContent;button.disabled=true;button.textContent='A iniciar partida…';try{await start('solo');}catch(error){console.error('Falha ao iniciar como convidado:',error);}finally{button.disabled=false;button.textContent=label;}});
 document.getElementById('atinaOnlinePlayersRefresh')?.addEventListener('click',atinaLoadOnlinePlayers);
 document.querySelectorAll('[data-home-target]').forEach(el=>el.addEventListener('click',()=>showHomePage(el.dataset.homeTarget)));
 window.addEventListener('hashchange',()=>showHomePage(location.hash.slice(1),true));
