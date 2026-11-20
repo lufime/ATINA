@@ -173,6 +173,14 @@ try {
     nodes.map(node => node.getAttribute('data-category')).filter(name => name && name !== 'Mímicas'));
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
 
+  // Regressão: o botão de arranque rápido Solo deve iniciar diretamente a sessão.
+  await page.locator('[data-atina-launch="solo"]').click();
+  await page.locator('#game').waitFor({state:'visible'});
+  await page.waitForFunction(() => document.querySelector('#category')?.textContent.trim().length > 0);
+  assert.equal(await page.locator('#answer').isEnabled(), true,
+    'O arranque rápido Solo deve abrir uma partida jogável, com resposta ativa.');
+  await page.evaluate(() => showHomePage('categories'));
+
   // Exercitar o ciclo completo do modo individual em todas as modalidades.
   for (const category of categories) {
     await page.evaluate(() => showHomePage('categories'));
