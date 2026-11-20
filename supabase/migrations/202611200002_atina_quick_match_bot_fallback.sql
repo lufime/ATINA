@@ -30,11 +30,12 @@ BEGIN
   SELECT * INTO v_entry FROM private.atina_v2_matchmaking_queue
     WHERE ticket_hash=v_hash FOR UPDATE;
   IF NOT FOUND THEN RETURN jsonb_build_object('status','cancelled'); END IF;
-  IF v_entry.status='matched' THEN
-    RETURN jsonb_build_object('status','matched','room_id',v_entry.room_id,'token',v_entry.token);
-  END IF;
+  -- Check ownership before returning any room bearer token, even for matched tickets.
   IF v_entry.account_player_id IS DISTINCT FROM v_account.player_id THEN
     RAISE EXCEPTION 'Este pedido não pertence à tua sessão.';
+  END IF;
+  IF v_entry.status='matched' THEN
+    RETURN jsonb_build_object('status','matched','room_id',v_entry.room_id,'token',v_entry.token);
   END IF;
   IF v_entry.created_at>clock_timestamp()-interval '8 seconds' THEN
     RETURN jsonb_build_object('status','waiting');
