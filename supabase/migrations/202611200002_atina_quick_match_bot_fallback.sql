@@ -51,6 +51,8 @@ BEGIN
   DELETE FROM public.atina_v2_rooms WHERE id=v_entry.room_id;
 
   v_result:=public.atina_v2_create_bot_match(p_session_token);
+  INSERT INTO private.atina_v2_quickmatch_bot_fallbacks(ticket_hash,room_id)
+  VALUES(v_hash,(v_result->>'room_id')::uuid);
   RETURN jsonb_build_object('status','bot_matched','room_id',v_result->'room_id',
     'token',v_result->'token','code',v_result->'code','player_id',v_result->'player_id');
 END;
