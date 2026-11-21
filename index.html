@@ -2852,35 +2852,7 @@ $('mimeNext').onclick=async()=>{
  mimeShowNext();mimeStartClock();
 };
 $('categories').addEventListener('click',e=>{let b=e.target.closest('[data-category]');if(!b)return;if(b.dataset.category==='Mímicas'){showHomePage('online');$('networkModeHint').textContent='🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.';return;}start('solo',b.dataset.category);});
-$('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='⚔️ Duelo online: cada jogador entra com a sua própria conta e telemóvel. Usa Partida rápida para encontrar adversário ou cria/entra numa sala.';};$('party').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='🎉 Modo Equipas: cada participante entra com a sua própria conta e telemóvel. Cria uma sala, distribui os jogadores por equipas e inicia a partida quando todos estiverem prontos.';};$('back').onclick=async()=>{
- if(networkGameActive){networkLeaveRoom();return;}
- const askExitName=(inputId,label)=>{
-  const input=$(inputId);let name=String(input?.value||'').trim();
-  if(!name){name=window.prompt('Para guardar os pontos desta partida, indica o pseudónimo de '+label+':','');if(name===null)return null;name=String(name).trim();if(input)input.value=name;}
-  return name;
- };
- const showExitStatus=message=>{const feedback=$('feedback');if(feedback)feedback.textContent=message;};
- try{
-  let saved=true;
-  if(mode==='solo'||mode==='mix'){
-   const name=askExitName('nickSolo','jogador');
-   if(name===null)return;
-   if(name)saved=await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
-  }else if(mode==='duel'||mode==='party'){
-   const name1=askExitName('nickP1','Jogador 1');if(name1===null)return;
-   const name2=askExitName('nickP2','Jogador 2');if(name2===null)return;
-   if(name1)saved=await saveOnlineScore(name1,scores[0],'duel','saveP1Btn')&&saved;
-   if(name2)saved=await saveOnlineScore(name2,scores[1],'duel','saveP2Btn')&&saved;
-  }else{
-   // Qualquer modo local não reconhecido guarda a pontuação individual.
-   const name=askExitName('nickSolo','jogador');
-   if(name===null)return;
-   if(name)saved=await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
-  }
-  if(!saved){showExitStatus('Não foi possível guardar os pontos. A partida continua aberta — tenta novamente.');return;}
-  stopTimer();raceStop();screen('home');update();
- }catch(error){showExitStatus('Erro ao guardar os pontos. A partida continua aberta para tentares novamente.');}
-};$('nextClue').onclick=reveal;$('submit').onclick=submit;
+$('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='⚔️ Duelo online: cada jogador entra com a sua própria conta e telemóvel. Usa Partida rápida para encontrar adversário ou cria/entra numa sala.';};$('party').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='🎉 Modo Equipas: cada participante entra com a sua própria conta e telemóvel. Cria uma sala, distribui os jogadores por equipas e inicia a partida quando todos estiverem prontos.';};$('back').onclick=()=>{if(networkGameActive){networkLeaveRoom();return;}stopTimer();raceStop();locked=true;localStorage.removeItem(ATINA_PROGRESS_KEY);$('resultText').textContent='Partida interrompida. Pontos contabilizados até ao momento: '+scores[0]+' — '+scores[1]+'. Desafios concluídos: '+answeredCount+'.';screen('result');renderGrandFinal();};$('nextClue').onclick=reveal;$('submit').onclick=submit;
 $('voice').onclick=()=>{
  if(locked)return;
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -2938,26 +2910,7 @@ $('voice').onclick=()=>{
 $('listenAnswer').onclick=()=>{const answerText=networkRoom&&networkGameState?(networkGameState.answer||''):(games[queue[pos]]?.[3]||'');if(!answerText){$('feedback').textContent='A resposta ainda não está disponível para leitura.';return;}if(!atinaSpeechSupported()){$('feedback').textContent=atinaSpeechDeviceWarning()||'A leitura em voz alta não está disponível neste navegador.';return;}window.speechSynthesis.cancel();const ok=atinaSpeakClue('A resposta correta é: '+answerText,true);if(!ok)$('feedback').textContent='Não foi possível iniciar a leitura em voz alta.';};$('pass').onclick=pass;$('continue').onclick=next;$('answer').addEventListener('input',saveLocalProgress);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
 // Autenticação desativada: o ranking funciona apenas com pseudónimo.
  $('menuRankingMode').onchange=loadMenuRanking;$('rankingBack').onclick=()=>screen('home');
-$('saveSoloBtn').onclick=()=>saveOnlineScore($('nickSolo').value,scores[0],'solo','saveSoloBtn');$('saveP1Btn').onclick=()=>saveOnlineScore($('nickP1').value,scores[0],'duel','saveP1Btn');$('saveP2Btn').onclick=()=>saveOnlineScore($('nickP2').value,scores[1],'duel','saveP2Btn');$('loadRanking').onclick=loadOnlineRanking;$('rankingMode').onchange=loadOnlineRanking;$('resultHome').onclick=async()=>{
- if(networkRoom&&networkGameState?.mode==='mimicas'){networkLeaveRoom();return;}
- const resultStatus=$('saveStatus');
- const askName=(inputId,label)=>{
-  const input=$(inputId);let name=String(input?.value||'').trim();
-  if(!name){name=window.prompt('Escolhe um pseudónimo para guardar automaticamente a pontuação ('+label+'):','');if(name===null)return '';name=String(name).trim();if(input)input.value=name;}
-  return name;
- };
- try{
-  if(mode==='solo'||mode==='mix'){
-   const name=askName('nickSolo','jogador');
-   if(name)await saveOnlineScore(name,scores[0],'solo','saveSoloBtn');
-  }else if(mode==='duel'||mode==='party'){
-   const name1=askName('nickP1','Jogador 1'),name2=askName('nickP2','Jogador 2');
-   if(name1)await saveOnlineScore(name1,scores[0],'duel','saveP1Btn');
-   if(name2)await saveOnlineScore(name2,scores[1],'duel','saveP2Btn');
-  }
- }catch(error){if(resultStatus)resultStatus.textContent='Não foi possível guardar automaticamente. Podes tentar novamente no ecrã de resultados.';return;}
- screen('home');update();
-};renderCategories();void refreshActiveChallengeCategories();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
+$('saveSoloBtn').onclick=()=>{};$('saveP1Btn').onclick=()=>{};$('saveP2Btn').onclick=()=>{};$('loadRanking').onclick=loadOnlineRanking;$('rankingMode').onchange=loadOnlineRanking;$('resultHome').onclick=()=>{if(networkRoom&&networkGameState?.mode==='mimicas'){networkLeaveRoom();return;}screen('home');update();};renderCategories();void refreshActiveChallengeCategories();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
 // Recupera o ecrã e o separador que estavam abertos antes da atualização.
 restoreLastScreen();
 /* Sincroniza o relógio quando a página volta a estar visível */
