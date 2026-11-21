@@ -204,6 +204,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <div><label for="reportCategoryFilter">Categoria</label><select id="reportCategoryFilter"><option value="">Todas as categorias</option><option value="visual">Visual</option><option value="game">Jogo</option><option value="points_xp">Pontuação / XP</option><option value="technical">Técnico</option><option value="other">Outro</option></select></div>
     </div>
     <p class="note" id="reportsStatus" role="status" aria-live="polite">Reports ainda não carregados.</p>
+    <p class="note" id="reportsAdminDiagnostic" aria-live="polite">Diagnóstico de autenticação: sessão não iniciada.</p>
     <div id="reportsList"></div>
   </section>
   <section class="panel hidden tab-panel" id="uploadPanel" data-tab-panel="upload">
@@ -343,6 +344,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("imagesInfo").classList.toggle("hidden", !session);
     $("challengesPanel").classList.toggle("hidden", !session);
     $("reportsPanel").classList.toggle("hidden", !session);
+    const diagnostic = $("reportsAdminDiagnostic");
+    if (diagnostic) diagnostic.textContent = session ? "UUID da conta autenticada: " + session.user.id : "Diagnóstico de autenticação: sessão não iniciada.";
     if (session && location.hash === "#challenges") loadChallenges();
     if (session && location.hash === "#reports") loadReports();
     $("adminLinks").classList.toggle("hidden", !session);
