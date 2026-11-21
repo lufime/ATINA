@@ -66,3 +66,12 @@ Novo → Em análise → Em correção → Resolvido → Arquivado.
 - Agrupamento e estados funcionam.
 - Falhas de envio não apagam o texto preenchido.
 - Sem email, sem Render, sem deploy de produção durante esta fase.
+
+
+## Auditoria técnica (2026-11-21)
+- A página `admin-images.html` confirma a sessão Supabase no cliente, mas uma sessão autenticada não é prova de autorização administrativa.
+- O endpoint de gestão chamado pela página (`atina-image-manage`) não tem implementação disponível no código versionado inspecionado; por isso não foi possível validar a autorização server-side nem reutilizar com segurança a sua lógica.
+- **Bloqueio de implementação:** não criar acesso administrativo com base em verificações de cliente, sessão genérica, user metadata ou email não verificado. A leitura/alteração de reportes só pode ser ligada depois de existir uma função server-side com autorização administrativa comprovável.
+- A implementação de submissão também depende do esquema persistente (tabela e armazenamento privado) e das políticas de acesso. Não criar um formulário que simule sucesso ou perca reportes sem persistência.
+- Próximos passos seguros: identificar ou implementar um mecanismo server-side de admin com política comprovada; preparar tabela/RLS e armazenamento privado; Edge Function de submissão com validação e limitação de abuso; integração UI do jogador e secção admin; testes automatizados de autorização, validação, privacidade e fluxo de falhas.
+- Esta auditoria é apenas no repositório/PR. Nenhuma migration foi aplicada, nenhuma alteração de Supabase produção, deploy, merge ou uso de Render.
