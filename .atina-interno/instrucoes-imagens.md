@@ -177,7 +177,8 @@ Aplicar a todos os avisos, alertas, respostas, notificações, confirmações, i
 - Documentar apenas modos, regras, menus, opções, fluxos e recursos online que estejam implementados e operacionais na versão atual.
 - Não apresentar funcionalidades antigas, removidas, planeadas, experimentais ou indisponíveis como funcionalidades atuais.
 - Quando uma alteração ao jogo afetar comportamentos, interface, regras, funcionalidades online, limitações ou procedimentos, atualizar todos os documentos relevantes no mesmo trabalho sempre que possível.
-- FAQ, Erros Conhecidos, guias, instruções, notas de versão e restantes documentos devem ser coerentes entre si e com o jogo publicado.
+- FAQ, **Como Jogar**, Erros Conhecidos, guias, instruções, notas de versão e restantes documentos devem ser coerentes entre si e com o jogo publicado.
+- A página/seção **Como Jogar** deve explicar apenas o funcionamento, modos, regras, controlos e funcionalidades online existentes na versão atual. Rever e atualizar sempre que a experiência de jogo mudar.
 - Os Erros Conhecidos devem incluir apenas problemas confirmados na versão atual, distinguindo falhas confirmadas, limitações atuais, aspetos por testar e correções validadas.
 - Se não for possível confirmar a versão online ou determinada funcionalidade, indicar a incerteza e não assumir disponibilidade.
 - O código atual e a versão online publicada são a referência; a documentação nunca deve contradizer o comportamento real do jogo.
