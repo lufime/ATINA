@@ -5090,8 +5090,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   const title=document.createElement('strong');title.textContent='⭐ Guardar ATINA nos favoritos';
   const msg=document.createElement('p');msg.style.cssText='margin:6px 0 10px;color:#d6deea';msg.textContent='Gostaste de jogar? Guarda esta página nos favoritos do teu navegador para voltares mais depressa.';
   const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
-  const help=document.createElement('button');help.type='button';help.textContent='Guardar nos favoritos';help.style.cssText='border:0;border-radius:9px;padding:9px 12px;background:#d3ad68;color:#17202b;font-weight:700';
-  help.onclick=function(){msg.textContent='No computador: Ctrl+D (Windows/Linux) ou ⌘+D (Mac). No telemóvel, usa o menu do navegador e escolhe Adicionar aos favoritos ou Marcador. Esta sugestão não volta a aparecer neste dispositivo.';help.textContent='Entendi';help.onclick=markSaved;};
+  const help=document.createElement('button');help.type='button';help.textContent='Adicionar aos favoritos do browser';help.style.cssText='border:0;border-radius:9px;padding:9px 12px;background:#d3ad68;color:#17202b;font-weight:700';
+  help.onclick=function(){msg.textContent='O browser não permite que o ATINA adicione automaticamente. No computador usa Ctrl+D (Windows/Linux) ou ⌘+D (Mac). No telemóvel abre o menu do navegador e escolhe Adicionar aos favoritos ou Marcador.';help.textContent='Já adicionei aos favoritos';help.onclick=markSaved;};
   const close=document.createElement('button');close.type='button';close.textContent='Agora não';close.style.cssText='border:1px solid #30445b;border-radius:9px;padding:9px 12px;background:#1a2d44;color:#f3f0e8';close.onclick=dismiss;
   actions.append(help,close);box.append(title,msg,actions);card.append(box);
  }
