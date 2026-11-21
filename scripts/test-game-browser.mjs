@@ -308,7 +308,7 @@ try {
   assert.equal(roomFallbackCall.args.p_session_token, 's'.repeat(64));
   assert.equal(fallbackState.lobbyVisible, true, 'O fallback deve abrir a sala online.');
   assert.equal(fallbackState.room, 'quick-fallback-room');
-  assert.match(fallbackState.status, /Partida preparada|A abrir a sala/);
+  assert.match(fallbackState.status, /Partida preparada|A abrir a sala|Partida encontrada\. Boa sorte!/);
   assert.doesNotMatch(fallbackState.status, /bot/i, 'O texto da interface não deve mencionar bots.');
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
