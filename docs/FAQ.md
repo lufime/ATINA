@@ -1,39 +1,44 @@
 # ATINA — Perguntas frequentes (FAQ)
 
-Esta página reúne respostas rápidas sobre o funcionamento do ATINA.
+**Versão do jogo:** v0.1.218  
+**Última atualização do documento:** 21/11/2026
+
+Esta página reúne respostas sobre os modos e o funcionamento do ATINA, com base no código consultado.
 
 ## Como começo a jogar?
-No ecrã inicial, escolhe um modo de jogo e segue as instruções apresentadas. Podes jogar desafios individuais ou em grupo, conforme os modos disponíveis.
+No ecrã inicial, abre **Jogar** e escolhe um modo. Segue as instruções apresentadas durante a partida.
 
 ## Que modos existem?
-- **Individual:** joga sozinho, com pontuação e progressão.
-- **Duelo:** dois jogadores partilham o dispositivo e alternam as jogadas.
-- **Mix:** combina desafios de várias modalidades.
-- **Party:** duas equipas jogam no mesmo dispositivo, até 10 desafios.
-- **Multiplayer:** cria ou entra numa sala online com código; os participantes podem responder, propor respostas e votar conforme a ronda.
+- **Jogar sozinho:** desafios individuais.
+- **Modo Mix:** mistura desafios de várias modalidades.
+- **Duelo:** encaminha para o jogo online; podes procurar uma partida rápida ou criar/entrar numa sala. Os jogadores usam os seus próprios dispositivos.
+- **Modo Festa / Equipas:** jogo em rede, através de uma sala; os participantes usam os seus próprios dispositivos e são distribuídos por equipas.
+- **Modalidades online:** cria uma sala ou entra com um código, conforme as opções disponíveis.
 
 ## Como funcionam as pistas?
-As pistas são reveladas progressivamente. Usa o botão de pista quando quiseres avançar, tendo em conta que a informação disponível pode facilitar a resposta.
+As pistas são reveladas progressivamente. Usa **Revelar próxima pista** para obter mais informação.
 
-## Como são validadas as respostas?
-Nos modos com resposta escrita, a resposta é enviada para validação online. A pontuação, penalizações, bónus, prazos e transições são calculados pelo serviço de jogo.
+## Como envio uma resposta?
+Escreve ou diz a resposta, quando a modalidade o permitir, e usa **Confirmar resposta**. A validação depende do serviço de jogo.
+
+## E se não souber a resposta?
+Usa **PASSO**, quando disponível. O jogo apresenta a solução de acordo com o fluxo da ronda.
+
+## Pontos, XP e tempo
+As respostas certas dão pontos e XP. A pontuação depende das regras da modalidade e da dificuldade. Uma resposta errada pode aplicar penalização. Nas Definições, existem opções de tempo e dificuldade, conforme apresentadas no jogo.
+
+## Duelo e Modo Festa funcionam no mesmo dispositivo?
+A implementação atual consultada encaminha **Duelo** e **Modo Festa** para o fluxo online. A indicação do jogo é usar os dispositivos dos participantes e jogar através de partida rápida ou sala; não os descrevas como modos locais no mesmo dispositivo.
 
 ## Preciso de Internet?
-Sim. Todos os modos requerem ligação à Internet e validação online. O ATINA não disponibiliza modo offline nem validação alternativa local.
+Os modos online dependem de ligação à Internet. A validação de respostas e as funcionalidades de sala são serviços online. Não foi confirmado um modo offline completo.
 
-## Posso jogar no mesmo dispositivo com outra pessoa?
-Sim. Os modos Duelo e Party são concebidos para partilha do dispositivo. Segue a indicação de vez/equipa que aparece no jogo.
+## Onde vejo o meu progresso?
+Consulta o Perfil e os separadores de Classificação disponíveis. A atualização dos dados depende da ligação e dos serviços.
 
-## Onde vejo a minha pontuação ou ranking?
-Consulta os separadores de ranking e perfil disponíveis no ecrã inicial. Os dados podem depender de ligação e carregamento do serviço.
-
-## O jogo não está a responder ou não carregou?
-Confirma a ligação à Internet e tenta novamente. Se o problema continuar, consulta a página **Erros conhecidos** e volta a tentar mais tarde.
+## Se o jogo não responder?
+Confirma a ligação, aguarda e tenta novamente. Consulta também **Erros conhecidos**. Se persistir, reporta o modo, o passo em que ocorreu e uma captura de ecrã, sem dados privados.
 
 ---
 
 [Voltar ao ATINA](../index.html)
-
-
-## Onde encontro a FAQ e os erros conhecidos?
-No ecrã inicial do ATINA, abre os separadores **FAQ** ou **Erros conhecidos** na navegação principal. Cada página tem também um link para abrir o documento completo.
