@@ -70,6 +70,8 @@ BEGIN
   WHERE q.status='waiting' AND r.status='waiting'
     AND (SELECT count(*) FROM public.atina_v2_room_players p WHERE p.room_id=r.id)=1
     AND q.created_at>clock_timestamp()-interval '90 seconds'
+    -- Do not match legacy queue rows whose account identity is unknown.
+    AND coalesce(q.account_player_id,waiting_player.account_player_id) IS NOT NULL
     AND coalesce(q.account_player_id,waiting_player.account_player_id) IS DISTINCT FROM v_account.player_id
   ORDER BY q.created_at LIMIT 1 FOR UPDATE OF q;
 
