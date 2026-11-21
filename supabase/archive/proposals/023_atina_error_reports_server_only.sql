@@ -42,10 +42,10 @@ DECLARE
   v_count integer;
 BEGIN
   IF p_limit < 1 OR p_limit > 200 THEN RETURN false; END IF;
-  INSERT INTO public.atina_error_report_rate_limits(minute_bucket, submission_count)
+  INSERT INTO public.atina_error_report_rate_limits AS limits(minute_bucket, submission_count)
   VALUES (v_bucket, 1)
   ON CONFLICT (minute_bucket) DO UPDATE
-    SET submission_count = atina_error_report_rate_limits.submission_count + 1
+    SET submission_count = limits.submission_count + 1
   RETURNING submission_count INTO v_count;
   DELETE FROM public.atina_error_report_rate_limits
     WHERE minute_bucket < v_bucket - interval '10 minutes';
