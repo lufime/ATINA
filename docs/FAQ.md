@@ -1,6 +1,6 @@
 # ATINA — Perguntas frequentes (FAQ)
 
-**Versão do jogo:** v0.1.11 (beta; versão da metadata do repositório — publicação online não verificada)  
+**Versão do jogo:** v0.1.218  
 **Última atualização do documento:** 21/11/2026
 
 Esta página reúne respostas sobre os modos e o funcionamento do ATINA, com base no código consultado.
