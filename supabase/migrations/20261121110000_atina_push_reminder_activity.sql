@@ -1,13 +1,17 @@
 -- ATINA Push reminders foundation (proposal only; not deployed)
 -- Adds server-side inactivity and reminder timestamps for opt-in subscriptions.
 ALTER TABLE public.atina_push_subscriptions
-  ADD COLUMN IF NOT EXISTS last_activity_at timestamptz NOT NULL DEFAULT now(),
+  ADD COLUMN IF NOT EXISTS last_activity_at timestamptz,
   ADD COLUMN IF NOT EXISTS last_reminded_at timestamptz;
 
--- Existing subscriptions use their update timestamp as the best available activity baseline.
+-- Use the existing subscription timestamp as the baseline for existing opt-ins.
 UPDATE public.atina_push_subscriptions
 SET last_activity_at = COALESCE(updated_at, created_at, now())
 WHERE last_activity_at IS NULL;
+
+ALTER TABLE public.atina_push_subscriptions
+  ALTER COLUMN last_activity_at SET DEFAULT now(),
+  ALTER COLUMN last_activity_at SET NOT NULL;
 
 CREATE INDEX IF NOT EXISTS atina_push_reminders_due_idx
   ON public.atina_push_subscriptions (last_activity_at, last_reminded_at);
