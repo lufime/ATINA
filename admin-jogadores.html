@@ -61,7 +61,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <h2 id="playersSection" class="subsection-title">Jogadores registados</h2>
     <div id="playersSummary" class="note">A carregar jogadores…</div>
     <div id="playersList" class="hint"></div>
-    <h2 id="presenceSection" class="subsection-title">Jogadores online e última atividade</h2>
+    <h2 id="presenceSection" class="subsection-title">Jogadores online, última atividade e tempo online</h2>
     <div id="presenceList" class="hint">A carregar jogadores…</div>
     <p class="note">Online = atividade nos últimos 2 minutos. A lista mantém a última atividade até 30 dias.</p>
     <h2 style="margin-top:18px">O que precisa de atenção</h2>
@@ -159,26 +159,31 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       }).join("") : "Ainda não existem jogadores registados.";
     } catch (error) { box.textContent = error.message; }
   }
+  function formatOnlineDuration(seconds) {
+    const total = Math.max(0, Math.floor(Number(seconds) || 0));
+    const days = Math.floor(total / 86400);
+    const hours = Math.floor((total % 86400) / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    if (days) return days + "d " + hours + "h " + minutes + "m";
+    if (hours) return hours + "h " + minutes + "m";
+    return minutes + "m";
+  }
   async function loadPresence() {
     const box = $("presenceList");
     if (!box) return;
     try {
       const { data: { session } } = await client.auth.getSession();
       if (!session) return;
-      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
-        method: "POST",
-        headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "presence" })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Não foi possível carregar a presença.");
-      if (!data.players.length) { box.textContent = "Ainda não há registos de atividade."; return; }
-      box.innerHTML = data.players.map(function(p) {
+      const { data, error } = await client.rpc("atina_player_online_time_stats");
+      if (error) throw error;
+      const players = Array.isArray(data) ? data : [];
+      if (!players.length) { box.textContent = "Ainda não há registos de atividade."; return; }
+      box.innerHTML = players.map(function(p) {
         const when = new Date(p.last_seen_at);
-        const ago = Math.max(0, Math.floor((Date.now() - when.getTime()) / 60000));
-        const time = ago < 1 ? "Agora mesmo" : ago < 60 ? "Há " + ago + " min" : when.toLocaleString("pt-PT");
-        const color = p.online ? "#83c6a4" : "#aab6c5";
-        return '<div class="task"><span><strong>' + String(p.nickname || "Visitante").replace(/[&<>"]/g, "") + '</strong><br><small style="color:' + color + '">' + (p.online ? "● Online" : "○ Offline") + '</small></span><span>' + time + '</span></div>';
+        const online = !!p.online;
+        const color = online ? "#83c6a4" : "#aab6c5";
+        const last = online ? "Online agora" : (Number.isNaN(when.getTime()) ? "Sem atividade" : when.toLocaleString("pt-PT"));
+        return '<div class="task"><span><strong>' + String(p.nickname || "Visitante").replace(/[&<>"]/g, "") + '</strong><br><small style="color:' + color + '">' + (online ? "● Online" : "○ Offline") + '</small><br><small>Tempo online total: ' + formatOnlineDuration(p.total_seconds) + '</small><br><small>Sessão atual: ' + (online ? formatOnlineDuration(p.current_seconds) : "—") + '</small></span><span>' + last + '</span></div>';
       }).join("");
     } catch (error) { box.textContent = error.message; }
   }
