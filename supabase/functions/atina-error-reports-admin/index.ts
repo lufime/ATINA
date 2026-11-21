@@ -11,7 +11,7 @@ const statuses = new Set(["new", "in_review", "fixing", "resolved", "archived"])
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: headersFor(req) });
+const origin = req.headers.get("Origin") ?? "";\n  if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);\n  if (req.method === "OPTIONS") return new Response("ok", { status: 204, headers: headersFor(req) });
   if (!["GET", "PATCH"].includes(req.method)) return json(req, { error: "Method not allowed" }, 405);
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_SECRET_KEY");
