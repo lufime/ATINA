@@ -119,3 +119,13 @@ A alternativa mais simples de auditar, sem depender de claims que possam demorar
 - Erros de persistência da submissão devolvem mensagem genérica, sem expor detalhe interno da base de dados.
 - Corrigido o alias do UPSERT do limite global e uma resposta de erro na função Admin durante revisão estática.
 - Esta revisão não substitui compilação, testes automatizados, teste em Supabase local/isolado ou revisão de segurança. Nenhum desses testes foi executado nesta sessão.
+
+
+## Interface — protótipo mobile/desktop (2026-11-21)
+- Criado `prototypes/error-reports-ui.html`, protótipo independente para avaliar fluxo do jogador e layout Admin.
+- Player: categoria, pseudónimo, descrição com contador, aviso de privacidade e submit desligado (não envia dados).
+- Admin: filtros de layout e cartão demonstrativo claramente identificado como mock, sem acesso a dados.
+- Responsivo: layout de duas colunas no desktop e coluna única em mobile.
+- Pseudónimo nesta demo é manual ou sugestão local; **não está ligado ao perfil ATINA**. A integração real deverá usar a fonte de pseudónimo ativa já existente e evitar persistência duplicada.
+- Não foi alterado `index.html` nem `admin-images.html`; protótipo não está integrado nem publicado. Sem screenshots/upload.
+- Próximas tarefas: rever pseudónimo source-of-truth no jogo, integrar UI com endpoint, remover mocks, configurar feedback/erros, testes mobile e desktop e testes de autorização num ambiente isolado.
