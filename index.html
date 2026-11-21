@@ -5072,19 +5072,19 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <script id="atina-bookmark-nudge-v1">
 (function(){
  const SAVED='atinaBookmarkSavedV1', COOL='atinaBookmarkCooldownUntilV1', COUNT='atinaBookmarkChallengeCountV1';
- const GAME_ID='game';
+ const HOME_ID='home';
  function saved(){try{return localStorage.getItem(SAVED)==='1';}catch(e){return true;}}
  function count(){try{return Number(localStorage.getItem(COUNT)||0);}catch(e){return 0;}}
  function hide(){const el=document.getElementById('atinaBookmarkNudge');if(el)el.remove();}
  function dismiss(){try{localStorage.setItem(COOL,String(count()+10));}catch(e){}hide();}
  function markSaved(){try{localStorage.setItem(SAVED,'1');}catch(e){}hide();}
  function render(force=false){
-  const game=document.getElementById(GAME_ID);
+  const home=document.getElementById(HOME_ID);
   if(saved())return;
   let coolUntil=0;try{coolUntil=Number(localStorage.getItem(COOL)||0);}catch(e){}
-  if(!force&&(!game||game.classList.contains('hidden')||game.hidden||count()<10||count()<coolUntil))return;
+  if(!force&&(!home||home.classList.contains('hidden')||home.hidden||count()<10||count()<coolUntil))return;
   if(document.getElementById('atinaBookmarkNudge'))return;
-  const card=game?.querySelector('.card')||document.body;
+  const card=home||document.body;
   const box=document.createElement('aside');box.id='atinaBookmarkNudge';box.setAttribute('role','note');
   box.style.cssText='margin:12px 0;padding:12px 14px;border:1px solid #d3ad68;border-radius:13px;background:#14243a;color:#f3f0e8;font-size:14px;line-height:1.45';
   const title=document.createElement('strong');title.textContent='⭐ Guardar ATINA nos favoritos';
