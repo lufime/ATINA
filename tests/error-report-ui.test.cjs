@@ -37,16 +37,21 @@ test('report contents are rendered through textContent and DOM nodes', () => {
 });
 
 test('embedded JavaScript scripts parse without syntax errors', () => {
-  const scripts = [...admin.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
-  assert.ok(scripts.length > 0, 'expected embedded script tags');
-  let parsed = 0;
-  for (const [, attributes, source] of scripts) {
-    if (/\\bsrc\\s*=/.test(attributes)) continue;
-    const type = (attributes.match(/\\btype\\s*=\\s*["']([^"']+)["']/i) || [])[1] || '';
-    if (type && !/(?:javascript|ecmascript)/i.test(type)) continue;
+  const scripts = [];
+  let cursor = 0;
+  while (true) {
+    const opening = admin.indexOf('<script', cursor);
+    if (opening < 0) break;
+    const tagEnd = admin.indexOf('>', opening);
+    const closing = admin.indexOf('</script>', tagEnd + 1);
+    assert.ok(tagEnd >= 0 && closing > tagEnd, 'script tags should be well formed');
+    const attributes = admin.slice(opening, tagEnd + 1).toLowerCase();
+    const source = admin.slice(tagEnd + 1, closing);
+    cursor = closing + 9;
+    if (attributes.includes(' src=') || attributes.includes(' type="application/json"') || attributes.includes(" type='application/json'")) continue;
     if (!source.trim()) continue;
     assert.doesNotThrow(() => new vm.Script(source, { filename: 'admin-images-inline-script.js' }), 'inline script should parse');
-    parsed++;
+    scripts.push(source);
   }
-  assert.ok(parsed > 0, 'expected at least one inline JavaScript block to parse');
+  assert.ok(scripts.length > 0, 'expected at least one inline JavaScript block to parse');
 });
