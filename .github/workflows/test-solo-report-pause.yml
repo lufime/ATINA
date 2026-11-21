@@ -1,0 +1,27 @@
+name: Testar pausa de reporte em Solo
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'tests/solo-report-pause.test.cjs'
+      - '.github/workflows/test-solo-report-pause.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  solo-report-pause:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validar sintaxe do teste
+        run: node --check tests/solo-report-pause.test.cjs
+      - name: Executar testes automatizados da pausa Solo
+        run: node --test tests/solo-report-pause.test.cjs
