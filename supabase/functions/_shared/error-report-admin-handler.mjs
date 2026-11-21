@@ -15,7 +15,7 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
   let user; try { user = await authenticate(token); } catch { return json(req, { error: "Unauthorized" }, 401); }
   if (!user) return json(req, { error: "Unauthorized" }, 401);
   let adminAllowed; try { adminAllowed = await isAdmin(user.id); } catch { return json(req, { error: "Admin authorization check failed" }, 503); }
-  if (!adminAllowed) return json(req, { error: "Forbidden" }, 403);
+  if (!adminAllowed) return json(req, { error: "Administrador não autorizado: a conta autenticada não está registada para gerir reports." }, 403);
   if (req.method === "GET") { try { return json(req, { reports: (await listReports()) ?? [] }); } catch { return json(req, { error: "Could not load reports" }, 500); } }
   try {
    const body = await req.json();
