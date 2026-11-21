@@ -1,0 +1,21 @@
+name: Validar backend de reports (offline)
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/atina-error-reports-*/**'
+      - 'supabase/migrations/**'
+      - 'tests/error-report-backend-validation.test.cjs'
+      - '.github/workflows/test-error-reports-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test tests/error-report-backend-validation.test.cjs
