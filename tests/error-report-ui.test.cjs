@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const vm = require('node:vm');
 
 const game = fs.readFileSync('index.html', 'utf8');
 const admin = fs.readFileSync('admin-images.html', 'utf8');
@@ -33,4 +34,19 @@ test('report contents are rendered through textContent and DOM nodes', () => {
   assert.match(render, /desc\.textContent=report\.description/);
   assert.match(render, /title\.textContent=/);
   assert.doesNotMatch(render, /innerHTML.*report\.(nickname|description|internal_note)/);
+});
+
+test('embedded JavaScript scripts parse without syntax errors', () => {
+  const scripts = [...admin.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  assert.ok(scripts.length > 0, 'expected embedded script tags');
+  let parsed = 0;
+  for (const [, attributes, source] of scripts) {
+    if (/\\bsrc\\s*=/i.test(attributes)) continue;
+    const type = (attributes.match(/\\btype\\s*=\\s*["']([^"']+)["']/i) || [])[1] || '';
+    if (type && !/(?:javascript|ecmascript)/i.test(type)) continue;
+    if (!source.trim()) continue;
+    assert.doesNotThrow(() => new vm.Script(source, { filename: 'admin-images-inline-script.js' }), 'inline script should parse');
+    parsed++;
+  }
+  assert.ok(parsed > 0, 'expected at least one inline JavaScript block to parse');
 });
