@@ -6,6 +6,8 @@ on:
       - admin-images.html
       - tests/error-report-ui.test.cjs
       - tests/error-report-backend.integration.test.cjs
+      - supabase/functions/atina-error-reports-admin/index.ts
+      - supabase/functions/atina-error-reports-submit/index.ts
       - .github/workflows/test-error-report-ui.yml
   push:
     branches: [main]
