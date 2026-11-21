@@ -1266,7 +1266,7 @@ label.section{line-height:1.35!important}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupClueToggle,{once:true});else setupClueToggle();
  const observer=new MutationObserver(setupClueToggle);
- observer.observe(document.body,{childList:true,subtree:true});
+ observer.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 <style id="atina-clues-flow-fix-v1">
@@ -5182,6 +5182,252 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 #game .feedback.solution-revealed{border:1px solid #d5ad57!important;border-radius:12px!important;padding:10px 12px!important;background:#30291b!important;color:#ffe5a4!important}
 #game .feedback .solution-answer{display:block!important;margin-top:6px!important}
 @media(prefers-reduced-motion:reduce){#game #feedback{transition:none!important;animation:none!important}}
+</style>
+<style id="atina-mobile-compact-consolidated">
+/* Consolidated mobile compact styles, preserving existing features and IDs */
+/* PR #293: atina-settings-compact */
+/* Definições: reduzir texto e espaçamento, mantendo todas as opções e IDs. */
+#home [data-home-page="settings"] .home-welcome{padding:14px!important;margin-bottom:9px!important}
+#home [data-home-page="settings"] .home-welcome h2{margin:5px 0!important;font-size:22px!important}
+#home [data-home-page="settings"] .home-welcome p,
+#home [data-home-page="settings"] .card>p.muted.small{display:none!important}
+#home [data-home-page="settings"] .card{padding:13px!important;margin:0 0 9px!important}
+#home [data-home-page="settings"] .card h3{margin:10px 0 5px!important;font-size:15px!important}
+#home [data-home-page="settings"] .card h3:first-child{margin-top:0!important}
+#home [data-home-page="settings"] .answer{margin:4px 0 8px!important;min-height:46px!important}
+#home [data-home-page="settings"] .sound-toggle{min-height:46px!important;margin:4px 0!important}
+#home [data-home-page="settings"] #clueSpeechTest{min-height:42px!important}
+#home [data-home-page="settings"] #shareMonitorHome{min-height:44px!important;margin:0!important}
+@media(max-width:480px){
+ #home [data-home-page="settings"] .home-welcome{padding:12px!important}
+ #home [data-home-page="settings"] .card{padding:12px!important}
+ #home [data-home-page="settings"] .card h3{font-size:14px!important;margin:8px 0 4px!important}
+ #home [data-home-page="settings"] .answer,
+ #home [data-home-page="settings"] .sound-toggle{min-height:44px!important}
+}
+
+/* PR #294: atina-profile-compact-20261120 */
+/* Perfil: reduzir texto secundário e tornar os blocos mais compactos sem alterar IDs, fluxo ou regras de conta. */
+#home [data-home-page="profile"] .home-welcome p{display:none!important}
+#home [data-home-page="profile"] #atinaCloudProgressPanel{padding:12px!important;margin:0 0 9px!important}
+#home [data-home-page="profile"] #atinaCloudProgressPanel .muted.small{font-size:11px!important;line-height:1.35!important}
+#home [data-home-page="profile"] #atinaCloudQiMeta{display:none!important}
+#home [data-home-page="profile"] .atina-level-gallery-panel{padding:12px!important;margin-bottom:9px!important}
+#home [data-home-page="profile"] .atina-level-gallery-panel>p.muted.small{margin:4px 0 8px!important}
+@media(max-width:480px){
+ #home [data-home-page="profile"] #atinaCloudProgressPanel{padding:10px!important}
+ #home [data-home-page="profile"] #atinaCloudProgressPanel .row{gap:6px!important}
+ #home [data-home-page="profile"] .atina-level-gallery-panel{padding:10px!important}
+}
+
+/* PR #295: atina-howto-mobile-compact-20261120 */
+/* Guia: leitura mais direta no telemóvel, sem remover passos ou informação. */
+#home [data-home-page="howto"] .home-welcome{padding:13px!important;margin:0 0 9px!important}
+#home [data-home-page="howto"] .home-welcome h2{font-size:clamp(20px,5vw,24px)!important;line-height:1.2!important;margin:6px 0!important}
+#home [data-home-page="howto"] .home-welcome p{font-size:12px!important;line-height:1.4!important;margin:0!important}
+#home [data-home-page="howto"] .atina-howto-card{padding:12px!important;margin:0 0 9px!important}
+#home [data-home-page="howto"] .atina-howto-card h3{font-size:15px!important;line-height:1.3!important;margin:0 0 7px!important}
+#home [data-home-page="howto"] .atina-howto-card p,#home [data-home-page="howto"] .atina-howto-card li{font-size:13px!important;line-height:1.45!important}
+#home [data-home-page="howto"] .atina-howto-card p{margin:5px 0 8px!important}
+#home [data-home-page="howto"] .atina-howto-card ul,#home [data-home-page="howto"] .atina-howto-card ol{padding-left:20px!important;margin:5px 0 8px!important}
+#home [data-home-page="howto"] .atina-howto-card li{margin:3px 0!important}
+@media(max-width:480px){#home [data-home-page="howto"] .atina-howto-card{padding:10px!important}#home [data-home-page="howto"] .atina-howto-card p,#home [data-home-page="howto"] .atina-howto-card li{font-size:12px!important}}
+
+/* PR #296: atina-categories-mobile-compact-20261120 */
+/* Categorias: grelha mais fácil de tocar e leitura rápida em ecrãs pequenos. */
+#home [data-home-page="categories"]>.section{margin:0 0 8px!important;font-size:15px!important}
+#home [data-home-page="categories"] .home-hint{font-size:11px!important;line-height:1.35!important;margin:4px 0 8px!important}
+#home [data-home-page="categories"] #challengeBankProgress{padding:6px 8px!important;border-radius:8px!important;background:#12283b!important}
+#home [data-home-page="categories"] #categories{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+#home [data-home-page="categories"] #categories .tile{min-height:82px!important;padding:10px!important;border-radius:12px!important;gap:3px!important}
+#home [data-home-page="categories"] #categories .tile span{font-size:20px!important;line-height:1.1!important}
+#home [data-home-page="categories"] #categories .tile b{font-size:13px!important;line-height:1.25!important}
+#home [data-home-page="categories"] #categories .tile small{font-size:10px!important;line-height:1.25!important}
+@media(max-width:360px){#home [data-home-page="categories"] #categories{gap:6px!important}#home [data-home-page="categories"] #categories .tile{padding:8px!important;min-height:76px!important}#home [data-home-page="categories"] #categories .tile b{font-size:12px!important}}
+
+/* PR #297: atina-access-mobile-compact-20261120 */
+/* Entrada e termos: melhorar leitura e reduzir espaço no mobile sem esconder informação legal. */
+@media(max-width:600px){
+ #atinaAccessPage{gap:8px!important}
+ #atinaAccessPage .atina-entry-intro{padding:14px!important;margin:0 0 8px!important;border-radius:14px!important}
+ #atinaAccessPage .atina-entry-intro h2{font-size:clamp(21px,6vw,26px)!important;line-height:1.15!important;margin:6px 0 8px!important}
+ #atinaAccessPage .atina-entry-intro p{font-size:12px!important;line-height:1.4!important;margin:0 0 8px!important}
+ #atinaAccessPage .atina-entry-prompt{padding:8px 10px!important;border-radius:10px!important;background:rgba(255,255,255,.045)!important}
+ #atinaAccessPage #atinaGuestContinue{min-height:44px!important;margin-top:4px!important}
+ #atinaAccessPage .atina-legal-inline{padding:12px!important;margin:8px 0!important;border-radius:13px!important}
+ #atinaAccessPage .atina-legal-inline h3{font-size:15px!important;line-height:1.3!important;margin:0 0 9px!important}
+ #atinaAccessPage .atina-legal-content h4{font-size:13px!important;line-height:1.3!important;margin:12px 0 5px!important}
+ #atinaAccessPage .atina-legal-content p{font-size:11px!important;line-height:1.45!important;margin:0 0 8px!important}
+}
+@media(max-width:360px){#atinaAccessPage .atina-entry-intro,#atinaAccessPage .atina-legal-inline{padding:10px!important}#atinaAccessPage .atina-legal-content p{font-size:10.5px!important}}
+
+/* PR #298: atina-play-mobile-compact-20261120 */
+/* Menu de modos: tornar escolha imediata e compacta em mobile. */
+@media(max-width:600px){
+ #home [data-home-page="play"]{padding:11px!important;margin:0 0 8px!important;border-radius:13px!important}
+ #home [data-home-page="play"]>.section{font-size:15px!important;margin:0 0 8px!important;line-height:1.25!important}
+ #home [data-home-page="play"] .actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:0!important}
+ #home [data-home-page="play"] .actions .btn{min-width:0!important;min-height:46px!important;padding:9px 7px!important;margin:0!important;font-size:12px!important;line-height:1.25!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ #home [data-home-page="play"] #solo{grid-column:1/-1!important}
+}
+@media(max-width:360px){#home [data-home-page="play"] .actions{gap:6px!important}#home [data-home-page="play"] .actions .btn{font-size:11px!important;padding:8px 5px!important;min-height:43px!important}}
+
+/* PR #299: atina-online-mobile-polish */
+/* Ecrã de jogo em rede: lista e ações mais compactas sem alterar funcionalidades. */
+@media(max-width:700px){
+ #home [data-home-page="online"] #atinaOnlinePlayersPanel{padding:11px!important;margin:9px 0!important;border-radius:12px!important}
+ #home [data-home-page="online"] #atinaOnlinePlayersPanel h3{font-size:15px!important}
+ #home [data-home-page="online"] #atinaOnlinePlayersRefresh{min-height:38px!important;font-size:12px!important}
+ #home [data-home-page="online"] #atinaOnlinePlayersList{padding-left:20px!important;margin:7px 0!important;font-size:13px!important;line-height:1.45!important}
+ #home [data-home-page="online"] #atinaOnlinePlayersStatus{font-size:11px!important;line-height:1.35!important;margin:6px 0 0!important}
+ #home [data-home-page="online"] .quick-match-panel{padding:12px!important;margin:9px 0!important;border-radius:12px!important}
+ #home [data-home-page="online"] .quick-match-panel h3{font-size:16px!important}
+ #home [data-home-page="online"] .quick-match-panel p{font-size:12px!important;line-height:1.35!important;margin:5px 0 8px!important}
+ #home [data-home-page="online"] .quick-match-panel .btn{min-height:44px!important;margin:4px 0!important}
+ #home [data-home-page="online"] .network-room-options{padding:10px!important;margin-top:9px!important;border-radius:12px!important}
+ #home [data-home-page="online"] .network-room-options label.section{margin:10px 0 5px!important;font-size:12px!important}
+ #home [data-home-page="online"] .network-room-options .answer{min-height:44px!important;font-size:14px!important}
+ #home [data-home-page="online"] .network-room-options .btn{min-height:44px!important;margin:4px 0!important}
+ #home [data-home-page="online"] #networkStatus{font-size:12px!important;line-height:1.4!important}
+}
+@media(max-width:380px){
+ #home [data-home-page="online"] #atinaOnlinePlayersPanel{padding:9px!important}
+ #home [data-home-page="online"] .quick-match-panel{padding:10px!important}
+ #home [data-home-page="online"] .network-room-options{padding:9px!important}
+}
+
+/* PR #300: atina-mimicas-mobile-compact */
+/* Mímicas: palco, cronómetro e controlos ajustados ao ecrã do telemóvel. */
+@media(max-width:700px){
+ #mimicaGame>.card{padding:12px!important;margin-top:9px!important;border-radius:15px!important}
+ #mimicaGame>.row:first-child{gap:5px!important;align-items:center!important}
+ #mimicaGame>.row:first-child .btn{min-height:40px!important;padding:8px 10px!important;font-size:12px!important}
+ #mimicaGame #mimeRound{margin:4px 0!important;font-size:11px!important}
+ #mimicaGame #mimePlayer{font-size:19px!important;line-height:1.2!important;margin:6px 0!important}
+ #mimicaGame #mimeTimer{min-height:64px!important;padding:8px 12px!important;font-size:clamp(38px,12vw,50px)!important;line-height:1!important}
+ #mimicaGame #mimeWord{font-size:clamp(24px,7vw,32px)!important;line-height:1.2!important;margin:7px 0!important}
+ #mimicaGame #mimePictureClue{min-height:130px!important;padding:10px!important;margin:8px 0!important;border-radius:12px!important}
+ #mimicaGame #mimePictureClue span{font-size:52px!important}
+ #mimicaGame #mimeClueProgress,#mimicaGame #mimeCategory{font-size:11px!important;margin:5px 0!important;line-height:1.3!important}
+ #mimicaGame #mimeReveal{min-height:44px!important;margin:7px 0!important;padding:9px!important;font-size:13px!important}
+ #mimicaGame .actions{gap:6px!important;margin:8px 0!important}
+ #mimicaGame .actions .btn{min-height:48px!important;padding:9px 7px!important;font-size:13px!important}
+ #mimicaGame #mimeFeedback{font-size:13px!important;line-height:1.4!important;margin:7px 0!important}
+}
+@media(max-width:380px){
+ #mimicaGame>.card{padding:10px!important}
+ #mimicaGame #mimePictureClue{min-height:115px!important}
+ #mimicaGame>.row:first-child .btn{font-size:11px!important;padding:7px 8px!important}
+}
+
+/* PR #301: atina-ranking-mobile-polish */
+/* Ranking: cartões e filtros mais compactos em mobile, sem alterar dados. */
+@media(max-width:600px){
+ #rankingPage{padding:11px!important;border-radius:14px!important;margin:8px 0!important}
+ #rankingPage>h2{font-size:20px!important;line-height:1.2!important;margin:3px 0 10px!important}
+ #rankingPage .online-ranking{padding:10px!important;margin:8px 0!important;border-radius:12px!important}
+ #rankingPage .online-ranking h3{font-size:15px!important;line-height:1.2!important;margin:2px 0 6px!important}
+ #rankingPage .online-ranking p{font-size:11px!important;line-height:1.35!important;margin:4px 0 8px!important}
+ #rankingPage .online-ranking .row{gap:6px!important;align-items:center!important;flex-wrap:wrap!important}
+ #rankingPage .online-ranking .row strong{font-size:12px!important}
+ #rankingPage #menuRankingMode{min-height:42px!important;font-size:13px!important;padding:8px!important}
+ #rankingPage #menuPointsRankingList,#rankingPage #menuXpRankingList{margin:8px 0!important;padding-left:23px!important;font-size:13px!important;line-height:1.4!important}
+ #rankingPage #menuPointsRankingList li,#rankingPage #menuXpRankingList li{padding:7px 4px!important;margin:3px 0!important;overflow-wrap:anywhere!important}
+ #rankingPage #rankingBack{min-height:46px!important;margin-top:8px!important}
+}
+@media(max-width:380px){
+ #rankingPage{padding:9px!important}
+ #rankingPage .online-ranking{padding:8px!important}
+ #rankingPage #menuPointsRankingList,#rankingPage #menuXpRankingList{font-size:12px!important;padding-left:20px!important}
+}
+
+/* PR #302: atina-screen-share-help-mobile */
+@media(max-width:600px){
+ #screenShareHelp{margin:8px 0!important;padding:12px!important;border-radius:14px!important;max-height:calc(100dvh - 16px)!important;overflow-y:auto!important}
+ #screenShareHelp .row{align-items:center!important;gap:8px!important}
+ #screenShareHelp #screenShareTitle{font-size:18px!important;line-height:1.2!important}
+ #screenShareHelp>p{font-size:12px!important;line-height:1.4!important;margin:8px 0!important}
+ #screenShareHelp .clues{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;margin:8px 0!important}
+ #screenShareHelp .clue{padding:9px 10px!important;font-size:12px!important;line-height:1.4!important;border-radius:10px!important;overflow-wrap:anywhere!important}
+ #screenShareHelp #fullscreenAtina{min-height:46px!important;margin:8px 0 2px!important}
+ #screenShareHelp #closeScreenShare{min-width:42px!important;min-height:42px!important;padding:8px!important;flex-shrink:0!important}
+}
+@media(max-width:380px){#screenShareHelp{padding:10px!important}#screenShareHelp .clue{padding:8px!important;font-size:11px!important}}
+
+/* PR #303: atina-results-mobile-compact */
+@media(max-width:600px){
+ #result{padding:12px!important;border-radius:14px!important;margin:8px 0!important}
+ #result>h2{font-size:21px!important;margin:2px 0 9px!important;line-height:1.2!important}
+ #result #resultText{font-size:15px!important;line-height:1.45!important;margin:7px 0 10px!important}
+ #result #onlineSave{padding:10px!important;margin:8px 0!important;border-radius:12px!important}
+ #result #onlineSave>h3{font-size:16px!important;margin:2px 0 7px!important}
+ #result #onlineSave>p{font-size:11px!important;line-height:1.35!important;margin:5px 0 8px!important}
+ #result #saveSolo,#result #saveDuel{display:flex!important;flex-direction:column!important;gap:7px!important}
+ #result #saveDuel.hidden{display:none!important}
+ #result input.answer{width:100%!important;min-width:0!important;min-height:44px!important;font-size:14px!important;padding:10px!important}
+ #result #onlineSave button{min-height:44px!important;padding:10px!important;font-size:13px!important}
+ #result .online-ranking{margin:9px 0 0!important;padding:9px!important;border-radius:10px!important}
+ #result .online-ranking .row{gap:7px!important;flex-wrap:wrap!important;align-items:center!important}
+ #result .online-ranking .row strong{font-size:12px!important}
+ #result #rankingMode{min-height:42px!important;font-size:13px!important;padding:7px!important}
+ #result #rankingList{font-size:12px!important;padding-left:22px!important;margin:7px 0!important}
+ #result #rankingList li{padding:6px 3px!important;overflow-wrap:anywhere!important}
+ #result #resultHome{min-height:46px!important;margin-top:8px!important}
+}
+@media(max-width:380px){#result{padding:9px!important}#result #onlineSave{padding:8px!important}#result #resultText{font-size:14px!important}}
+
+/* PR #304: atina-social-share-mobile */
+@media(max-width:600px){
+ #atinaSocialShare{padding:11px!important;margin:8px 0!important;border-radius:13px!important}
+ #atinaSocialShare h3{font-size:16px!important;line-height:1.2!important;margin:1px 0 6px!important}
+ #atinaSocialShare>p{font-size:11px!important;line-height:1.35!important;margin:5px 0 9px!important}
+ #atinaSocialShare .actions{grid-template-columns:1fr!important;gap:6px!important}
+ #atinaSocialShare .actions button{min-height:43px!important;padding:9px!important;font-size:13px!important}
+ #atinaSocialShare #socialShareStatus{font-size:12px!important;line-height:1.35!important;margin:6px 0 0!important;overflow-wrap:anywhere!important}
+}
+@media(min-width:381px) and (max-width:600px){#atinaSocialShare .actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}#atinaSocialShare .actions button{font-size:12px!important}}
+@media(max-width:380px){#atinaSocialShare{padding:9px!important}#atinaSocialShare .actions button{font-size:11px!important}}
+
+/* PR #305: atina-network-lobby-mobile */
+@media(max-width:600px){
+ #networkLobby{padding:11px!important;margin:8px 0!important;border-radius:14px!important;min-width:0!important}
+ #networkLobby>h2{font-size:20px!important;line-height:1.2!important;margin:8px 0!important;overflow-wrap:anywhere!important}
+ #networkLobby>h3,#networkLobby #networkHostTools h3{font-size:16px!important;line-height:1.25!important;margin:9px 0 6px!important}
+ #networkLobby>p,#networkLobby #networkHostTools p{font-size:12px!important;line-height:1.4!important;margin:6px 0 9px!important}
+ #networkLobby #networkPlayers{padding-left:22px!important;margin:8px 0!important;font-size:13px!important;line-height:1.4!important}
+ #networkLobby #networkPlayers li{padding:6px 3px!important;margin:3px 0!important;overflow-wrap:anywhere!important}
+ #networkLobby #networkHostTools{padding:9px!important;margin:9px 0!important;border-radius:11px!important;min-width:0!important}
+ #networkLobby button{min-height:44px!important;padding:9px 11px!important;font-size:13px!important;max-width:100%!important}
+ #networkLobby #leaveNetworkRoom{width:100%!important;margin-bottom:5px!important}
+ #networkLobby #networkReady{margin:8px 0!important}
+ #networkLobby #networkLobbyStatus{font-size:12px!important;line-height:1.4!important;overflow-wrap:anywhere!important;margin:7px 0!important}
+}
+@media(max-width:380px){#networkLobby{padding:9px!important}#networkLobby #networkHostTools{padding:8px!important}#networkLobby #networkPlayers{font-size:12px!important}}
+
+/* PR #306: atina-team-scoreboard-mobile */
+@media(max-width:600px){
+ #networkScoreboard{padding:11px!important;margin:8px 0!important;border-radius:13px!important}
+ #networkScoreboard>strong{font-size:13px!important;line-height:1.3!important;display:block!important;margin:5px 0!important}
+ #networkScoreboard ol{padding-left:22px!important;margin:6px 0 9px!important;font-size:12px!important;line-height:1.35!important}
+ #networkScoreboard ol li{padding:6px 3px!important;margin:2px 0!important;overflow-wrap:anywhere!important}
+ #teamVotePanel{padding:11px!important;border-radius:12px!important;margin:8px 0!important}
+ #teamVotePanel h3,#teamVotePanel strong{font-size:14px!important;line-height:1.25!important}
+ #teamVotePanel p{font-size:12px!important;line-height:1.4!important;margin:6px 0!important}
+ #teamVotePanel button{min-height:44px!important;padding:9px!important;font-size:13px!important;max-width:100%!important}
+}
+@media(max-width:380px){#networkScoreboard{padding:9px!important}#networkScoreboard ol{font-size:11px!important;padding-left:20px!important}#teamVotePanel{padding:9px!important}}
+
+/* PR #307: atina-brand-header-mobile */
+@media(max-width:600px){
+ .brand{padding:10px 11px!important;min-height:0!important;margin-bottom:7px!important;border-radius:14px!important;text-align:center!important}
+ .brand .eyebrow{font-size:9px!important;letter-spacing:.16em!important;line-height:1.2!important}
+ .brand .logo-image{display:block!important;width:min(64%,220px)!important;max-height:76px!important;object-fit:contain!important;margin:4px auto!important}
+ .brand .tag{font-size:12px!important;line-height:1.25!important;margin:2px 0!important}
+ #atinaSignedInUser{max-width:100%!important;box-sizing:border-box!important;margin:6px auto 0!important;padding:5px 9px!important;font-size:11px!important;overflow-wrap:anywhere!important}
+ .brand .stats{justify-content:center!important;gap:5px!important;margin-top:7px!important}
+ .brand .stats>*{padding:5px 8px!important;font-size:10px!important;line-height:1.2!important}
+}
+@media(max-width:380px){.brand .logo-image{width:min(58%,190px)!important;max-height:64px!important}.brand .tag{font-size:11px!important}.brand .stats>*{font-size:9px!important;padding:4px 6px!important}}
 </style>
 </body></html>
 
