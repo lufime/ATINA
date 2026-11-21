@@ -3,7 +3,7 @@ name: ATINA CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, feature/voluntary-push-reminders-rebuild]
   workflow_dispatch:
 
 permissions:
