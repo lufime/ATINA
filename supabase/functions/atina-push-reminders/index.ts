@@ -44,7 +44,12 @@ Deno.serve(async (request) => {
   let sent = 0, expired = 0, failed = 0, invalid = 0;
   for (const item of claimed) {
     const host = endpointHost(item.subscription);
-    if (!host) { invalid++; continue; }
+    if (!host) {
+      // Invalid or unsupported endpoints cannot be sent to and otherwise can monopolize claim batches.
+      await removeSubscription(item.id).catch(() => {});
+      invalid++;
+      continue;
+    }
     try {
       await webpush.sendNotification(item.subscription as Parameters<typeof webpush.sendNotification>[0], payload, { TTL: 86400, urgency: "normal" });
       await markSent(item.id);
