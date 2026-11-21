@@ -424,6 +424,22 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .detective-story ul{margin:8px 0;padding-left:22px;font-size:14px}
 .detective-story li{margin:6px 0}
 .detective-story-note{padding:9px 11px;border-left:3px solid #d3ad68;background:#0d1d30;border-radius:0 9px 9px 0;color:#c5d3e2;font-size:12px!important}
+
+/* ATINA — game-style button polish */
+:root{--game-btn-shadow:0 5px 0 #0005,0 9px 18px #0003;--game-btn-press:0 1px 0 #0004,0 3px 8px #0003}
+button:not(.tile):not(.sound-toggle){border-radius:13px;position:relative;overflow:hidden;transition:transform .14s ease,box-shadow .14s ease,filter .14s ease,border-color .14s ease;box-shadow:var(--game-btn-shadow);}
+button:not(.tile):not(.sound-toggle):not(:disabled):active{transform:translateY(3px) scale(.99)!important;box-shadow:var(--game-btn-press)!important;filter:brightness(.96)}
+button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;filter:saturate(.65);box-shadow:none}
+.btn{background:linear-gradient(180deg,#f0d38a 0%,#d3ad68 52%,#b68b43 100%);border:1px solid #f6dfaa;color:#182230;text-shadow:0 1px #fff4;box-shadow:0 5px 0 #80622e,0 9px 18px #0004!important;}
+.btn:not(:disabled):active{transform:translateY(4px)!important;box-shadow:0 1px 0 #80622e,0 3px 8px #0004!important}
+.btn.secondary{background:linear-gradient(180deg,#284767,#1a2d44 80%);border:1px solid #58799d;color:#f3f0e8;box-shadow:0 5px 0 #0b1827,0 9px 18px #0004!important}
+.btn.secondary:not(:disabled):active{box-shadow:0 1px 0 #0b1827,0 3px 8px #0004!important}
+.btn.danger{background:linear-gradient(180deg,#78464d,#412b31 85%);border:1px solid #a36a70;color:#ffe3df;box-shadow:0 5px 0 #26191c,0 9px 18px #0004!important}
+.tile{background:linear-gradient(180deg,#1c3552,#12263d 88%);border:1px solid #3d5f80;box-shadow:0 4px 0 #071321,0 8px 16px #0003;transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease,filter .14s ease}
+.tile:not(:disabled):active{transform:translateY(3px)!important;box-shadow:0 1px 0 #071321,0 3px 8px #0003!important;filter:brightness(.97)}
+.sound-toggle{box-shadow:0 4px 0 #0b1d30,0 8px 14px #0003}
+@media(hover:hover){button:not(:disabled):not(.sound-toggle):hover{filter:brightness(1.07);transform:translateY(-2px)}.tile:not(:disabled):hover{border-color:#d3ad68;box-shadow:0 6px 0 #071321,0 12px 22px #0004}}
+@media(prefers-reduced-motion:reduce){button,.tile{transition:none!important}}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
