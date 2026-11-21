@@ -1,0 +1,22 @@
+name: Detect Edge Function pre-execution NOT_FOUND signature
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/test-edge-function-not-found.mjs'
+      - 'docs/supabase-support-not-found-atina-error-reports-admin.md'
+      - '.github/workflows/test-edge-function-not-found-signature.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  signature-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test platform NOT_FOUND classification (isolated fixtures)
+        run: node scripts/test-edge-function-not-found.mjs
