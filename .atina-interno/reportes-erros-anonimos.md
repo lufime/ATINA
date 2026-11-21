@@ -100,3 +100,15 @@ A alternativa mais simples de auditar, sem depender de claims que possam demorar
 - Pesquisas no código do repositório por admin role, admin-images admin e is_admin não devolveram resultados indexados. Estas pesquisas não são prova absoluta de inexistência, mas reforçam que não há autorização admin documentada/reutilizável no branch.
 - Consultado também SECURITY-DESIGN.md: descreve RLS, RPCs, tokens de sessão e exclusão do perfil Admin de certas aprendizagens, mas não define um sistema de autorização administrativa por papel/identidade. O próprio documento alerta que a exclusão por nome apresentado não é autorização.
 - A allowlist privada, com função de verificação server-side e RLS, é a alternativa concreta recomendada neste momento. Continua pendente decidir e autorizar a sua criação em ambiente de teste isolado, antes de tocar na produção.
+
+
+## Fase de backend — scaffold isolado (2026-11-21)
+- Criada proposta SQL `supabase/archive/proposals/023_atina_error_reports_server_only.sql`: tabelas de reportes, allowlist administrativa, contador de limite global por minuto, RLS ativada e grants restritos ao `service_role`. **É proposta, não migration aplicada.**
+- Criada Edge Function `atina-error-reports-submit`: valida categoria, pseudónimo, descrição e campos opcionais; usa service role no servidor e limite global de 50 submissões/minuto. Não aceita identificadores de jogador/partida/sessão. Não recolhe IP nem fingerprint por código.
+- Criada Edge Function `atina-error-reports-admin`: valida JWT com Auth, verifica UUID do utilizador na allowlist server-only antes de cada GET/PATCH, lista reportes e permite atualizar estado/nota interna. Sem administrador registado, o acesso é recusado.
+- A allowlist não tem qualquer admin inicial. A atribuição deverá ser feita apenas por operador de confiança após revisão, fora da interface de jogadores.
+- Limitação conhecida do limite global: um cliente abusivo pode esgotar a quota temporária de todos; não guarda IP nem identificador individual.
+- O pseudónimo recebido é texto fornecido pelo cliente e, sem associar ID de jogador (proibido pela política de privacidade), não pode ser criptograficamente confirmado. A interface deve preenchê-lo automaticamente e indicar à Administração que é o pseudónimo submetido.
+- Screenshots e UI do jogador/admin não estão implementadas nesta fase. A captura/upload de imagem requer desenho adicional de validação, remoção de EXIF, bucket privado e acesso assinado, e não deve ser ativada sem testes.
+- O código e SQL são scaffold/proposta e **não foram executados nem testados**. Não há migration, função deployada, dados, secrets ou configuração Supabase alterados. Não afirmar funcionalidade operacional até testes num projeto isolado.
+- Plano de validação antes de avançar: requests anónimos e inválidos, limites/categoria/descrição, JWT inválido, jogador autenticado não-admin (403), admin permitido, admin removido, PATCH inválido, notas internas, CORS e rate-limit; depois testes mobile/desktop e revisão dos logs/retention para garantir que a plataforma não guarda metadados proibidos.
