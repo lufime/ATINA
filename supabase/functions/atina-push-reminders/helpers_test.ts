@@ -1,4 +1,4 @@
-import { buildReminderPayload, endpointHost, isReminderDue, INACTIVITY_MS, REMINDER_COOLDOWN_MS, CLAIM_COOLDOWN_MS } from "./helpers.ts";
+import { buildReminderPayload, endpointHost, isValidPushEndpoint, isReminderDue, INACTIVITY_MS, REMINDER_COOLDOWN_MS, CLAIM_COOLDOWN_MS } from "./helpers.ts";
 
 Deno.test("sends only after 48h inactivity", () => {
   const now = Date.parse("2026-11-21T12:00:00Z");
@@ -27,13 +27,13 @@ Deno.test("payload includes ATINA destination", () => {
   if (payload.url !== "https://atina.lufime.pt/" || !payload.title || !payload.body) throw new Error("payload incomplete");
 });
 
-Deno.test("rejects malformed, HTTP, and unknown push endpoints", () => {
-  if (endpointHost({ endpoint: "http://invalid.test" }) !== null) throw new Error("http endpoint rejected");
-  if (endpointHost({ endpoint: "not a url" }) !== null) throw new Error("malformed endpoint rejected");
-  if (endpointHost({ endpoint: "https://evil.example/ssrf" }) !== null) throw new Error("unknown host rejected");
-  if (endpointHost({ endpoint: "https://push.example" }) !== null) throw new Error("unknown host rejected");
-  if (endpointHost({ endpoint: "https://fcm.googleapis.com:8443/fcm/send/id" }) !== null) throw new Error("nonstandard port rejected");
-  if (endpointHost({ endpoint: "https://fcm.googleapis.com:443/fcm/send/id" }) !== "fcm.googleapis.com") throw new Error("explicit default port accepted");
-  if (endpointHost({ endpoint: "https://fcm.googleapis.com/fcm/send/id" }) !== "fcm.googleapis.com") throw new Error("valid Google endpoint accepted");
+Deno.test("invalid endpoints are distinguished from valid unsupported providers", () => {
+  if (isValidPushEndpoint({ endpoint: "http://invalid.test" })) throw new Error("http endpoint must be invalid");
+  if (isValidPushEndpoint({ endpoint: "not a url" })) throw new Error("malformed endpoint must be invalid");
+  if (isValidPushEndpoint({ endpoint: "https://fcm.googleapis.com:8443/id" })) throw new Error("nonstandard port must be invalid");
+  if (!isValidPushEndpoint({ endpoint: "https://unknown-push.example/id" })) throw new Error("valid unsupported endpoint must be retained");
+  if (endpointHost({ endpoint: "https://unknown-push.example/id" }) !== null) throw new Error("unsupported host must not be sent");
+  if (endpointHost({ endpoint: "https://fcm.googleapis.com:443/id" }) !== "fcm.googleapis.com") throw new Error("explicit default port accepted");
+  if (endpointHost({ endpoint: "https://fcm.googleapis.com/id" }) !== "fcm.googleapis.com") throw new Error("valid Google endpoint accepted");
   if (endpointHost({ endpoint: "https://foo.push.services.mozilla.com/abc" }) !== "foo.push.services.mozilla.com") throw new Error("valid Mozilla endpoint accepted");
 });
