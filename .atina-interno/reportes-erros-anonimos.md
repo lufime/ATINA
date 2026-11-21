@@ -112,3 +112,10 @@ A alternativa mais simples de auditar, sem depender de claims que possam demorar
 - Screenshots e UI do jogador/admin não estão implementadas nesta fase. A captura/upload de imagem requer desenho adicional de validação, remoção de EXIF, bucket privado e acesso assinado, e não deve ser ativada sem testes.
 - O código e SQL são scaffold/proposta e **não foram executados nem testados**. Não há migration, função deployada, dados, secrets ou configuração Supabase alterados. Não afirmar funcionalidade operacional até testes num projeto isolado.
 - Plano de validação antes de avançar: requests anónimos e inválidos, limites/categoria/descrição, JWT inválido, jogador autenticado não-admin (403), admin permitido, admin removido, PATCH inválido, notas internas, CORS e rate-limit; depois testes mobile/desktop e revisão dos logs/retention para garantir que a plataforma não guarda metadados proibidos.
+
+
+### Revisão estática inicial do scaffold
+- CORS nas duas Edge Functions limitado às origens GitHub Pages do ATINA e localhost de desenvolvimento, com `Vary: Origin`; a submissão anónima continua sem autenticação, como previsto.
+- Erros de persistência da submissão devolvem mensagem genérica, sem expor detalhe interno da base de dados.
+- Corrigido o alias do UPSERT do limite global e uma resposta de erro na função Admin durante revisão estática.
+- Esta revisão não substitui compilação, testes automatizados, teste em Supabase local/isolado ou revisão de segurança. Nenhum desses testes foi executado nesta sessão.
