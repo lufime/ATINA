@@ -9,7 +9,7 @@ assert.ok(challengeImageBank, 'Banco de desafios deve existir no HTML.');
 assert.doesNotMatch(challengeImageBank[0], /https?:\/\//, 'Banco de desafios não deve conter imagens externas.');
 const solutionImageCatalog = JSON.parse(await readFile(new URL('../solution-images.json', import.meta.url), 'utf8'));
 assert.ok(Array.isArray(solutionImageCatalog.images), 'Catálogo de imagens deve ter uma lista válida.');
-assert.doesNotMatch(solutionImageCatalog.images.map(item => String(item.image || '')).join('\\n'), /https?:\\/\\//, 'Catálogo de soluções não deve conter imagens externas.');
+assert.ok(!solutionImageCatalog.images.some(item => String(item.image || '').includes('http://') || String(item.image || '').includes('https://')), 'Catálogo de soluções não deve conter imagens externas.');
 const serverClient = await readFile(new URL('../atina-server-client.js', import.meta.url), 'utf8');
 const roomRuntime = await readFile(new URL('../assets/network-room-runtime.js', import.meta.url), 'utf8');
 const server = createServer((request, response) => {
