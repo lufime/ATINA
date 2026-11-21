@@ -50,3 +50,25 @@ No GitHub, abre **Settings → Secrets and variables → Actions → New reposit
 Esta chave é confidencial: guarda-a apenas como GitHub Actions secret. Nunca a coloques no HTML, JavaScript ou neste repositório.
 
 O workflow cobre commits na branch `main`, incluindo alterações em `supabase/migrations/**`. Alterações feitas manualmente no Dashboard do Supabase, fora de um workflow/migration commit, não geram um evento GitHub e não são detetadas por este mecanismo.
+
+## Auditoria obrigatória de documentação em todos os PRs
+
+Em cada pull request, confirmar se a alteração modifica ou afeta o comportamento real do jogo, regras, condições, mecânicas, pontuação, XP, rankings, resultados de ronda, perfil do jogador, funcionalidades, permissões ou experiência visível ao jogador. Esta revisão é obrigatória mesmo para alterações indiretas ou pequenas melhorias de interface.
+
+Quando houver impacto, atualizar **no mesmo PR** todas as secções de documentação afetadas, incluindo:
+
+- **Termos:** refletir o estado real e atual das regras, condições e funcionalidades.
+- **Como Jogar:** descrever o funcionamento real, os fluxos, as mecânicas e os sistemas de jogo atuais.
+- **FAQ:** rever perguntas e respostas para corresponder às funcionalidades e ao comportamento atualmente existentes.
+
+### Checklist de revisão
+
+- [ ] Comportamento real confirmado no código e validado quando necessário.
+- [ ] Termos revistos e atualizados se afetados.
+- [ ] Como Jogar revisto e atualizado se afetado.
+- [ ] FAQ revisto e atualizado se afetado.
+- [ ] Pontuação, XP, rankings, resultados e perfil coerentes com o funcionamento real, quando afetados.
+- [ ] Sem contradições entre código, interface e documentação.
+- [ ] Testes e CI executados e resultados verificados.
+
+Um PR **não está pronto para merge** enquanto existirem discrepâncias relevantes entre o funcionamento real do ATINA e a documentação aplicável, ou documentação afetada por atualizar. Não alterar documentação para afirmar funcionalidades que ainda não existem ou que não tenham sido confirmadas. Registar no PR quais documentos foram atualizados ou justificar explicitamente por que Termos, Como Jogar e FAQ não são afetados.
