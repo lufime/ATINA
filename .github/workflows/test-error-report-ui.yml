@@ -1,0 +1,40 @@
+name: Error report UI static tests
+on:
+  pull_request:
+    paths:
+      - index.html
+      - admin-images.html
+      - tests/error-report-ui.test.cjs
+      - tests/error-report-backend.integration.test.cjs
+      - supabase/functions/atina-error-reports-admin/index.ts
+      - supabase/functions/atina-error-reports-submit/index.ts
+      - .github/workflows/test-error-report-ui.yml
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - admin-images.html
+      - tests/error-report-ui.test.cjs
+      - tests/error-report-backend.integration.test.cjs
+      - .github/workflows/test-error-report-ui.yml
+jobs:
+  error-report-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check supabase/functions/atina-error-reports-admin/index.ts supabase/functions/atina-error-reports-submit/index.ts
+      - run: node --test tests/error-report-ui.test.cjs
+      - name: Executar integração backend (opt-in, ambiente isolado)
+        env:
+          ATINA_ERROR_REPORTS_TEST_URL: ${{ secrets.ATINA_ERROR_REPORTS_TEST_URL }}
+          ATINA_ERROR_REPORTS_TEST_ANON_KEY: ${{ secrets.ATINA_ERROR_REPORTS_TEST_ANON_KEY }}
+          ATINA_ERROR_REPORTS_TEST_ADMIN_TOKEN: ${{ secrets.ATINA_ERROR_REPORTS_TEST_ADMIN_TOKEN }}
+          ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN: ${{ secrets.ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN }}
+          ATINA_ERROR_REPORTS_TEST_ALLOW_REMOTE: ${{ secrets.ATINA_ERROR_REPORTS_TEST_ALLOW_REMOTE }}
+        run: node --test tests/error-report-backend.integration.test.cjs

@@ -11,7 +11,9 @@ const statuses = new Set(["new", "in_review", "fixing", "resolved", "archived"])
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: headersFor(req) });
+const origin = req.headers.get("Origin") ?? "";
+  if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
+  if (req.method === "OPTIONS") return new Response("ok", { status: 204, headers: headersFor(req) });
   if (!["GET", "PATCH"].includes(req.method)) return json(req, { error: "Method not allowed" }, 405);
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_SECRET_KEY");
@@ -34,11 +36,12 @@ Deno.serve(async (req) => {
   }
   try {
     const body = await req.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) return json(req, { error: "Invalid JSON body" }, 400);
     const reportId = typeof body.report_id === "string" ? body.report_id : "";
     if (!uuidPattern.test(reportId)) return json(req, { error: "Report ID inválido" }, 400);
     const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
-    if (typeof body.status === "string") {
-      if (!statuses.has(body.status)) return json(req, { error: "Estado inválido" }, 400);
+    if (body.status !== undefined) {
+      if (typeof body.status !== "string" || !statuses.has(body.status)) return json(req, { error: "Estado inválido" }, 400);
       update.status = body.status;
     }
     if (body.internal_note !== undefined) {

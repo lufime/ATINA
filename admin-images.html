@@ -162,6 +162,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <a href="#logo" data-admin-tab="logo">Logótipo</a>
       <a href="#players" data-admin-tab="players">Jogadores</a>
       <a href="#challenges" data-admin-tab="challenges">Base de dados dos desafios</a>
+      <a href="#reports" data-admin-tab="reports">Reports de erros</a>
     </div>
   </nav>
   <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
@@ -192,6 +193,18 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <h2 style="margin-top:18px">O que precisa de atenção</h2>
     <div id="dashboardTasks" class="hint">A carregar tarefas…</div>
     <p class="note">Os números e as tarefas são consultados diretamente na base de dados, apenas depois de entrares como administrador.</p>
+  </section>
+  <section class="panel hidden tab-panel" id="reportsPanel" data-tab-panel="reports">
+    <div class="dash-head"><h2>Reports de erros</h2><button class="secondary refresh" id="refreshReports" type="button">Atualizar</button></div>
+    <p class="note">Reports enviados pelos jogadores. Acesso restrito à sessão de administração. Sem dados pessoais.</p>
+    <div class="stats" id="reportStats"><div class="stat"><strong>—</strong><span>Novos</span></div><div class="stat"><strong>—</strong><span>Em análise</span></div><div class="stat"><strong>—</strong><span>Em correção</span></div><div class="stat"><strong>—</strong><span>Resolvidos</span></div></div>
+    <div class="form-grid" style="margin-top:12px">
+      <div><label for="reportNicknameFilter">Pseudónimo</label><input id="reportNicknameFilter" type="search" placeholder="Pesquisar pseudónimo"></div>
+      <div><label for="reportStatusFilter">Estado</label><select id="reportStatusFilter"><option value="">Todos os estados</option><option value="new">Novo</option><option value="in_review">Em análise</option><option value="fixing">Em correção</option><option value="resolved">Resolvido</option><option value="archived">Arquivado</option></select></div>
+      <div><label for="reportCategoryFilter">Categoria</label><select id="reportCategoryFilter"><option value="">Todas as categorias</option><option value="visual">Visual</option><option value="game">Jogo</option><option value="points_xp">Pontuação / XP</option><option value="technical">Técnico</option><option value="other">Outro</option></select></div>
+    </div>
+    <p class="note" id="reportsStatus" role="status" aria-live="polite">Reports ainda não carregados.</p>
+    <div id="reportsList"></div>
   </section>
   <section class="panel hidden tab-panel" id="uploadPanel" data-tab-panel="upload">
     <h2>Enviar imagens em massa</h2>
@@ -281,7 +294,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 (() => {
-  const tabNames = ["home","images","upload","logo","players","challenges"];
+  const tabNames = ["home","images","upload","logo","players","challenges","reports"];
   function activateTab(name) {
     const tab = tabNames.includes(name) ? name : "home";
     const imageScroll = document.getElementById("imageManagerScroll");
@@ -310,10 +323,10 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       link.setAttribute("aria-current", link.dataset.adminTab === tab ? "page" : "false");
     });
     const title = document.querySelector(".admin-header h1");
-    if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores",challenges:"Base de dados dos desafios"}[tab]);
+    if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores",challenges:"Base de dados dos desafios",reports:"Reports de erros"}[tab]);
   }
   const $ = (id) => document.getElementById(id);
-  window.addEventListener("hashchange", () => activateTab(location.hash.slice(1)));
+  window.addEventListener("hashchange", () => { activateTab(location.hash.slice(1)); if (location.hash === "#reports") loadReports(); });
   window.addEventListener("message",event=>{const frame=$("imageManagerFrame");if(!frame||event.source!==frame.contentWindow||event.data?.type!=="atina-image-manager-height")return;const height=Math.max(700,Number(event.data.height)||700);frame.style.height=height+"px";frame.style.minHeight="0";});
   $("imageManagerFrame").addEventListener("load",()=>{const frame=$("imageManagerFrame");try{const doc=frame.contentDocument;const resize=()=>{const main=doc.querySelector("main"),gallery=doc.getElementById("gallery");const height=Math.max(doc.documentElement.scrollHeight,doc.body.scrollHeight,main?.scrollHeight||0,gallery?.scrollHeight||0)+100;frame.style.height=height+"px";};resize();if("ResizeObserver"in window){const observer=new ResizeObserver(resize);observer.observe(doc.documentElement);observer.observe(doc.body);const gallery=doc.getElementById("gallery");if(gallery)observer.observe(gallery);}new MutationObserver(resize).observe(doc.body,{childList:true,subtree:true,attributes:true});doc.defaultView.addEventListener("load",resize);doc.defaultView.addEventListener("resize",resize);[250,750,1500,3000,6000].forEach(ms=>setTimeout(resize,ms));}catch(error){console.warn("Não foi possível medir a gestão incorporada",error);}});
   const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
@@ -329,7 +342,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("dashboardPanel").classList.toggle("hidden", !session);
     $("imagesInfo").classList.toggle("hidden", !session);
     $("challengesPanel").classList.toggle("hidden", !session);
+    $("reportsPanel").classList.toggle("hidden", !session);
     if (session && location.hash === "#challenges") loadChallenges();
+    if (session && location.hash === "#reports") loadReports();
     $("adminLinks").classList.toggle("hidden", !session);
     $("adminNavigation").classList.toggle("hidden", !session);
     $("logoutTop").classList.toggle("hidden", !session);
@@ -423,6 +438,67 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       $("dashboardUpdated").textContent = "Atualizado em " + new Date().toLocaleString("pt-PT");
     } catch (error) { $("dashboardUpdated").textContent = "Erro ao atualizar"; target.textContent = error.message; }
   }
+  const reportLabels = {new:"Novo",in_review:"Em análise",fixing:"Em correção",resolved:"Resolvido",archived:"Arquivado"};
+  const reportCategoryLabels = {visual:"Visual",game:"Jogo",points_xp:"Pontuação / XP",technical:"Técnico",other:"Outro"};
+  let reportCache = [];
+  async function loadReports() {
+    const list = $("reportsList"), message = $("reportsStatus");
+    if (!list || !$("reportsPanel") || $("reportsPanel").classList.contains("hidden")) return;
+    list.textContent = "A carregar reports…"; message.textContent = "A consultar reports…";
+    try {
+      const {data:{session}} = await client.auth.getSession();
+      if (!session) throw new Error("Sessão de administrador não encontrada.");
+      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-error-reports-admin", {
+        method:"GET", headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY}
+      });
+      const data = await response.json().catch(()=>({}));
+      if (!response.ok) throw new Error(data.error || (response.status===404 ? "A função de reports ainda não está publicada no Supabase de produção." : "Não foi possível carregar reports."));
+      reportCache = Array.isArray(data.reports) ? data.reports : [];
+      renderReports();
+      message.textContent = reportCache.length + " report(s) carregados · " + new Date().toLocaleString("pt-PT");
+    } catch(error) {
+      reportCache = []; list.textContent = "";
+      message.textContent = error.message + " (sem alterar a base de dados)";
+    }
+  }
+  function renderReports() {
+    const list=$("reportsList"), statusFilter=$("reportStatusFilter").value, categoryFilter=$("reportCategoryFilter").value;
+    const nicknameFilter=$("reportNicknameFilter").value.trim().toLocaleLowerCase("pt-PT");
+    const rows=reportCache.filter(r=>(!statusFilter||r.status===statusFilter)&&(!categoryFilter||r.category===categoryFilter)&&(!nicknameFilter||String(r.nickname||"").toLocaleLowerCase("pt-PT").includes(nicknameFilter)));
+    const counts={new:0,in_review:0,fixing:0,resolved:0,archived:0};
+    reportCache.forEach(r=>{if(counts[r.status]!==undefined)counts[r.status]++;});
+    $("reportStats").innerHTML=Object.entries(counts).map(([key,count])=>'<div class="stat"><strong>'+count+'</strong><span>'+reportLabels[key]+'</span></div>').join("");
+    list.replaceChildren();
+    if(!rows.length){list.textContent="Não existem reports para este filtro.";return;}
+    rows.forEach(report=>{
+      const card=document.createElement("article");card.className="challenge-item";
+      const title=document.createElement("strong");title.textContent=(reportCategoryLabels[report.category]||report.category)+" · "+(report.nickname||"Pseudónimo não indicado");card.appendChild(title);
+      const meta=document.createElement("div");meta.className="challenge-meta";meta.textContent=(report.created_at?new Date(report.created_at).toLocaleString("pt-PT"):"Data não indicada")+" · Estado: "+(reportLabels[report.status]||report.status);card.appendChild(meta);
+      const desc=document.createElement("p");desc.style.whiteSpace="pre-wrap";desc.textContent=report.description||"";card.appendChild(desc);
+      if(report.game_version||report.game_area){const extra=document.createElement("p");extra.className="challenge-meta";extra.textContent=[report.game_version&&("Versão: "+report.game_version),report.game_area&&("Área: "+report.game_area)].filter(Boolean).join(" · ");card.appendChild(extra);}
+      const statusLabel=document.createElement("label");statusLabel.textContent="Estado";card.appendChild(statusLabel);
+      const select=document.createElement("select");Object.entries(reportLabels).forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;select.appendChild(option);});select.value=report.status||"new";card.appendChild(select);
+      const noteLabel=document.createElement("label");noteLabel.textContent="Nota interna (apenas administração)";card.appendChild(noteLabel);
+      const note=document.createElement("textarea");note.maxLength=2000;note.placeholder="Notas de análise ou resolução…";note.value=report.internal_note||"";card.appendChild(note);
+      const save=document.createElement("button");save.type="button";save.textContent="Guardar alterações";card.appendChild(save);
+      save.addEventListener("click",async()=>{
+        save.disabled=true;messageStatus("A guardar alterações…");
+        try{const {data:{session}}=await client.auth.getSession();if(!session)throw new Error("Sessão expirada.");
+          const response=await fetch(SUPABASE_URL+"/functions/v1/atina-error-reports-admin",{method:"PATCH",headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},body:JSON.stringify({report_id:report.report_id,status:select.value,internal_note:note.value})});
+          const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Não foi possível guardar.");
+          report.status=select.value;report.internal_note=note.value;report.updated_at=result.report?.updated_at||new Date().toISOString();messageStatus("Report atualizado.");
+          renderReports();
+        }catch(error){messageStatus("Falha ao guardar: "+error.message);}
+        finally{save.disabled=false;}
+      });
+      list.appendChild(card);
+    });
+  }
+  function messageStatus(text){const target=$("reportsStatus");if(target)target.textContent=text;}
+  $("refreshReports").addEventListener("click",loadReports);
+  $("reportStatusFilter").addEventListener("change",renderReports);
+  $("reportCategoryFilter").addEventListener("change",renderReports);
+  $("reportNicknameFilter").addEventListener("input",renderReports);
   async function watermarkStats() {
     const { data: { session } } = await client.auth.getSession();
     if (!session) return;
