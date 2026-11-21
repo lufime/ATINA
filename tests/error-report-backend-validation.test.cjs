@@ -57,3 +57,29 @@ test('admin UI points at the reports admin endpoint for read and update actions'
   assert.match(page, /reportStatusFilter/);
   assert.match(page, /reportCategoryFilter/);
 });
+
+test('admin page sends authenticated GET and PATCH requests to the reports function', () => {
+  const page = fs.readFileSync(path.join(root, 'admin-images.html'), 'utf8');
+  assert.match(page, /atina-error-reports-admin/);
+  assert.match(page, /client\\.auth\\.getSession\\(\\)/);
+  assert.match(page, /Authorization/);
+  assert.match(page, /session\\.access_token/);
+  assert.match(page, /SUPABASE_ANON_KEY/);
+  assert.match(page, /method:"GET"/);
+  assert.match(page, /method:"PATCH"/);
+  assert.match(page, /report_id:report\\.report_id/);
+  assert.match(page, /status:select\\.value/);
+  assert.match(page, /internal_note:note\\.value/);
+  assert.match(page, /response\\.ok/);
+  assert.match(page, /error\\.message/);
+});
+
+test('admin Edge Function includes CORS, token validation, and admin allowlist checks', () => {
+  assert.match(admin, /Deno\\.serve/);
+  assert.match(admin, /Access-Control-Allow-Origin/);
+  assert.match(admin, /Access-Control-Allow-Headers/);
+  assert.match(admin, /Access-Control-Allow-Methods/);
+  assert.match(admin, /auth\\.getUser\\(token\\)/);
+  assert.match(admin, /SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(admin, /atina_error_report_admins/);
+});
