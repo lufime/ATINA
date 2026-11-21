@@ -1,5 +1,5 @@
 import webpush from "npm:web-push@3.6.7";
-import { buildReminderPayload, endpointHost } from "./helpers.ts";
+import { buildReminderPayload, endpointHost, isValidPushEndpoint } from "./helpers.ts";
 
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -41,13 +41,17 @@ Deno.serve(async (request) => {
   try { claimed = await claimBatch(100); } catch (error) { return json({ error: "Could not claim reminder batch", detail: String(error) }, 500); }
 
   const payload = JSON.stringify(buildReminderPayload(env("ATINA_PUBLIC_URL") || "https://atina.lufime.pt/"));
-  let sent = 0, expired = 0, failed = 0, invalid = 0;
+  let sent = 0, expired = 0, failed = 0, invalid = 0, unsupported = 0;
   for (const item of claimed) {
     const host = endpointHost(item.subscription);
     if (!host) {
-      // Invalid or unsupported endpoints cannot be sent to and otherwise can monopolize claim batches.
-      await removeSubscription(item.id).catch(() => {});
-      invalid++;
+      if (!isValidPushEndpoint(item.subscription)) {
+        await removeSubscription(item.id).catch(() => {});
+        invalid++;
+      } else {
+        // Valid HTTPS endpoint, but provider is not in the supported allowlist. Keep the subscription.
+        unsupported++;
+      }
       continue;
     }
     try {
@@ -65,5 +69,5 @@ Deno.serve(async (request) => {
       }
     }
   }
-  return json({ ok: true, claimed: claimed.length, sent, expired, failed, invalid });
+  return json({ ok: true, claimed: claimed.length, sent, expired, failed, invalid, unsupported });
 });
