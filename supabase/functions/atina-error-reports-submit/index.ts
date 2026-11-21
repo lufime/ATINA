@@ -5,7 +5,7 @@ import { allowedOrigins, createSubmitHandler, headersFor } from "../_shared/erro
 const url = Deno.env.get("SUPABASE_URL");
 const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_SECRET_KEY");
 const handler = createSubmitHandler({
-  submitReport: async (fields) => {
+  submitReport: async (fields: { nickname: string; category: string; description: string; game_version: string | null; game_area: string | null }) => {
     if (!url || !key) throw new Error("Backend configuration unavailable");
     const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data: allowed, error: limitError } = await db.rpc("atina_error_report_consume_global_limit", { p_limit: 50 });
