@@ -24,7 +24,7 @@ function extractFunction(name) {
   throw new Error('Could not parse function ' + name);
 }
 
-const snippets = ['timerTick', 'atinaSoloReportOpen', 'atinaSoloReportResume'].map(extractFunction).join('\\n');
+const snippets = ['timerTick', 'atinaSoloReportOpen', 'atinaSoloReportResume'].map(extractFunction).join('\n');
 
 function harness() {
   let now = 100000;
