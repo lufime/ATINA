@@ -264,7 +264,6 @@ try {
       if (name === 'atina_v2_matchmake') return {data:{status:'waiting'},error:null};
       if (name === 'atina_v2_matchmake_status') return {data:{status:'waiting'},error:null};
       if (name === 'atina_v2_cancel_matchmake') return {data:null,error:null};
-      if (name === 'atina_v2_create_bot_match') return {data:{room_id:'quick-fallback-room',token:'r'.repeat(64),code:'QK123'},error:null};
       return {data:null,error:null};
     };
     networkRefreshRoom = async () => {};
