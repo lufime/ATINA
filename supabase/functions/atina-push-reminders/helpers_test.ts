@@ -32,6 +32,8 @@ Deno.test("rejects malformed, HTTP, and unknown push endpoints", () => {
   if (endpointHost({ endpoint: "not a url" }) !== null) throw new Error("malformed endpoint rejected");
   if (endpointHost({ endpoint: "https://evil.example/ssrf" }) !== null) throw new Error("unknown host rejected");
   if (endpointHost({ endpoint: "https://push.example" }) !== null) throw new Error("unknown host rejected");
+  if (endpointHost({ endpoint: "https://fcm.googleapis.com:8443/fcm/send/id" }) !== null) throw new Error("nonstandard port rejected");
+  if (endpointHost({ endpoint: "https://fcm.googleapis.com:443/fcm/send/id" }) !== "fcm.googleapis.com") throw new Error("explicit default port accepted");
   if (endpointHost({ endpoint: "https://fcm.googleapis.com/fcm/send/id" }) !== "fcm.googleapis.com") throw new Error("valid Google endpoint accepted");
   if (endpointHost({ endpoint: "https://foo.push.services.mozilla.com/abc" }) !== "foo.push.services.mozilla.com") throw new Error("valid Mozilla endpoint accepted");
 });
