@@ -2849,7 +2849,7 @@ $('mimeNext').onclick=async()=>{
   const loaded=await mimeLoadNextCard();$('mimeNext').disabled=false;
   if(!loaded){if(mimeUsedCardIds.length>=48)mimeShowResults();else $('mimeNext').textContent='Tentar novamente';return;}
  }
- mimeShowNext();mimeStartClock();
+ mimeShowNext();
 };
 $('categories').addEventListener('click',e=>{let b=e.target.closest('[data-category]');if(!b)return;if(b.dataset.category==='Mímicas'){showHomePage('online');$('networkModeHint').textContent='🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.';return;}start('solo',b.dataset.category);});
 $('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='⚔️ Duelo online: cada jogador entra com a sua própria conta e telemóvel. Usa Partida rápida para encontrar adversário ou cria/entra numa sala.';};$('party').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='🎉 Modo Equipas: cada participante entra com a sua própria conta e telemóvel. Cria uma sala, distribui os jogadores por equipas e inicia a partida quando todos estiverem prontos.';};$('back').onclick=async()=>{
