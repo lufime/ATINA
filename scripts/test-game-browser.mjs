@@ -264,7 +264,6 @@ try {
       if (name === 'atina_v2_matchmake') return {data:{status:'waiting'},error:null};
       if (name === 'atina_v2_matchmake_status') return {data:{status:'waiting'},error:null};
       if (name === 'atina_v2_cancel_matchmake') return {data:null,error:null};
-      if (name === 'atina_v2_create_bot_match') return {data:{room_id:'quick-fallback-room',token:'r'.repeat(64),code:'QK123'},error:null};
       return {data:null,error:null};
     };
     networkRefreshRoom = async () => {};
@@ -277,16 +276,18 @@ try {
   await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_matchmake_status'), null, {timeout:5000});
   const quickStartCall = await page.evaluate(() => window.__quickOnlineCalls.find(call => call.name === 'atina_v2_matchmake'));
   assert.ok(quickStartCall, 'Partida rápida deve criar pedido de matchmaking.');
-  assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_ticket'],
-    'O matchmaking deve enviar apenas os dois argumentos esperados pela RPC.');
+  assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_session_token','p_ticket'],
+    'O matchmaking deve enviar nickname, token de sessão e ticket.');
   assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
-  const fallbackState = await page.evaluate(async () => {
-    await quickMatchFallback();
+  assert.equal(quickStartCall.args.p_session_token, 's'.repeat(64),
+    'O matchmaking deve encaminhar o token de sessão autenticado.');
+  const cancelState = await page.evaluate(async () => {
+    const cancelled = await quickMatchCancel();
     const state = {
+      cancelled,
       calls: window.__quickOnlineCalls.slice(),
-      lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
       status: document.getElementById('quickMatchStatus').textContent,
-      room: networkRoom?.room_id
+      busy: quickMatchBusy
     };
     quickMatchStopPolling();
     supabaseClient.rpc = window.__quickOnlineRpcOriginal;
@@ -300,21 +301,16 @@ try {
     showHomePage('online');
     return state;
   });
-  assert.ok(fallbackState.calls.some(call => call.name === 'atina_v2_cancel_matchmake'),
-    'O ticket em espera deve ser cancelado antes do fallback.');
-  const roomFallbackCall = fallbackState.calls.find(call => call.name === 'atina_v2_create_bot_match');
-  assert.ok(roomFallbackCall, 'O fallback deve preparar uma sala online.');
-  assert.deepEqual(Object.keys(roomFallbackCall.args), ['p_session_token']);
-  assert.equal(roomFallbackCall.args.p_session_token, 's'.repeat(64));
-  assert.equal(fallbackState.lobbyVisible, true, 'O fallback deve abrir a sala online.');
-  assert.equal(fallbackState.room, 'quick-fallback-room');
-  assert.match(fallbackState.status, /Partida preparada|A abrir a sala/);
-  assert.doesNotMatch(fallbackState.status, /bot/i, 'O texto da interface não deve mencionar bots.');
+  assert.ok(cancelState.cancelled, 'A procura em espera deve poder ser cancelada.');
+  assert.ok(cancelState.calls.some(call => call.name === 'atina_v2_cancel_matchmake'),
+    'Cancelar a procura deve chamar a RPC de cancelamento.');
+  assert.equal(cancelState.busy, false, 'Após cancelar, a procura deve deixar de estar ativa.');
+  assert.match(cancelState.status, /Procura cancelada/);
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
-  assert.equal(await page.locator('#networkNickname').isEditable(), false,
-    'O pseudónimo da sala deve ser apenas de leitura e vir da conta ATINA.');
+  assert.equal(await page.locator('#networkNickname').count(), 0,
+    'O ecrã online não deve expor um campo de pseudónimo editável separado da conta ATINA.');
   await page.locator('.network-room-options summary').click();
   await page.locator('#createNetworkRoom').click();
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
