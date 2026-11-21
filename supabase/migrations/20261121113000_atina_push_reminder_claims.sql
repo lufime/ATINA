@@ -16,9 +16,10 @@ AS $function$
       AND (s.last_reminded_at IS NULL OR s.last_reminded_at <= now() - interval '7 days')
       AND (s.last_attempt_at IS NULL OR s.last_attempt_at <= now() - interval '15 minutes')
       -- Claim malformed subscriptions for cleanup, but do not let valid unsupported providers monopolize batches.
+      -- Normalize URL case because scheme and DNS host names are case-insensitive.
       AND (
-        coalesce(s.subscription->>'endpoint', '') !~ '^https://[^/?#:@]+(:443)?(/|\?|#|$)'
-        OR (s.subscription->>'endpoint') ~ '^https://(fcm\.googleapis\.com|[A-Za-z0-9.-]+\.fcm\.googleapis\.com|[A-Za-z0-9.-]+\.push\.services\.mozilla\.com|web\.push\.apple\.com|notify\.windows\.com|wns\.windows\.com)(:443)?(/|\?|#|$)'
+        coalesce(lower(s.subscription->>'endpoint'), '') !~ '^https://[^/?#:@]+(:443)?(/|\\?|#|$)'
+        OR lower(s.subscription->>'endpoint') ~ '^https://(fcm\\.googleapis\\.com|[a-z0-9.-]+\\.fcm\\.googleapis\\.com|[a-z0-9.-]+\\.push\\.services\\.mozilla\\.com|web\\.push\\.apple\\.com|notify\\.windows\\.com|wns\\.windows\\.com)(:443)?(/|\\?|#|$)'
       )
     ORDER BY s.last_activity_at ASC
     LIMIT LEAST(GREATEST(COALESCE(p_limit, 100), 1), 250)
