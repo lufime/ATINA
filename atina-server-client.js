@@ -109,12 +109,50 @@ async function atinaResultProgressRender(){
   panel.innerHTML='<h3 style="margin:0 0 10px">📊 A tua progressão</h3><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><div style="padding:10px 5px;border:1px solid #38556d;border-radius:11px;background:#10283d;text-align:center"><div style="font-size:12px">🏆 Pontos</div><strong style="font-size:20px;color:#f2d38e">'+fmt(points)+'</strong></div><div style="padding:10px 5px;border:1px solid #38556d;border-radius:11px;background:#10283d;text-align:center"><div style="font-size:12px">⭐ XP</div><strong style="font-size:20px;color:#f2d38e">'+fmt(xp)+'</strong></div><div style="padding:10px 5px;border:1px solid #38556d;border-radius:11px;background:#10283d;text-align:center"><div style="font-size:12px">🧠 QI ATINA</div><strong style="font-size:20px;color:#f2d38e">'+qi+'</strong></div></div><p class="muted small" style="margin:8px 0 0">Valores atuais da conta. As recompensas não são novamente contabilizadas neste ecrã.</p>';
  }catch(error){panel.innerHTML='<p class="muted small">Não foi possível carregar os valores da progressão neste momento.</p>';console.warn('ATINA: falha ao mostrar progressão no resultado.',error);}
 }
+let atinaProfileRanksBusy = false;
+let atinaProfileRanksNickname = '';
+async function atinaProfileLoadRanks(profile) {
+  const panel = $('atinaCloudProgressPanel');
+  if (!panel || !profile?.nickname || atinaProfileRanksBusy || atinaProfileRanksNickname === profile.nickname) return;
+  atinaProfileRanksBusy = true;
+  atinaProfileRanksNickname = profile.nickname;
+  let box = $('atinaProfileRanks');
+  if (!box) {
+    box = document.createElement('section');
+    box.id = 'atinaProfileRanks';
+    box.style.cssText = 'margin:12px 0 0;padding:12px;border:1px solid #38556d;border-radius:12px;background:#10283d';
+    const progress = panel.querySelector('.daily-progress');
+    if (progress) progress.insertAdjacentElement('afterend', box);
+    else panel.appendChild(box);
+  }
+  box.textContent = '🏅 A carregar classificações…';
+  try {
+    const [pointsRows, xpRows, qiRows] = await Promise.all([
+      atinaServerRpc('atina_points_leaderboard', {p_limit:100}),
+      atinaServerRpc('atina_progress_leaderboard', {p_limit:100}),
+      atinaServerRpc('atina_qi_leaderboard', {p_limit:100})
+    ]);
+    const findRank = (rows, field) => {
+      const ranked = Array.isArray(rows) ? rows.filter(row => Number(row[field] || 0) > 0) : [];
+      const index = ranked.findIndex(row => String(row.nickname || '').toLocaleLowerCase() === String(profile.nickname).toLocaleLowerCase());
+      return index >= 0 ? '🏆 #' + (index + 1) + ' / 100' : '— (não consta no top 100)';
+    };
+    box.innerHTML = '<strong>🏅 As tuas classificações (top 100)</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px"><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>Pontos</small><div style="font-weight:700;color:#f2d38e">' + findRank(pointsRows,'points') + '</div></div><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>XP</small><div style="font-weight:700;color:#f2d38e">' + findRank(xpRows,'xp') + '</div></div><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>QI</small><div style="font-weight:700;color:#f2d38e">' + findRank(qiRows,'qi_score') + '</div></div></div><p class="muted small" style="margin:8px 0 0">A posição é calculada pela ordem das classificações públicas. Se não aparecer, está fora do top 100 apresentado.</p>';
+  } catch (error) {
+    box.textContent = 'Não foi possível carregar as classificações.';
+    atinaProfileRanksNickname = '';
+    console.warn('ATINA: falha ao carregar posições do perfil.', error);
+  } finally {
+    atinaProfileRanksBusy = false;
+  }
+}
 function atinaProgressRender(profile) {
   const signedInName = $('atinaSignedInUserName');
   if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
   atinaRenderLevelGallery(profile || {level:1,xp:0});
   if (!profile) return;
   void atinaProgressLoadMyQi(profile);
+  void atinaProfileLoadRanks(profile);
   const xp = Math.max(0, Number(profile.xp) || 0);
   const points = Math.max(0, Number(profile.points) || 0);
   if ($('atinaCloudPoints')) $('atinaCloudPoints').textContent = points + ' pontos';
