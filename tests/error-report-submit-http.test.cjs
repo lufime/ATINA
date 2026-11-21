@@ -4,9 +4,8 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const { once } = require('node:events');
 
-const { createSubmitHandler } = await import('../supabase/functions/_shared/error-report-submit-handler.mjs');
-
 async function startServer(submitReport) {
+  const { createSubmitHandler } = await import('../supabase/functions/_shared/error-report-submit-handler.mjs');
   const handler = createSubmitHandler({ submitReport });
   const server = http.createServer(async (incoming, outgoing) => {
     try {
