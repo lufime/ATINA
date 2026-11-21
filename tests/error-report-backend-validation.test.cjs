@@ -1,85 +1,10 @@
-// Offline validation tests for the error-report backend source. No credentials or network calls.
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-
-const root = path.resolve(__dirname, '..');
-const admin = fs.readFileSync(path.join(root, 'supabase/functions/atina-error-reports-admin/index.ts'), 'utf8');
-const submit = fs.readFileSync(path.join(root, 'supabase/functions/atina-error-reports-submit/index.ts'), 'utf8');
-const sharedSubmit = fs.readFileSync(path.join(root, 'supabase/functions/_shared/error-report-submit-handler.mjs'), 'utf8');
-const migration = fs.readFileSync(path.join(root, 'supabase/migrations/20261121190000_atina_error_reports_backend.sql'), 'utf8');
-
-test('admin endpoint restricts origins, methods, and statuses', () => {
-  assert.match(admin, /allowedOrigins/);
-  assert.match(admin, /\["GET", "PATCH"\]/);
-  for (const status of ['new','in_review','fixing','resolved','archived']) assert.match(admin, new RegExp('"'+status+'"'));
-  assert.match(admin, /uuidPattern/);
-  assert.match(admin, /No update fields supplied/);
-});
-
-test('submission validates nickname, category and description and limits requests', () => {
-  assert.ok(sharedSubmit.includes('categories'));
-  assert.match(submit, /nickname/);
-  assert.match(sharedSubmit, /description\.length < 20/);
-  assert.match(submit, /atina_error_report_consume_global_limit/);
-  assert.ok(sharedSubmit.includes('429'));
-});
-
-test('migration enables RLS and limits table grants to service role', () => {
-  for (const table of ['atina_error_report_admins','atina_error_reports','atina_error_report_rate_limits']) {
-    assert.match(migration, new RegExp('ALTER TABLE public\\.'+table+' ENABLE ROW LEVEL SECURITY', 'i'));
-    assert.match(migration, new RegExp('REVOKE ALL ON public\\.'+table, 'i'));
-  }
-  assert.match(migration, /GRANT EXECUTE ON FUNCTION public\.atina_error_report_consume_global_limit/);
-});
-
-test('privacy-sensitive identifiers are not present in backend schema', () => {
-  assert.doesNotMatch(migration, /\b(email|ip_address|player_id|session_id|room_id)\b/i);
-});
-
-test('admin endpoint enforces auth and restricts reports access to allowlisted admins', () => {
-  assert.match(admin, /auth\.getUser\(token\)/);
-  assert.match(admin, /atina_error_report_admins/);
-  assert.match(admin, /if \(!admin\) return json\(req, \{ error: "Forbidden" \}, 403\)/);
-  assert.match(admin, /select\("report_id,nickname,category,description,game_version,game_area,status,internal_note,created_at,updated_at"\)/);
-  assert.match(admin, /\.limit\(200\)/);
-  assert.match(admin, /\.update\(update\)/);
-  assert.match(admin, /"Access-Control-Allow-Methods": "GET, PATCH, OPTIONS"/);
-});
-
-test('admin UI points at the reports admin endpoint for read and update actions', () => {
-  const page = fs.readFileSync(path.join(root, 'admin-images.html'), 'utf8');
-  assert.match(page, /atina-error-reports-admin/);
-  assert.match(page, /method:"GET"/);
-  assert.match(page, /method:"PATCH"/);
-  assert.match(page, /reportNicknameFilter/);
-  assert.match(page, /reportStatusFilter/);
-  assert.match(page, /reportCategoryFilter/);
-});
-
-test('admin page sends authenticated GET and PATCH requests to the reports function', () => {
-  const page = fs.readFileSync(path.join(root, 'admin-images.html'), 'utf8');
-  assert.match(page, /atina-error-reports-admin/);
-  assert.match(page, /client\\.auth\\.getSession\\(\\)/);
-  assert.match(page, /Authorization/);
-  assert.match(page, /session\\.access_token/);
-  assert.match(page, /SUPABASE_ANON_KEY/);
-  assert.match(page, /method:"GET"/);
-  assert.match(page, /method:"PATCH"/);
-  assert.match(page, /report_id:report\\.report_id/);
-  assert.match(page, /status:select\\.value/);
-  assert.match(page, /internal_note:note\\.value/);
-  assert.match(page, /response\\.ok/);
-  assert.match(page, /error\\.message/);
-});
-
-test('admin Edge Function includes CORS, token validation, and admin allowlist checks', () => {
-  assert.match(admin, /Deno\\.serve/);
-  assert.match(admin, /Access-Control-Allow-Origin/);
-  assert.match(admin, /Access-Control-Allow-Headers/);
-  assert.match(admin, /Access-Control-Allow-Methods/);
-  assert.match(admin, /auth\\.getUser\\(token\\)/);
-  assert.match(admin, /SUPABASE_SERVICE_ROLE_KEY/);
-  assert.match(admin, /atina_error_report_admins/);
-});
+// Static source checks; request/response behavior is tested in error-report-admin-http.test.mjs.
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'..');
+const admin=fs.readFileSync(path.join(root,'supabase/functions/atina-error-reports-admin/index.ts'),'utf8'),handler=fs.readFileSync(path.join(root,'supabase/functions/_shared/error-report-admin-handler.mjs'),'utf8'),submit=fs.readFileSync(path.join(root,'supabase/functions/atina-error-reports-submit/index.ts'),'utf8'),sharedSubmit=fs.readFileSync(path.join(root,'supabase/functions/_shared/error-report-submit-handler.mjs'),'utf8'),migration=fs.readFileSync(path.join(root,'supabase/migrations/20261121190000_atina_error_reports_backend.sql'),'utf8');
+test('admin handler validates origins, methods, statuses and report IDs',()=>{assert.match(handler,/allowedOrigins/);assert.match(handler,/GET.*PATCH.*OPTIONS/);for(const status of ['new','in_review','fixing','resolved','archived'])assert.match(handler,new RegExp('"'+status+'"'));assert.match(handler,/uuidPattern/);assert.match(handler,/No update fields supplied/);});
+test('admin Edge entrypoint connects injected handler and Supabase auth/database',()=>{assert.match(admin,/Deno\.serve\(handler\)/);assert.match(admin,/createAdminHandler/);assert.match(admin,/auth\.getUser\(token\)/);assert.match(admin,/atina_error_report_admins/);assert.match(admin,/atina_error_reports/);});
+test('submission validates and rate-limits',()=>{assert.match(submit,/nickname/);assert.match(sharedSubmit,/categories/);assert.match(sharedSubmit,/description\.length < 20/);assert.match(submit,/atina_error_report_consume_global_limit/);assert.ok(sharedSubmit.includes('429'));});
+test('migration enables RLS and limits grants',()=>{for(const t of ['atina_error_report_admins','atina_error_reports','atina_error_report_rate_limits']){assert.match(migration,new RegExp('ALTER TABLE public\\.'+t+' ENABLE ROW LEVEL SECURITY','i'));assert.match(migration,new RegExp('REVOKE ALL ON public\\.'+t,'i'));}assert.match(migration,/GRANT EXECUTE ON FUNCTION public\.atina_error_report_consume_global_limit/);});
+test('migration excludes sensitive identifiers',()=>assert.doesNotMatch(migration,/\b(email|ip_address|player_id|session_id|room_id)\b/i));
+test('admin UI uses GET/PATCH and authenticated session and filters',()=>{const p=fs.readFileSync(path.join(root,'admin-images.html'),'utf8');assert.match(p,/atina-error-reports-admin/);assert.match(p,/method:"GET"/);assert.match(p,/method:"PATCH"/);for(const k of ['reportNicknameFilter','reportStatusFilter','reportCategoryFilter','session.access_token'])assert.ok(p.includes(k));});
+test('admin handler enforces CORS and authentication/admin checks',()=>{for(const k of ['Access-Control-Allow-Origin','Access-Control-Allow-Headers','Access-Control-Allow-Methods','authenticate(token)','isAdmin(user.id)'])assert.ok(handler.includes(k));});
