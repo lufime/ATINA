@@ -33,3 +33,7 @@ Confirma a ligação à Internet e tenta novamente. Se o problema continuar, con
 ---
 
 [Voltar ao ATINA](../index.html)
+
+
+## Onde encontro a FAQ e os erros conhecidos?
+No ecrã inicial do ATINA, abre os separadores **FAQ** ou **Erros conhecidos** na navegação principal. Cada página tem também um link para abrir o documento completo.
