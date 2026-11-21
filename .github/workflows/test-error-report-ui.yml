@@ -25,6 +25,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check supabase/functions/atina-error-reports-admin/index.ts supabase/functions/atina-error-reports-submit/index.ts
       - run: node --test tests/error-report-ui.test.cjs
       - name: Executar integração backend (opt-in, ambiente isolado)
         env:
