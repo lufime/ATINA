@@ -5082,7 +5082,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   const home=document.getElementById(HOME_ID);
   if(saved())return;
   let coolUntil=0;try{coolUntil=Number(localStorage.getItem(COOL)||0);}catch(e){}
-  if(!force&&(!home||home.classList.contains('hidden')||home.hidden||count()<10||count()<coolUntil))return;
+  if(count()<coolUntil)return;
+  if(!force&&(!home||home.classList.contains('hidden')||home.hidden||count()<10))return;
   if(document.getElementById('atinaBookmarkNudge'))return;
   const card=home||document.body;
   const box=document.createElement('aside');box.id='atinaBookmarkNudge';box.setAttribute('role','note');
