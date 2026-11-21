@@ -1,0 +1,51 @@
+name: ATINA CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atina-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Install Playwright
+        run: npm install --no-save --no-package-lock playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: JavaScript syntax checks
+        run: |
+          node --check assets/atina-push.js
+          node --check sw.js
+          node --check scripts/test-game-browser.mjs
+
+      - name: Push reminder helper tests
+        working-directory: supabase/functions/atina-push-reminders
+        run: deno test helpers_test.ts
+
+      - name: Browser regression tests
+        run: node scripts/test-game-browser.mjs
