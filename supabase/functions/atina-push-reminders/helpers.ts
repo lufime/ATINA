@@ -22,7 +22,7 @@ export function buildReminderPayload(baseUrl: string) {
 }
 
 const PUSH_HOST_SUFFIXES = [".fcm.googleapis.com", ".push.services.mozilla.com"];
-const PUSH_EXACT_HOSTS = ["fcm.googleapis.com", "web.push.apple.com", "notify.windows.com", "wns.windows.com"];
+const PUSH_EXACT_HOSTS = ["fcm.googleapis.com", "push.services.mozilla.com", "web.push.apple.com", "notify.windows.com", "wns.windows.com"];
 
 export function isValidPushEndpoint(subscription: unknown): boolean {
   if (!subscription || typeof subscription !== "object") return false;
