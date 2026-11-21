@@ -1,5 +1,8 @@
 # ATINA — Instruções permanentes para imagens
 
+**Versão:** 1.1  
+**Última atualização:** 21/11/2026
+
 ## 1. Projeto e acessos
 - GitHub: https://github.com/lufime/ATINA.git
 - Supabase: projeto `atina-development`, ref `qvvlqrgbtjujsejvenld`.
