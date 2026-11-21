@@ -36,7 +36,6 @@ begin
     select p.id, p.total_points::integer as value,
       row_number() over(order by p.total_points desc,p.total_challenges desc,p.created_at asc) as position
     from private.atina_players p
-    where p.total_points > 0
   ),
   xp_ranked as (
     select p.id, p.total_xp::integer as value,
