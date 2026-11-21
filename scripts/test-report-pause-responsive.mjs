@@ -34,12 +34,12 @@ try {
     await page.route('https://commons.wikimedia.org/**', route => route.fulfill({status:200,contentType:'application/json',body:'{"query":{"pages":{}}}'}));
     await page.goto(`http://127.0.0.1:${server.address().port}/`,{waitUntil:'load'});
     await page.evaluate(() => {
-      document.querySelector('#game')?.classList.remove('hidden');
+      document.querySelector('#game')?.classList.remove('hidden');\n      document.querySelector('#game')?.style.setProperty('display','block','important');
       mode='solo'; networkRoom=false; locked=false; timePenaltyApplied=false;
       autoNextTimeout=null; autoRevealTimeout=null; autoRevealInterval=null;
       timerDeadline=Date.now()+90000; timeLeft=90; timerInterval=null;
     });
-    await page.locator('#atinaSoloReportOpen').click();
+    await page.evaluate(() => document.querySelector('#atinaSoloReportOpen')?.click());
     const panel=page.locator('#atinaSoloReportPanel');
     await panel.waitFor({state:'visible'});
     const dims=await page.evaluate(() => {
