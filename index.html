@@ -1509,6 +1509,7 @@ async function atinaAccountRegister(){
   atinaAccountSetSession(data);
   atinaAccountMessage('Conta criada. Guarda agora a tua chave de recuperação: '+data.recovery_key);
   window.alert('CHAVE DE RECUPERAÇÃO ATINA\n\n'+data.recovery_key+'\n\nGuarda esta chave num local seguro. É apresentada uma única vez e será necessária se te esqueceres da palavra-passe.');
+  window.atinaShowBookmarkNudge?.();
  }catch(e){atinaAccountMessage(e.message||'Não foi possível criar a conta.');}
  finally{$('atinaAccountRegister').disabled=false;}
 }
@@ -5067,6 +5068,41 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #game #clues{padding:5px 0 8px!important;margin:0 0 10px!important}
 }
 </style>
+
+<script id="atina-bookmark-nudge-v1">
+(function(){
+ const SAVED='atinaBookmarkSavedV1', COOL='atinaBookmarkCooldownUntilV1', COUNT='atinaBookmarkChallengeCountV1';
+ const GAME_ID='game';
+ function saved(){try{return localStorage.getItem(SAVED)==='1';}catch(e){return true;}}
+ function count(){try{return Number(localStorage.getItem(COUNT)||0);}catch(e){return 0;}}
+ function hide(){const el=document.getElementById('atinaBookmarkNudge');if(el)el.remove();}
+ function dismiss(){try{localStorage.setItem(COOL,String(count()+10));}catch(e){}hide();}
+ function markSaved(){try{localStorage.setItem(SAVED,'1');}catch(e){}hide();}
+ const originalEnd=window.end;
+ if(typeof originalEnd==='function'&&!originalEnd.__atinaBookmarkWrapped){window.end=function(message,restoring=false){if(!restoring){try{localStorage.setItem(COUNT,String(count()+1));}catch(e){}}return originalEnd.apply(this,arguments);};window.end.__atinaBookmarkWrapped=true;}
+ function render(force=false){
+  const game=document.getElementById(GAME_ID);
+  if(saved())return;
+  let coolUntil=0;try{coolUntil=Number(localStorage.getItem(COOL)||0);}catch(e){}
+  if(!force&&(!game||game.classList.contains('hidden')||game.hidden||count()<10||count()<coolUntil))return;
+  if(document.getElementById('atinaBookmarkNudge'))return;
+  const card=game?.querySelector('.card')||document.body;
+  const box=document.createElement('aside');box.id='atinaBookmarkNudge';box.setAttribute('role','note');
+  box.style.cssText='margin:12px 0;padding:12px 14px;border:1px solid #d3ad68;border-radius:13px;background:#14243a;color:#f3f0e8;font-size:14px;line-height:1.45';
+  const title=document.createElement('strong');title.textContent='⭐ Guardar ATINA nos favoritos';
+  const msg=document.createElement('p');msg.style.cssText='margin:6px 0 10px;color:#d6deea';msg.textContent='Gostaste de jogar? Guarda esta página nos favoritos do teu navegador para voltares mais depressa.';
+  const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
+  const help=document.createElement('button');help.type='button';help.textContent='Guardar nos favoritos';help.style.cssText='border:0;border-radius:9px;padding:9px 12px;background:#d3ad68;color:#17202b;font-weight:700';
+  help.onclick=function(){msg.textContent='No computador: Ctrl+D (Windows/Linux) ou ⌘+D (Mac). No telemóvel, usa o menu do navegador e escolhe Adicionar aos favoritos ou Marcador. Esta sugestão não volta a aparecer neste dispositivo.';help.textContent='Entendi';help.onclick=markSaved;};
+  const close=document.createElement('button');close.type='button';close.textContent='Agora não';close.style.cssText='border:1px solid #30445b;border-radius:9px;padding:9px 12px;background:#1a2d44;color:#f3f0e8';close.onclick=dismiss;
+  actions.append(help,close);box.append(title,msg,actions);card.append(box);
+ }
+ window.atinaShowBookmarkNudge=function(){render(true);};
+ const observer=new MutationObserver(()=>render(false));observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+ document.addEventListener('click',function(){setTimeout(render,80);});
+ setInterval(render,1500);
+})();
+</script>
 
 </body></html>
 
