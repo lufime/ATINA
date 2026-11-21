@@ -151,7 +151,7 @@ A alternativa mais simples de auditar, sem depender de claims que possam demorar
 
 
 ## Integração de formulário e painel Admin (2026-11-21)
-- Branch de implementação: `atina/admin-error-reports-inbox` (PR ainda não aberto/publicado nesta revisão).
+- Branch de implementação: `atina/admin-error-reports-inbox`; PR #348 em draft, ainda sem merge/publicação.
 - O formulário de reporte no modo Solo foi ligado ao endpoint `atina-error-reports-submit`: categoria, pseudónimo local e descrição; validação mínima de 20 caracteres no cliente; mensagem de sucesso/falha; a descrição é preservada em caso de falha.
 - Após envio bem-sucedido, a descrição é limpa e o relógio continua pausado até o jogador retomar explicitamente o desafio.
 - O painel existente `admin-images.html` ganhou separador Reports, contadores por estado, filtros de estado/categoria/pseudónimo, descrição, versão/área se presentes, edição de estado e nota interna, com criação de elementos DOM para apresentar conteúdo do reporte.
