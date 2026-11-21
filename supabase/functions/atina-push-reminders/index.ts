@@ -23,6 +23,12 @@ async function rest(path: string, init: RequestInit = {}) {
 async function markSent(id: string) {
   await rest("/rest/v1/atina_push_subscriptions?id=eq." + encodeURIComponent(id), { method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ last_reminded_at: new Date().toISOString() }) });
 }
+async function deferUnrecordedSend(id: string) {
+  // If delivery succeeded but its timestamp could not be persisted, suppress another
+  // delivery for a week. This is best-effort because the database may be unavailable.
+  const retryAfter = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  await rest("/rest/v1/atina_push_subscriptions?id=eq." + encodeURIComponent(id), { method: "PATCH", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ last_attempt_at: retryAfter }) });
+}
 async function removeSubscription(id: string) {
   await rest("/rest/v1/atina_push_subscriptions?id=eq." + encodeURIComponent(id), { method: "DELETE", headers: { Prefer: "return=minimal" } });
 }
@@ -41,7 +47,7 @@ Deno.serve(async (request) => {
   try { claimed = await claimBatch(100); } catch (error) { return json({ error: "Could not claim reminder batch", detail: String(error) }, 500); }
 
   const payload = JSON.stringify(buildReminderPayload(env("ATINA_PUBLIC_URL") || "https://atina.lufime.pt/"));
-  let sent = 0, expired = 0, failed = 0, invalid = 0, unsupported = 0;
+  let sent = 0, expired = 0, failed = 0, invalid = 0, unsupported = 0, sentUnrecorded = 0;
   for (const item of claimed) {
     const host = endpointHost(item.subscription);
     if (!host) {
@@ -56,8 +62,6 @@ Deno.serve(async (request) => {
     }
     try {
       await webpush.sendNotification(item.subscription as Parameters<typeof webpush.sendNotification>[0], payload, { TTL: 86400, urgency: "normal" });
-      await markSent(item.id);
-      sent++;
     } catch (error) {
       const statusCode = Number((error as { statusCode?: number })?.statusCode || 0);
       if (statusCode === 404 || statusCode === 410) {
@@ -67,7 +71,25 @@ Deno.serve(async (request) => {
         failed++;
         console.error("Push send failed for endpoint host", host, "status", statusCode);
       }
+      continue;
+    }
+    // Delivery succeeded. Persist the reminder marker separately so a database
+    // failure is never misclassified as a failed Push and retried as a duplicate.
+    let recorded = false;
+    for (let attempt = 0; attempt < 3 && !recorded; attempt++) {
+      try {
+        await markSent(item.id);
+        recorded = true;
+      } catch {
+        if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+      }
+    }
+    sent++;
+    if (!recorded) {
+      sentUnrecorded++;
+      try { await deferUnrecordedSend(item.id); } catch {}
+      console.error("Push delivered but reminder timestamp could not be recorded", host);
     }
   }
-  return json({ ok: true, claimed: claimed.length, sent, expired, failed, invalid, unsupported });
+  return json({ ok: true, claimed: claimed.length, sent, sent_unrecorded: sentUnrecorded, expired, failed, invalid, unsupported });
 });
