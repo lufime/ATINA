@@ -12,6 +12,12 @@ RETURNS uuid
 LANGUAGE sql
 AS $$ SELECT '11111111-1111-1111-1111-111111111111'::uuid $$;
 
+CREATE TABLE private.atina_players(id uuid PRIMARY KEY, nickname text);
+CREATE TABLE public.atina_v2_rooms(id uuid PRIMARY KEY, code text);
+CREATE TABLE public.atina_friend_requests(id uuid PRIMARY KEY, sender_player_id uuid, recipient_player_id uuid, status text);
+CREATE TABLE public.atina_game_invites(id uuid PRIMARY KEY, inviter_player_id uuid, recipient_player_id uuid, room_id uuid, status text);
+
+\i supabase/migrations/20261120190000_atina_notifications_inbox_and_triggers.sql
 \i supabase/migrations/20261120200000_atina_push_subscriptions.sql
 \i supabase/migrations/20261121110000_atina_push_reminder_activity.sql
 \i supabase/migrations/20261121113000_atina_push_reminder_claims.sql
