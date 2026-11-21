@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "name": "platform 404 NOT_FOUND without execution ID",
+      "http_status": 404,
+      "sb_error_code": "NOT_FOUND",
+      "execution_id": "",
+      "expected": "pre_execution_not_found"
+    },
+    {
+      "name": "NOT_FOUND_FUNCTION_BLOB is distinct",
+      "http_status": 404,
+      "sb_error_code": "NOT_FOUND_FUNCTION_BLOB",
+      "execution_id": "",
+      "expected": "other_404"
+    },
+    {
+      "name": "NOT_FOUND with execution ID is not the signature",
+      "http_status": 404,
+      "sb_error_code": "NOT_FOUND",
+      "execution_id": "exec-test-123",
+      "expected": "other_404"
+    },
+    {
+      "name": "successful response",
+      "http_status": 204,
+      "sb_error_code": "",
+      "execution_id": "",
+      "expected": "not_404"
+    }
+  ]
+}
