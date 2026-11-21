@@ -19,11 +19,11 @@ test('admin endpoint restricts origins, methods, and statuses', () => {
 });
 
 test('submission validates nickname, category and description and limits requests', () => {
-  assert.match(sharedSubmit, /categories/;
+  assert.ok(sharedSubmit.includes('categories'));
   assert.match(submit, /nickname/);
   assert.match(sharedSubmit, /description\.length < 20/);
   assert.match(submit, /atina_error_report_consume_global_limit/);
-  assert.match(sharedSubmit, /429/;
+  assert.ok(sharedSubmit.includes('429'));
 });
 
 test('migration enables RLS and limits table grants to service role', () => {
