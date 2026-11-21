@@ -1509,6 +1509,7 @@ async function atinaAccountRegister(){
   atinaAccountSetSession(data);
   atinaAccountMessage('Conta criada. Guarda agora a tua chave de recuperação: '+data.recovery_key);
   window.alert('CHAVE DE RECUPERAÇÃO ATINA\n\n'+data.recovery_key+'\n\nGuarda esta chave num local seguro. É apresentada uma única vez e será necessária se te esqueceres da palavra-passe.');
+  window.atinaShowBookmarkNudge?.();
  }catch(e){atinaAccountMessage(e.message||'Não foi possível criar a conta.');}
  finally{$('atinaAccountRegister').disabled=false;}
 }
