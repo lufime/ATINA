@@ -34,11 +34,12 @@ const origin = req.headers.get("Origin") ?? "";\n  if (!allowedOrigins.has(origi
   }
   try {
     const body = await req.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) return json(req, { error: "Invalid JSON body" }, 400);
     const reportId = typeof body.report_id === "string" ? body.report_id : "";
     if (!uuidPattern.test(reportId)) return json(req, { error: "Report ID inválido" }, 400);
     const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
-    if (typeof body.status === "string") {
-      if (!statuses.has(body.status)) return json(req, { error: "Estado inválido" }, 400);
+    if (body.status !== undefined) {
+      if (typeof body.status !== "string" || !statuses.has(body.status)) return json(req, { error: "Estado inválido" }, 400);
       update.status = body.status;
     }
     if (body.internal_note !== undefined) {
