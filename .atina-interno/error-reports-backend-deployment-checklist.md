@@ -1,28 +1,24 @@
-# Reports backend rollout checklist (draft)
+# Reports backend validation checklist (offline)\n
 
-Review-only package. No migration or Edge Function is applied/deployed.
+This validation is fully offline/local: no GitHub Secrets, JWTs, Supabase credentials, remote test project, or network calls are required.
 
-## Objects
-- `atina_error_report_admins`: allowlist of verified Supabase Auth UUIDs.
-- `atina_error_reports`: report records and workflow statuses.
-- `atina_error_report_rate_limits`: global minute buckets.
-- `atina_error_report_consume_global_limit(integer)`: atomic limiter used by submit function.
 
-## Required before activation
-1. Review SQL constraints, RLS, grants, indexes and definer function.
-2. Verify admin Auth UUIDs independently; do not seed guessed values.
-3. Owner approval is required before applying to `atina-development` (production).
-4. Deploy Edge Functions only after migration and allowlist are approved.
-5. Run backend integration tests in isolated Supabase with test JWTs only.
-6. Validate unauthorized/authorized Admin GET/PATCH, submission validation and persistence, global 429 and CORS.
-7. Review platform log retention/privacy settings.
+## Offline checks
+- Static validation of admin endpoint origin/method/status/UUID validation.
+- Submission endpoint nickname/category/description validation and rate-limit handling.
+- Migration RLS and service-role grants review.
+- Privacy schema check for email/IP/player/session/room identifiers.
 
-## Privacy and limitations
-- Rate limiting is global per minute (not keyed to IP/player); one abusive client can consume the shared quota.
-- Screenshot upload is not implemented by these functions/migration.
-- Data excludes email, IP, player IDs, session/room/challenge IDs and persistent client identifiers.
-- No email or notification sends.
-- Admin authorization is server-side allowlist based.
 
-## Rollout status
-Migration proposed only; Edge Functions not deployed; admin seeding awaits verified UUIDs and approval; tests need isolated credentials. Production unchanged. Render not used.
+## Boundaries
+- These checks validate source structure, not deployed HTTP behavior or database integration.
+- No migration is applied and no Edge Function is deployed.
+- Supabase `atina-development` is production and remains untouched.
+- No Render use.
+
+
+## Next steps before activation
+1. Review migration, RLS, grants, indexes and security-definer function.
+2. Confirm administrator Auth UUIDs without guessing.
+3. Obtain explicit approval before any production migration or function deployment.
+4. Perform any future runtime/integration testing only after separately approved, without requiring Secrets as part of this PR.
