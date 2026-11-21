@@ -1,0 +1,27 @@
+name: Testar segurança básica do envio de reportes
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/functions/atina-error-reports-submit/index.ts'
+      - 'tests/error-report-submit-security.test.cjs'
+      - '.github/workflows/test-error-report-submit-security.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  submit-security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validar sintaxe do teste
+        run: node --check tests/error-report-submit-security.test.cjs
+      - name: Executar testes estáticos de segurança
+        run: node --test tests/error-report-submit-security.test.cjs
