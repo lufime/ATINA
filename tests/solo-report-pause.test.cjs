@@ -14,7 +14,7 @@ function extractFunction(name) {
     const ch = html[i], next = html[i + 1];
     if (lineComment) { if (ch === '\\n') lineComment = false; continue; }
     if (blockComment) { if (ch === '*' && next === '/') { blockComment = false; i++; } continue; }
-    if (quote) { if (escaped) { escaped = false; continue; } if (ch === '\\\\') { escaped = true; continue; } if (ch === quote) quote = null; continue; }
+    if (quote) { if (escaped) { escaped = false; continue; } if (ch === '\\') { escaped = true; continue; } if (ch === quote) quote = null; continue; }
     if (ch === '/' && next === '/') { lineComment = true; i++; continue; }
     if (ch === '/' && next === '*') { blockComment = true; i++; continue; }
     if (ch === "'" || ch === '"' || ch === '`') { quote = ch; continue; }
