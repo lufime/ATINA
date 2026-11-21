@@ -103,15 +103,12 @@ async function atinaResultProgressRender(){
   const points=Math.max(0,Number(profile.points)||0),xp=Math.max(0,Number(profile.xp)||0);
   let qi='—';
   if(token&&profile.player_id){
-   const res=await atinaServerRpc('atina_qi_my_score',{p_session_token:token});
-   const row=Array.isArray(res)?res[0]:res;
-   if(row&&row.qi_score!=null)qi=Number(row.qi_score).toLocaleString('pt-PT');
+   try{const res=await atinaServerRpc('atina_qi_my_score',{p_session_token:token});const row=Array.isArray(res)?res[0]:res;if(row&&row.qi_score!=null)qi=Number(row.qi_score).toLocaleString('pt-PT');}catch(_){qi='Indisponível';}
   }
   const fmt=n=>Number(n).toLocaleString('pt-PT');
   panel.innerHTML='<h3 style="margin:0 0 10px">📊 A tua progressão</h3><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><div style="padding:10px 5px;border:1px solid #38556d;border-radius:11px;background:#10283d;text-align:center"><div style="font-size:12px">🏆 Pontos</div><strong style="font-size:20px;color:#f2d38e">'+fmt(points)+'</strong></div><div style="padding:10px 5px;border:1px solid #38556d;border-radius:11px;background:#10283d;text-align:center"><div style="font-size:12px">⭐ XP</div><strong style="font-size:20px;color:#f2d38e">'+fmt(xp)+'</strong></div><div style="padding:10px 5px;border:1px solid #38556d;border-radius:11px;background:#10283d;text-align:center"><div style="font-size:12px">🧠 QI ATINA</div><strong style="font-size:20px;color:#f2d38e">'+qi+'</strong></div></div><p class="muted small" style="margin:8px 0 0">Valores atuais da conta. As recompensas não são novamente contabilizadas neste ecrã.</p>';
  }catch(error){panel.innerHTML='<p class="muted small">Não foi possível carregar os valores da progressão neste momento.</p>';console.warn('ATINA: falha ao mostrar progressão no resultado.',error);}
 }
-
 function atinaProgressRender(profile) {
   const signedInName = $('atinaSignedInUserName');
   if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
