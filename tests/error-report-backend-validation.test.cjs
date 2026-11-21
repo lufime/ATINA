@@ -37,3 +37,23 @@ test('migration enables RLS and limits table grants to service role', () => {
 test('privacy-sensitive identifiers are not present in backend schema', () => {
   assert.doesNotMatch(migration, /\b(email|ip_address|player_id|session_id|room_id)\b/i);
 });
+
+test('admin endpoint enforces auth and restricts reports access to allowlisted admins', () => {
+  assert.match(admin, /auth\.getUser\(token\)/);
+  assert.match(admin, /atina_error_report_admins/);
+  assert.match(admin, /if \(!admin\) return json\(req, \{ error: "Forbidden" \}, 403\)/);
+  assert.match(admin, /select\("report_id,nickname,category,description,game_version,game_area,status,internal_note,created_at,updated_at"\)/);
+  assert.match(admin, /\.limit\(200\)/);
+  assert.match(admin, /\.update\(update\)/);
+  assert.match(admin, /"Access-Control-Allow-Methods": "GET, PATCH, OPTIONS"/);
+});
+
+test('admin UI points at the reports admin endpoint for read and update actions', () => {
+  const page = fs.readFileSync(path.join(root, 'admin-images.html'), 'utf8');
+  assert.match(page, /atina-error-reports-admin/);
+  assert.match(page, /method:"GET"/);
+  assert.match(page, /method:"PATCH"/);
+  assert.match(page, /reportNicknameFilter/);
+  assert.match(page, /reportStatusFilter/);
+  assert.match(page, /reportCategoryFilter/);
+});
