@@ -77,8 +77,14 @@ BEGIN
   RETURN NEW;
 END;
 $function$;
-DROP TRIGGER IF EXISTS atina_notification_friend_event_trigger ON public.atina_friend_requests;
-CREATE TRIGGER atina_notification_friend_event_trigger AFTER INSERT OR UPDATE OF status ON public.atina_friend_requests FOR EACH ROW EXECUTE FUNCTION public.atina_notification_friend_event();
+DO $migration$
+BEGIN
+  IF to_regclass('public.atina_friend_requests') IS NOT NULL THEN
+    EXECUTE 'DROP TRIGGER IF EXISTS atina_notification_friend_event_trigger ON public.atina_friend_requests';
+    EXECUTE 'CREATE TRIGGER atina_notification_friend_event_trigger AFTER INSERT OR UPDATE OF status ON public.atina_friend_requests FOR EACH ROW EXECUTE FUNCTION public.atina_notification_friend_event()';
+  END IF;
+END;
+$migration$;
 
 CREATE OR REPLACE FUNCTION public.atina_notification_game_invite_event()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
@@ -104,8 +110,14 @@ BEGIN
   RETURN NEW;
 END;
 $function$;
-DROP TRIGGER IF EXISTS atina_notification_game_invite_event_trigger ON public.atina_game_invites;
-CREATE TRIGGER atina_notification_game_invite_event_trigger AFTER INSERT OR UPDATE OF status ON public.atina_game_invites FOR EACH ROW EXECUTE FUNCTION public.atina_notification_game_invite_event();
+DO $migration$
+BEGIN
+  IF to_regclass('public.atina_game_invites') IS NOT NULL THEN
+    EXECUTE 'DROP TRIGGER IF EXISTS atina_notification_game_invite_event_trigger ON public.atina_game_invites';
+    EXECUTE 'CREATE TRIGGER atina_notification_game_invite_event_trigger AFTER INSERT OR UPDATE OF status ON public.atina_game_invites FOR EACH ROW EXECUTE FUNCTION public.atina_notification_game_invite_event()';
+  END IF;
+END;
+$migration$;
 
 REVOKE ALL ON FUNCTION public.atina_notification_list(text) FROM public;
 REVOKE ALL ON FUNCTION public.atina_notification_mark_read(text,uuid) FROM public;
