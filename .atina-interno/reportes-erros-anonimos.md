@@ -4,12 +4,13 @@
 Permitir que qualquer jogador reporte um erro durante ou depois do jogo, sem interromper a partida e sem recolher dados pessoais.
 
 ## Privacidade obrigatória
-- Não recolher email, IP, nome/conta, ID de jogador, identificadores persistentes, fingerprint ou tokens da partida.
+- O reporte inclui o pseudónimo atual do jogador, preenchido automaticamente pelo jogo, para a administração identificar quem reportou.
+- Não recolher email, IP, nome real/conta, ID de jogador, identificadores persistentes, fingerprint ou tokens da partida.
 - Não guardar user-agent completo nem headers da requisição.
-- Não ligar o reporte à partida, sala, sessão, desafio ou jogador.
+- Não ligar o reporte à partida, sala, sessão, desafio ou IDs do jogador; guardar apenas o pseudónimo apresentado.
 - A screenshot é opcional e deve mostrar aviso para ocultar informação pessoal antes do envio.
 - Remover metadados EXIF da screenshot no cliente antes de upload; limitar tipo e tamanho.
-- Guardar apenas categoria, descrição, versão pública do jogo, área/modo selecionado opcional, timestamp de servidor e screenshot opcional.
+- Guardar categoria, descrição, pseudónimo, versão pública do jogo, área/modo selecionado opcional, timestamp de servidor e screenshot opcional.
 - Evitar registo de IP nos logs de aplicação; confirmar limites e retenção dos logs da plataforma antes de ativar.
 - Não enviar email.
 
@@ -22,15 +23,17 @@ Permitir que qualquer jogador reporte um erro durante ou depois do jogo, sem int
 
 ## Fluxo do jogador
 1. Acesso a “Reportar erro” no menu/rodapé e nos ecrãs relevantes, sem bloquear a partida.
-2. Categoria obrigatória, descrição obrigatória e screenshot opcional.
-3. Aviso visível: não incluir nomes, emails, dados pessoais ou informação sensível na screenshot/descrição.
-4. Envio com estado e confirmação; se falhar, manter descrição no formulário para nova tentativa.
-5. Limitação de spam não baseada em identificador persistente: limite global por janela temporal e throttle apenas em memória no browser.
+2. O pseudónimo é obtido automaticamente do perfil atual e apresentado no formulário como referência (não editável), sem recolher outros dados de conta.
+3. Categoria obrigatória, descrição obrigatória e screenshot opcional.
+4. Aviso visível: não incluir emails, dados pessoais ou informação sensível na screenshot/descrição.
+5. Envio com estado e confirmação; se falhar, manter descrição no formulário para nova tentativa.
+6. Limitação de spam não baseada em identificador persistente: limite global por janela temporal e throttle apenas em memória no browser.
 
 ## Administração (integrada em admin-images.html)
 - Secção protegida de reportes, sem página Admin nova.
 - Contador de reportes por estado e destaque de novos.
-- Lista com categoria, data, versão, área, descrição e screenshot.
+- Lista com pseudónimo do jogador, categoria, data, versão, área, descrição e screenshot.
+- Filtro e pesquisa por pseudónimo.
 - Estados: Novo, Em análise, Em correção, Resolvido, Arquivado.
 - Agrupar reportes semelhantes por fingerprint calculado apenas a partir de categoria + texto normalizado; o fingerprint não é um identificador de pessoa.
 - Ações para mudar estado e adicionar nota interna (nota administrativa não enviada aos jogadores).
