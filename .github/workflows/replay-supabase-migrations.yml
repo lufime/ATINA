@@ -41,8 +41,39 @@ jobs:
       - name: Normalize duplicate migration IDs in the disposable runner copy
         run: node scripts/prepare-migration-replay.mjs
 
-      - name: Start disposable local Supabase stack
-        run: supabase start
+      - name: Start disposable local Supabase stack (debug + one retry)
+        shell: bash
+        run: |
+          set +e
+          supabase start --debug
+          first_status=$?
+          if [ "$first_status" -eq 0 ]; then
+            exit 0
+          fi
+
+          echo "::warning::Supabase local stack failed on first attempt (exit $first_status); printing Docker diagnostics before retry."
+          docker ps -a --no-trunc
+          docker system df
+          echo "Retrying once with debug logs..."
+          sleep 10
+          supabase start --debug
+          exit $?
+
+      - name: Print local stack diagnostics if startup failed
+        if: failure()
+        shell: bash
+        run: |
+          echo "=== Docker containers ==="
+          docker ps -a --no-trunc || true
+          echo "=== Docker disk usage ==="
+          docker system df || true
+          echo "=== Supabase status ==="
+          supabase status || true
+          echo "=== Supabase container logs (tail) ==="
+          for container in $(docker ps -a --format '{{.Names}}' | grep '^supabase' || true); do
+            echo "--- $container ---"
+            docker logs --tail=120 "$container" 2>&1 || true
+          done
 
       - name: Replay every migration from an empty database
         run: supabase db reset --local --no-seed
