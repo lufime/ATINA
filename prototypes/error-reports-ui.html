@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ATINA — Protótipo de reportes</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1421;--panel:#14243a;--panel2:#1b3049;--gold:#d3ad68;--text:#f3f0e8;--muted:#aab6c5;--line:#30445b;--red:#e58b83;--green:#83c6a4}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b3049 0,#0b1421 58%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}.wrap{max-width:850px;margin:auto;padding:20px 14px 50px}.top{padding:22px;border:1px solid #43546a;border-radius:18px;background:linear-gradient(135deg,#14243a,#304b65)}.brand{font-size:26px;font-weight:850;letter-spacing:.12em}.sub{color:#cbd5e1}.card{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:#122238;padding:18px}.tabs{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:12px 15px;font-weight:700;background:var(--gold);color:#17202b;cursor:pointer}.btn.alt{background:#1a2d44;color:var(--text);border:1px solid var(--line)}label{display:block;margin:15px 0 6px;font-weight:700}input,select,textarea{width:100%;padding:13px;border:1px solid #53657b;border-radius:11px;background:#0d1a2a;color:var(--text);font:inherit}textarea{min-height:130px;resize:vertical}.hint{color:var(--muted);font-size:13px;line-height:1.5}.status{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:10px;color:var(--muted)}.status.good{color:var(--green)}.status.warn{color:#e7c87c}.hidden{display:none!important}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.title{font-size:20px;margin:0 0 6px}@media(max-width:620px){.wrap{padding:12px 10px 30px}.card{padding:14px}.grid{grid-template-columns:1fr}.btn{width:100%}.tabs .btn{width:auto;flex:1}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top"><div class="brand">ATINA</div><div class="sub">Protótipo — Reportar um erro</div></header>
+<div class="card">
+<p class="hint">Protótipo visual independente. Ainda não envia reportes nem acede à Administração.</div>
+<div class="tabs" style="margin-top:12px"><button class="btn" id="showPlayer">Reporte jogador</button><button class="btn alt" id="showAdmin">Vista Administração (mock)</button></div>
+</div>
+<section class="card" id="playerView">
+<h1 class="title">🐞 Reportar um erro</h1><p class="hint">Ajuda-nos a perceber o que aconteceu. Evita incluir dados pessoais na descrição.</p>
+<form id="reportForm">
+<label for="nickname">Pseudónimo</label><input id="nickname" maxlength="40" placeholder="A carregar pseudónimo…" required autocomplete="off"><p class="hint" id="nickHint">Nesta demonstração, indica o pseudónimo. No jogo será preenchido automaticamente pelo perfil ativo.</p>
+<label for="category">Categoria</label><select id="category" required><option value="">Selecionar</option><option value="visual">Visual</option><option value="game">Jogo</option><option value="points_xp">Pontuação / XP</option><option value="technical">Técnico</option><option value="other">Outro</option></select>
+<label for="description">O que aconteceu?</label><textarea id="description" maxlength="2000" minlength="20" placeholder="Descreve o problema e os passos para o reproduzir (mínimo 20 caracteres)." required></textarea><p class="hint" id="counter">0 / 2000</p>
+<div class="status warn">Envio desligado nesta versão de protótipo. O backend ainda não está deployado nem ligado ao jogo.</div><button class="btn" type="submit" style="width:100%;margin-top:14px" disabled>Enviar reporte (indisponível)</button>
+</form>
+</section>
+<section class="card hidden" id="adminView"><h1 class="title">Administração — Reportes</h1><p class="hint">Pré-visualização de layout. Os dados reais só aparecerão após integração com endpoint protegido e testes de autorização.</p>
+<div class="grid"><div><label>Filtrar pseudónimo</label><input placeholder="Pesquisar…" disabled></div><div><label>Estado</label><select disabled><option>Todos</option><option>Novo</option><option>Em análise</option><option>Em correção</option><option>Resolvido</option><option>Arquivado</option></select></div></div>
+<div class="status">Não existem reportes carregados — vista de demonstração.</div>
+<div class="card"><strong>Exemplo de cartão (dados fictícios)</strong><p class="hint">Pseudónimo: Jogador-exemplo · Categoria: Técnico · Estado: Novo</p><p>O texto e as ações deste cartão são apenas ilustrativos.</p><div class="grid"><select disabled><option>Novo</option><option>Em análise</option><option>Em correção</option><option>Resolvido</option><option>Arquivado</option></select><input placeholder="Nota interna (mock)" disabled></div></div>
+</section>
+</main>
+<script>
+const player=document.getElementById('playerView'), admin=document.getElementById('adminView');
+document.getElementById('showPlayer').onclick=()=>{player.classList.remove('hidden');admin.classList.add('hidden')};
+document.getElementById('showAdmin').onclick=()=>{admin.classList.remove('hidden');player.classList.add('hidden')};
+const nick=document.getElementById('nickname');
+try{const saved=localStorage.getItem('atina.nickname')||localStorage.getItem('atinaNickname')||'';if(saved){nick.value=saved;document.getElementById('nickHint').textContent='Pseudónimo sugerido a partir do armazenamento local deste protótipo. Confirma antes de enviar.'}}catch{}
+document.getElementById('description').addEventListener('input',e=>document.getElementById('counter').textContent=e.target.value.length+' / 2000');
+document.getElementById('reportForm').addEventListener('submit',e=>{e.preventDefault()});
+</script>
+</body></html>
