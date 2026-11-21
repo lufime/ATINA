@@ -3186,6 +3186,8 @@ function atinaSolutionImageMatch(answer,category,item,extraAliases=[]){
  return {answerCoverage:1,categoryCoverage};
 }
 async function atinaWikidataSolutionImage(answer,category){
+  // Desativado: imagens externas não são permitidas no ATINA.
+  return null;
  const normalizedAnswer=atinaSolutionImageText(answer);
  if(!normalizedAnswer)return {entityFound:false,item:null};
  for(const language of ['pt','en']){
@@ -3242,6 +3244,8 @@ function atinaArtInstituteCategoryMatch(category,item){
  return terms.length>0&&terms.some(term=>context.split(/\s+/).includes(term));
 }
 async function atinaMetMuseumSolutionImage(answer,category){
+  // Desativado: imagens externas não são permitidas no ATINA.
+  return null;
  const query=atinaSolutionImageCoreText(answer);
  if(!query)return null;
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','the','of','and','in','on','um','uma']);
@@ -3277,6 +3281,8 @@ async function atinaMetMuseumSolutionImage(answer,category){
  return null;
 }
 async function atinaArtInstituteSolutionImage(answer,category){
+  // Desativado: imagens externas não são permitidas no ATINA.
+  return null;
  const query=atinaSolutionImageCoreText(answer);
  if(!query)return null;
  const params=new URLSearchParams({
@@ -3315,6 +3321,8 @@ async function atinaArtInstituteSolutionImage(answer,category){
  };
 }
 async function atinaWikipediaSolutionImage(answer,category){
+  // Desativado: imagens externas não são permitidas no ATINA.
+  return null;
  const normalizedAnswer=atinaSolutionImageCoreText(answer);
  if(!normalizedAnswer)return null;
  for(const language of ['pt','en']){
@@ -3362,6 +3370,8 @@ async function atinaTranslateImageSearchText(value){
  }catch(error){return '';}
 }
 async function atinaOpenverseSolutionImage(answer,category,aliases=[],contexts=[],allowEnglishFallback=true){
+  // Desativado: imagens externas não são permitidas no ATINA.
+  return null;
  const stop=new Set(['de','da','do','das','dos','e','a','o','as','os','um','uma','uns','umas','the','of','and','in','on','for','with','what','who','where']);
  const clean=value=>atinaSolutionImageText(value).split(' ').filter(token=>token.length>2&&!stop.has(token));
  const answerVariants=[answer,...aliases].map(value=>String(value||'').trim()).filter(Boolean);
@@ -3519,6 +3529,8 @@ async function atinaFindCuratedSolutionImage(answer,aliases=[]){
  return null;
 }
 async function atinaFindCommonsSolutionImage(answer,category,aliases=[]){
+  // Desativado: imagens externas não são permitidas no ATINA.
+  return null;
  const searchTerms=[...new Set([answer,...aliases].map(value=>String(value||'').trim()).filter(Boolean))].slice(0,8);
  for(const query of searchTerms){
   try{
@@ -3606,8 +3618,8 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    item=preGeneratedUrl
     ?(curatedItem&&curatedItem.thumburl===preGeneratedUrl?curatedItem:(publishedItem||generatedItem))
     :curatedItem;
-   // Sem URL explícito do servidor, procurar uma alternativa verificada.
-   if(!item&&!preGeneratedUrl)item=await atinaFindCommonsSolutionImage(cleanAnswer,cleanCategory,aliases);
+   // ATINA: não pesquisar nem carregar imagens de fontes externas.
+   // Só usar imagens locais curadas ou imagens ATINA alojadas no Supabase, verificadas acima.
    atinaSolutionImageCache.set(cacheKey,item||null);
   }
   if(target.dataset.solutionKey!==key)return;
