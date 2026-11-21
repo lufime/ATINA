@@ -5074,13 +5074,12 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  const GAME_ID='game';
  function dismissed(){try{return localStorage.getItem(KEY)==='1';}catch(e){return true;}}
  function hide(){try{localStorage.setItem(KEY,'1');}catch(e){} const el=document.getElementById('atinaBookmarkNudge');if(el)el.remove();}
- function render(){
+ function render(force=false){
   const game=document.getElementById(GAME_ID);
-  if(!game||game.classList.contains('hidden')||game.hidden||dismissed())return;
-  if(!(Number(window.pos)>=9&&window.locked))return;
+  if(dismissed())return;
+  if(!force&&(!game||game.classList.contains('hidden')||game.hidden||!(Number(window.pos)>=9&&window.locked)))return;
   if(document.getElementById('atinaBookmarkNudge'))return;
-  const card=game.querySelector('.card');
-  if(!card)return;
+  const card=game?.querySelector('.card')||document.body;
   const box=document.createElement('aside');box.id='atinaBookmarkNudge';box.setAttribute('role','note');
   box.style.cssText='margin:12px 0;padding:12px 14px;border:1px solid #d3ad68;border-radius:13px;background:#14243a;color:#f3f0e8;font-size:14px;line-height:1.45';
   const title=document.createElement('strong');title.textContent='⭐ Guardar ATINA nos favoritos';
@@ -5091,7 +5090,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   const close=document.createElement('button');close.type='button';close.textContent='Agora não';close.style.cssText='border:1px solid #30445b;border-radius:9px;padding:9px 12px;background:#1a2d44;color:#f3f0e8';close.onclick=hide;
   actions.append(help,close);box.append(title,msg,actions);card.append(box);
  }
- const observer=new MutationObserver(render);observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+ window.atinaShowBookmarkNudge=function(){render(true);};
+ const observer=new MutationObserver(()=>render(false));observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
  document.addEventListener('click',function(){setTimeout(render,80);});
  setInterval(render,1500);
 })();
