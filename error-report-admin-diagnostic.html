@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Diagnóstico HTTP — ATINA Reports</title>
 <style>body{font:16px system-ui;background:#0b1421;color:#eef2f7;margin:0;padding:24px}main{max-width:800px;margin:auto}button{padding:12px 18px;background:#d3ad68;color:#101a28;border:0;border-radius:8px;font-weight:700;cursor:pointer}pre{background:#14243a;border:1px solid #36516e;border-radius:8px;padding:14px;white-space:pre-wrap;overflow-wrap:anywhere}.muted{color:#aab6c5}</style></head>
-<body><main><h1>Diagnóstico HTTP — Reports</h1><p class="muted">Teste isolado, somente OPTIONS e GET. Não altera dados.</p><button id="run">Executar diagnóstico</button><pre id="out">Pronto.</pre></main>
+<body><main><h1>Diagnóstico HTTP — Reports</h1><p class="muted">Teste GET autenticado; o browser gera automaticamente o preflight OPTIONS. Abra DevTools → Network para inspecionar OPTIONS. Não altera dados.</p><button id="run">Executar diagnóstico</button><pre id="out">Pronto.</pre></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 const URL="https://qvvlqrgbtjujsejvenld.supabase.co";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dmxxcmdidGp1anNlanZlbmxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0ODMzMDksImV4cCI6MjEwOTA1OTMwOX0.k_3Q05KxqmAByJgPxDyWeWPnYYfkrPxkRjd60Bntn6w";
@@ -15,11 +15,7 @@ try{
  const {data:{session},error:sessionError}=await client.auth.getSession();
  log("Sessão: "+(session?"encontrada":"não encontrada")+(sessionError?" — "+sessionError.message:""));
  log("Endpoint: "+endpoint);
- try{
-  const r=await fetch(endpoint,{method:"OPTIONS",headers:{"Origin":location.origin,"Access-Control-Request-Method":"GET","Access-Control-Request-Headers":"authorization,apikey"}});
-  log("OPTIONS status: "+r.status+" "+r.statusText);
-  log("OPTIONS headers: "+JSON.stringify(Object.fromEntries(["access-control-allow-origin","access-control-allow-methods","access-control-allow-headers","access-control-max-age"].map(h=>[h,r.headers.get(h)]))));
- }catch(e){log("OPTIONS falhou: "+e.name+" — "+e.message);}
+ log("Preflight OPTIONS: será gerado automaticamente pelo browser se necessário; inspecione no separador Network.");
  if(!session){log("GET ignorado: iniciar sessão de administrador na página admin e executar novamente.");return;}
  try{
   const r=await fetch(endpoint,{method:"GET",headers:{"Authorization":"Bearer "+session.access_token,"apikey":KEY}});
