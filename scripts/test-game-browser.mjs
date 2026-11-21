@@ -277,11 +277,13 @@ try {
   await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_matchmake_status'), null, {timeout:5000});
   const quickStartCall = await page.evaluate(() => window.__quickOnlineCalls.find(call => call.name === 'atina_v2_matchmake'));
   assert.ok(quickStartCall, 'Partida rápida deve criar pedido de matchmaking.');
-  assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_ticket'],
-    'O matchmaking deve enviar apenas os dois argumentos esperados pela RPC.');
+  assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_session_token','p_ticket'],
+    'O matchmaking deve enviar nickname, token de sessão e ticket esperados pela RPC.');
+  assert.ok(quickStartCall.args.p_session_token, 'O matchmaking deve incluir o token de sessão autenticado.');
   assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
-  const fallbackState = await page.evaluate(async () => {
-    await quickMatchFallback();
+  // O fallback é acionado pelo timer real de espera; não invocar funções internas inexistentes no escopo global.
+  await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_create_bot_match'), null, {timeout:15000});
+  const fallbackState = await page.evaluate(() => {
     const state = {
       calls: window.__quickOnlineCalls.slice(),
       lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
@@ -308,13 +310,13 @@ try {
   assert.equal(roomFallbackCall.args.p_session_token, 's'.repeat(64));
   assert.equal(fallbackState.lobbyVisible, true, 'O fallback deve abrir a sala online.');
   assert.equal(fallbackState.room, 'quick-fallback-room');
-  assert.match(fallbackState.status, /Partida preparada|A abrir a sala/);
+  assert.match(fallbackState.status, /Partida encontrada|Partida preparada|A abrir a sala/);
   assert.doesNotMatch(fallbackState.status, /bot/i, 'O texto da interface não deve mencionar bots.');
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
-  assert.equal(await page.locator('#networkNickname').isEditable(), false,
-    'O pseudónimo da sala deve ser apenas de leitura e vir da conta ATINA.');
+  assert.equal(await page.locator('#networkNickname').count(), 0,
+    'A interface da sala não deve expor um campo de pseudónimo; o nome vem do perfil ATINA.');
   await page.locator('.network-room-options summary').click();
   await page.locator('#createNetworkRoom').click();
   await page.getByText(/Inicia sessão na tua conta ATINA/).waitFor();
