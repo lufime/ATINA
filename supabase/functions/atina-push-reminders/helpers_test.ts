@@ -35,5 +35,6 @@ Deno.test("invalid endpoints are distinguished from valid unsupported providers"
   if (endpointHost({ endpoint: "https://unknown-push.example/id" }) !== null) throw new Error("unsupported host must not be sent");
   if (endpointHost({ endpoint: "https://fcm.googleapis.com:443/id" }) !== "fcm.googleapis.com") throw new Error("explicit default port accepted");
   if (endpointHost({ endpoint: "https://fcm.googleapis.com/id" }) !== "fcm.googleapis.com") throw new Error("valid Google endpoint accepted");
-  if (endpointHost({ endpoint: "https://foo.push.services.mozilla.com/abc" }) !== "foo.push.services.mozilla.com") throw new Error("valid Mozilla endpoint accepted");
+  if (endpointHost({ endpoint: "https://foo.push.services.mozilla.com/abc" }) !== "foo.push.services.mozilla.com") throw new Error("valid Mozilla subdomain accepted");
+  if (endpointHost({ endpoint: "https://push.services.mozilla.com/wpush/v2/abc" }) !== "push.services.mozilla.com") throw new Error("standard Mozilla endpoint accepted");
 });
