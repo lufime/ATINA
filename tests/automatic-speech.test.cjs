@@ -117,7 +117,31 @@ for (const client of ['anfitrião', 'participante']) {
 for (const client of ['anfitrião', 'participante']) {
   test(`(${client}) a Sala inicia diretamente a leitura da pista confirmada pelo servidor`, () => {
     assert.ok(html.includes("networkPendingSpokenClueState=spokenKey;const currentClue=String(clueSource[revealed-1]||g[2]?.[revealed-1]||'').trim();"));
-    assert.ok(html.includes("atinaSpeakClue('Pista '+revealed+'. '+currentClue,true,atinaNetworkClueSpeechLifecycle)"));
+    assert.ok(html.includes("atinaSpeakClue('Pista '+revealed+'. '+currentClue,false,atinaNetworkClueSpeechLifecycle)"));
     assert.ok(!html.includes("networkPendingSpokenClueState=spokenKey;$('listenCurrentClue')?.click();"));
   });
 }
+
+
+test('a leitura automática na sala respeita a opção de desligar', () => {
+  assert.ok(html.includes("atinaSpeakClue('Pista '+revealed+'. '+currentClue,false,atinaNetworkClueSpeechLifecycle)"),
+    'A leitura das pistas online deve respeitar a configuração de voz');
+  assert.ok(!html.includes("atinaSpeakClue('Pista '+revealed+'. '+currentClue,true,atinaNetworkClueSpeechLifecycle)"),
+    'A sala não deve forçar a voz quando o jogador a desligou');
+});
+
+test('o relógio de tempo ativo pausa antes da transição entre desafios', () => {
+  const nextStart = html.indexOf('async function next(){');
+  const nextEnd = html.indexOf('async function activateLandscapePresentation()', nextStart);
+  assert.ok(nextStart >= 0 && nextEnd > nextStart, 'Função next() encontrada');
+  const nextSource = html.slice(nextStart, nextEnd);
+  const stopPosition = nextSource.indexOf('raceStop();');
+  const pausePosition = nextSource.indexOf('await challengePause');
+  assert.ok(stopPosition >= 0 && pausePosition > stopPosition,
+    'raceStop deve ocorrer antes da pausa de transição, para não contar os 10 segundos entre desafios');
+  const revealStart = html.indexOf('function reveal(){');
+  const revealEnd = html.indexOf('function atinaRenderRevealedAnswer', revealStart);
+  const revealSource = html.slice(revealStart, revealEnd);
+  assert.ok(revealSource.includes('raceStart();startTimer();'),
+    'Relógio de tempo ativo e cronómetro do desafio devem arrancar na primeira pista');
+});
