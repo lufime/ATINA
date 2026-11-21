@@ -1,0 +1,31 @@
+name: Push reminder SQL smoke test
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/voluntary-push-reminders-rebuild]
+  workflow_dispatch:
+
+jobs:
+  postgres-migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_USER: postgres
+          POSTGRES_DB: atina_sql_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d atina_sql_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run migrations and smoke assertions on disposable PostgreSQL
+        env:
+          PGPASSWORD: testpass
+        run: psql -h localhost -U postgres -d atina_sql_test -v ON_ERROR_STOP=1 -f scripts/test-push-reminders-sql.sql
