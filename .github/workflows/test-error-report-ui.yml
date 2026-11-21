@@ -1,0 +1,24 @@
+name: Error report UI static tests
+on:
+  pull_request:
+    paths:
+      - index.html
+      - admin-images.html
+      - tests/error-report-ui.test.cjs
+      - .github/workflows/test-error-report-ui.yml
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - admin-images.html
+      - tests/error-report-ui.test.cjs
+      - .github/workflows/test-error-report-ui.yml
+jobs:
+  error-report-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test tests/error-report-ui.test.cjs
