@@ -30,7 +30,7 @@ export function endpointHost(subscription: unknown): string | null {
   if (typeof endpoint !== "string" || endpoint.length > 2048) return null;
   try {
     const parsed = new URL(endpoint);
-    if (parsed.protocol !== "https:" || parsed.username || parsed.password) return null;
+    if (parsed.protocol !== "https:" || parsed.username || parsed.password || (parsed.port && parsed.port !== "443")) return null;
     const host = parsed.hostname.toLowerCase();
     if (PUSH_EXACT_HOSTS.includes(host) || PUSH_HOST_SUFFIXES.some(suffix => host.endsWith(suffix))) return host;
     return null;
