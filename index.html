@@ -1266,7 +1266,7 @@ label.section{line-height:1.35!important}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupClueToggle,{once:true});else setupClueToggle();
  const observer=new MutationObserver(setupClueToggle);
- observer.observe(document.body,{childList:true,subtree:true});
+ observer.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 <style id="atina-clues-flow-fix-v1">
