@@ -21,14 +21,19 @@ export function buildReminderPayload(baseUrl: string) {
   };
 }
 
+const PUSH_HOST_SUFFIXES = [".fcm.googleapis.com", ".push.services.mozilla.com"];
+const PUSH_EXACT_HOSTS = ["fcm.googleapis.com", "web.push.apple.com", "notify.windows.com", "wns.windows.com"];
+
 export function endpointHost(subscription: unknown): string | null {
   if (!subscription || typeof subscription !== "object") return null;
   const endpoint = (subscription as { endpoint?: unknown }).endpoint;
   if (typeof endpoint !== "string" || endpoint.length > 2048) return null;
   try {
     const parsed = new URL(endpoint);
-    if (parsed.protocol !== "https:") return null;
-    return parsed.host;
+    if (parsed.protocol !== "https:" || parsed.username || parsed.password) return null;
+    const host = parsed.hostname.toLowerCase();
+    if (PUSH_EXACT_HOSTS.includes(host) || PUSH_HOST_SUFFIXES.some(suffix => host.endsWith(suffix))) return host;
+    return null;
   } catch {
     return null;
   }
