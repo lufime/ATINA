@@ -1,0 +1,30 @@
+name: Testar responsividade do reporte Solo
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'scripts/test-report-pause-responsive.mjs'
+      - '.github/workflows/test-report-pause-responsive.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  responsive-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar Playwright
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Testar UI de reporte em mobile e desktop
+        run: node scripts/test-report-pause-responsive.mjs
