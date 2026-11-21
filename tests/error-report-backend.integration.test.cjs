@@ -4,11 +4,11 @@ const assert = require('node:assert/strict');
 
 const base = (process.env.ATINA_ERROR_REPORTS_TEST_URL || '').replace(/\\/$/, '');
 const adminToken = process.env.ATINA_ERROR_REPORTS_TEST_ADMIN_TOKEN || '';
-const playerToken = process.env.ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN || '';
+const playerToken = process.env.ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN || '';\nconst anonKey = process.env.ATINA_ERROR_REPORTS_TEST_ANON_KEY || '';
 const allowRemote = process.env.ATINA_ERROR_REPORTS_TEST_ALLOW_REMOTE === 'true';
 const prodHost = 'qvvlqrgbtjujsejvenld.supabase.co';
 const host = (() => { try { return new URL(base).hostname; } catch { return ''; } })();
-const configured = Boolean(base && host && adminToken && playerToken);
+const configured = Boolean(base && host && anonKey && adminToken && playerToken);
 const safeTarget = Boolean(configured && host !== prodHost && (['localhost','127.0.0.1'].includes(host) || allowRemote));
 const skipReason = !configured ? 'Set explicit isolated-test URL and admin/player tokens to enable.' :
   !safeTarget ? 'Remote tests require explicit opt-in and production hostname is forbidden.' : false;
@@ -17,7 +17,7 @@ const submitEndpoint = base + '/functions/v1/atina-error-reports-submit';
 const origin = 'https://lufime.github.io';
 
 async function request(url, token, method='GET', body) {
-  return fetch(url, { method, headers: { Origin: origin, apikey: 'integration-test-anon-key', ...(token ? { Authorization: 'Bearer ' + token } : {}), ...(body !== undefined ? {'Content-Type':'application/json'} : {}) }, ...(body !== undefined ? {body:JSON.stringify(body)} : {}) });
+  return fetch(url, { method, headers: { Origin: origin, apikey: anonKey, ...(token ? { Authorization: 'Bearer ' + token } : {}), ...(body !== undefined ? {'Content-Type':'application/json'} : {}) }, ...(body !== undefined ? {body:JSON.stringify(body)} : {}) });
 }
 
 test('Admin endpoint rejects missing and invalid JWTs', {skip:skipReason}, async () => {
@@ -52,6 +52,6 @@ test('Submit endpoint rejects invalid category and short description without wri
 });
 
 test('Submit endpoint rejects unapproved browser origin', {skip:skipReason}, async () => {
-  const response = await fetch(submitEndpoint, {method:'POST',headers:{Origin:'https://invalid.example',apikey:'integration-test-anon-key','Content-Type':'application/json'},body:JSON.stringify({nickname:'Test',category:'technical',description:'This is a valid long description for testing.'})});
+  const response = await fetch(submitEndpoint, {method:'POST',headers:{Origin:'https://invalid.example',apikey:anonKey,'Content-Type':'application/json'},body:JSON.stringify({nickname:'Test',category:'technical',description:'This is a valid long description for testing.'})});
   assert.equal(response.status, 403);
 });
