@@ -343,7 +343,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("imagesInfo").classList.toggle("hidden", !session);
     $("challengesPanel").classList.toggle("hidden", !session);
     $("reportsPanel").classList.toggle("hidden", !session);
-    if (session && location.hash === "#challenges") loadChallenges();\n    if (session && location.hash === "#reports") loadReports();
+    if (session && location.hash === "#challenges") loadChallenges();
+    if (session && location.hash === "#reports") loadReports();
     $("adminLinks").classList.toggle("hidden", !session);
     $("adminNavigation").classList.toggle("hidden", !session);
     $("logoutTop").classList.toggle("hidden", !session);
