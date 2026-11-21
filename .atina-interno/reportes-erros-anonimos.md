@@ -139,3 +139,12 @@ A alternativa mais simples de auditar, sem depender de claims que possam demorar
 - Solo: pausa local do relógio; garantir que callbacks/timeout/auto-reveal/aut-next também ficam suspensos e que deadlines são reconstruídos ao retomar.
 - Multiplayer/competitivo: não pausar apenas o relógio de um participante, pois o relógio é partilhado e isso cria vantagem. A proposta é pausa sincronizada da sala para todos, com estado de pausa visível e limites anti-abuso; validar o impacto em todos os modos antes da integração.
 - Esta regra está registada e mostrada no protótipo; a pausa efetiva do relógio ainda não está implementada nem testada.
+
+
+## Implementação inicial da pausa Solo
+- PR #344 integra no ecrã de jogo um botão de reporte e painel local (envio ainda desligado).
+- Abrir o painel em Solo preserva o tempo restante, limpa apenas o intervalo do relógio e suspende o `timerTick` enquanto o painel está aberto.
+- Retomar reconstrói a deadline com o tempo restante; não altera pontuação, XP nem streak.
+- Para evitar interromper outros fluxos de jogo que usam temporizadores auxiliares, o botão fica indisponível quando há auto-next, auto-reveal, intervalo de auto-reveal, desafio bloqueado, penalização de timeout ou carta especial ativa.
+- Multiplayer não é afetado por esta primeira implementação.
+- Validação efetuada nesta fase: inspeção estática da integração e dos guards. Ainda não foi executado teste browser automatizado/CI, pelo que a implementação não é considerada validada.
