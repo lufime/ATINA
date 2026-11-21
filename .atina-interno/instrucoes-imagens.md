@@ -169,3 +169,15 @@ Aplicar a todos os avisos, alertas, respostas, notificações, confirmações, i
 - Rever os documentos alterados e validar que correspondem à implementação atual antes de concluir o PR
 - Sempre que possível, incluir a atualização documental no mesmo PR da alteração funcional, para evitar divergências entre o jogo e a documentação.
 - Não fazer merge nem deploy sem autorização explícita.
+
+
+## 19. Documentação sempre conforme a versão online atual do jogo
+- Toda a documentação do ATINA deve estar alinhada com a versão atual publicada online e com as funcionalidades online que estão realmente disponíveis.
+- Antes de escrever, atualizar ou validar documentação, confirmar o código atual e, quando acessível, a versão publicada online.
+- Documentar apenas modos, regras, menus, opções, fluxos e recursos online que estejam implementados e operacionais na versão atual.
+- Não apresentar funcionalidades antigas, removidas, planeadas, experimentais ou indisponíveis como funcionalidades atuais.
+- Quando uma alteração ao jogo afetar comportamentos, interface, regras, funcionalidades online, limitações ou procedimentos, atualizar todos os documentos relevantes no mesmo trabalho sempre que possível.
+- FAQ, Erros Conhecidos, guias, instruções, notas de versão e restantes documentos devem ser coerentes entre si e com o jogo publicado.
+- Os Erros Conhecidos devem incluir apenas problemas confirmados na versão atual, distinguindo falhas confirmadas, limitações atuais, aspetos por testar e correções validadas.
+- Se não for possível confirmar a versão online ou determinada funcionalidade, indicar a incerteza e não assumir disponibilidade.
+- O código atual e a versão online publicada são a referência; a documentação nunca deve contradizer o comportamento real do jogo.
