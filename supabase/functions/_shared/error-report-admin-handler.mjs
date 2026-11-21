@@ -8,7 +8,7 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
  return async (req) => {
   const origin = req.headers.get("Origin") ?? "";
   if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
-  if (req.method === "OPTIONS") return new Response("ok", { status: 204, headers: headersFor(req) });
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: headersFor(req) });
   if (!["GET", "PATCH"].includes(req.method)) return json(req, { error: "Method not allowed" }, 405);
   const authHeader = req.headers.get("Authorization") ?? "", token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
   if (!token) return json(req, { error: "Unauthorized" }, 401);
