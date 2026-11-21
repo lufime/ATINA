@@ -7,6 +7,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const admin = fs.readFileSync(path.join(root, 'supabase/functions/atina-error-reports-admin/index.ts'), 'utf8');
 const submit = fs.readFileSync(path.join(root, 'supabase/functions/atina-error-reports-submit/index.ts'), 'utf8');
+const sharedSubmit = fs.readFileSync(path.join(root, 'supabase/functions/_shared/error-report-submit-handler.mjs'), 'utf8');
 const migration = fs.readFileSync(path.join(root, 'supabase/migrations/20261121190000_atina_error_reports_backend.sql'), 'utf8');
 
 test('admin endpoint restricts origins, methods, and statuses', () => {
@@ -18,11 +19,11 @@ test('admin endpoint restricts origins, methods, and statuses', () => {
 });
 
 test('submission validates nickname, category and description and limits requests', () => {
-  assert.match(submit, /categories/);
+  assert.match(sharedSubmit, /categories/;
   assert.match(submit, /nickname/);
-  assert.match(submit, /description\.length < 20/);
+  assert.match(sharedSubmit, /description\.length < 20/);
   assert.match(submit, /atina_error_report_consume_global_limit/);
-  assert.match(submit, /429/);
+  assert.match(sharedSubmit, /429/;
 });
 
 test('migration enables RLS and limits table grants to service role', () => {
