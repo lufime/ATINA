@@ -1,29 +1,36 @@
-# ATINA — Erros conhecidos
+# ATINA — Erros conhecidos e limitações
 
-Esta página reúne apenas problemas relevantes que o jogador consegue notar durante a utilização do ATINA.
+**Versão do jogo:** v0.1.11 (beta; versão da metadata do repositório — publicação online não verificada)  
+**Última atualização do documento:** 21/11/2026
 
-## Limitações e problemas conhecidos
+Esta página separa limitações e situações que podem ocorrer de erros reproduzidos e confirmados. Nesta revisão documental não foram reproduzidos testes de jogo; por isso, os pontos abaixo não são apresentados como bugs confirmados.
 
-### Alguns desafios não têm imagem
-Nem todos os desafios incluem uma imagem ilustrativa. Nesses casos, o desafio pode aparecer apenas com texto.
+## Situações a considerar
 
-### A ligação à Internet pode falhar durante o jogo
-Uma ligação instável pode interromper uma ronda ou uma sala online, e nem sempre a partida retoma automaticamente.
+### Desafios sem imagem
+Alguns desafios podem ser apresentados apenas com texto, caso não tenham imagem associada.
 
-**O que fazer:** recupera a ligação e verifica o estado do jogo antes de voltares a agir.
+### Ligação instável
+A perda de ligação pode afetar rondas, validação de respostas e salas online. A recuperação automática após interrupção não foi verificada nesta revisão.
 
-### Rankings ou perfil podem demorar a atualizar
-Se a ligação ou o serviço estiver instável, o ranking ou os dados do perfil podem não aparecer ou atualizar imediatamente.
+**O que fazer:** recupera a ligação e verifica o estado da partida antes de continuar.
 
-**O que fazer:** aguarda um pouco e tenta atualizar ou reabrir o separador.
+### Perfil ou classificações sem atualização imediata
+O carregamento ou atualização pode demorar quando a ligação ou o serviço está instável. Não foi reproduzido um erro persistente nesta revisão.
 
-## Como reportar um problema
+**O que fazer:** aguarda, volta a abrir o separador ou tenta atualizar.
 
-Se encontrares um problema visível, indica o modo de jogo, o passo em que aconteceu e o que viste (se possível, com uma captura de ecrã). Não incluas palavras-passe nem dados privados.
+### Duelo e Modo Festa
+Estes modos encaminham para o fluxo online. A experiência depende da sala/partida e dos dispositivos dos participantes; não são descritos aqui como modos locais no mesmo dispositivo.
+
+## Problemas ainda não verificados
+Esta revisão não incluiu testes end-to-end em dispositivos nem reproduziu falhas adicionais. Não se adicionam problemas como confirmados sem evidência.
+
+## Como reportar
+Indica o modo, o passo em que ocorreu, o resultado esperado e o que aconteceu. Se possível, junta uma captura de ecrã. Não incluas palavras-passe, tokens ou dados privados.
 
 ## Estado das correções
-
-Uma falha só é considerada corrigida depois de a alteração ser implementada e validada.
+Uma correção só é considerada concluída após implementação e validação.
 
 ---
 
