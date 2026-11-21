@@ -277,8 +277,9 @@ try {
   await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_matchmake_status'), null, {timeout:5000});
   const quickStartCall = await page.evaluate(() => window.__quickOnlineCalls.find(call => call.name === 'atina_v2_matchmake'));
   assert.ok(quickStartCall, 'Partida rápida deve criar pedido de matchmaking.');
-  assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_ticket'],
-    'O matchmaking deve enviar apenas os dois argumentos esperados pela RPC.');
+  assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_session_token','p_ticket'],
+    'O matchmaking deve enviar nickname, token de sessão e ticket esperados pela RPC.');
+  assert.ok(quickStartCall.args.p_session_token, 'O matchmaking deve incluir o token de sessão autenticado.');
   assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
   const fallbackState = await page.evaluate(async () => {
     await quickMatchFallback();
