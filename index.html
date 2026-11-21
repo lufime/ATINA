@@ -5149,6 +5149,16 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 @media(max-width:480px){.card,.home-page-panel,.daily-mission{border-radius:14px!important}.answer,input.answer,textarea.answer,select.answer{font-size:16px!important}}
 @media(prefers-reduced-motion:reduce){.card,.home-page-panel,.daily-progress span,.answer{transition:none!important}}
 </style>
+
+<style id="atina-arcade-selection-feedback">
+/* Selected and focused game tiles — visible feedback without layout growth */
+#home .tile,#categories .tile,.modes .tile,[data-home-target],.category-option,.mode-option{position:relative;isolation:isolate;overflow:hidden;transition:transform .15s ease,border-color .15s ease,filter .15s ease,box-shadow .15s ease!important;box-shadow:0 4px 0 #071321,0 8px 14px #0003!important}
+#home .tile:focus-visible,#categories .tile:focus-visible,.modes .tile:focus-visible,[data-home-target]:focus-visible,.category-option:focus-visible,.mode-option:focus-visible{outline:2px solid #e5bf68!important;outline-offset:2px}
+#home .tile[aria-pressed="true"],#home .tile[aria-selected="true"],#home .tile.selected,#home .tile.active,#categories .tile[aria-pressed="true"],#categories .tile[aria-selected="true"],#categories .tile.selected,#categories .tile.active,.modes .tile[aria-pressed="true"],.modes .tile[aria-selected="true"],.modes .tile.selected,.modes .tile.active,[data-home-target][aria-pressed="true"],[data-home-target].selected,[data-home-target].active,.category-option.selected,.mode-option.selected{border-color:#e5bf68!important;background:linear-gradient(145deg,#294d70,#172f49)!important;box-shadow:inset 0 0 0 1px #e5bf6833,0 4px 0 #765b2a,0 0 16px #e5bf6822!important;filter:brightness(1.08)}
+#home .tile:not(:disabled):active,#categories .tile:not(:disabled):active,.modes .tile:not(:disabled):active,[data-home-target]:not(:disabled):active,.category-option:not(:disabled):active,.mode-option:not(:disabled):active{transform:translateY(2px) scale(.985)!important;box-shadow:0 1px 0 #071321,0 3px 7px #0003!important}
+#home .tile:disabled,#categories .tile:disabled,.modes .tile:disabled,.category-option:disabled,.mode-option:disabled{filter:grayscale(.5)!important;opacity:.55!important;box-shadow:none!important}
+@media(prefers-reduced-motion:reduce){#home .tile,#categories .tile,.modes .tile,[data-home-target],.category-option,.mode-option{transition:none!important}}
+</style>
 </body></html>
 
 
