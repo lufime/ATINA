@@ -127,21 +127,24 @@ async function atinaProfileLoadRanks(profile) {
   }
   box.textContent = '🏅 A carregar classificações…';
   try {
-    const [pointsRows, xpRows, qiRows] = await Promise.all([
-      atinaServerRpc('atina_points_leaderboard', {p_limit:100}),
-      atinaServerRpc('atina_progress_leaderboard', {p_limit:100}),
-      atinaServerRpc('atina_qi_leaderboard', {p_limit:100})
-    ]);
-    const findRank = (rows, field) => {
-      const ranked = Array.isArray(rows) ? rows.filter(row => Number(row[field] || 0) > 0) : [];
-      const index = ranked.findIndex(row => String(row.nickname || '').toLocaleLowerCase() === String(profile.nickname).toLocaleLowerCase());
-      return index >= 0 ? '🏆 #' + (index + 1) + ' / 100' : '— (não consta no top 100)';
-    };
-    box.innerHTML = '<strong>🏅 As tuas classificações (top 100)</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px"><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>Pontos</small><div style="font-weight:700;color:#f2d38e">' + findRank(pointsRows,'points') + '</div></div><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>XP</small><div style="font-weight:700;color:#f2d38e">' + findRank(xpRows,'xp') + '</div></div><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>QI</small><div style="font-weight:700;color:#f2d38e">' + findRank(qiRows,'qi_score') + '</div></div></div><p class="muted small" style="margin:8px 0 0">A posição é calculada pela ordem das classificações públicas. Se não aparecer, está fora do top 100 apresentado.</p>';
+    const ranks = await atinaServerRpc('atina_profile_individual_ranks', {
+      p_session_token: atinaAccountSessionToken()
+    });
+    const row = Array.isArray(ranks) ? ranks[0] : ranks;
+    if (!row) {
+      box.textContent = 'Não foi possível encontrar as tuas classificações.';
+      atinaProfileRanksNickname = '';
+      return;
+    }
+    const value = (n) => Number(n || 0).toLocaleString('pt-PT');
+    const rank = (n) => Number(n) > 0 ? '🏆 #' + Number(n).toLocaleString('pt-PT') : 'Sem posição';
+    const qiValue = Number(row.qi_score || 0) > 0 ? value(row.qi_score) : '—';
+    const qiRank = Number(row.qi_rank || 0) > 0 ? rank(row.qi_rank) : 'Sem posição';
+    box.innerHTML = '<strong>🏅 As tuas classificações individuais</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px"><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>Pontos</small><div style="font-weight:700;color:#f2d38e">' + value(row.points) + '</div><div class="small">' + rank(row.points_rank) + '</div></div><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>XP</small><div style="font-weight:700;color:#f2d38e">' + value(row.xp) + '</div><div class="small">' + rank(row.xp_rank) + '</div></div><div style="padding:8px 3px;border:1px solid #38556d;border-radius:9px;text-align:center"><small>QI</small><div style="font-weight:700;color:#f2d38e">' + qiValue + '</div><div class="small">' + qiRank + '</div></div></div><p class="muted small" style="margin:8px 0 0">Posições calculadas sobre a classificação completa, sem limite Top 100.</p>';
   } catch (error) {
     box.textContent = 'Não foi possível carregar as classificações.';
     atinaProfileRanksNickname = '';
-    console.warn('ATINA: falha ao carregar posições do perfil.', error);
+    console.warn('ATINA: falha ao carregar posições individuais do perfil.', error);
   } finally {
     atinaProfileRanksBusy = false;
   }
