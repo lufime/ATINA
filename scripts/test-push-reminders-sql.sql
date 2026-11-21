@@ -22,6 +22,28 @@ DECLARE
   v_claims integer;
   v_activity jsonb;
 BEGIN
+  -- Verify notification migration triggers and RPC permissions.
+  INSERT INTO private.atina_players(id,nickname) VALUES
+    ('11111111-1111-1111-1111-111111111111','Teste A'),
+    ('22222222-2222-2222-2222-222222222222','Teste B');
+  INSERT INTO public.atina_friend_requests(id,sender_player_id,recipient_player_id,status)
+    VALUES ('33333333-3333-3333-3333-333333333333','11111111-1111-1111-1111-111111111111','22222222-2222-2222-2222-222222222222','pending');
+  IF NOT EXISTS (SELECT 1 FROM public.atina_notifications WHERE dedupe_key='friend-request-in:33333333-3333-3333-3333-333333333333') THEN
+    RAISE EXCEPTION 'Friend request trigger did not create inbox notification';
+  END IF;
+  INSERT INTO public.atina_v2_rooms(id,code) VALUES ('44444444-4444-4444-4444-444444444444','ROOM');
+  INSERT INTO public.atina_game_invites(id,inviter_player_id,recipient_player_id,room_id,status)
+    VALUES ('55555555-5555-5555-5555-555555555555','11111111-1111-1111-1111-111111111111','22222222-2222-2222-2222-222222222222','44444444-4444-4444-4444-444444444444','pending');
+  IF NOT EXISTS (SELECT 1 FROM public.atina_notifications WHERE dedupe_key='game-invite-in:55555555-5555-5555-5555-555555555555') THEN
+    RAISE EXCEPTION 'Game invite trigger did not create inbox notification';
+  END IF;
+  IF NOT has_function_privilege('anon','public.atina_notification_list(text)','EXECUTE') THEN
+    RAISE EXCEPTION 'anon missing notification list RPC privilege';
+  END IF;
+  IF has_function_privilege('anon','public.atina_notification_friend_event()','EXECUTE') THEN
+    RAISE EXCEPTION 'anon must not execute trigger function';
+  END IF;
+
   SELECT count(*) INTO v_cols
   FROM information_schema.columns
   WHERE table_schema='public' AND table_name='atina_push_subscriptions'
