@@ -280,8 +280,8 @@ try {
   assert.deepEqual(Object.keys(quickStartCall.args).sort(), ['p_nickname','p_session_token','p_ticket'],
     'O matchmaking deve enviar apenas os dois argumentos esperados pela RPC.');
   assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
+  await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_create_bot_match'), null, {timeout:15000});
   const fallbackState = await page.evaluate(async () => {
-    await quickMatchFallback();
     const state = {
       calls: window.__quickOnlineCalls.slice(),
       lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
