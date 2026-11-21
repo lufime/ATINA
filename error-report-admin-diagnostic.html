@@ -7,9 +7,9 @@ const URL="https://qvvlqrgbtjujsejvenld.supabase.co";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dmxxcmdidGp1anNlanZlbmxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0ODMzMDksImV4cCI6MjEwOTA1OTMwOX0.k_3Q05KxqmAByJgPxDyWeWPnYYfkrPxkRjd60Bntn6w";
 const endpoint=URL+"/functions/v1/atina-error-reports-admin";
 const out=document.querySelector("#out");
-const log=(s)=>out.textContent+=s+"\\n";
+const log=(s)=>out.textContent+=s+"\n";
 document.querySelector("#run").onclick=async()=>{
-out.textContent="Início do teste…\\n";
+out.textContent="Início do teste…\n";
 try{
  const client=window.supabase.createClient(URL,KEY);
  const {data:{session},error:sessionError}=await client.auth.getSession();
