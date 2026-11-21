@@ -41,7 +41,7 @@ test('embedded JavaScript scripts parse without syntax errors', () => {
   assert.ok(scripts.length > 0, 'expected embedded script tags');
   let parsed = 0;
   for (const [, attributes, source] of scripts) {
-    if (/\\bsrc\\s*=/i.test(attributes)) continue;
+    if (/\\bsrc\\s*=/.test(attributes)) continue;
     const type = (attributes.match(/\\btype\\s*=\\s*["']([^"']+)["']/i) || [])[1] || '';
     if (type && !/(?:javascript|ecmascript)/i.test(type)) continue;
     if (!source.trim()) continue;
