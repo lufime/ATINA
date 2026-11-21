@@ -5159,6 +5159,20 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 #home .tile:disabled,#categories .tile:disabled,.modes .tile:disabled,.category-option:disabled,.mode-option:disabled{filter:grayscale(.5)!important;opacity:.55!important;box-shadow:none!important}
 @media(prefers-reduced-motion:reduce){#home .tile,#categories .tile,.modes .tile,[data-home-target],.category-option,.mode-option{transition:none!important}}
 </style>
+
+<style id="atina-arcade-button-consistency">
+/* Consistent arcade control treatment across screens */
+.btn{position:relative;font-weight:800;letter-spacing:.015em;border-radius:12px;transition:transform .12s ease,filter .12s ease,box-shadow .12s ease,border-color .12s ease!important;box-shadow:0 3px 0 #090f19,0 5px 10px #0002!important}
+.btn:not(:disabled):hover{filter:brightness(1.07)}
+.btn:not(:disabled):active{transform:translateY(2px)!important;box-shadow:0 1px 0 #090f19,0 2px 5px #0002!important}
+.btn.secondary{background:linear-gradient(180deg,#294766,#1a3048)!important;border:1px solid #4d6b89!important;color:#edf4fb!important}
+.btn.danger{background:linear-gradient(180deg,#6a3439,#46252d)!important;border:1px solid #a45b60!important;color:#ffe5e2!important}
+.btn:not(.secondary):not(.danger){background:linear-gradient(180deg,#f0cf7d,#c89a43)!important;color:#202631!important;border:1px solid #f5d88e!important}
+.btn:disabled{opacity:.52!important;filter:saturate(.45)!important;box-shadow:none!important;cursor:not-allowed!important}
+.btn:focus-visible{outline:2px solid #f5d88e!important;outline-offset:3px}
+#game .game-control-row .btn,#game .actions .btn{min-height:48px}
+@media(prefers-reduced-motion:reduce){.btn{transition:none!important}}
+</style>
 </body></html>
 
 
