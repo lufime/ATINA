@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
   if (!token) return json(req, { error: "Unauthorized" }, 401);
   const authClient = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data: userData, error: authError } = await authClient.auth.getUser(token);
-  if (authError || !userData.user) return json({ error: "Unauthorized" }, 401);
+  if (authError || !userData.user) return json(req, { error: "Unauthorized" }, 401);
   const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data: admin, error: adminError } = await db.from("atina_error_report_admins").select("user_id").eq("user_id", userData.user.id).maybeSingle();
   if (adminError) return json(req, { error: "Admin authorization check failed" }, 503);
