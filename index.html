@@ -424,6 +424,22 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .detective-story ul{margin:8px 0;padding-left:22px;font-size:14px}
 .detective-story li{margin:6px 0}
 .detective-story-note{padding:9px 11px;border-left:3px solid #d3ad68;background:#0d1d30;border-radius:0 9px 9px 0;color:#c5d3e2;font-size:12px!important}
+
+/* ATINA — game-style button polish */
+:root{--game-btn-shadow:0 5px 0 #0005,0 9px 18px #0003;--game-btn-press:0 1px 0 #0004,0 3px 8px #0003}
+button:not(.tile):not(.sound-toggle){border-radius:13px;position:relative;overflow:hidden;transition:transform .14s ease,box-shadow .14s ease,filter .14s ease,border-color .14s ease;box-shadow:var(--game-btn-shadow);}
+button:not(.tile):not(.sound-toggle):not(:disabled):active{transform:translateY(3px) scale(.99)!important;box-shadow:var(--game-btn-press)!important;filter:brightness(.96)}
+button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;filter:saturate(.65);box-shadow:none}
+.btn{background:linear-gradient(180deg,#f0d38a 0%,#d3ad68 52%,#b68b43 100%);border:1px solid #f6dfaa;color:#182230;text-shadow:0 1px #fff4;box-shadow:0 5px 0 #80622e,0 9px 18px #0004!important;}
+.btn:not(:disabled):active{transform:translateY(4px)!important;box-shadow:0 1px 0 #80622e,0 3px 8px #0004!important}
+.btn.secondary{background:linear-gradient(180deg,#284767,#1a2d44 80%);border:1px solid #58799d;color:#f3f0e8;box-shadow:0 5px 0 #0b1827,0 9px 18px #0004!important}
+.btn.secondary:not(:disabled):active{box-shadow:0 1px 0 #0b1827,0 3px 8px #0004!important}
+.btn.danger{background:linear-gradient(180deg,#78464d,#412b31 85%);border:1px solid #a36a70;color:#ffe3df;box-shadow:0 5px 0 #26191c,0 9px 18px #0004!important}
+.tile{background:linear-gradient(180deg,#1c3552,#12263d 88%);border:1px solid #3d5f80;box-shadow:0 4px 0 #071321,0 8px 16px #0003;transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease,filter .14s ease}
+.tile:not(:disabled):active{transform:translateY(3px)!important;box-shadow:0 1px 0 #071321,0 3px 8px #0003!important;filter:brightness(.97)}
+.sound-toggle{box-shadow:0 4px 0 #0b1d30,0 8px 14px #0003}
+@media(hover:hover){button:not(:disabled):not(.sound-toggle):hover{filter:brightness(1.07);transform:translateY(-2px)}.tile:not(:disabled):hover{border-color:#d3ad68;box-shadow:0 6px 0 #071321,0 12px 22px #0004}}
+@media(prefers-reduced-motion:reduce){button,.tile{transition:none!important}}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
@@ -5102,6 +5118,37 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 })();
 </script>
 
+
+<style id="atina-arcade-feedback-style">
+/* Feedback, notices and dialogs — shared arcade treatment */
+#feedback.is-correct,.feedback.is-correct,.atina-notification-notice.positive{color:#b8ffd2!important;background:linear-gradient(180deg,#145333,#0c3524)!important;border:2px solid #36d17b!important;border-radius:13px!important;box-shadow:inset 0 1px #a9ffd333,0 4px 0 #062417,0 0 18px #28b76522!important;font-weight:900!important;padding:10px 12px!important}
+#feedback.is-wrong,.feedback.is-wrong,.atina-notification-notice.negative{color:#ffd2d2!important;background:linear-gradient(180deg,#632a32,#3a1820)!important;border:2px solid #f05c64!important;border-radius:13px!important;box-shadow:inset 0 1px #ffaaaa33,0 4px 0 #250e13,0 0 18px #e64b5422!important;font-weight:900!important;padding:10px 12px!important}
+#feedback.is-info,.feedback.is-info,.atina-notification-notice.neutral{color:#ffedb0!important;background:linear-gradient(180deg,#58451e,#352813)!important;border:2px solid #e4b94f!important;border-radius:13px!important;box-shadow:inset 0 1px #fff2b833,0 4px 0 #241a0b,0 0 18px #d5a43a22!important;font-weight:900!important;padding:10px 12px!important}
+.atina-notification-panel{border:2px solid #5484aa!important;border-radius:16px!important;background:linear-gradient(160deg,#1b3b5a,#0b1d31 80%)!important;box-shadow:0 5px 0 #071524,0 12px 26px #0005!important}
+.atina-notification-item,.atina-notification-empty,.atina-notification-prefs{border-radius:12px!important;box-shadow:0 3px 0 #071524!important}
+.atina-notification-item.positive{border-color:#3cc67a!important;border-left-color:#3cc67a!important}.atina-notification-item.negative{border-color:#ed5b5b!important;border-left-color:#ed5b5b!important}.atina-notification-item.neutral{border-color:#e5bd60!important;border-left-color:#e5bd60!important}
+[role="dialog"],.modal,.popup,.toast{border-radius:16px!important;box-shadow:0 6px 0 #071524,0 18px 36px #0006!important}
+.atina-notification-panel button,.atina-notification-actions button{min-height:42px!important;border-radius:11px!important}
+@media(prefers-reduced-motion:reduce){#feedback,.feedback,.atina-notification-panel,.atina-notification-item{animation:none!important;transition:none!important}}
+</style>
+
+<style id="atina-arcade-interface-polish">
+/* Unified arcade polish for cards, progress, stats and answer fields */
+.card,.home-page-panel,.daily-mission,.atina-xp-panel,.atina-notification-prefs,.atina-notification-empty{border-radius:16px!important;border-color:#355b7d!important;box-shadow:0 4px 0 #071321,0 10px 24px #0003!important}
+.card{background:linear-gradient(155deg,#193451,#10243a 78%)!important}
+.home-page-panel{background:linear-gradient(160deg,#172f4a,#102238)!important}
+.pill,.timer-display,.atina-live-stats span{box-shadow:inset 0 1px #ffffff12,0 3px 0 #071321!important}
+.answer,input.answer,textarea.answer,select.answer{border:2px solid #3c6285!important;border-radius:13px!important;background:linear-gradient(180deg,#10243a,#0b192a)!important;box-shadow:inset 0 3px 8px #0004,0 3px 0 #071321!important;transition:border-color .15s ease,box-shadow .15s ease!important}
+.answer:focus,input.answer:focus,textarea.answer:focus,select.answer:focus{border-color:#e5bf68!important;box-shadow:inset 0 3px 8px #0004,0 0 0 3px #e5bf6833!important;outline:0!important}
+.daily-progress{height:11px!important;border:1px solid #3d5b79;background:#071524!important;box-shadow:inset 0 2px 4px #0005!important}
+.daily-progress span{background:linear-gradient(90deg,#26a75b,#8bf0a8,#d7f6a2)!important;box-shadow:0 0 12px #52cf8066!important}
+.atina-badge{box-shadow:0 2px 0 #071321!important}.atina-badge.earned{border-color:#d2a94e!important;background:linear-gradient(180deg,#56431f,#332815)!important;box-shadow:0 3px 0 #1b1308!important}
+#game .clue,.clue{border-radius:0 12px 12px 0;box-shadow:0 3px 0 #071321}
+#game .visual{border:2px solid #3b6386!important;box-shadow:0 4px 0 #071321,0 10px 24px #0004!important}
+.stats,.daily-stats{gap:8px}
+@media(max-width:480px){.card,.home-page-panel,.daily-mission{border-radius:14px!important}.answer,input.answer,textarea.answer,select.answer{font-size:16px!important}}
+@media(prefers-reduced-motion:reduce){.card,.home-page-panel,.daily-progress span,.answer{transition:none!important}}
+</style>
 </body></html>
 
 
