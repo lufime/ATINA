@@ -100,7 +100,7 @@ test('resuming Solo rebuilds the deadline from preserved time, not elapsed pause
   const h = harness(), c = h.context;
   c.timeLeft = 60;
   c.timerDeadline = 100000 + 60000;
-  c.timerInterval = h.setInterval(c.timerTick);
+  c.timerInterval = c.setInterval(c.timerTick);
   h.advance(12000);
   c.timerTick();
   c.atinaSoloReportOpen();
@@ -138,7 +138,7 @@ test('timeout is only applied after resumed time expires, never while paused', (
   const h = harness(), c = h.context;
   c.timeLeft = 5;
   c.timerDeadline = 100000 + 5000;
-  c.timerInterval = h.setInterval(c.timerTick);
+  c.timerInterval = c.setInterval(c.timerTick);
   const startingScore = c.scores[0], startingXp = c.xpTotal;
   c.atinaSoloReportOpen();
   h.advance(30000);
