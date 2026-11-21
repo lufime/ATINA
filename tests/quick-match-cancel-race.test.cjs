@@ -24,3 +24,8 @@ test('client ignores RPC responses when ticket was cancelled', () => {
   assert.ok(html.includes('quickMatchTicket!==ticket||!quickMatchBusy)return;'));
   assert.ok(html.includes("const sessionToken=quickMatchSessionToken;"));
 });
+
+test('initial status response does not schedule fallback after the ticket has matched or been cancelled', () => {
+  const html = fs.readFileSync(clientHtml, 'utf8');
+  assert.ok(html.includes('await quickMatchCheck();if(quickMatchTicket===ticket&&quickMatchBusy)quickMatchFallbackTimer=setTimeout(quickMatchTryBotFallback,8000);'));
+});
