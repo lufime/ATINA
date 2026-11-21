@@ -129,3 +129,13 @@ A alternativa mais simples de auditar, sem depender de claims que possam demorar
 - Pseudónimo nesta demo é manual ou sugestão local; **não está ligado ao perfil ATINA**. A integração real deverá usar a fonte de pseudónimo ativa já existente e evitar persistência duplicada.
 - Não foi alterado `index.html` nem `admin-images.html`; protótipo não está integrado nem publicado. Sem screenshots/upload.
 - Próximas tarefas: rever pseudónimo source-of-truth no jogo, integrar UI com endpoint, remover mocks, configurar feedback/erros, testes mobile e desktop e testes de autorização num ambiente isolado.
+
+
+## Regra de relógio ao reportar erro (2026-11-21)
+- Ao abrir a interface de reporte durante desafio, congelar o relógio e preservar exatamente o tempo restante.
+- O período de reporte não conta como tempo de jogo e não causa penalização, perda de pontos, XP ou streak.
+- Cancelar/fechar o reporte: retomar o relógio com o tempo guardado.
+- Envio bem-sucedido: manter a pausa até o jogador regressar explicitamente ao desafio; só então retomar.
+- Solo: pausa local do relógio; garantir que callbacks/timeout/auto-reveal/aut-next também ficam suspensos e que deadlines são reconstruídos ao retomar.
+- Multiplayer/competitivo: não pausar apenas o relógio de um participante, pois o relógio é partilhado e isso cria vantagem. A proposta é pausa sincronizada da sala para todos, com estado de pausa visível e limites anti-abuso; validar o impacto em todos os modos antes da integração.
+- Esta regra está registada e mostrada no protótipo; a pausa efetiva do relógio ainda não está implementada nem testada.
