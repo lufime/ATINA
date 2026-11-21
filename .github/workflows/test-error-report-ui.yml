@@ -5,6 +5,7 @@ on:
       - index.html
       - admin-images.html
       - tests/error-report-ui.test.cjs
+      - tests/error-report-backend.integration.test.cjs
       - .github/workflows/test-error-report-ui.yml
   push:
     branches: [main]
@@ -22,3 +23,10 @@ jobs:
         with:
           node-version: 22
       - run: node --test tests/error-report-ui.test.cjs
+      - name: Executar integração backend (opt-in, ambiente isolado)
+        env:
+          ATINA_ERROR_REPORTS_TEST_URL: ${{ secrets.ATINA_ERROR_REPORTS_TEST_URL }}
+          ATINA_ERROR_REPORTS_TEST_ADMIN_TOKEN: ${{ secrets.ATINA_ERROR_REPORTS_TEST_ADMIN_TOKEN }}
+          ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN: ${{ secrets.ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN }}
+          ATINA_ERROR_REPORTS_TEST_ALLOW_REMOTE: ${{ secrets.ATINA_ERROR_REPORTS_TEST_ALLOW_REMOTE }}
+        run: node --test tests/error-report-backend.integration.test.cjs
