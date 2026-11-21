@@ -198,6 +198,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <p class="note">Reports enviados pelos jogadores. Acesso restrito à sessão de administração. Sem dados pessoais.</p>
     <div class="stats" id="reportStats"><div class="stat"><strong>—</strong><span>Novos</span></div><div class="stat"><strong>—</strong><span>Em análise</span></div><div class="stat"><strong>—</strong><span>Em correção</span></div><div class="stat"><strong>—</strong><span>Resolvidos</span></div></div>
     <div class="form-grid" style="margin-top:12px">
+      <div><label for="reportNicknameFilter">Pseudónimo</label><input id="reportNicknameFilter" type="search" placeholder="Pesquisar pseudónimo"></div>
       <div><label for="reportStatusFilter">Estado</label><select id="reportStatusFilter"><option value="">Todos os estados</option><option value="new">Novo</option><option value="in_review">Em análise</option><option value="fixing">Em correção</option><option value="resolved">Resolvido</option><option value="archived">Arquivado</option></select></div>
       <div><label for="reportCategoryFilter">Categoria</label><select id="reportCategoryFilter"><option value="">Todas as categorias</option><option value="visual">Visual</option><option value="game">Jogo</option><option value="points_xp">Pontuação / XP</option><option value="technical">Técnico</option><option value="other">Outro</option></select></div>
     </div>
@@ -459,8 +460,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   }
   function renderReports() {
     const list=$("reportsList"), statusFilter=$("reportStatusFilter").value, categoryFilter=$("reportCategoryFilter").value;
-    const rows=reportCache.filter(r=>(!statusFilter||r.status===statusFilter)&&(!categoryFilter||r.category===categoryFilter));
-    const counts={new:0,in_review:0,fixing:0,resolved:0};
+    const nicknameFilter=$("reportNicknameFilter").value.trim().toLocaleLowerCase("pt-PT");
+    const rows=reportCache.filter(r=>(!statusFilter||r.status===statusFilter)&&(!categoryFilter||r.category===categoryFilter)&&(!nicknameFilter||String(r.nickname||"").toLocaleLowerCase("pt-PT").includes(nicknameFilter)));
+    const counts={new:0,in_review:0,fixing:0,resolved:0,archived:0};
     reportCache.forEach(r=>{if(counts[r.status]!==undefined)counts[r.status]++;});
     $("reportStats").innerHTML=Object.entries(counts).map(([key,count])=>'<div class="stat"><strong>'+count+'</strong><span>'+reportLabels[key]+'</span></div>').join("");
     list.replaceChildren();
@@ -493,6 +495,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("refreshReports").addEventListener("click",loadReports);
   $("reportStatusFilter").addEventListener("change",renderReports);
   $("reportCategoryFilter").addEventListener("change",renderReports);
+  $("reportNicknameFilter").addEventListener("input",renderReports);
   async function watermarkStats() {
     const { data: { session } } = await client.auth.getSession();
     if (!session) return;
