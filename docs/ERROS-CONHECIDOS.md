@@ -24,7 +24,7 @@ Os rankings e dados de perfil são carregados online; se o serviço falhar ou a 
 
 ### Testes de browser não substituem testes completos em dispositivos
 **Estado:** Limitação de validação conhecida  
-Os testes automáticos não cobrem toda a utilização em browsers reais, telemóveis, reconexões, salas online, votação, prazos e Mímicas.
+Os testes automáticos não cobrem toda a utilização em browsers reais, telemóveis, reconexões, salas online, votação e prazos.
 
 ## Como reportar um problema
 
