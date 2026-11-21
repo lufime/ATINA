@@ -59,7 +59,7 @@ function harness() {
     clearInterval(id) { activeIntervals.delete(id); },
     setTimeout(fn) { const id = nextHandle++; return id; },
     clearTimeout() {},
-    document: { getElementById: makeElement },
+    document: { getElementById(id) { return id === 'atinaSpecialCardPopup' ? null : makeElement(id); } },
     $: makeElement
   };
   vm.createContext(context);
@@ -76,7 +76,7 @@ test('report opening pauses immediately and preserves the exact remaining time',
   const h = harness(), c = h.context;
   c.timeLeft = 60;
   c.timerDeadline = 100000 + 60000;
-  c.timerInterval = h.setInterval(c.timerTick);
+  c.timerInterval = c.setInterval(c.timerTick);
   h.advance(10000);
   c.timerTick();
   const before = c.timeLeft;
