@@ -52,7 +52,7 @@ function harness() {
     atinaSoloReportPaused: false, atinaSoloReportRemaining: 0,
     autoNextTimeout: null, autoRevealTimeout: null, autoRevealInterval: null,
     timerDeadline: 0, timeLeft: 60, timedMode: 60, timerInterval: null,
-    scores: [12], player: 0, correctStreak: 3, answeredCount: 0, lastTimerBeepAt: 0,
+    scores: [12], player: 0, correctStreak: 3, answeredCount: 0, lastTimerBeepAt: 0,\n    games: [['Categoria', [], [], 'Resposta correta']], queue: [0], pos: 0,
     xpTotal: 777, saveLocalProgress() {}, timerBeep() {}, playAtinaSound() {},
     update() {}, board() {}, end() {}, drawTimer() {},
     setInterval(fn) { const id = nextHandle++; activeIntervals.set(id, fn); return id; },
