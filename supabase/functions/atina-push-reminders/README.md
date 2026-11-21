@@ -8,7 +8,8 @@ This is a review-only rebuild. **Do not deploy or apply migrations to the produc
 - Successful reminders are cooled down for 7 days.
 - Claims are throttled for 15 minutes, to reduce overlapping scheduled invocations.
 - Expired Web Push subscriptions (HTTP 404/410) are deleted.
-- Invalid or unsupported endpoint subscriptions are deleted to prevent them from monopolizing reminder batches.
+- Malformed endpoint subscriptions are deleted; valid endpoints from unsupported providers are retained but skipped.
+- Claims are cooldown-throttled, so skipped unsupported endpoints do not permanently monopolize batches.
 - The sender logs provider hostnames only, never subscription endpoints or payload keys.
 
 ## Required Supabase Edge Function secrets
