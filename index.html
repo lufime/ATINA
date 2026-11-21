@@ -5114,7 +5114,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   actions.append(help,close);box.append(title,msg,actions);card.append(box);
  }
  window.atinaShowBookmarkNudge=function(){render(true);};
- const observer=new MutationObserver(()=>render(false));observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+ const observer=new MutationObserver(()=>render(false));const observerTarget=document.body;if(observerTarget&&typeof Node==='function'&&observerTarget instanceof Node)observer.observe(observerTarget,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
  document.addEventListener('click',()=>{render(false);});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)render(false);});
 })();
