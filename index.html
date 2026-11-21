@@ -1322,15 +1322,32 @@ label.section{line-height:1.35!important}
 <button type="button" class="home-nav-btn" data-home-target="settings">⚙️ Definições</button>
 <button type="button" class="home-nav-btn" data-home-target="friends">👥 Amigos</button>
 <button type="button" class="home-nav-btn" data-home-target="faq">❓ FAQ</button>
-<button type="button" class="home-nav-btn" data-home-target="knownissues">⚠️ Erros conhecidos</button>
+<button type="button" class="home-nav-btn" data-home-target="knownissues">🐞 Bugs conhecidos</button>
 </nav>
 
-<section id="home">
-<section class="home-page-panel hidden" data-home-page="faq" id="atinaFaqPage">
- <div class="home-welcome"><div class="home-welcome-kicker">AJUDA</div><h2>❓ Perguntas frequentes</h2><p>Encontra respostas sobre modos de jogo, pistas, pontuação, conta e utilização do ATINA.</p><a class="btn full" href="https://lufime.github.io/ATINA/docs/FAQ.html" target="_blank" rel="noopener noreferrer">Abrir FAQ completo</a></div>
+<section id="home"><section class="home-page-panel hidden" data-home-page="faq" id="atinaFaqPage">
+ <div class="home-welcome"><div class="home-welcome-kicker">AJUDA</div><h2>❓ Perguntas frequentes</h2><p>Versão do jogo: v0.1.218 · Última atualização: 21/11/2026</p></div>
+ <section class="card atina-howto-card"><h3>Como começo a jogar?</h3><p>No ecrã inicial, abre <strong>Jogar</strong> e escolhe um modo. Segue as instruções apresentadas durante a partida.</section>
+ <section class="card atina-howto-card"><h3>Que modos existem?</h3><ul><li><strong>Jogar sozinho:</strong> desafios individuais.</li><li><strong>Modo Mix:</strong> mistura desafios de várias modalidades.</li><li><strong>Duelo:</strong> encaminha para jogo online, partida rápida ou sala.</li><li><strong>Modo Festa / Equipas:</strong> partida online em sala, com participantes distribuídos por equipas.</li><li><strong>Modalidades online:</strong> cria uma sala ou entra com código, conforme disponível.</li></ul></section>
+ <section class="card atina-howto-card"><h3>Como funcionam as pistas?</h3><p>As pistas são reveladas progressivamente. Usa <strong>Revelar próxima pista</strong> para obter mais informação.</section>
+ <section class="card atina-howto-card"><h3>Como envio uma resposta?</h3><p>Escreve ou diz a resposta, quando a modalidade o permitir, e usa <strong>Confirmar resposta</strong>. A validação depende do serviço de jogo.</p></section>
+ <section class="card atina-howto-card"><h3>E se não souber a resposta?</h3><p>Usa <strong>PASSO</strong>, quando disponível. O jogo apresenta a solução de acordo com o fluxo da ronda.</p></section>
+ <section class="card atina-howto-card"><h3>Pontos, XP e tempo</h3><p>As respostas certas dão pontos e XP. A pontuação depende das regras da modalidade e da dificuldade. Uma resposta errada pode aplicar penalização. Nas Definições existem opções de tempo e dificuldade, conforme apresentadas no jogo.</p></section>
+ <section class="card atina-howto-card"><h3>Duelo e Modo Festa funcionam no mesmo dispositivo?</h3><p>O fluxo atual consultado encaminha Duelo e Modo Festa para o jogo online. Usa os dispositivos dos participantes e joga através de partida rápida ou sala; não são descritos como modos locais no mesmo dispositivo.</p></section>
+ <section class="card atina-howto-card"><h3>Preciso de Internet?</h3><p>Os modos online dependem de ligação à Internet. A validação de respostas e as funcionalidades de sala são serviços online. Não foi confirmado um modo offline completo.</p></section>
+ <section class="card atina-howto-card"><h3>Onde vejo o meu progresso?</h3><p>Consulta o Perfil e os separadores de Classificação disponíveis. A atualização depende da ligação e dos serviços.</p></section>
+ <section class="card atina-howto-card"><h3>Se o jogo não responder?</h3><p>Confirma a ligação, aguarda e tenta novamente. Consulta também <strong>Bugs conhecidos</strong>. Se persistir, reporta o modo, o passo e o que aconteceu, com captura de ecrã se possível, sem dados privados.</p></section>
 </section>
 <section class="home-page-panel hidden" data-home-page="knownissues" id="atinaKnownIssuesPage">
- <div class="home-welcome"><div class="home-welcome-kicker">SUPORTE</div><h2>⚠️ Erros conhecidos</h2><p>Consulta limitações confirmadas, problemas em validação e recomendações quando algo não funciona.</p><a class="btn full" href="https://lufime.github.io/ATINA/docs/ERROS-CONHECIDOS.html" target="_blank" rel="noopener noreferrer">Ver erros conhecidos</a></div>
+ <div class="home-welcome"><div class="home-welcome-kicker">SUPORTE</div><h2>🐞 Bugs conhecidos</h2><p>Versão do jogo: v0.1.218 · Última atualização: 21/11/2026</p></div>
+ <section class="card atina-howto-card"><h3>Nota desta revisão</h3><p>Esta página separa limitações e situações possíveis de erros reproduzidos e confirmados. Nesta revisão documental não foram reproduzidos testes de jogo; os pontos abaixo não são apresentados como bugs confirmados.</p></section>
+ <section class="card atina-howto-card"><h3>Desafios sem imagem</h3><p>Alguns desafios podem ser apresentados apenas com texto, caso não tenham imagem associada.</p></section>
+ <section class="card atina-howto-card"><h3>Ligação instável</h3><p>A perda de ligação pode afetar rondas, validação de respostas e salas online. A recuperação automática após interrupção não foi verificada.</p><p><strong>O que fazer:</strong> recupera a ligação e verifica o estado da partida antes de continuar.</p></section>
+ <section class="card atina-howto-card"><h3>Perfil ou classificações sem atualização imediata</h3><p>O carregamento ou atualização pode demorar quando a ligação ou o serviço está instável. Não foi reproduzido um erro persistente nesta revisão.</p><p><strong>O que fazer:</strong> aguarda, volta a abrir o separador ou tenta atualizar.</p></section>
+ <section class="card atina-howto-card"><h3>Duelo e Modo Festa</h3><p>Estes modos encaminham para o fluxo online. A experiência depende da sala/partida e dos dispositivos dos participantes; não são modos locais no mesmo dispositivo.</p></section>
+ <section class="card atina-howto-card"><h3>Problemas ainda não verificados</h3><p>Esta revisão não incluiu testes end-to-end em dispositivos nem reproduziu falhas adicionais. Não se adicionam problemas como confirmados sem evidência.</p></section>
+ <section class="card atina-howto-card"><h3>Como reportar</h3><p>Indica o modo, o passo em que ocorreu, o resultado esperado e o que aconteceu. Se possível, junta uma captura de ecrã. Não incluas palavras-passe, tokens ou dados privados.</p></section>
+ <section class="card atina-howto-card"><h3>Estado das correções</h3><p>Uma correção só é considerada concluída após implementação e validação.</p></section>
 </section>
 <section class="home-page-panel hidden" data-home-page="friends" id="atinaFriendsPage">
  <div class="home-welcome"><div class="home-welcome-kicker">COMUNIDADE</div><h2>👥 Amigos</h2><p>Gere os teus amigos, pedidos de amizade e convites para jogar num só lugar.</p></div>
