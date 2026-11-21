@@ -75,3 +75,11 @@ Novo → Em análise → Em correção → Resolvido → Arquivado.
 - A implementação de submissão também depende do esquema persistente (tabela e armazenamento privado) e das políticas de acesso. Não criar um formulário que simule sucesso ou perca reportes sem persistência.
 - Próximos passos seguros: identificar ou implementar um mecanismo server-side de admin com política comprovada; preparar tabela/RLS e armazenamento privado; Edge Function de submissão com validação e limitação de abuso; integração UI do jogador e secção admin; testes automatizados de autorização, validação, privacidade e fluxo de falhas.
 - Esta auditoria é apenas no repositório/PR. Nenhuma migration foi aplicada, nenhuma alteração de Supabase produção, deploy, merge ou uso de Render.
+
+
+## Segunda verificação de permissões
+- Revistos os SQL de contas de jogador, notificações e subscrições Push e as Edge Functions versionadas. Estes mecanismos autenticam/identificam jogadores ou protegem operações específicas, mas não fornecem uma autorização de administrador verificável reutilizável para reportes.
+- A administração chama `atina-image-manage` com JWT de sessão; o código da Edge Function não está no repositório versionado consultado, pelo que a autorização desse endpoint não pode ser auditada.
+- Não reutilizar tokens de jogador, sessão normal, email, user metadata ou simples estado de login para dar acesso aos reportes.
+- Recomendação para desbloquear: estabelecer uma autorização administrativa explícita validada no servidor (por exemplo, claim/role de admin em JWT assinado e emitido pelo sistema de autenticação, com origem e processo de atribuição auditáveis; nunca user_metadata editável pelo utilizador), e exigir essa autorização em cada operação de leitura/alteração. Só depois ligar a UI admin.
+- A autorização e o endpoint de gestão não podem ser testados funcionalmente até existir implementação acessível e ambiente de testes. Nenhuma mudança de backend ou banco foi aplicada.
