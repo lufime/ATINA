@@ -16,8 +16,8 @@ AS $function$
       AND (s.last_reminded_at IS NULL OR s.last_reminded_at <= now() - interval '7 days')
       AND (s.last_attempt_at IS NULL OR s.last_attempt_at <= now() - interval '15 minutes')
     ORDER BY s.last_activity_at ASC
-    FOR UPDATE SKIP LOCKED
     LIMIT LEAST(GREATEST(COALESCE(p_limit, 100), 1), 250)
+    FOR UPDATE SKIP LOCKED
   ),
   claimed AS (
     UPDATE public.atina_push_subscriptions s
@@ -31,5 +31,3 @@ $function$;
 
 REVOKE ALL ON FUNCTION public.atina_push_reminders_claim(integer) FROM public, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.atina_push_reminders_claim(integer) TO service_role;
-
--- Service-role sender can mark successful delivery attempts only.
