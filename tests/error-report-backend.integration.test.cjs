@@ -2,9 +2,11 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const base = (process.env.ATINA_ERROR_REPORTS_TEST_URL || '').replace(/\\/$/, '');
+let base = process.env.ATINA_ERROR_REPORTS_TEST_URL || '';
+while (base.endsWith('/')) base = base.slice(0, -1);
 const adminToken = process.env.ATINA_ERROR_REPORTS_TEST_ADMIN_TOKEN || '';
-const playerToken = process.env.ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN || '';\nconst anonKey = process.env.ATINA_ERROR_REPORTS_TEST_ANON_KEY || '';
+const playerToken = process.env.ATINA_ERROR_REPORTS_TEST_PLAYER_TOKEN || '';
+const anonKey = process.env.ATINA_ERROR_REPORTS_TEST_ANON_KEY || '';
 const allowRemote = process.env.ATINA_ERROR_REPORTS_TEST_ALLOW_REMOTE === 'true';
 const prodHost = 'qvvlqrgbtjujsejvenld.supabase.co';
 const host = (() => { try { return new URL(base).hostname; } catch { return ''; } })();
