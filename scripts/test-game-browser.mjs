@@ -282,13 +282,13 @@ try {
   assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
   assert.equal(quickStartCall.args.p_session_token, 's'.repeat(64),
     'O matchmaking deve encaminhar o token de sessão autenticado.');
-  const fallbackState = await page.evaluate(async () => {
-    await quickMatchFallback();
+  const cancelState = await page.evaluate(async () => {
+    const cancelled = await quickMatchCancel();
     const state = {
+      cancelled,
       calls: window.__quickOnlineCalls.slice(),
-      lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
       status: document.getElementById('quickMatchStatus').textContent,
-      room: networkRoom?.room_id
+      busy: quickMatchBusy
     };
     quickMatchStopPolling();
     supabaseClient.rpc = window.__quickOnlineRpcOriginal;
@@ -302,16 +302,11 @@ try {
     showHomePage('online');
     return state;
   });
-  assert.ok(fallbackState.calls.some(call => call.name === 'atina_v2_cancel_matchmake'),
-    'O ticket em espera deve ser cancelado antes do fallback.');
-  const roomFallbackCall = fallbackState.calls.find(call => call.name === 'atina_v2_create_bot_match');
-  assert.ok(roomFallbackCall, 'O fallback deve preparar uma sala online.');
-  assert.deepEqual(Object.keys(roomFallbackCall.args), ['p_session_token']);
-  assert.equal(roomFallbackCall.args.p_session_token, 's'.repeat(64));
-  assert.equal(fallbackState.lobbyVisible, true, 'O fallback deve abrir a sala online.');
-  assert.equal(fallbackState.room, 'quick-fallback-room');
-  assert.match(fallbackState.status, /Partida preparada|A abrir a sala/);
-  assert.doesNotMatch(fallbackState.status, /bot/i, 'O texto da interface não deve mencionar bots.');
+  assert.ok(cancelState.cancelled, 'A procura em espera deve poder ser cancelada.');
+  assert.ok(cancelState.calls.some(call => call.name === 'atina_v2_cancel_matchmake'),
+    'Cancelar a procura deve chamar a RPC de cancelamento.');
+  assert.equal(cancelState.busy, false, 'Após cancelar, a procura deve deixar de estar ativa.');
+  assert.match(cancelState.status, /Procura cancelada/);
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
