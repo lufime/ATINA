@@ -30,18 +30,18 @@ BEGIN
 
   INSERT INTO public.atina_push_subscriptions(player_id,endpoint,subscription,last_activity_at)
   VALUES ('11111111-1111-1111-1111-111111111111',
-    'https://bad-provider.example/endpoint',
-    '{"endpoint":"https://bad-provider.example/endpoint","keys":{"p256dh":"p","auth":"a"}}',
+    'not-a-url',
+    '{"endpoint":"not-a-url","keys":{"p256dh":"p","auth":"a"}}',
     now() - interval '49 hours');
 
-  v_activity := public.atina_push_subscription_activity('test-session','https://bad-provider.example/endpoint');
+  v_activity := public.atina_push_subscription_activity('test-session','not-a-url');
   IF v_activity->>'ok' <> 'true' OR (v_activity->>'updated')::int <> 1 THEN
     RAISE EXCEPTION 'Activity RPC did not update own subscription: %', v_activity;
   END IF;
 
   UPDATE public.atina_push_subscriptions
   SET last_activity_at=now()-interval '49 hours'
-  WHERE endpoint='https://bad-provider.example/endpoint';
+  WHERE endpoint='not-a-url';
 
   SELECT count(*) INTO v_claims FROM public.atina_push_reminders_claim(10);
   IF v_claims <> 1 THEN RAISE EXCEPTION 'Expected first atomic claim to return one row; got %', v_claims; END IF;
