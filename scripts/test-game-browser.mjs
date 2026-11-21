@@ -281,8 +281,9 @@ try {
     'O matchmaking deve enviar nickname, token de sessão e ticket esperados pela RPC.');
   assert.ok(quickStartCall.args.p_session_token, 'O matchmaking deve incluir o token de sessão autenticado.');
   assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
-  const fallbackState = await page.evaluate(async () => {
-    await quickMatchFallback();
+  // O fallback é acionado pelo timer real de espera; não invocar funções internas inexistentes no escopo global.
+  await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_create_bot_match'), null, {timeout:15000});
+  const fallbackState = await page.evaluate(() => {
     const state = {
       calls: window.__quickOnlineCalls.slice(),
       lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
