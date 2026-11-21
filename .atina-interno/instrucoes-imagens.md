@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão:** 1.1  
+**Versão das instruções:** 1.2  
 **Última atualização:** 21/11/2026
 
 ## 1. Projeto e acessos
@@ -185,3 +185,11 @@ Aplicar a todos os avisos, alertas, respostas, notificações, confirmações, i
 - Os Erros Conhecidos devem incluir apenas problemas confirmados na versão atual, distinguindo falhas confirmadas, limitações atuais, aspetos por testar e correções validadas.
 - Se não for possível confirmar a versão online ou determinada funcionalidade, indicar a incerteza e não assumir disponibilidade.
 - O código atual e a versão online publicada são a referência; a documentação nunca deve contradizer o comportamento real do jogo.
+
+## 20. Versão do jogo e data em todos os documentos
+- Esta regra aplica-se a **todos os documentos do ATINA**, sem exceção: FAQ, Como Jogar, Erros Conhecidos, guias, instruções, notas de versão, documentação técnica e outros documentos do jogo.
+- Todos os documentos devem indicar a **versão do jogo** a que se referem e a **data da última atualização do documento**.
+- A versão indicada deve ser a versão real do jogo publicada online, confirmada no código/metadata e na publicação. Nunca usar a versão do documento como substituto da versão do jogo nem inventar números de versão.
+- Antes de atualizar um documento, confirmar a versão atual publicada. Se não existir número de versão identificável, não inventar: indicar claramente «Versão do jogo: não identificada» e registar a data da atualização.
+- Ao atualizar um documento, atualizar também a data da última atualização. Alterar a versão do jogo indicada apenas quando o documento for verificado/ajustado para uma nova versão do jogo.
+- Manter estes metadados no início do documento, num formato consistente e fácil de localizar.
