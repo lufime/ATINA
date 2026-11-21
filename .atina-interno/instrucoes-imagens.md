@@ -157,3 +157,15 @@ Aplicar a todos os avisos, alertas, respostas, notificações, confirmações, i
 - Manter o mesmo padrão visual e semântico em toda a plataforma; não usar cores contraditórias para o mesmo tipo de estado.
 - Classificação padrão: sucesso/positivo = verde; erro/negativo = vermelho; informação/aviso/neutro = amarelo.
 - Esta regra define o padrão visual e de apresentação; não altera por si só a lógica, permissões ou estado funcional das ações.
+
+
+## 18. Documentação sempre atualizada
+- A documentação do ATINA deve acompanhar sempre o estado real do jogo e do projeto; nunca deixar instruções sobre modos, funcionalidades, ecrãs, regras ou fluxos que já tenham sido removidos ou alterados.
+- Antes de alterar código ou funcionalidades, consultar a documentação relevante e identificar o que poderá ficar desatualizado.
+- Ao implementar, remover ou alterar uma funcionalidade, atualizar no mesmo trabalho todos os documentos afetados (FAQ, guia/como jogar, erros conhecidos, notas de versão e outros documentos relevantes).
+- Descrever apenas modos, opções e comportamentos que existam atualmente e tenham sido confirmados no código. Não inventar funcionalidades nem apresentar funcionalidades removidas como disponíveis.
+- Distinguir erros confirmados de áreas por testar; retirar limitações que deixaram de se aplicar após validação.
+- Após a alteração, pesquisar no repositório referências antigas, nomes, navegação, instruções e exemplos relacionados; corrigir inconsistências e links desatualizados.
+- Rever os documentos alterados e validar que correspondem à implementação atual antes de concluir o PR
+- Sempre que possível, incluir a atualização documental no mesmo PR da alteração funcional, para evitar divergências entre o jogo e a documentação.
+- Não fazer merge nem deploy sem autorização explícita.

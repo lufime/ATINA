@@ -1,45 +1,29 @@
-# ATINA — Erros conhecidos e limitações
+# ATINA — Erros conhecidos
 
-Esta página regista limitações confirmadas e áreas em que ainda são necessários testes em dispositivos e browsers reais. Não apresenta hipóteses como falhas confirmadas.
+Esta página reúne apenas problemas relevantes que o jogador consegue notar durante a utilização do ATINA.
 
-## Limitações atuais
+## Limitações e problemas conhecidos
 
-### É necessária ligação à Internet
-**Estado:** Limitação confirmada  
-Todos os modos dependem da ligação e da validação online. Não existe modo offline nem validação de respostas no browser.
+### Alguns desafios não têm imagem
+Nem todos os desafios incluem uma imagem ilustrativa. Nesses casos, o desafio pode aparecer apenas com texto.
 
-**O que fazer:** confirma que tens Internet e volta a tentar.
+### A ligação à Internet pode falhar durante o jogo
+Uma ligação instável pode interromper uma ronda ou uma sala online, e nem sempre a partida retoma automaticamente.
 
-### A ligação pode interromper uma ronda ou sala online
-**Estado:** Área a validar em testes reais  
-A experiência de reconexão, em especial em telemóveis e salas multiplayer, deve ser testada em condições reais. Não se garante que uma ronda interrompida seja retomada automaticamente em todos os cenários.
+**O que fazer:** recupera a ligação e verifica o estado do jogo antes de voltares a agir.
 
-**O que fazer:** evita fechar a página durante uma ronda. Se perderes a ligação, recupera-a e verifica o estado da sala antes de repetir ações.
+### Rankings ou perfil podem demorar a atualizar
+Se a ligação ou o serviço estiver instável, o ranking ou os dados do perfil podem não aparecer ou atualizar imediatamente.
 
-### Carregamento de rankings e perfil depende do serviço
-**Estado:** Dependência confirmada  
-Os rankings e dados de perfil são carregados online; se o serviço falhar ou a ligação estiver instável, os dados podem não aparecer ou não atualizar imediatamente.
-
-**O que fazer:** aguarda alguns segundos e tenta atualizar/reabrir o separador.
-
-### Testes de browser não substituem testes completos em dispositivos
-**Estado:** Limitação de validação conhecida  
-Os testes automáticos não cobrem toda a utilização em browsers reais, telemóveis, reconexões, salas online, votação, prazos e Mímicas.
+**O que fazer:** aguarda um pouco e tenta atualizar ou reabrir o separador.
 
 ## Como reportar um problema
 
-Ao reportar uma falha, inclui:
-- modo de jogo e passo em que ocorreu;
-- dispositivo e browser;
-- o que esperavas que acontecesse;
-- o que aconteceu, incluindo mensagem de erro;
-- se o problema desapareceu após recarregar.
-
-Não partilhes palavras-passe, tokens, códigos privados de sala ou outros dados sensíveis.
+Se encontrares um problema visível, indica o modo de jogo, o passo em que aconteceu e o que viste (se possível, com uma captura de ecrã). Não incluas palavras-passe nem dados privados.
 
 ## Estado das correções
 
-Uma falha só deve ser marcada como **corrigida** depois de a alteração estar implementada e validada. A existência de um PR ou de um deploy, por si só, não significa que o problema esteja resolvido para todos os jogadores.
+Uma falha só é considerada corrigida depois de a alteração ser implementada e validada.
 
 ---
 

@@ -11,7 +11,6 @@ No ecrã inicial, escolhe um modo de jogo e segue as instruções apresentadas. 
 - **Mix:** combina desafios de várias modalidades.
 - **Party:** duas equipas jogam no mesmo dispositivo, até 10 desafios.
 - **Multiplayer:** cria ou entra numa sala online com código; os participantes podem responder, propor respostas e votar conforme a ronda.
-- **Mímicas:** salas online com um representante por ronda; a palavra é mostrada apenas no dispositivo do representante.
 
 ## Como funcionam as pistas?
 As pistas são reveladas progressivamente. Usa o botão de pista quando quiseres avançar, tendo em conta que a informação disponível pode facilitar a resposta.
@@ -24,9 +23,6 @@ Sim. Todos os modos requerem ligação à Internet e validação online. O ATINA
 
 ## Posso jogar no mesmo dispositivo com outra pessoa?
 Sim. Os modos Duelo e Party são concebidos para partilha do dispositivo. Segue a indicação de vez/equipa que aparece no jogo.
-
-## Como funcionam as Mímicas?
-O anfitrião regista se o gesto foi adivinhado. O relógio e os pontos são calculados pelo servidor. A palavra secreta é apresentada apenas no dispositivo do representante.
 
 ## Onde vejo a minha pontuação ou ranking?
 Consulta os separadores de ranking e perfil disponíveis no ecrã inicial. Os dados podem depender de ligação e carregamento do serviço.
