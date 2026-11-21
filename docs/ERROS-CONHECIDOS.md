@@ -1,6 +1,6 @@
 # ATINA — Erros conhecidos e limitações
 
-**Versão do jogo:** v0.1.11 (beta; versão da metadata do repositório — publicação online não verificada)  
+**Versão do jogo:** v0.1.218  
 **Última atualização do documento:** 21/11/2026
 
 Esta página separa limitações e situações que podem ocorrer de erros reproduzidos e confirmados. Nesta revisão documental não foram reproduzidos testes de jogo; por isso, os pontos abaixo não são apresentados como bugs confirmados.
