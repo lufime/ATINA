@@ -250,7 +250,7 @@ try {
     await page.locator(`[data-home-page="${target}"]`).first().waitFor({state:'visible'});
   }
 
-  // Regressão: a partida rápida online faz fallback de forma segura quando a fila não encontra adversário.
+  // Regressão: a partida rápida mantém a procura online até haver correspondência ou cancelamento.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(async () => {
     localStorage.setItem('atinaAccountSessionV1', 's'.repeat(64));
@@ -264,7 +264,6 @@ try {
       if (name === 'atina_v2_matchmake') return {data:{status:'waiting'},error:null};
       if (name === 'atina_v2_matchmake_status') return {data:{status:'waiting'},error:null};
       if (name === 'atina_v2_cancel_matchmake') return {data:null,error:null};
-      if (name === 'atina_v2_create_bot_match') return {data:{room_id:'quick-fallback-room',token:'r'.repeat(64),code:'QK123'},error:null};
       return {data:null,error:null};
     };
     networkRefreshRoom = async () => {};
@@ -281,16 +280,20 @@ try {
     'O matchmaking deve enviar nickname, token de sessão e ticket esperados pela RPC.');
   assert.ok(quickStartCall.args.p_session_token, 'O matchmaking deve incluir o token de sessão autenticado.');
   assert.equal(quickStartCall.args.p_nickname, 'BrowserTester');
-  // O fallback é acionado pelo timer real de espera; não invocar funções internas inexistentes no escopo global.
-  await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_create_bot_match'), null, {timeout:15000});
-  const fallbackState = await page.evaluate(() => {
-    const state = {
-      calls: window.__quickOnlineCalls.slice(),
-      lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
-      status: document.getElementById('quickMatchStatus').textContent,
-      room: networkRoom?.room_id
-    };
-    quickMatchStopPolling();
+  // Espera além do antigo período de fallback e confirma que a procura não cria uma sala automática.
+  await page.waitForTimeout(8500);
+  const waitingState = await page.evaluate(() => ({
+    calls: window.__quickOnlineCalls.slice(),
+    lobbyVisible: !document.getElementById('networkLobby').classList.contains('hidden'),
+    status: document.getElementById('quickMatchStatus').textContent
+  }));
+  assert.equal(waitingState.lobbyVisible, false, 'A procura sem correspondência não deve abrir uma sala.');
+  assert.match(waitingState.status, /À procura de um adversário/);
+  assert.equal(waitingState.calls.some(call => call.name === 'atina_v2_create_bot_match'), false,
+    'A procura não deve criar uma partida de forma automática.');
+  await page.locator('#quickMatchCancel').click();
+  await page.waitForFunction(() => window.__quickOnlineCalls.some(call => call.name === 'atina_v2_cancel_matchmake'), null, {timeout:5000});
+  await page.evaluate(() => {
     supabaseClient.rpc = window.__quickOnlineRpcOriginal;
     networkRefreshRoom = window.__quickOnlineRefreshOriginal;
     networkStartPolling = window.__quickOnlinePollingOriginal;
@@ -300,18 +303,7 @@ try {
     localStorage.removeItem('atinaNetworkRoom');
     screen('home');
     showHomePage('online');
-    return state;
   });
-  assert.ok(fallbackState.calls.some(call => call.name === 'atina_v2_cancel_matchmake'),
-    'O ticket em espera deve ser cancelado antes do fallback.');
-  const roomFallbackCall = fallbackState.calls.find(call => call.name === 'atina_v2_create_bot_match');
-  assert.ok(roomFallbackCall, 'O fallback deve preparar uma sala online.');
-  assert.deepEqual(Object.keys(roomFallbackCall.args), ['p_session_token']);
-  assert.equal(roomFallbackCall.args.p_session_token, 's'.repeat(64));
-  assert.equal(fallbackState.lobbyVisible, true, 'O fallback deve abrir a sala online.');
-  assert.equal(fallbackState.room, 'quick-fallback-room');
-  assert.match(fallbackState.status, /Partida encontrada|Partida preparada|A abrir a sala/);
-  assert.doesNotMatch(fallbackState.status, /bot/i, 'O texto da interface não deve mencionar bots.');
   // Ações online sem sessão devem ser recusadas de forma explícita e segura.
   await page.evaluate(() => showHomePage('online'));
   await page.evaluate(() => localStorage.removeItem('atinaAccountSessionV1'));
