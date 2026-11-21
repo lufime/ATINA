@@ -83,3 +83,20 @@ Novo → Em análise → Em correção → Resolvido → Arquivado.
 - Não reutilizar tokens de jogador, sessão normal, email, user metadata ou simples estado de login para dar acesso aos reportes.
 - Recomendação para desbloquear: estabelecer uma autorização administrativa explícita validada no servidor (por exemplo, claim/role de admin em JWT assinado e emitido pelo sistema de autenticação, com origem e processo de atribuição auditáveis; nunca user_metadata editável pelo utilizador), e exigir essa autorização em cada operação de leitura/alteração. Só depois ligar a UI admin.
 - A autorização e o endpoint de gestão não podem ser testados funcionalmente até existir implementação acessível e ambiente de testes. Nenhuma mudança de backend ou banco foi aplicada.
+
+
+## Alternativa de autorização investigada — allowlist server-side
+A alternativa mais simples de auditar, sem depender de claims que possam demorar a refletir-se nos tokens, é uma allowlist privada de utilizadores administradores autenticados:
+- Guardar apenas os UUIDs Auth dos administradores numa tabela do schema privado, sem acesso direto pela API pública. A tabela não contém dados dos reportes nem do jogador.
+- A atribuição/removal de admin é feita apenas por operação privilegiada de confiança (migration reviewed ou ferramenta administrativa server-side), nunca por frontend, RPC pública, user_metadata ou auto-registo.
+- Criar uma função de verificação SECURITY DEFINER de leitura, com search_path fixo, que verifica auth.uid() contra a allowlist. Não devolver a lista de administradores ao cliente.
+- Reforçar com RLS: SELECT e UPDATE dos reportes exigem a função de verificação; os jogadores não têm SELECT/UPDATE/DELETE. INSERT público deve passar por RPC/Edge Function de submissão com campos allowlisted, validação e throttling; não conceder acesso de leitura ao storage.
+- Para screenshots, bucket privado, validação do conteúdo/tamanho, remoção EXIF, e URLs assinadas curtas geradas apenas depois de verificação admin.
+- Testes obrigatórios: utilizador anónimo, jogador autenticado normal, administrador autorizado e admin removido (token antigo também não deve manter acesso); validar leitura, atualização de estado, notas e acesso ao screenshot. O check admin deve ser reavaliado no servidor em cada chamada.
+- Esta abordagem é apenas proposta de arquitetura. Não foi criada tabela, função, política, secret, nem aplicada/testada em Supabase. Antes de implementação, confirmar se o mecanismo existente de admin pode ser reutilizado; se não, obter autorização explícita para estabelecer a allowlist.
+
+## Investigação adicional (2026-11-21)
+- Reconsultada a árvore completa do branch do PR: só está versionada a função atina-update-solution-tags; a função atina-image-manage continua ausente.
+- Pesquisas no código do repositório por admin role, admin-images admin e is_admin não devolveram resultados indexados. Estas pesquisas não são prova absoluta de inexistência, mas reforçam que não há autorização admin documentada/reutilizável no branch.
+- Consultado também SECURITY-DESIGN.md: descreve RLS, RPCs, tokens de sessão e exclusão do perfil Admin de certas aprendizagens, mas não define um sistema de autorização administrativa por papel/identidade. O próprio documento alerta que a exclusão por nome apresentado não é autorização.
+- A allowlist privada, com função de verificação server-side e RLS, é a alternativa concreta recomendada neste momento. Continua pendente decidir e autorizar a sua criação em ambiente de teste isolado, antes de tocar na produção.
