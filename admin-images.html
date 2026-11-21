@@ -341,7 +341,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("watermarkPanel").classList.toggle("hidden", !session);
     $("dashboardPanel").classList.toggle("hidden", !session);
     $("imagesInfo").classList.toggle("hidden", !session);
-    $("challengesPanel").classList.toggle("hidden", !session);\n    $("reportsPanel").classList.toggle("hidden", !session);
+    $("challengesPanel").classList.toggle("hidden", !session);
+    $("reportsPanel").classList.toggle("hidden", !session);
     if (session && location.hash === "#challenges") loadChallenges();\n    if (session && location.hash === "#reports") loadReports();
     $("adminLinks").classList.toggle("hidden", !session);
     $("adminNavigation").classList.toggle("hidden", !session);
