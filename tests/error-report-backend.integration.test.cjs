@@ -18,42 +18,73 @@ const adminEndpoint = base + '/functions/v1/atina-error-reports-admin';
 const submitEndpoint = base + '/functions/v1/atina-error-reports-submit';
 const origin = 'https://lufime.github.io';
 
-async function request(url, token, method='GET', body) {
-  return fetch(url, { method, headers: { Origin: origin, apikey: anonKey, ...(token ? { Authorization: 'Bearer ' + token } : {}), ...(body !== undefined ? {'Content-Type':'application/json'} : {}) }, ...(body !== undefined ? {body:JSON.stringify(body)} : {}) });
+async function request(url, token, method='GET', body, requestOrigin=origin) {
+  return fetch(url, { method, headers: { Origin: requestOrigin, apikey: anonKey, ...(token ? { Authorization: 'Bearer ' + token } : {}), ...(body !== undefined ? {'Content-Type':'application/json'} : {}) }, ...(body !== undefined ? {body:JSON.stringify(body)} : {}) });
 }
 
 test('Admin endpoint rejects missing and invalid JWTs', {skip:skipReason}, async () => {
-  const noToken = await request(adminEndpoint, '');
-  assert.equal(noToken.status, 401);
-  const invalid = await request(adminEndpoint, 'invalid-test-token');
-  assert.equal(invalid.status, 401);
+  assert.equal((await request(adminEndpoint, '')).status, 401);
+  assert.equal((await request(adminEndpoint, 'invalid-test-token')).status, 401);
 });
 
 test('Admin endpoint denies authenticated non-admin users', {skip:skipReason}, async () => {
-  const response = await request(adminEndpoint, playerToken);
-  assert.equal(response.status, 403);
+  assert.equal((await request(adminEndpoint, playerToken)).status, 403);
+});
+
+test('Admin CORS rejects disallowed origins and permits preflight for allowed origin', {skip:skipReason}, async () => {
+  assert.equal((await request(adminEndpoint, adminToken, 'GET', undefined, 'https://invalid.example')).status, 403);
+  const preflight = await request(adminEndpoint, '', 'OPTIONS');
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), origin);
+  assert.match(preflight.headers.get('access-control-allow-methods') || '', /PATCH/);
 });
 
 test('Allowlisted admin can read reports and receives a reports array', {skip:skipReason}, async () => {
   const response = await request(adminEndpoint, adminToken);
   assert.equal(response.status, 200);
-  const data = await response.json();
-  assert.ok(Array.isArray(data.reports));
+  assert.ok(Array.isArray((await response.json()).reports));
 });
 
-test('Admin PATCH validates report identifiers before any update', {skip:skipReason}, async () => {
-  const response = await request(adminEndpoint, adminToken, 'PATCH', { report_id: 'not-a-uuid', status: 'resolved' });
-  assert.equal(response.status, 400);
+test('Admin PATCH validates report identifiers, status, notes and empty updates', {skip:skipReason}, async () => {
+  assert.equal((await request(adminEndpoint, adminToken, 'PATCH', { report_id: 'not-a-uuid', status: 'resolved' })).status, 400);
+  const validId = '00000000-0000-4000-8000-000000000001';
+  assert.equal((await request(adminEndpoint, adminToken, 'PATCH', { report_id: validId, status: 'invalid-status' })).status, 400);
+  assert.equal((await request(adminEndpoint, adminToken, 'PATCH', { report_id: validId, internal_note: 'x'.repeat(2001) })).status, 400);
+  assert.equal((await request(adminEndpoint, adminToken, 'PATCH', { report_id: validId })).status, 400);
+  assert.equal((await request(adminEndpoint, adminToken, 'PATCH', null)).status, 400);
 });
 
-test('Submit endpoint rejects invalid category and short description without writing', {skip:skipReason}, async () => {
-  const invalidCategory = await request(submitEndpoint, '', 'POST', {nickname:'Test',category:'invalid',description:'This description is long enough for validation.'});
-  assert.equal(invalidCategory.status, 400);
-  const shortDescription = await request(submitEndpoint, '', 'POST', {nickname:'Test',category:'technical',description:'Too short'});
-  assert.equal(shortDescription.status, 400);
+test('Submit endpoint validates category, nickname, description and origin', {skip:skipReason}, async () => {
+  assert.equal((await request(submitEndpoint, '', 'POST', {nickname:'Test',category:'invalid',description:'This description is long enough for validation.'})).status, 400);
+  assert.equal((await request(submitEndpoint, '', 'POST', {nickname:'Test',category:'technical',description:'Too short'})).status, 400);
+  assert.equal((await request(submitEndpoint, '', 'POST', {nickname:'',category:'technical',description:'This description is long enough for validation.'})).status, 400);
+  assert.equal((await request(submitEndpoint, '', 'POST', {nickname:'Test',category:'technical',description:'This description is long enough for validation.'}, 'https://invalid.example')).status, 403);
 });
 
-test('Submit endpoint rejects unapproved browser origin', {skip:skipReason}, async () => {
-  const response = await fetch(submitEndpoint, {method:'POST',headers:{Origin:'https://invalid.example',apikey:anonKey,'Content-Type':'application/json'},body:JSON.stringify({nickname:'Test',category:'technical',description:'This is a valid long description for testing.'})});
-  assert.equal(response.status, 403);
+test('Admin updates a submitted report and subsequent GET confirms persistence', {skip:skipReason}, async () => {
+  const nickname = 'backend-test-' + Date.now().toString(36).slice(-8);
+  const submission = await request(submitEndpoint, '', 'POST', {
+    nickname, category:'technical', description:'Isolated integration report for update and persistence validation.'
+  });
+  assert.equal(submission.status, 200);
+  const submitted = await submission.json();
+  assert.equal(submitted.success, true);
+  assert.ok(submitted.report_id);
+
+  const patch = await request(adminEndpoint, adminToken, 'PATCH', {
+    report_id: submitted.report_id, status:'in_review', internal_note:'Integration test persistence marker.'
+  });
+  assert.equal(patch.status, 200);
+  const updated = (await patch.json()).report;
+  assert.equal(updated.report_id, submitted.report_id);
+  assert.equal(updated.status, 'in_review');
+  assert.equal(updated.internal_note, 'Integration test persistence marker.');
+
+  const listing = await request(adminEndpoint, adminToken);
+  assert.equal(listing.status, 200);
+  const reports = (await listing.json()).reports;
+  const persisted = reports.find((item) => item.report_id === submitted.report_id);
+  assert.ok(persisted, 'report must be returned by subsequent Admin GET');
+  assert.equal(persisted.status, 'in_review');
+  assert.equal(persisted.internal_note, 'Integration test persistence marker.');
 });
