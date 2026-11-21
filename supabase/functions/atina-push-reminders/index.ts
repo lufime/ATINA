@@ -44,9 +44,9 @@ Deno.serve(async (request) => {
   let sent = 0, expired = 0, failed = 0, invalid = 0;
   for (const item of claimed) {
     const host = endpointHost(item.subscription);
-    if (!host) { invalid++; await removeSubscription(item.id).catch(() => {}); continue; }
+    if (!host) { invalid++; continue; }
     try {
-      await webpush.sendNotification(item.subscription as webpush.PushSubscription, payload, { TTL: 86400, urgency: "normal" });
+      await webpush.sendNotification(item.subscription as Parameters<typeof webpush.sendNotification>[0], payload, { TTL: 86400, urgency: "normal" });
       await markSent(item.id);
       sent++;
     } catch (error) {
