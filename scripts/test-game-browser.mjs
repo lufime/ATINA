@@ -4,6 +4,9 @@ import { readFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const challengeImageBank = indexHtml.match(/const games=\[[\s\S]*?\];/);
+assert.ok(challengeImageBank, 'Banco de desafios deve existir no HTML.');
+assert.doesNotMatch(challengeImageBank[0], /https?:\/\//, 'Banco de desafios não deve conter imagens externas.');
 const serverClient = await readFile(new URL('../atina-server-client.js', import.meta.url), 'utf8');
 const roomRuntime = await readFile(new URL('../assets/network-room-runtime.js', import.meta.url), 'utf8');
 const server = createServer((request, response) => {
