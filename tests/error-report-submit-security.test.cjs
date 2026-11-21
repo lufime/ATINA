@@ -4,8 +4,8 @@ const fs = require('node:fs');
 
 const source = fs.readFileSync('supabase/functions/atina-error-reports-submit/index.ts', 'utf8');
 
-test('submission handler rejects non-allowlisted browser origins before body processing', () => {
-  const guard = source.indexOf('if (origin && !allowedOrigins.has(origin))');
+test('submission handler rejects missing and non-allowlisted origins before body processing', () => {
+  const guard = source.indexOf('if (!allowedOrigins.has(origin))');
   const bodyParse = source.indexOf('const parsed = await req.json()');
   assert.notEqual(guard, -1);
   assert.ok(bodyParse > guard, 'origin guard must precede parsing and writes');

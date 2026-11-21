@@ -13,7 +13,7 @@ const clean = (value: unknown, max: number) => typeof value === "string" ? value
 Deno.serve(async (req) => {
   const origin = req.headers.get("Origin") ?? "";
   // Reject browser origins outside the allowlist before processing a request.
-  if (origin && !allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
+  if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
   if (req.method === "OPTIONS") return new Response("ok", { headers: headersFor(req) });
   if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
   const url = Deno.env.get("SUPABASE_URL");
