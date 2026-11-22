@@ -116,6 +116,10 @@ try {
   async function confirmPregame(){
     await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
     await page.locator('#atinaPregameConfirmed').check();
+    assert.equal(await page.locator('#atinaPregameStart').isDisabled(),true,'Iniciar ronda deve ficar bloqueado antes de Confirmar.');
+    await page.locator('#atinaPregameConfirm').click();
+    assert.equal(await page.locator('#atinaPregameStart').isDisabled(),false,'Confirmar valida e desbloqueia o início sem arrancar.');
+    assert.equal(await page.locator('#game').isVisible(),false,'Confirmar não inicia a partida.');
     await page.locator('#atinaPregameStart').click();
   }
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
