@@ -9,7 +9,9 @@ const admin = fs.readFileSync('admin-images.html', 'utf8');
 test('game report form submits only pseudonym, category and description to report endpoint', () => {
   assert.match(game, /atina-error-reports-submit/);
   assert.match(game, /nickname:getNickname\(\),category:/);
-  assert.match(game, /description,screenshot:screenshotPayload/);\n  assert.match(game, /atinaSoloReportScreenshot/);\n  assert.match(game, /3\\*1024\\*1024/);
+  assert.match(game, /description,screenshot:screenshotPayload/);
+  assert.match(game, /atinaSoloReportScreenshot/);
+  assert.match(game, /3\\*1024\\*1024/);
   assert.doesNotMatch(game.slice(game.indexOf('setupSoloReportSubmission'), game.indexOf('const ATINA_PROGRESS_KEY')), /player_id|session_id|room_id|email|ip_address/i);
 });
 
@@ -23,7 +25,9 @@ test('admin reports UI is integrated in existing admin-images page', () => {
   assert.match(admin, /id="reportsPanel"/);
   assert.match(admin, /atina-error-reports-admin/);
   assert.match(admin, /reportNicknameFilter/);
-  assert.match(admin, /Guardar alterações/);\n  assert.match(admin, /Ver screenshot/);\n  assert.match(admin, /report.screenshot_url/);
+  assert.match(admin, /Guardar alterações/);
+  assert.match(admin, /Ver screenshot/);
+  assert.match(admin, /report.screenshot_url/);
 });
 
 test('report contents are rendered through textContent and DOM nodes', () => {
