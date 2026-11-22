@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const sql = readFile(new URL('../supabase/migrations/20261122230000_atina_smart_challenge_selection.sql', import.meta.url), 'utf8');
+const sql = await readFile(new URL('../supabase/migrations/20261122230000_atina_smart_challenge_selection.sql', import.meta.url), 'utf8');
 assert.match(sql, /p_challenge_count integer default 10/);
 assert.match(sql, /p_device_token text default null/);
 assert.match(sql, /limit p_challenge_count/);
