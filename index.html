@@ -5142,7 +5142,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <div id="atinaPregameOverlay" aria-modal="true" role="dialog" aria-labelledby="atinaPregameTitle">
  <section id="atinaPregamePanel">
   <h2 id="atinaPregameTitle">⚙️ Configurar partida</h2>
-  <p class="muted small" style="text-align:center">Revê as opções. A partida só começa depois de confirmares.</p>
+  <p class="muted small" style="text-align:center">Revê as opções e confirma para continuar.</p>
   <label for="atinaPregameCount">Número de desafios</label>
   <input id="atinaPregameCount" type="number" min="1" max="1000" step="1" value="10" inputmode="numeric">
   <label for="atinaPregameDifficulty">Dificuldade</label>
@@ -5164,7 +5164,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  let mode='solo',category=null;
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
  function updateSummary(){summary.textContent=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode]+' · '+count.value+' desafios · '+difficultyLabel(difficulty.value);}
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;error.textContent='';updateSummary();overlay.classList.add('open');count.focus();}
+ function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;error.textContent='';updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
  count.addEventListener('input',updateSummary);difficulty.addEventListener('change',updateSummary);
