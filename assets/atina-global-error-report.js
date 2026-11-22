@@ -57,25 +57,12 @@
  const safe=(v,max=120)=>String(v??'').replace(/[\r\n]+/g,' ').trim().slice(0,max);
  function visibleScreen(){const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];return ids.find(id=>{const el=document.getElementById(id);return el&&!el.hidden&&!el.classList.contains('hidden')&&getComputedStyle(el).display!=='none'})||'unknown';}
  function gameContext(){
-  const screen=visibleScreen(),currentMode=safe(typeof mode!=='undefined'?mode:'unknown',40),room=typeof networkRoom!=='undefined'&&networkRoom?networkRoom:null;
-  let timer='';if(screen==='game'&&typeof timeLeft!=='undefined'){const remaining=pausedSolo&&typeof atinaSoloReportRemaining!=='undefined'?atinaSoloReportRemaining:timerDeadline?Math.max(0,Math.ceil((timerDeadline-Date.now())/1000)):timeLeft;timer=safe(remaining,20)+'s'}else if(screen==='mimicaGame')timer=safe($('mimeTimer')?.textContent,30);
-  const category=screen==='game'?safe($('category')?.textContent,100):screen==='mimicaGame'?safe($('mimeCategory')?.textContent,100):'';
-  const round=screen==='game'&&typeof pos!=='undefined'?String(pos+1):screen==='mimicaGame'?safe($('mimeRound')?.textContent,40):'';
-  const roomId=room?safe(room.room_id,80):'';
-  const version=(()=>{const meta=document.querySelector('meta[name="atina-game-version"]');return meta?safe(meta.content,40):''})();
-  const question=screen==='game'?safe($('question')?.textContent,220):'';
-  const clues=screen==='game'?safe($('clues')?.textContent,480):'';
-  const score=screen==='game'&&typeof scores!=='undefined'?safe(scores.join(' / '),40):'';
-  const streak=screen==='game'&&typeof correctStreak!=='undefined'?safe(correctStreak,30):'';
-  return {screen,mode:currentMode,room:roomId||undefined,round:round||undefined,category:category||undefined,timer:timer||undefined,question:question||undefined,clues:clues||undefined,score:score||undefined,streak:streak||undefined,version:version||undefined,paused:pausedSolo};
+  const bridge=window.atinaReportBridge,c=bridge?.getContext?.()||{};
+  return {screen:safe(c.screen||visibleScreen(),30),mode:safe(c.mode||'unknown',40),room:safe(c.room,80)||undefined,round:safe(c.round,40)||undefined,category:safe(c.category,100)||undefined,timer:safe(c.timer,30)||undefined,question:safe(c.question,220)||undefined,clues:safe(c.clues,480)||undefined,score:safe(c.score,40)||undefined,streak:safe(c.streak,30)||undefined,version:safe(c.version,40)||undefined,paused:Boolean(c.paused)};
  }
  function contextText(ctx){return ['Contexto automático do jogo:', 'Ecrã: '+ctx.screen,'Modo: '+ctx.mode,ctx.room?'Sala: '+ctx.room:'',ctx.round?'Ronda: '+ctx.round:'',ctx.category?'Categoria: '+ctx.category:'',ctx.timer?'Tempo visível: '+ctx.timer:'',ctx.question?'Desafio: '+ctx.question:'',ctx.clues?'Pistas visíveis: '+ctx.clues:'',ctx.score?'Pontuação: '+ctx.score:'',ctx.streak?'Sequência: '+ctx.streak:'',ctx.version?'Versão: '+ctx.version:''].filter(Boolean).join('\n');}
- function pauseSolo(){
-  if(visibleScreen()!=='game'||typeof mode==='undefined'||mode!=='solo'||typeof atinaSoloReportOpen!=='function')return false;
-  if(typeof atinaSoloReportPaused!=='undefined'&&atinaSoloReportPaused)return false;
-  atinaSoloReportOpen();pausedSolo=typeof atinaSoloReportPaused!=='undefined'&&atinaSoloReportPaused;return pausedSolo;
- }
- function resumeSolo(){if(pausedSolo&&typeof atinaSoloReportResume==='function')atinaSoloReportResume();pausedSolo=false;}
+ function pauseSolo(){const bridge=window.atinaReportBridge;pausedSolo=Boolean(bridge?.pauseSolo?.());return pausedSolo;}
+ function resumeSolo(){const bridge=window.atinaReportBridge;if(pausedSolo)bridge?.resumeSolo?.();pausedSolo=false;}
  function open(){pausedSolo=pauseSolo();$('atinaGlobalReportContext').textContent=contextText(gameContext());overlay.classList.add('open');$('atinaGlobalReportDescription').focus();status.textContent=pausedSolo?'Relógio pausado.':'Contexto anexado ao reporte.';}
  function close(){overlay.classList.remove('open');resumeSolo();}
  function clearImage(){screenshot=null;$('atinaGlobalReportScreenshot').value='';$('atinaGlobalReportPreview').removeAttribute('src');$('atinaGlobalReportPreview').hidden=true;}
