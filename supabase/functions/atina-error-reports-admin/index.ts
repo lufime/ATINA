@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"; import { createClient } from "npm:@supabase/supabase-js@2"; import { createAdminHandler } from "../_shared/error-report-admin-handler.mjs";
 const url=Deno.env.get("SUPABASE_URL"), key=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")??Deno.env.get("SUPABASE_SECRET_KEY"), anonKey=Deno.env.get("SUPABASE_ANON_KEY");
-const logDbError=(operation,error)=>console.error("[atina-error-reports-admin]",operation,{code:error?.code,message:error?.message,details:error?.details,hint:error?.hint});
+const logDbError=(operation:string,error:unknown)=>{const e=error as {code?:string;message?:string;details?:string;hint?:string};console.error("[atina-error-reports-admin]",operation,{code:e?.code,message:e?.message,details:e?.details,hint:e?.hint});};
 const handler=createAdminHandler({
  signedScreenshotUrl: async (path: string)=>{if(!url||!key)throw Error("Storage config unavailable");const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});const {data,error}=await db.storage.from("atina-error-report-screenshots").createSignedUrl(path,300);if(error)throw error;return data?.signedUrl??null;},
  authenticate:async (token: string)=>{if(!url||!anonKey)throw Error("Auth config unavailable");const auth=createClient(url,anonKey,{auth:{persistSession:false,autoRefreshToken:false}});const {data,error}=await auth.auth.getUser(token);if(error||!data.user)return null;return {id:data.user.id};},
