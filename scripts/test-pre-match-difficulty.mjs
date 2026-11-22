@@ -25,10 +25,10 @@ try{
 // Verify challenge-count validation against the actual reader function.
 const countFn=html.match(/function atinaReadChallengeCount\(\)\{try\{[\s\S]*?\}catch\(e\)\{return 10;\}\}/)?.[0];
 assert(countFn,'challenge-count reader exists');
-assert(html.includes('id="atinaPregameConfirm"'),'configuration has a separate Confirmar action');
-assert(html.includes('id="atinaPregameStart" disabled'),'Iniciar ronda stays disabled until confirmation');
-assert(html.includes('configurationValidated=false'),'configuration edits reset validation');
-assert(html.includes('if(!confirmed.checked||!configurationValidated)'),'starting requires explicit confirmation and validation');
+assert(html.includes('id="atinaPregameStart" disabled'),'start is initially disabled until valid configuration');
+assert(html.includes('function validateConfig()')||html.includes('function validate()'),'configuration validates automatically');
+assert(!html.includes('atinaPregameConfirmCheck'),'configuration has no separate confirmation checkbox');
+assert(!html.includes('atinaPregameConfirm'),'configuration has no separate validation button');
 
 const countRuntime=new Function('localStorage',"const ATINA_CHALLENGE_COUNT_KEY='atinaChallengeCount';"+countFn+';return atinaReadChallengeCount;');
 function readCount(value,throws=false){
