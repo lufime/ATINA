@@ -4992,6 +4992,10 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  <section id="atinaPregamePanel">
   <h2 id="atinaPregameTitle">⚙️ Configurar partida</h2>
   <p class="muted small" style="text-align:center">Ajusta as opções e inicia a partida.</p>
+  <label for="atinaPregameMode">Modo de jogo</label>
+  <select id="atinaPregameMode">
+   <option value="solo">Solo</option><option value="mix">Mix</option><option value="duel">Duelo</option><option value="party">Equipas</option><option value="mime">Mímicas</option>
+  </select>
   <label for="atinaPregameCount">Número de desafios</label>
   <div id="atinaPregameCountControl"><button type="button" id="atinaPregameMinus" aria-label="Diminuir desafios">−</button><input id="atinaPregameCount" type="number" min="1" max="1000" step="1" value="10" inputmode="numeric"><button type="button" id="atinaPregamePlus" aria-label="Aumentar desafios">+</button></div>
   <label for="atinaPregameDifficulty">Dificuldade</label>
@@ -5013,7 +5017,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
  function isServerMode(){return mode==='mime'||mode==='duel'||mode==='party';}
  function availableChallenges(){if(isServerMode())return null;if(typeof games==='undefined'||!Array.isArray(games))return 0;const matchingCategory=games.filter(g=>g&&((mode==='mix')||(!category||g[0]===category)));const matchingDifficulty=matchingCategory.filter(g=>difficulty.value==='mixed'||classifyChallenge(games.indexOf(g))===difficulty.value);return matchingDifficulty.length;}
- function updateLimit(){const serverMode=isServerMode(),max=availableChallenges();count.disabled=serverMode;document.getElementById('atinaPregameMinus').disabled=serverMode;document.getElementById('atinaPregamePlus').disabled=serverMode;count.max=serverMode?'1000':String(max);count.min='1';if(serverMode){count.value=String(Math.max(1,Math.min(1000,Number(count.value)||10)));error.textContent='A quantidade de desafios é definida pelo servidor neste modo.';document.getElementById('atinaPregameConfirm').disabled=false;document.getElementById('atinaPregameStart').disabled=true;return;}if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção/dificuldade.';document.getElementById('atinaPregameConfirm').disabled=true;document.getElementById('atinaPregameStart').disabled=true;}else{document.getElementById('atinaPregameConfirm').disabled=false;const n=Math.max(1,Math.min(max,Number(count.value)||10));count.value=String(n);error.textContent='';}}
+ function updateLimit(){const serverMode=isServerMode(),max=availableChallenges();count.disabled=serverMode;document.getElementById('atinaPregameMinus').disabled=serverMode;document.getElementById('atinaPregamePlus').disabled=serverMode;count.max=serverMode?'1000':String(max);count.min='1';if(serverMode){count.value=String(Math.max(1,Math.min(1000,Number(count.value)||10)));error.textContent='A quantidade de desafios é definida pelo servidor neste modo.';return;}if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção/dificuldade.';}else{const n=Math.max(1,Math.min(max,Number(count.value)||10));count.value=String(n);error.textContent='';}}
  function updateSummary(){const title=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode];summary.textContent=isServerMode()?title+' · desafios geridos pelo servidor · '+difficultyLabel(difficulty.value):title+' · '+count.value+' desafios · '+availableChallenges()+' disponíveis · '+difficultyLabel(difficulty.value);}
  function validateConfig(){
   const n=Number(count.value),max=availableChallenges(),valid=isServerMode()?Number.isInteger(n)&&n>=1&&n<=1000:Number.isInteger(n)&&n>=1&&n<=max;
@@ -5022,9 +5026,11 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   else error.textContent='';
   return valid;
  }
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';updateLimit();updateSummary();validateConfig();document.getElementById('atinaPregameStart').textContent=mode==='solo'?'Iniciar Solo':mode==='mix'?'Iniciar Mix':'Continuar';overlay.classList.add('open');document.getElementById('atinaPregameMinus').focus();}
+ function updateModeUI(){document.getElementById('atinaPregameMode').value=mode;document.getElementById('atinaPregameStart').textContent=({solo:'Iniciar Solo',mix:'Iniciar Mix',duel:'Continuar Duelo',party:'Continuar Equipas',mime:'Continuar Mímicas'})[mode]||'Iniciar';}
+ function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';updateModeUI();updateLimit();updateSummary();validateConfig();overlay.classList.add('open');document.getElementById('atinaPregameMinus').focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
+ document.getElementById('atinaPregameMode').addEventListener('change',e=>{mode=e.target.value;category=mode==='solo'?category:null;updateModeUI();updateLimit();updateSummary();validateConfig();});
  count.addEventListener('input',()=>{updateLimit();updateSummary();validateConfig();});difficulty.addEventListener('change',()=>{updateLimit();updateSummary();validateConfig();});
  document.getElementById('atinaPregameMinus').addEventListener('click',()=>{count.value=String(Math.max(Number(count.min)||1,(Number(count.value)||1)-1));count.dispatchEvent(new Event('input'));});
  document.getElementById('atinaPregamePlus').addEventListener('click',()=>{const max=Number(count.max)||1000;count.value=String(Math.min(max,(Number(count.value)||0)+1));count.dispatchEvent(new Event('input'));});
