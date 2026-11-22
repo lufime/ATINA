@@ -85,7 +85,8 @@ if (!client.includes("'atina_v2_resolve_mime_round'")) errors.push('A resoluçã
 
 if (!client.includes('p_challenge_count: challengeCount')) errors.push('O cliente não envia a quantidade configurada para a RPC local.');
 if (!client.includes("Number($('challengeCount')?.value ?? 10)")) errors.push('O cliente não lê o seletor de quantidade antes de iniciar.');
-if (!challengeCountMigration.includes('p_challenge_count integer default 10') || !challengeCountMigration.includes('limit p_challenge_count')) errors.push('A migration da RPC não limita a fila à quantidade pedida.');
+if (!challengeCountMigration.includes('p_device_token text default null') || !challengeCountMigration.includes('p_challenge_count integer default 10') || !challengeCountMigration.includes('limit p_challenge_count')) errors.push('A RPC deve preservar p_device_token e limitar a fila pela quantidade pedida.');
+if (!challengeCountMigration.includes('insert into private.atina_xp_session_owners(session_id,player_id)') || !challengeCountMigration.includes('drop function if exists public.atina_v2_start_local_game(text, text, text, integer, text)')) errors.push('A migration não preserva a vinculação de progressão da RPC anterior.');
 if (!challengeCountMigration.includes('v_available < p_challenge_count')) errors.push('A RPC não rejeita seleções com desafios insuficientes.');
 
 const localRpcs = [
