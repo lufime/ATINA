@@ -23,11 +23,15 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
     if (!body || typeof body !== "object" || Array.isArray(body)) return json(req, { error: "Invalid JSON body" }, 400);
     const reportId = typeof body.report_id === "string" ? body.report_id : "";
     if (!uuidPattern.test(reportId)) return json(req, { error: "Report ID inválido" }, 400);
+    const existing = await getReportForDelete(reportId);
+    if (!existing) return json(req, { error: "Report não encontrado" }, 404);
+    if (existing.screenshot_path) {
+     try { await removeScreenshot(existing.screenshot_path); }
+     catch { return json(req, { error: "Não foi possível limpar a screenshot. O report foi preservado; tenta novamente." }, 503); }
+    }
     const deleted = await deleteReport(reportId);
-    if (!deleted) return json(req, { error: "Report não encontrado" }, 404);
-    let screenshotCleanupWarning = false;
-    if (deleted.screenshot_path) { try { await removeScreenshot(deleted.screenshot_path); } catch { screenshotCleanupWarning = true; } }
-    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: screenshotCleanupWarning });
+    if (!deleted) return json(req, { error: "Screenshot limpa, mas o report não foi apagado. Tenta novamente." }, 503);
+    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: false });
    } catch (error) { if (error instanceof SyntaxError) return json(req, { error: "Invalid JSON" }, 400); return json(req, { error: "Could not delete report" }, 500); }
   }
   try {
