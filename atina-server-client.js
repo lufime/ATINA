@@ -742,6 +742,50 @@ async function atinaRenderChallengeImageCredit(challengeId) {
   }
 }
 
+function atinaRenderChallengeProgress(position, total) {
+  const card = document.getElementById('category')?.closest('.card');
+  if (!card) return;
+  let wrap = document.getElementById('atinaChallengeProgress');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'atinaChallengeProgress';
+    wrap.setAttribute('role', 'group');
+    wrap.setAttribute('aria-label', 'Progresso da partida');
+    wrap.style.cssText = 'margin:10px 0 14px;';
+    const label = document.createElement('div');
+    label.id = 'atinaChallengeProgressLabel';
+    label.style.cssText = 'display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:800;margin-bottom:5px;';
+    const track = document.createElement('div');
+    track.style.cssText = 'height:8px;border-radius:999px;background:#26384c;overflow:hidden;';
+    const fill = document.createElement('div');
+    fill.id = 'atinaChallengeProgressFill';
+    fill.style.cssText = 'height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#38c5dd,#71f1c0);transition:width .25s ease;';
+    track.appendChild(fill);
+    wrap.append(label, track);
+    const stats = card.querySelector('.atina-live-stats');
+    if (stats) stats.insertAdjacentElement('afterend', wrap);
+    else card.insertBefore(wrap, card.firstChild);
+  }
+  const safeTotal = Math.max(1, Number(total) || 1);
+  const safePosition = Math.max(0, Math.min(safeTotal, Number(position) || 0));
+  const percent = Math.round(safePosition / safeTotal * 100);
+  const label = document.getElementById('atinaChallengeProgressLabel');
+  const fill = document.getElementById('atinaChallengeProgressFill');
+  if (label) {
+    label.textContent = 'Progresso da partida';
+    const count = document.createElement('span');
+    count.textContent = safePosition + ' / ' + safeTotal;
+    label.replaceChildren(document.createTextNode('Progresso da partida'), count);
+  }
+  if (fill) {
+    fill.style.width = percent + '%';
+    fill.setAttribute('aria-valuenow', String(percent));
+    fill.setAttribute('aria-valuemin', '0');
+    fill.setAttribute('aria-valuemax', '100');
+    fill.setAttribute('role', 'progressbar');
+    fill.setAttribute('aria-label', safePosition + ' de ' + safeTotal + ' desafios concluídos');
+  }
+}
 function atinaServerApplyState(state, announce = false) {
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
   const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
@@ -768,6 +812,7 @@ function atinaServerApplyState(state, announce = false) {
   answeredCount = Number(state.answered_count || 0);
   difficultyMode = state.difficulty || difficultyMode;
   const challenge = state.challenge;
+  atinaRenderChallengeProgress(pos + 1, queue.length);
   const specialCard = state.special_card || null;
   const localCardPopupKey = specialCard ? [state.session_id || '', state.position || 0, specialCard.id || specialCard.name || ''].join('|') : '';
   if (specialCard && localCardPopupKey !== window.__atinaLastLocalCardPopupKey) {
