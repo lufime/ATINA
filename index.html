@@ -1303,6 +1303,40 @@ label.section{line-height:1.35!important}
  #home [data-home-page="dashboard"] .atina-fast-play-grid .btn{font-size:11px!important}
 }
 </style>
+<script id="atina-bookmark-nudge-v1">
+(function(){
+ const SAVED='atinaBookmarkSavedV1', COOL='atinaBookmarkCooldownUntilV1', COUNT='atinaBookmarkChallengeCountV1';
+ const HOME_ID='home';
+ function read(key,fallback){try{return localStorage.getItem(key);}catch(e){return fallback;}}
+ function saved(){return read(SAVED,'')==='1';}
+ function count(){return Math.max(0,Number(read(COUNT,'0'))||0);}
+ function hide(){const el=document.getElementById('atinaBookmarkNudge');if(el)el.remove();}
+ function dismiss(){try{localStorage.setItem(COOL,String(count()+10));}catch(e){}hide();}
+ function markSaved(){try{localStorage.setItem(SAVED,'1');}catch(e){}hide();}
+ function render(force=false){
+  const home=document.getElementById(HOME_ID);
+  if(saved())return;
+  const coolUntil=Math.max(0,Number(read(COOL,'0'))||0);
+  if(count()<coolUntil)return;
+  if(!force&&(!home||home.classList.contains('hidden')||home.hidden||count()<10))return;
+  if(document.getElementById('atinaBookmarkNudge'))return;
+  const card=home||document.body;
+  const box=document.createElement('aside');box.id='atinaBookmarkNudge';box.setAttribute('role','note');
+  box.style.cssText='margin:12px 0;padding:12px 14px;border:1px solid #d3ad68;border-radius:13px;background:#14243a;color:#f3f0e8;font-size:14px;line-height:1.45';
+  const title=document.createElement('strong');title.textContent='⭐ Guardar ATINA nos favoritos';
+  const msg=document.createElement('p');msg.style.cssText='margin:6px 0 10px;color:#d6deea';msg.textContent='Guarda esta página nos favoritos do navegador para voltares a jogar mais depressa.';
+  const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
+  const help=document.createElement('button');help.type='button';help.textContent='Como guardar';help.style.cssText='border:0;border-radius:9px;padding:9px 12px;background:#d3ad68;color:#17202b;font-weight:700';
+  help.onclick=function(){msg.textContent='No computador: Ctrl+D (Windows/Linux) ou ⌘+D (Mac). No telemóvel: abre o menu do navegador e escolhe Adicionar aos favoritos ou Marcador.';help.textContent='Já guardei';help.onclick=markSaved;};
+  const close=document.createElement('button');close.type='button';close.textContent='Agora não';close.style.cssText='border:1px solid #30445b;border-radius:9px;padding:9px 12px;background:#1a2d44;color:#f3f0e8';close.onclick=dismiss;
+  actions.append(help,close);box.append(title,msg,actions);card.append(box);
+ }
+ window.atinaShowBookmarkNudge=function(){render(true);};
+ const observer=new MutationObserver(()=>render(false));const observerTarget=document.body;if(observerTarget&&typeof Node==='function'&&observerTarget instanceof Node)observer.observe(observerTarget,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+ document.addEventListener('click',()=>{render(false);});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)render(false);});
+})();
+</script>
 </head>
 <body><div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.231"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.231</strong></div><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite" style="margin:12px 0;padding:13px 15px;border:1px solid #d3ad68;border-radius:14px;background:linear-gradient(110deg,#49391f,#302a22);color:#ffe2a0;font-weight:700;line-height:1.45">
