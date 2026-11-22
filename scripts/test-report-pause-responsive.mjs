@@ -55,7 +55,8 @@ try {
     assert.ok(dims.categoryWidth <= dims.panelWidth && dims.descriptionWidth <= dims.panelWidth, `form controls overflow panel: ${JSON.stringify(dims)}`);
     assert.ok(dims.panelScroll <= dims.panelClient + 1, `panel has horizontal overflow at ${viewport.width}px: ${JSON.stringify(dims)}`);
     assert.equal(await page.locator('#atinaGlobalReportOverlay').evaluate(el=>el.classList.contains('open')),true);
-    assert.equal(await page.evaluate(()=>window.atinaReportBridge.isSoloPaused()),true,'Solo timer should pause when the global report modal opens');
+    const reportDebug=await page.evaluate(()=>({context:window.atinaReportBridge.getContext(),paused:window.atinaReportBridge.isSoloPaused()}));
+    assert.equal(reportDebug.paused,true,'Solo timer should pause when the global report modal opens: '+JSON.stringify(reportDebug));
     await page.locator('#atinaGlobalReportClose').click();
     assert.equal(await page.evaluate(()=>atinaSoloReportPaused),false,'Solo timer should resume when the global report is closed');
     for (const target of ['home','mimicaGame','result','rankingPage','networkLobby']) {
