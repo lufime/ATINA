@@ -5020,7 +5020,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   if(mainCount){mainCount.value=String(n);mainCount.dispatchEvent(new Event('change'));}
   if(mainDifficulty){mainDifficulty.value=difficulty.value;mainDifficulty.dispatchEvent(new Event('change'));}
   try{localStorage.setItem('atinaChallengeCount',String(n));localStorage.setItem('atinaDifficultyMode',difficulty.value);}catch(e){}
-  closeConfig();if(mode==='solo'||mode==='mix'){if(typeof start==='function')start(mode,category);return;}showHomePage('online');const hint=document.getElementById('networkModeHint');if(hint)hint.textContent=({duel:'⚔️ Duelo: configura as preferências e segue para partida rápida ou sala.',party:'🎉 Modo Festa: configura as preferências e segue para criar ou entrar numa sala.',mime:'🎭 Mímicas: segue para a sala online para preparar a ronda.'})[mode]||'Segue para a configuração online.';
+  closeConfig();if(mode==='solo'||mode==='mix'){if(typeof start==='function')start(mode,category);return;}showHomePage('online');const hint=document.getElementById('networkModeHint');if(hint)hint.textContent=({duel:'⚔️ Duelo online: configura as preferências e usa Partida rápida ou cria/entra numa sala.',party:'🎉 Modo Equipas: configura as preferências e cria uma sala ou entra com código.',mime:'🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.'})[mode]||'Segue para a configuração online.';
  });
  document.getElementById('solo').onclick=()=>showHomePage('categories');
  document.getElementById('mix').onclick=()=>openConfig('mix',null);
