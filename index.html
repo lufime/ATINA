@@ -450,6 +450,35 @@ button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;fil
 #atinaUpdateNoticeMessage{overflow-wrap:anywhere;word-break:normal;white-space:normal;hyphens:auto}
 #game .feedback,#game .clue,#game #question,#game .card,[role="status"],[role="alert"],.legal-copy,.online-panel,.online-ranking{min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
 #game .feedback,#game .clue,[role="status"],[role="alert"],.legal-copy{hyphens:auto}
+
+/* ATINA: caixas de mensagens fluidas e preservação de parágrafos */
+#dateNotice,#atinaUpdateNoticeMessage,
+#game .feedback,#game .clue,#game #question,#game .card,
+[role="status"],[role="alert"],.legal-copy,.online-panel,.online-ranking{
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+  height:auto;
+  min-height:0;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+#dateNotice>div{align-items:flex-start;min-width:0}
+#dateNotice>div>div{min-width:0;flex:1 1 auto;white-space:pre-wrap}
+#atinaUpdateNoticeMessage{white-space:pre-wrap}
+#game .feedback,#game .clue,#game #question,[role="status"],[role="alert"],.legal-copy{
+  line-height:1.55;
+  padding-block:clamp(8px,2vw,14px);
+}
+#game .feedback p,#game .clue p,#game #question p,[role="status"] p,[role="alert"] p,.legal-copy p,#atinaUpdateNoticeMessage p{
+  margin-block:0 .85em;
+}
+#game .feedback p:last-child,#game .clue p:last-child,#game #question p:last-child,[role="status"] p:last-child,[role="alert"] p:last-child,.legal-copy p:last-child,#atinaUpdateNoticeMessage p:last-child{margin-bottom:0}
+#game .feedback *,#game .clue *,#game #question *,[role="status"] *,[role="alert"] *,#atinaUpdateNoticeMessage *{min-width:0;max-width:100%;overflow-wrap:anywhere}
+@media(max-width:600px){
+  #game .feedback,#game .clue,#game #question,[role="status"],[role="alert"],#dateNotice,#atinaUpdateNoticeMessage{width:100%;padding-inline:clamp(8px,3vw,14px)}
+}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
