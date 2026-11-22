@@ -8,6 +8,7 @@ const sql = readFileSync(
 
 const migration = readFileSync(new URL('../supabase/migrations/20261102120000_atina_progress_session_binding.sql', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../atina-server-client.js', import.meta.url), 'utf8');
+const accountProfileMigration = readFileSync(new URL('../supabase/migrations/20261121170000_atina_account_profile_include_points.sql', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 
 const required = [
@@ -121,6 +122,14 @@ if (!migration.includes('p_device_token text default null') ||
     !migration.includes("insert into private.atina_xp_session_owners(session_id,player_id)") ||
     !migration.includes("p_game_mode not in ('solo','mix')")) {
   throw new Error('O arranque da sessão não fixa a identidade do pseudónimo no servidor.');
+}
+
+if (!accountProfileMigration.includes("'points',p.total_points") ||
+    !accountProfileMigration.includes('create or replace function public.atina_account_profile(p_session_token text)')) {
+  throw new Error('RPC do perfil não devolve pontos da conta para o ecrã de resultados.');
+}
+if (!client.includes('Number(profile.points)')) {
+  throw new Error('Ecrã de resultados deixou de ler pontos devolvidos pelo perfil.');
 }
 
 console.log(
