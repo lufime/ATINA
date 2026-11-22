@@ -19,3 +19,13 @@ assert.match(client, /atinaChallengeProgressFill/);
 assert.match(client, /Desafios da partida/);
 assert.match(client, /atinaRenderChallengeProgress\(pos \+ 1, queue\.length\)/);
 console.log('Smart challenge selection and progress UI checks passed.');
+
+const progressRpc = sql.slice(sql.indexOf('create or replace function public.atina_challenge_catalog_progress'), sql.indexOf('revoke all on function public.atina_challenge_catalog_progress'));
+assert.match(progressRpc, /atina_challenge_exposures/);
+assert.match(progressRpc, /categories/);
+assert.match(progressRpc, /difficulties/);
+assert.match(progressRpc, /remaining/);
+assert.match(client, /function atinaRenderChallengeCatalogProgress\(data, selectedCategory, selectedDifficulty\)/);
+assert.match(client, /Já completaste todos os desafios desta categoria/);
+assert.match(client, /Já completaste todos os desafios desta dificuldade/);
+assert.match(client, /Contacta o administrador para adicionar novos desafios/);
