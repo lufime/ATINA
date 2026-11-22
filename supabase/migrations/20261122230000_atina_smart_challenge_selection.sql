@@ -441,3 +441,59 @@ revoke all on function public.atina_v2_start_room_challenges(uuid,text,text,inte
 grant execute on function public.atina_v2_start_room_challenges(uuid,text,text,integer,text) to anon,authenticated;
 revoke all on function public.atina_v2_next_room_challenge(uuid,text) from public;
 grant execute on function public.atina_v2_next_room_challenge(uuid,text) to anon,authenticated;
+
+
+-- Per-player challenge catalog counters, kept server-side and scoped to the validated account session.
+create or replace function public.atina_challenge_catalog_progress(p_session_token text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_player_id uuid;
+  v_seen integer;
+  v_total integer;
+  v_categories jsonb;
+  v_difficulties jsonb;
+begin
+  if p_session_token is null or length(p_session_token)<20 then
+    raise exception 'Sessão inválida.' using errcode='28000';
+  end if;
+  select coalesce(
+    (select a.player_id from private.atina_player_accounts a
+      where a.session_token_hash=extensions.digest(convert_to(p_session_token,'UTF8'),'sha256')
+        and a.session_expires_at>clock_timestamp()),
+    (select p.id from private.atina_players p
+      where p.device_token_hash=extensions.digest(convert_to(p_session_token,'UTF8'),'sha256'))
+  ) into v_player_id;
+  if v_player_id is null then
+    raise exception 'Sessão expirada. Inicia sessão novamente.' using errcode='28000';
+  end if;
+  select count(*) into v_total from private.atina_challenges c where c.active;
+  select count(*) into v_seen from private.atina_challenge_exposures e
+    join private.atina_challenges c on c.challenge_id=e.challenge_id and c.active
+    where e.scope_type='player' and e.scope_key=v_player_id::text;
+  select coalesce(jsonb_agg(jsonb_build_object('category',x.category,'total',x.total,'seen',x.seen,'remaining',greatest(0,x.total-x.seen)) order by x.category),'[]'::jsonb)
+    into v_categories from (
+      select c.category,count(*)::integer total,
+             count(e.challenge_id)::integer seen
+        from private.atina_challenges c
+        left join private.atina_challenge_exposures e
+          on e.scope_type='player' and e.scope_key=v_player_id::text and e.challenge_id=c.challenge_id
+       where c.active group by c.category
+    ) x;
+  select coalesce(jsonb_agg(jsonb_build_object('difficulty',x.difficulty,'total',x.total,'seen',x.seen,'remaining',greatest(0,x.total-x.seen)) order by x.difficulty),'[]'::jsonb)
+    into v_difficulties from (
+      select c.difficulty,count(*)::integer total,
+             count(e.challenge_id)::integer seen
+        from private.atina_challenges c
+        left join private.atina_challenge_exposures e
+          on e.scope_type='player' and e.scope_key=v_player_id::text and e.challenge_id=c.challenge_id
+       where c.active group by c.difficulty
+    ) x;
+  return jsonb_build_object('total',v_total,'seen',v_seen,'remaining',greatest(0,v_total-v_seen),'categories',v_categories,'difficulties',v_difficulties);
+end;
+$function$;
+revoke all on function public.atina_challenge_catalog_progress(text) from public;
+grant execute on function public.atina_challenge_catalog_progress(text) to anon,authenticated;
