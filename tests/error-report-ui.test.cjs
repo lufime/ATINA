@@ -11,7 +11,9 @@ test('game report form submits report fields with optional screenshot to report 
   assert.match(game, /nickname:getNickname\(\),category:/);
   assert.match(game, /description,screenshot:screenshotPayload/);
   assert.match(game, /atinaSoloReportScreenshot/);
-  assert.match(game, /3\*1024\*1024/);
+  assert.match(game, /3\s*\*\s*1024\s*\*\s*1024/);
+  assert.match(game, /readAsDataURL\(file\)/);
+  assert.match(game, /screenshotPayload\s*=\s*\{content_type:file\.type,base64:/);
   assert.doesNotMatch(game.slice(game.indexOf('setupSoloReportSubmission'), game.indexOf('const ATINA_PROGRESS_KEY')), /player_id|session_id|room_id|email|ip_address/i);
 });
 
