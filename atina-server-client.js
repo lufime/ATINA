@@ -786,6 +786,43 @@ function atinaRenderChallengeProgress(position, total) {
     fill.setAttribute('aria-label', 'Desafio ' + safePosition + ' de ' + safeTotal);
   }
 }
+
+async function atinaChallengeCatalogProgressRefresh() {
+  const token = atinaAccountSessionToken();
+  if (!token || !atinaServerState) return;
+  try {
+    const data = await atinaServerRpc('atina_challenge_catalog_progress', { p_session_token: token });
+    atinaRenderChallengeCatalogProgress(data, atinaServerState.category, atinaServerState.difficulty);
+  } catch (error) {
+    console.warn('ATINA: não foi possível atualizar os contadores de desafios.', error);
+  }
+}
+function atinaRenderChallengeCatalogProgress(data, selectedCategory, selectedDifficulty) {
+  const card = document.getElementById('category')?.closest('.card');
+  if (!card || !data) return;
+  let panel = document.getElementById('atinaChallengeCatalogProgress');
+  if (!panel) {
+    panel = document.createElement('section');
+    panel.id = 'atinaChallengeCatalogProgress';
+    panel.setAttribute('aria-live', 'polite');
+    panel.style.cssText = 'margin:12px 0;padding:12px;border:1px solid #38556d;border-radius:12px;background:#10283d;font-size:12px;';
+    const matchProgress = document.getElementById('atinaChallengeProgress');
+    if (matchProgress) matchProgress.insertAdjacentElement('afterend', panel);
+    else card.appendChild(panel);
+  }
+  const fmt = n => Number(n || 0).toLocaleString('pt-PT');
+  const row = (label, total, seen, remaining) => '<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0"><span>'+label+'</span><strong>'+fmt(seen)+' / '+fmt(total)+' · '+fmt(remaining)+' restantes</strong></div>';
+  const categories = Array.isArray(data.categories) ? data.categories : [];
+  const difficulties = Array.isArray(data.difficulties) ? data.difficulties : [];
+  const selectedCat = categories.find(x => x.category === selectedCategory);
+  const selectedDiff = difficulties.find(x => x.difficulty === selectedDifficulty);
+  let messages = [];
+  if (selectedCat && Number(selectedCat.remaining) === 0) messages.push('Já completaste todos os desafios desta categoria! Escolhe outra categoria para continuares a jogar.');
+  if (selectedDiff && Number(selectedDiff.remaining) === 0) messages.push('Parabéns! Já completaste todos os desafios desta dificuldade! Experimenta outra dificuldade.');
+  if (Number(data.remaining) === 0) messages.push('🎉 Parabéns! Já completaste todos os desafios disponíveis. Não há mais desafios disponíveis de momento. Contacta o administrador para adicionar novos desafios e continuares a jogar!');
+  panel.innerHTML = '<strong>📚 Progressão do catálogo</strong><div style="margin-top:8px">'+row('Total geral',data.total,data.seen,data.remaining)+'</div><div style="margin-top:8px"><strong>Por categoria</strong>'+categories.map(x=>row(String(x.category),x.total,x.seen,x.remaining)).join('')+'</div><div style="margin-top:8px"><strong>Por dificuldade</strong>'+difficulties.map(x=>row(({easy:'Fácil',medium:'Normal',hard:'Difícil',mixed:'Aleatória'})[x.difficulty]||x.difficulty,x.total,x.seen,x.remaining)).join('')+'</div>'+messages.map(m=>'<p style="margin:8px 0;color:#f2d38e" role="status">'+m+'</p>').join('');
+}
+
 function atinaServerApplyState(state, announce = false) {
   if (!state?.challenge) throw new Error('O servidor devolveu um estado de jogo inválido.');
   const sameChallenge = !!(atinaServerState && atinaServerState.session_id === state.session_id && atinaServerState.position === state.position);
@@ -813,6 +850,7 @@ function atinaServerApplyState(state, announce = false) {
   difficultyMode = state.difficulty || difficultyMode;
   const challenge = state.challenge;
   atinaRenderChallengeProgress(pos + 1, queue.length);
+  if (!sameChallenge) void atinaChallengeCatalogProgressRefresh();
   const specialCard = state.special_card || null;
   const localCardPopupKey = specialCard ? [state.session_id || '', state.position || 0, specialCard.id || specialCard.name || ''].join('|') : '';
   if (specialCard && localCardPopupKey !== window.__atinaLastLocalCardPopupKey) {
