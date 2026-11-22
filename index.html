@@ -5221,6 +5221,13 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #mimicaGame #mimeReveal{min-height:44px!important;margin:7px 0!important;padding:9px!important;font-size:13px!important}
  #mimicaGame .actions{gap:6px!important;margin:8px 0!important}
  #mimicaGame .actions .btn{min-height:48px!important;padding:9px 7px!important;font-size:13px!important}
+
+/* ATINA: quebra e parágrafos em todos os textos/informações do jogo */
+#game :where(p,li,blockquote,article,section,aside,small,label),
+#game [class*="message" i],#game [class*="info" i],#game [class*="notice" i],#game [class*="text" i],#game [class*="description" i],#game [class*="content" i]{box-sizing:border-box;min-width:0;max-width:100%;height:auto;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+#game p,#game [class*="message" i] p,#game [class*="info" i] p,#game [class*="notice" i] p,#game [class*="text" i] p,#game [class*="description" i] p{white-space:pre-wrap;line-height:1.55;margin-block:0 .85em}
+#game p:last-child,#game [class*="message" i] p:last-child,#game [class*="info" i] p:last-child,#game [class*="notice" i] p:last-child,#game [class*="text" i] p:last-child,#game [class*="description" i] p:last-child{margin-bottom:0}
+#game :where(p,li,blockquote,article,section,aside,small,label) *{min-width:0;max-width:100%;overflow-wrap:anywhere}
 </style>
 <script src="./assets/atina-global-error-report.js"></script>
 </body>
