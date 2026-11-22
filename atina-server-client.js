@@ -772,10 +772,10 @@ function atinaRenderChallengeProgress(position, total) {
   const label = document.getElementById('atinaChallengeProgressLabel');
   const fill = document.getElementById('atinaChallengeProgressFill');
   if (label) {
-    label.textContent = 'Progresso da partida';
+    label.textContent = 'Desafios da partida';
     const count = document.createElement('span');
     count.textContent = safePosition + ' / ' + safeTotal;
-    label.replaceChildren(document.createTextNode('Progresso da partida'), count);
+    label.replaceChildren(document.createTextNode('Desafios da partida'), count);
   }
   if (fill) {
     fill.style.width = percent + '%';
@@ -783,7 +783,7 @@ function atinaRenderChallengeProgress(position, total) {
     fill.setAttribute('aria-valuemin', '0');
     fill.setAttribute('aria-valuemax', '100');
     fill.setAttribute('role', 'progressbar');
-    fill.setAttribute('aria-label', safePosition + ' de ' + safeTotal + ' desafios concluídos');
+    fill.setAttribute('aria-label', 'Desafio ' + safePosition + ' de ' + safeTotal);
   }
 }
 function atinaServerApplyState(state, announce = false) {
