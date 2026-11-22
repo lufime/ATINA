@@ -6,12 +6,12 @@ const vm = require('node:vm');
 const game = fs.readFileSync('index.html', 'utf8');
 const admin = fs.readFileSync('admin-images.html', 'utf8');
 
-test('game report form submits only pseudonym, category and description to report endpoint', () => {
+test('game report form submits report fields with optional screenshot to report endpoint', () => {
   assert.match(game, /atina-error-reports-submit/);
   assert.match(game, /nickname:getNickname\(\),category:/);
   assert.match(game, /description,screenshot:screenshotPayload/);
   assert.match(game, /atinaSoloReportScreenshot/);
-  assert.match(game, /3\\*1024\\*1024/);
+  assert.match(game, /3\*1024\*1024/);
   assert.doesNotMatch(game.slice(game.indexOf('setupSoloReportSubmission'), game.indexOf('const ATINA_PROGRESS_KEY')), /player_id|session_id|room_id|email|ip_address/i);
 });
 
