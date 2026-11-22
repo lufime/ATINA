@@ -157,7 +157,7 @@ begin
     ) q;
 
   if coalesce(cardinality(v_queue),0)=0 then
-    raise exception 'Já viste todos os desafios disponíveis para estes critérios. Experimenta outra categoria ou dificuldade.';
+    raise exception '🎉 Parabéns! Já completaste todos os desafios disponíveis. Não há mais desafios disponíveis de momento. Contacta o administrador para adicionar novos desafios e continuares a jogar!';
   end if;
   if p_game_mode='party' then
     v_queue:=v_queue[1:least(10,cardinality(v_queue))];
