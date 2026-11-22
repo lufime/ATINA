@@ -88,7 +88,6 @@ declare
   v_queue integer[];
   v_session private.atina_v2_local_sessions;
   v_player_id uuid;
-  v_priority integer;
 begin
   if p_game_mode is null or p_game_mode not in ('solo','duel','mix','party') then
     raise exception 'Modo inválido.' using errcode='22023';
@@ -147,10 +146,6 @@ begin
              random() as random_order
         from private.atina_challenges c
        where c.active
-         and (p_game_mode='mix' or p_difficulty='mixed'
-              or c.difficulty in ('easy','medium','hard'))
-         and (p_game_mode='mix' or p_difficulty='mixed'
-              or p_category is null or c.category is not null)
          and (v_player_id is null or not exists (
            select 1 from private.atina_challenge_exposures e
             where e.scope_type='player' and e.scope_key=v_player_id::text
