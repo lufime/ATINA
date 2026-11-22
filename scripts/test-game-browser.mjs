@@ -181,14 +181,14 @@ try {
     nodes.map(node => node.getAttribute('data-category')).filter(name => name && name !== 'Mímicas'));
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
 
-  // Regressão: o atalho Solo deve abrir primeiro a seleção de modos.
+  // Regressão: o atalho Solo deve abrir a seleção de modalidades antes da partida.
   await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').click();
-  await page.locator('#home [data-home-page="play"]').first().waitFor({state:'visible',timeout:5000});
-  assert.equal(await page.locator('#solo').isVisible(), true,
-    'O painel de seleção deve mostrar o botão Solo após o atalho rápido.');
-  // O utilizador inicia explicitamente a partida a partir da seleção.
-  await page.locator('#solo').click();
+  await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
+  assert.equal(await page.locator('#categories [data-category]').first().isVisible(), true,
+    'O atalho Solo deve apresentar a seleção de modalidades.');
+  // O utilizador escolhe uma modalidade e inicia a partida.
+  await page.locator('#categories [data-category]').filter({hasText: categories[0]}).click();
   await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
   await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
   await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
