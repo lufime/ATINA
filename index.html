@@ -1046,7 +1046,11 @@ label.section{line-height:1.35!important}
   // secundário escondido. Mantém Duelo e Festa no fluxo online.
   // Os atalhos rápidos abrem primeiro a seleção de modos, evitando arrancar
   // uma partida sem o utilizador passar pelo ecrã de seleção.
-  if((launch==="solo"||launch==="mix")&&typeof showHomePage==="function"){
+  if(launch==="solo"&&typeof showHomePage==="function"){
+   showHomePage("categories");
+   return;
+  }
+  if(launch==="mix"&&typeof showHomePage==="function"){
    showHomePage("play");
    return;
   }
