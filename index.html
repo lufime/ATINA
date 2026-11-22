@@ -2567,6 +2567,22 @@ function timerTick(){if(atinaSoloReportPaused)return;if(locked){stopTimer();retu
 function startTimer(resume=false){if(atinaSoloReportPaused)return;stopTimer();if(document.getElementById('atinaSpecialCardPopup'))return;if(!resume)timeLeft=timedMode;timePenaltyApplied=false;lastTimerBeepAt=0;drawTimer();if(!timedMode||locked)return;unlockTimerAudio();timerDeadline=Date.now()+Math.max(0,timeLeft)*1000;timerInterval=setInterval(timerTick,250);timerTick();}
 let atinaSoloReportPaused=false,atinaSoloReportRemaining=0;function atinaSoloReportOpen(){if(networkRoom||mode!=='solo'||locked||timePenaltyApplied||atinaSoloReportPaused||autoNextTimeout!==null||autoRevealTimeout!==null||autoRevealInterval!==null||document.getElementById('atinaSpecialCardPopup'))return;if(timerDeadline)atinaSoloReportRemaining=Math.max(0,Math.ceil((timerDeadline-Date.now())/1000));else atinaSoloReportRemaining=Math.max(0,timeLeft);if(timerInterval!==null){clearInterval(timerInterval);timerInterval=null;}timerDeadline=0;atinaSoloReportPaused=true;$('atinaSoloReportPanel')?.classList.remove('hidden');$('atinaSoloReportOpen')?.setAttribute('aria-expanded','true');if($('timerDisplay'))$('timerDisplay').textContent='⏸️ '+String(Math.floor(atinaSoloReportRemaining/60)).padStart(2,'0')+':'+String(atinaSoloReportRemaining%60).padStart(2,'0');}function atinaSoloReportResume(){if(!atinaSoloReportPaused)return;atinaSoloReportPaused=false;timeLeft=atinaSoloReportRemaining;atinaSoloReportRemaining=0;$('atinaSoloReportPanel')?.classList.add('hidden');$('atinaSoloReportOpen')?.setAttribute('aria-expanded','false');drawTimer();if(timedMode&&!locked){timerDeadline=Date.now()+Math.max(0,timeLeft)*1000;timerInterval=setInterval(timerTick,250);timerTick();}}
 $('atinaSoloReportOpen')?.addEventListener('click',atinaSoloReportOpen);$('atinaSoloReportResume')?.addEventListener('click',atinaSoloReportResume);
+const ATINA_REPORT_SCREENSHOT_MAX_BYTES=3*1024*1024;
+let screenshotPayload=null;
+(function setupSoloReportScreenshot(){
+ const input=$('atinaSoloReportScreenshot'),preview=$('atinaSoloReportScreenshotPreview'),image=$('atinaSoloReportScreenshotImage'),remove=$('atinaSoloReportScreenshotRemove');
+ if(!input||!preview||!image)return;
+ const clearScreenshot=()=>{screenshotPayload=null;input.value='';preview.classList.add('hidden');image.removeAttribute('src');};
+ input.addEventListener('change',()=>{
+  const file=input.files?.[0];if(!file){clearScreenshot();return;}
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){clearScreenshot();$('atinaSoloReportStatus').textContent='Formato inválido. Usa PNG, JPG ou WebP.';return;}
+  if(file.size>ATINA_REPORT_SCREENSHOT_MAX_BYTES){clearScreenshot();$('atinaSoloReportStatus').textContent='Screenshot excede o limite de 3 MB.';return;}
+  const reader=new FileReader();
+  reader.onload=()=>{const result=typeof reader.result==='string'?reader.result:'';const comma=result.indexOf(',');if(comma<0){clearScreenshot();return;}screenshotPayload={content_type:file.type,base64:result.slice(comma+1)};image.src=result;preview.classList.remove('hidden');};
+  reader.onerror=()=>{clearScreenshot();$('atinaSoloReportStatus').textContent='Não foi possível ler a screenshot.';};
+  reader.readAsDataURL(file);
+ });
+ remove?.addEventListener('click',clearScreenshot);})();
 (function setupSoloReportSubmission(){
  const form=$('atinaSoloReportForm'),nickname=$('atinaSoloReportNickname'),status=$('atinaSoloReportStatus'),submit=$('atinaSoloReportSubmit');
  if(!form)return;
