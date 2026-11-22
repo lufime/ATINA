@@ -12,8 +12,8 @@ test('transversal report component is mounted in the game entry page', () => {
   assert.match(source, /role="dialog"/);
   assert.match(source, /gameContext\(\)/);
   assert.match(source, /contextText\(ctx\)/);
-  assert.match(source, /question:question\|\|undefined/);
-  assert.match(source, /clues:clues\|\|undefined/);
+  assert.match(source, /c\.question/);
+  assert.match(source, /c\.clues/);
   assert.match(source, /ctx\.question\?'Desafio: '\+ctx\.question/);
   assert.match(source, /ctx\.clues\?'Pistas visíveis: '\+ctx\.clues/);
   assert.match(source, /game_area:ctx\.screen\+' · '\+ctx\.mode/);
@@ -29,8 +29,8 @@ test('report is available globally and offers screenshot upload/capture', () => 
 });
 
 test('Solo clock pauses via existing pause routine and resumes on modal close/success', () => {
-  assert.match(source, /atinaSoloReportOpen\(\)/);
-  assert.match(source, /atinaSoloReportResume\(\)/);
+  assert.match(source, /bridge\?\.pauseSolo\?\.\(\)/);
+  assert.match(source, /bridge\?\.resumeSolo\?\.\(\)/);
   assert.match(source, /function close\(\).*resumeSolo/s);
   assert.match(source, /setTimeout\(close,500\)/);
 });
