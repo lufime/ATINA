@@ -189,6 +189,8 @@ try {
     'O painel de seleção deve mostrar o botão Solo após o atalho rápido.');
   // O utilizador inicia explicitamente a partida a partir da seleção.
   await page.locator('#solo').click();
+  await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
+  await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
   await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
     const state = await page.evaluate(() => ({startType:typeof start,session:localStorage.getItem('atinaAccountSessionV1'),guest:atinaGuestLimitReached(),guestCount:localStorage.getItem('atinaGuestChallengesCompletedV1'),gameCount:games.length,difficulty:difficultyMode,queueLength:queue.length,mode,screen:localStorage.getItem('atinaLastScreen'),dashboardHidden:document.querySelector('[data-home-page="dashboard"]')?.hidden,launchVisible:document.querySelector('[data-atina-launch="solo"]')?.getBoundingClientRect().height>0}));
     throw new Error('Quick Solo não abriu a partida. Diagnóstico: '+JSON.stringify({state,pageDialogs,pageErrors}));
@@ -234,6 +236,8 @@ try {
   // Resposta errada não fecha a ronda; a resposta certa seguinte fecha-a.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#solo').click();
+  await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
+  await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
   await page.locator('#game').waitFor({state:'visible'});
   await page.locator('#answer').fill('Resposta errada');
   await page.locator('#submit').click();
