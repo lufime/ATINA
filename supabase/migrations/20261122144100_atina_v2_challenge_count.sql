@@ -59,8 +59,8 @@ end; $$;
 
 -- Compatibility wrapper: existing SQL tests/callers passing a challenge count as argument 5.
 create or replace function public.atina_v2_start_local_game(
-  p_game_mode text, p_difficulty text, p_category text default null,
-  p_timed_mode_seconds integer default 60, p_challenge_count integer default 10
+  p_game_mode text, p_difficulty text, p_category text,
+  p_timed_mode_seconds integer, p_challenge_count integer
 ) returns jsonb language sql security definer set search_path = '' as $$
   select public.atina_v2_start_local_game(p_game_mode,p_difficulty,p_category,p_timed_mode_seconds,null,p_challenge_count);
 $$;
