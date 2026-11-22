@@ -1,0 +1,25 @@
+name: Testar quantidade de desafios por ronda
+on:
+  pull_request:
+    paths:
+      - index.html
+      - scripts/test-round-count.mjs
+      - .github/workflows/test-round-count.yml
+  push:
+    branches:
+      - main
+      - fix/round-challenge-count
+    paths:
+      - index.html
+      - scripts/test-round-count.mjs
+      - .github/workflows/test-round-count.yml
+jobs:
+  round-count:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Testar quantidade e limite da ronda
+        run: node scripts/test-round-count.mjs
