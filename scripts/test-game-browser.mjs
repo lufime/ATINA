@@ -223,7 +223,12 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   });
 
   // Regressão: o atalho Solo deve abrir diretamente a configuração/seleção, sem a página de categorias.
-  await page.evaluate(() => showHomePage('dashboard'));
+  await page.evaluate(() => {
+    $('challengeCount').value = '10';
+    difficultyMode = 'medium';
+    $('difficultyMode').value = 'medium';
+    showHomePage('dashboard');
+  });
   await page.locator('[data-atina-launch="solo"]').click();
   await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
   assert.equal(await page.locator('#atinaSoloCategoryPicker').isVisible(), true,
