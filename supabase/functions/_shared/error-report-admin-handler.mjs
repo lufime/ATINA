@@ -39,7 +39,7 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
      if (existing.screenshot_path) { try { await clearScreenshotPath(reportId); } catch {} }
      return json(req, { error: "Screenshot removida, mas o report foi preservado. Atualiza e tenta apagar novamente." }, 503);
     }
-    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: false });
+    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: !existing.screenshot_path });
    } catch (error) { if (error instanceof SyntaxError) return json(req, { error: "Invalid JSON" }, 400); return json(req, { error: "Could not delete report" }, 500); }
   }
   try {
