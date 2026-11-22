@@ -484,7 +484,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
         const screenshotBox=document.createElement("div");screenshotBox.style.cssText="margin:10px 0";
         if(report.screenshot_url){
           const image=document.createElement("img");image.src=report.screenshot_url;image.alt="Screenshot do report";image.loading="lazy";image.style.cssText="display:block;width:100%;max-height:360px;object-fit:contain;border:1px solid #36516e;border-radius:12px;background:#08121d;margin:10px 0";
-          image.onerror=()=>{image.remove();shot.remove();const fallback=document.createElement("p");fallback.className="challenge-meta";fallback.textContent="Screenshot registada, mas não foi possível carregar a imagem. Atualiza os reports para renovar o acesso.";screenshotBox.appendChild(fallback);};
+          image.onerror=()=>{image.remove();const brokenLink=screenshotBox.querySelector('a');if(brokenLink)brokenLink.remove();const fallback=document.createElement("p");fallback.className="challenge-meta";fallback.textContent="Screenshot registada, mas não foi possível carregar a imagem. Atualiza os reports para renovar o acesso.";screenshotBox.appendChild(fallback);};
           screenshotBox.appendChild(image);
           const shot=document.createElement("a");shot.href=report.screenshot_url;shot.target="_blank";shot.rel="noopener noreferrer";shot.className="btn secondary full";shot.textContent="Abrir screenshot em tamanho completo";screenshotBox.appendChild(shot);
         }else{const fallback=document.createElement("p");fallback.className="challenge-meta";fallback.textContent="Screenshot registada, mas temporariamente indisponível. Atualiza os reports para tentar novamente.";screenshotBox.appendChild(fallback);}
