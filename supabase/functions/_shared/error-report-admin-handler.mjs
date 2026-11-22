@@ -4,7 +4,7 @@ const statuses = new Set(["new", "in_review", "fixing", "resolved", "archived"])
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const headersFor = (req) => { const origin = req.headers.get("Origin") ?? ""; return { ...(allowedOrigins.has(origin) ? { "Access-Control-Allow-Origin": origin } : {}), "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "GET, PATCH, DELETE, OPTIONS", "Vary": "Origin", "Content-Type": "application/json" }; };
 const json = (req, body, status = 200) => new Response(JSON.stringify(body), { status, headers: headersFor(req) });
-export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport, getReportForDelete, deleteReport, removeScreenshot, signedScreenshotUrl }) {
+export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport, getReportForDelete, deleteReport, removeScreenshot, clearScreenshotPath, signedScreenshotUrl }) {
  return async (req) => {
   const origin = req.headers.get("Origin") ?? "";
   if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
@@ -29,8 +29,16 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
      try { await removeScreenshot(existing.screenshot_path); }
      catch { return json(req, { error: "Não foi possível limpar a screenshot. O report foi preservado; tenta novamente." }, 503); }
     }
-    const deleted = await deleteReport(reportId);
-    if (!deleted) return json(req, { error: "Screenshot limpa, mas o report não foi apagado. Tenta novamente." }, 503);
+    let deleted;
+    try { deleted = await deleteReport(reportId); }
+    catch {
+     if (existing.screenshot_path) { try { await clearScreenshotPath(reportId); } catch {} }
+     return json(req, { error: "Screenshot removida, mas o report foi preservado. Atualiza e tenta apagar novamente." }, 503);
+    }
+    if (!deleted) {
+     if (existing.screenshot_path) { try { await clearScreenshotPath(reportId); } catch {} }
+     return json(req, { error: "Screenshot removida, mas o report foi preservado. Atualiza e tenta apagar novamente." }, 503);
+    }
     return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: false });
    } catch (error) { if (error instanceof SyntaxError) return json(req, { error: "Invalid JSON" }, 400); return json(req, { error: "Could not delete report" }, 500); }
   }
