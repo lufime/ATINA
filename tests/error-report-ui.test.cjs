@@ -2,34 +2,39 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-
 const game = fs.readFileSync('index.html', 'utf8');
 const admin = fs.readFileSync('admin-images.html', 'utf8');
 
-test('game report form submits report fields with optional screenshot to report endpoint', () => {
+test('game report supports optional uploaded or directly captured screenshots', () => {
   assert.match(game, /atina-error-reports-submit/);
   assert.match(game, /nickname:getNickname\(\),category:/);
   assert.match(game, /description,screenshot:screenshotPayload/);
   assert.match(game, /atinaSoloReportScreenshot/);
+  assert.match(game, /atinaSoloReportCapture/);
+  assert.match(game, /getDisplayMedia/);
+  assert.match(game, /Capturar screenshot do jogo/);
   assert.match(game, /3\s*\*\s*1024\s*\*\s*1024/);
   assert.match(game, /readAsDataURL\(file\)/);
   assert.match(game, /screenshotPayload\s*=\s*\{content_type:file\.type,base64:/);
   assert.doesNotMatch(game.slice(game.indexOf('setupSoloReportSubmission'), game.indexOf('const ATINA_PROGRESS_KEY')), /player_id|session_id|room_id|email|ip_address/i);
 });
 
-test('solo report keeps the timer paused until explicit resume', () => {
-  assert.match(game, /Report enviado com sucesso\. O relógio continua pausado até voltares ao jogo/);
-  assert.match(game, /atinaSoloReportResume/);
+test('successful Solo report automatically resumes the paused clock', () => {
+  assert.match(game, /Report enviado com sucesso\. O relógio foi retomado automaticamente/);
+  assert.match(game, /atinaSoloReportResume\(\)/);
+  assert.match(game, /atinaSoloReportRemaining/);
 });
 
-test('admin reports UI is integrated in existing admin-images page', () => {
+test('admin report UI previews screenshots and provides guarded deletion', () => {
   assert.match(admin, /data-admin-tab="reports"/);
   assert.match(admin, /id="reportsPanel"/);
   assert.match(admin, /atina-error-reports-admin/);
   assert.match(admin, /reportNicknameFilter/);
   assert.match(admin, /Guardar alterações/);
-  assert.match(admin, /Ver screenshot/);
-  assert.match(admin, /report.screenshot_url/);
+  assert.match(admin, /Abrir screenshot em tamanho completo/);
+  assert.match(admin, /Apagar report/);
+  assert.match(admin, /method:"DELETE"/);
+  assert.match(admin, /report\.screenshot_url/);
 });
 
 test('report contents are rendered through textContent and DOM nodes', () => {
@@ -39,9 +44,30 @@ test('report contents are rendered through textContent and DOM nodes', () => {
   const render = admin.slice(start, end);
   assert.match(render, /desc\.textContent=report\.description/);
   assert.match(render, /title\.textContent=/);
+  assert.match(render, /image\.src=report\.screenshot_url/);
   assert.doesNotMatch(render, /innerHTML.*report\.(nickname|description|internal_note)/);
 });
 
+test('screenshot capture handles unsupported browsers, enforces size, and stops media tracks', () => {
+  const capture = game.slice(game.indexOf('const captureButton=$("atinaSoloReportCapture")'), game.indexOf('remove?.addEventListener', game.indexOf('const captureButton=$("atinaSoloReportCapture")')));
+  assert.match(capture, /getDisplayMedia/);
+  assert.match(capture, /track/);
+  assert.match(capture, /blob\.size>ATINA_REPORT_SCREENSHOT_MAX_BYTES/);
+  assert.match(capture, /stream\?\.getTracks\(\)\.forEach\(track=>track\.stop\(\)\)/);
+  assert.match(capture, /canvas\.toBlob/);
+  assert.match(capture, /catch\(error\)/);
+});
+test('clock resumes only after successful report and failed submission keeps description', () => {
+  const start=game.indexOf('form.addEventListener(\'submit\',async event=>');
+  const end=game.indexOf('});\n})();',start);
+  assert.ok(start>=0&&end>start);
+  const submitFlow=game.slice(start,end);
+  assert.match(submitFlow,/if\(!response\.ok\|\|!data\.success\)throw/);
+  assert.match(submitFlow,/atinaSoloReportResume\(\)/);
+  assert.match(submitFlow,/catch\(error\)/);
+  assert.doesNotMatch(submitFlow,/catch\(error\)[\s\S]*atinaSoloReportResume\(\)/);
+  assert.match(submitFlow,/finally\{submit\.disabled=false;/);
+});
 test('embedded JavaScript scripts parse without syntax errors', () => {
   const scripts = [];
   let cursor = 0;

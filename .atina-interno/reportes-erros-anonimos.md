@@ -153,11 +153,11 @@ A alternativa mais simples de auditar, sem depender de claims que possam demorar
 ## Integração de formulário e painel Admin (2026-11-21)
 - Branch de implementação: `atina/admin-error-reports-inbox`; PR #348 em draft, ainda sem merge/publicação.
 - O formulário de reporte no modo Solo foi ligado ao endpoint `atina-error-reports-submit`: categoria, pseudónimo local e descrição; validação mínima de 20 caracteres no cliente; mensagem de sucesso/falha; a descrição é preservada em caso de falha.
-- Após envio bem-sucedido, a descrição é limpa e o relógio continua pausado até o jogador retomar explicitamente o desafio.
+- Após envio bem-sucedido, a descrição é limpa e o relógio retoma automaticamente o tempo restante preservado, sem penalização. A retoma automática está em validação no PR; não está publicada.
 - O painel existente `admin-images.html` ganhou separador Reports, contadores por estado, filtros de estado/categoria/pseudónimo, descrição, versão/área se presentes, edição de estado e nota interna, com criação de elementos DOM para apresentar conteúdo do reporte.
 - A UI usa a Edge Function `atina-error-reports-admin` (GET/PATCH) e submissão usa `atina-error-reports-submit` (POST), que permanecem scaffold no repositório.
 - **Não funcional em produção ainda:** as Edge Functions, a tabela e a allowlist não foram aplicadas/deployadas ao Supabase `atina-development`. O painel mostrará erro de ligação até backend ser validado e disponibilizado.
-- Não foi adicionado screenshot/upload; sem emails, IPs, IDs de jogador, partida, sessão, fingerprint ou notificações.
+- PR em preparação: screenshots opcionais via ficheiro ou captura direta do ecrã partilhado pelo navegador, pré-visualização no Admin e eliminação de reports com limpeza da screenshot. Sem emails, IPs, IDs de jogador, partida, sessão, fingerprint ou notificações.
 - Não foi alterada a base de dados de produção, não houve deploy nem merge, e Render não foi utilizado.
-- Versão de jogo referenciada no código atual: v0.1.218 (publicação online não revalidada); data da atualização deste documento: 21/11/2026.
-- Testes browser e de integração com Supabase continuam pendentes; validar CI, mobile/desktop, autorização server-side, persistência e falhas antes de ativar.
+- Versão de jogo referenciada: v0.1.218 (publicação online não revalidada); data da atualização deste documento: 22/11/2026.
+- Testes browser e de integração Supabase continuam pendentes. O PR mantém as alterações isoladas e não aplica migrations, deploy, merge ou alterações na Supabase de produção. Validar CI e autorização server-side antes de ativar.

@@ -2,14 +2,14 @@
 export const allowedOrigins = new Set(["https://lufime.github.io", "http://localhost:5173"]);
 const statuses = new Set(["new", "in_review", "fixing", "resolved", "archived"]);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const headersFor = (req) => { const origin = req.headers.get("Origin") ?? ""; return { ...(allowedOrigins.has(origin) ? { "Access-Control-Allow-Origin": origin } : {}), "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "GET, PATCH, OPTIONS", "Vary": "Origin", "Content-Type": "application/json" }; };
+const headersFor = (req) => { const origin = req.headers.get("Origin") ?? ""; return { ...(allowedOrigins.has(origin) ? { "Access-Control-Allow-Origin": origin } : {}), "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "GET, PATCH, DELETE, OPTIONS", "Vary": "Origin", "Content-Type": "application/json" }; };
 const json = (req, body, status = 200) => new Response(JSON.stringify(body), { status, headers: headersFor(req) });
-export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport, signedScreenshotUrl }) {
+export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport, getReportForDelete, deleteReport, removeScreenshot, clearScreenshotPath, signedScreenshotUrl }) {
  return async (req) => {
   const origin = req.headers.get("Origin") ?? "";
   if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: headersFor(req) });
-  if (!["GET", "PATCH"].includes(req.method)) return json(req, { error: "Method not allowed" }, 405);
+  if (!["GET", "PATCH", "DELETE"].includes(req.method)) return json(req, { error: "Method not allowed" }, 405);
   const authHeader = req.headers.get("Authorization") ?? "", token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
   if (!token) return json(req, { error: "Unauthorized" }, 401);
   let user; try { user = await authenticate(token); } catch { return json(req, { error: "Unauthorized" }, 401); }
@@ -17,6 +17,31 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
   let adminAllowed; try { adminAllowed = await isAdmin(user.id); } catch { return json(req, { error: "Admin authorization check failed" }, 503); }
   if (!adminAllowed) return json(req, { error: "Administrador não autorizado: a conta autenticada não está registada para gerir reports." }, 403);
   if (req.method === "GET") { try { const reports = (await listReports()) ?? []; const enriched = await Promise.all(reports.map(async report => ({ ...report, screenshot_url: report.screenshot_path ? await signedScreenshotUrl(report.screenshot_path) : null }))); return json(req, { reports: enriched }); } catch { return json(req, { error: "Could not load reports" }, 500); } }
+  if (req.method === "DELETE") {
+   try {
+    const body = await req.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) return json(req, { error: "Invalid JSON body" }, 400);
+    const reportId = typeof body.report_id === "string" ? body.report_id : "";
+    if (!uuidPattern.test(reportId)) return json(req, { error: "Report ID inválido" }, 400);
+    const existing = await getReportForDelete(reportId);
+    if (!existing) return json(req, { error: "Report não encontrado" }, 404);
+    if (existing.screenshot_path) {
+     try { await removeScreenshot(existing.screenshot_path); }
+     catch { return json(req, { error: "Não foi possível limpar a screenshot. O report foi preservado; tenta novamente." }, 503); }
+    }
+    let deleted;
+    try { deleted = await deleteReport(reportId); }
+    catch {
+     if (existing.screenshot_path) { try { await clearScreenshotPath(reportId); } catch {} }
+     return json(req, { error: "Screenshot removida, mas o report foi preservado. Atualiza e tenta apagar novamente." }, 503);
+    }
+    if (!deleted) {
+     if (existing.screenshot_path) { try { await clearScreenshotPath(reportId); } catch {} }
+     return json(req, { error: "Screenshot removida, mas o report foi preservado. Atualiza e tenta apagar novamente." }, 503);
+    }
+    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: false });
+   } catch (error) { if (error instanceof SyntaxError) return json(req, { error: "Invalid JSON" }, 400); return json(req, { error: "Could not delete report" }, 500); }
+  }
   try {
    const body = await req.json();
    if (!body || typeof body !== "object" || Array.isArray(body)) return json(req, { error: "Invalid JSON body" }, 400);

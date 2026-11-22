@@ -26,8 +26,11 @@ Estes modos encaminham para o fluxo online. A experiência depende da sala/parti
 ## Problemas ainda não verificados
 Esta revisão não incluiu testes end-to-end em dispositivos nem reproduziu falhas adicionais. Não se adicionam problemas como confirmados sem evidência.
 
+## Reports de erros — alteração em validação
+O fluxo de reportes está a receber correções num PR ainda não publicado: pré-visualização de screenshots na Administração, captura de ecrã diretamente no formulário, opção de eliminar reportes e retoma automática do relógio após envio bem-sucedido. Até os CI e testes de navegador terminarem, estas correções não são consideradas validadas nem disponíveis na versão online.
+
 ## Como reportar
-Indica o modo, o passo em que ocorreu, o resultado esperado e o que aconteceu. Se possível, junta uma captura de ecrã. Não incluas palavras-passe, tokens ou dados privados.
+Indica o modo, o passo em que ocorreu, o resultado esperado e o que aconteceu. Se possível, junta uma captura de ecrã pelo ficheiro ou pela opção de captura no formulário. Não incluas palavras-passe, tokens ou dados privados.
 
 ## Estado das correções
 Uma correção só é considerada concluída após implementação e validação.
