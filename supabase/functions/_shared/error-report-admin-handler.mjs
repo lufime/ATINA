@@ -4,7 +4,7 @@ const statuses = new Set(["new", "in_review", "fixing", "resolved", "archived"])
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const headersFor = (req) => { const origin = req.headers.get("Origin") ?? ""; return { ...(allowedOrigins.has(origin) ? { "Access-Control-Allow-Origin": origin } : {}), "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "GET, PATCH, DELETE, OPTIONS", "Vary": "Origin", "Content-Type": "application/json" }; };
 const json = (req, body, status = 200) => new Response(JSON.stringify(body), { status, headers: headersFor(req) });
-export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport, deleteReport, removeScreenshot, signedScreenshotUrl }) {
+export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport, getReportForDelete, deleteReport, removeScreenshot, signedScreenshotUrl }) {
  return async (req) => {
   const origin = req.headers.get("Origin") ?? "";
   if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
