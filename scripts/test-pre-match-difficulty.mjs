@@ -42,4 +42,6 @@ assert(html.includes('queue=queue.slice(0,atinaChallengeCount)'),'configured cou
 assert(html.includes("['easy','medium','hard']"),'random difficulty uses existing score-supported levels');
 assert(html.includes("Object.entries(p.atinaMixedDifficultyCache).filter(([k,v])=>Number.isInteger(Number(k))&&['easy','medium','hard'].includes(v))"),'restored cache filters invalid indexes and difficulty values');
 
+assert(html.includes("!['solo','duel','mix'].includes(p.mode)"),'local progress restore accepts the Mix mode');
+
 console.log('Pre-match selection regression checks passed.');
