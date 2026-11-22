@@ -5187,3 +5187,59 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <script src="./assets/atina-global-error-report.js"></script>
 </body>
 </html>
+
+<style id="atina-game-message-line-breaks-v1">
+/* Texto de mensagens e informações: quebras de linha legíveis em todos os ecrãs */
+#atinaUpdateNotice,
+#atinaUpdateNoticeMessage,
+.atina-notification-panel,
+.atina-notification-panel *,
+#game .feedback,
+#game .clue,
+#game #question,
+#game .card p,
+#game .card small,
+#game .card .muted,
+#home .home-hint,
+#home .home-welcome p,
+#home .daily-mission p,
+#home .home-block p {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  hyphens: auto;
+  line-height: 1.55 !important;
+}
+#atinaUpdateNoticeMessage,
+.atina-notification-panel,
+#game .feedback,
+#game .clue,
+#game .card p,
+#game .card small,
+#game .card .muted,
+#home .home-hint,
+#home .home-welcome p,
+#home .daily-mission p,
+#home .home-block p {
+  min-width: 0;
+  max-width: 100%;
+}
+#atinaUpdateNotice > div,
+.atina-notification-head,
+#game .feedback,
+#game .card .row {
+  min-width: 0;
+}
+#atinaUpdateNotice strong,
+.atina-notification-panel strong,
+#game .feedback strong,
+#game .clue strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  #atinaUpdateNotice { padding: 11px 12px !important; }
+  #atinaUpdateNoticeMessage { line-height: 1.55 !important; }
+  .atina-notification-panel { line-height: 1.55 !important; }
+  #game .feedback, #game .clue, #game .card p { line-height: 1.55 !important; }
+}
+</style>
