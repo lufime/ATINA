@@ -4,7 +4,7 @@ const statuses = new Set(["new", "in_review", "fixing", "resolved", "archived"])
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const headersFor = (req) => { const origin = req.headers.get("Origin") ?? ""; return { ...(allowedOrigins.has(origin) ? { "Access-Control-Allow-Origin": origin } : {}), "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "GET, PATCH, OPTIONS", "Vary": "Origin", "Content-Type": "application/json" }; };
 const json = (req, body, status = 200) => new Response(JSON.stringify(body), { status, headers: headersFor(req) });
-export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport }) {
+export function createAdminHandler({ authenticate, isAdmin, listReports, updateReport, signedScreenshotUrl }) {
  return async (req) => {
   const origin = req.headers.get("Origin") ?? "";
   if (!allowedOrigins.has(origin)) return json(req, { error: "Origin not allowed" }, 403);
@@ -16,7 +16,7 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
   if (!user) return json(req, { error: "Unauthorized" }, 401);
   let adminAllowed; try { adminAllowed = await isAdmin(user.id); } catch { return json(req, { error: "Admin authorization check failed" }, 503); }
   if (!adminAllowed) return json(req, { error: "Administrador não autorizado: a conta autenticada não está registada para gerir reports." }, 403);
-  if (req.method === "GET") { try { return json(req, { reports: (await listReports()) ?? [] }); } catch { return json(req, { error: "Could not load reports" }, 500); } }
+  if (req.method === "GET") { try { const reports = (await listReports()) ?? []; const enriched = await Promise.all(reports.map(async report => ({ ...report, screenshot_url: report.screenshot_path ? await signedScreenshotUrl(report.screenshot_path) : null }))); return json(req, { reports: enriched }); } catch { return json(req, { error: "Could not load reports" }, 500); } }
   try {
    const body = await req.json();
    if (!body || typeof body !== "object" || Array.isArray(body)) return json(req, { error: "Invalid JSON body" }, 400);
