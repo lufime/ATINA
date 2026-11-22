@@ -58,6 +58,18 @@ try {
     assert.equal(await page.evaluate(()=>atinaSoloReportPaused),true,'Solo timer should pause when the global report modal opens');
     await page.locator('#atinaGlobalReportClose').click();
     assert.equal(await page.evaluate(()=>atinaSoloReportPaused),false,'Solo timer should resume when the global report is closed');
+    for (const target of ['home','mimicaGame','result','rankingPage','networkLobby']) {
+      await page.evaluate(id => {
+        const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];
+        ids.forEach(name=>{const el=document.getElementById(name);if(!el)return;el.classList.add('hidden');el.hidden=true;el.setAttribute('aria-hidden','true');el.style.setProperty('display','none','important');});
+        const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.hidden=false;el.setAttribute('aria-hidden','false');el.style.setProperty('display','block','important');}
+      },target);
+      await page.locator('#atinaGlobalReportButton').click();
+      await panel.waitFor({state:'visible'});
+      const context=await page.locator('#atinaGlobalReportContext').textContent();
+      assert.ok(context.includes('Ecrã: '+target),`global report should open on ${target}: ${context}`);
+      await page.locator('#atinaGlobalReportClose').click();
+    }
     await page.close();
     console.log(`PASS responsive report panel at ${viewport.width}x${viewport.height}`);
   }
