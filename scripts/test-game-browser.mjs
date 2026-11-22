@@ -222,17 +222,26 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
     localStorage.setItem('atinaDifficultyMode', 'medium');
   });
 
-  // Regressão: o atalho Solo deve abrir a seleção de modalidades antes da partida.
-  await page.evaluate(() => showHomePage('dashboard'));
+  // Regressão: o atalho Solo deve abrir diretamente a configuração/seleção, sem a página de categorias.
+  await page.evaluate(() => {
+    $('challengeCount').value = '10';
+    $('challengeCount').dispatchEvent(new Event('change'));
+    atinaChallengeCount = 10;
+    localStorage.setItem('atinaChallengeCount', '10');
+    difficultyMode = 'medium';
+    $('difficultyMode').value = 'medium';
+    showHomePage('dashboard');
+  });
   await page.locator('[data-atina-launch="solo"]').click();
-  await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
-  assert.equal(await page.locator('#categories [data-category]').first().isVisible(), true,
-    'O atalho Solo deve apresentar a seleção de modalidades.');
-  // O utilizador escolhe uma modalidade e inicia a partida.
-  await page.locator('#categories [data-category]').filter({hasText: categories[0]}).click();
   await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
-  assert.equal(await page.locator('#atinaPregameCount').inputValue(),'10','Solo deve iniciar com 10 desafios por defeito.');
+  assert.equal(await page.locator('#atinaSoloCategoryPicker').isVisible(), true,
+    'Solo deve abrir diretamente a seleção de modalidade na configuração.');
+  await page.locator('#atinaSoloCategory').selectOption({label:categories[0]});
+  const quickSoloCount=Number(await page.locator('#atinaPregameCount').inputValue());
+  assert.ok(quickSoloCount>=1&&quickSoloCount<=10,
+    'Solo deve manter a quantidade inicial até 10, limitada aos desafios disponíveis na modalidade escolhida.');
   assert.equal(await page.locator('#atinaPregameDifficulty').inputValue(),'medium','Solo deve iniciar com dificuldade média por defeito.');
+  // Escolher uma modalidade na configuração direta e iniciar a partida.
   await confirmPregame();
   await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
     const state = await page.evaluate(() => ({startType:typeof start,session:localStorage.getItem('atinaAccountSessionV1'),guest:atinaGuestLimitReached(),guestCount:localStorage.getItem('atinaGuestChallengesCompletedV1'),gameCount:games.length,difficulty:difficultyMode,queueLength:queue.length,mode,screen:localStorage.getItem('atinaLastScreen'),dashboardHidden:document.querySelector('[data-home-page="dashboard"]')?.hidden,launchVisible:document.querySelector('[data-atina-launch="solo"]')?.getBoundingClientRect().height>0}));
@@ -281,8 +290,7 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   // Resposta errada não fecha a ronda; a resposta certa seguinte fecha-a.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#solo').click();
-  await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
-  await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
+  await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
   await confirmPregame();
   await page.locator('#game').waitFor({state:'visible'});
   await page.locator('#answer').fill('Resposta errada');
