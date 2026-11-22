@@ -236,7 +236,10 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
   assert.equal(await page.locator('#atinaSoloCategoryPicker').isVisible(), true,
     'Solo deve abrir diretamente a seleção de modalidade na configuração.');
-  assert.equal(await page.locator('#atinaPregameCount').inputValue(),'10','Solo deve iniciar com 10 desafios por defeito.');
+  await page.locator('#atinaSoloCategory').selectOption({label:categories[0]});
+  const quickSoloCount=Number(await page.locator('#atinaPregameCount').inputValue());
+  assert.ok(quickSoloCount>=1&&quickSoloCount<=10,
+    'Solo deve manter a quantidade inicial até 10, limitada aos desafios disponíveis na modalidade escolhida.');
   assert.equal(await page.locator('#atinaPregameDifficulty').inputValue(),'medium','Solo deve iniciar com dificuldade média por defeito.');
   // Escolher uma modalidade na configuração direta e iniciar a partida.
   await confirmPregame();
