@@ -117,14 +117,19 @@ await page.route('https://images.unsplash.com/**', route => route.abort());
 try {
   async function confirmPregame(){
     await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
-    await page.locator('#atinaPregameConfirmed').check();
-    assert.equal(await page.locator('#atinaPregameStart').isDisabled(),true,'Iniciar ronda deve ficar bloqueado antes de Confirmar.');
-    await page.locator('#atinaPregameConfirm').click();
-    assert.equal(await page.locator('#atinaPregameStart').isDisabled(),false,'Confirmar valida e desbloqueia o início sem arrancar.');
-    assert.equal(await page.locator('#game').isVisible(),false,'Confirmar não inicia a partida.');
+    const categoryPicker = page.locator('#atinaSoloCategoryPicker');
+    if (await categoryPicker.isVisible()) {
+      const options = await page.locator('#atinaSoloCategory option').evaluateAll(nodes => nodes.map(n => n.value).filter(Boolean));
+      if (options.length) await page.locator('#atinaSoloCategory').selectOption(options[0]);
+    }
+    await page.locator('#atinaPregameStart').waitFor({state:'visible',timeout:5000});
+    await page.waitForFunction(() => {
+      const button=document.querySelector('#atinaPregameStart');
+      return button && !button.disabled;
+    }, null, {timeout:5000});
     await page.locator('#atinaPregameStart').click();
   }
-  await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
+    await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
 
@@ -206,8 +211,8 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
   assert.equal(await page.locator('#atinaPregameCount').inputValue(), '0',
     'Sem desafios da dificuldade selecionada, a quantidade deve ser zero (sem fallback para outra dificuldade).');
-  assert.equal(await page.locator('#atinaPregameConfirm').isDisabled(), true,
-    'Não deve permitir validar uma configuração sem desafios nessa dificuldade.');
+  assert.equal(await page.locator('#atinaPregameStart').isDisabled(), true,
+    'Não deve permitir iniciar uma configuração sem desafios nessa dificuldade.');
   await page.locator('#atinaPregameCancel').click();
   await page.evaluate(() => {
     classifyChallenge = window.__originalChallengeDifficulty;

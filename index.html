@@ -4983,8 +4983,6 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 #atinaPregameCount{ text-align:center;font-size:22px!important;font-weight:700}
 #atinaPregameSummary{margin-bottom:8px}
 #atinaPregameError{border:0!important;padding:0!important;background:transparent!important;min-height:0!important;line-height:1.4}
-#atinaPregameConfirmCheck{display:flex!important;align-items:center;gap:10px;font-weight:500!important;margin:10px 0}
-#atinaPregameConfirmCheck input{width:22px;height:22px;flex:none}
 #atinaPregameSummary{background:#1a2b40;border:1px solid #38536e;border-radius:14px;padding:12px;margin:14px 0;line-height:1.6}
 #atinaPregameButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 #atinaPregameButtons button{min-height:48px;border-radius:12px}
@@ -4993,7 +4991,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <div id="atinaPregameOverlay" aria-modal="true" role="dialog" aria-labelledby="atinaPregameTitle">
  <section id="atinaPregamePanel">
   <h2 id="atinaPregameTitle">⚙️ Configurar partida</h2>
-  <p class="muted small" style="text-align:center">Revê as opções e confirma para continuar.</p>
+  <p class="muted small" style="text-align:center">Escolhe a modalidade, quantidade e dificuldade.</p>
+  <div id="atinaPregameModes" style="display:flex;gap:8px;margin:8px 0"><button type="button" data-mode="solo" class="btn secondary">Modalidades</button><button type="button" data-mode="mix" class="btn secondary">Mix</button></div><div id="atinaSoloCategoryPicker" style="display:none"><label for="atinaSoloCategory">Categoria</label><select id="atinaSoloCategory"><option value="">Seleciona uma categoria</option></select></div>
   <label for="atinaPregameCount">Número de desafios</label>
   <div id="atinaPregameCountControl"><button type="button" id="atinaPregameMinus" aria-label="Diminuir desafios">−</button><input id="atinaPregameCount" type="number" min="1" max="1000" step="1" value="10" inputmode="numeric"><button type="button" id="atinaPregamePlus" aria-label="Aumentar desafios">+</button></div>
   <label for="atinaPregameDifficulty">Dificuldade</label>
@@ -5002,60 +5001,35 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   </select>
   <div id="atinaPregameSummary" aria-live="polite">Solo · 10 desafios · Média</div>
   <p id="atinaPregameError" role="alert" style="color:#ffb7a8;min-height:1.2em;margin:6px 0"></p>
-  <label id="atinaPregameConfirmCheck"><input id="atinaPregameConfirmed" type="checkbox"> Confirmo a configuração selecionada</label>
   <div id="atinaPregameButtons">
    <button type="button" class="btn secondary" id="atinaPregameCancel">Cancelar</button>
-   <button type="button" class="btn secondary" id="atinaPregameConfirm">Validar configuração</button>
    <button type="button" class="btn" id="atinaPregameStart" disabled>Iniciar ronda</button>
   </div>
  </section>
 </div>
 <script id="atina-pregame-configuration-v1">
 (function(){
- const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),error=document.getElementById('atinaPregameError');
- let mode='solo',category=null;
+ const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),error=document.getElementById('atinaPregameError'),startBtn=document.getElementById('atinaPregameStart');
+ let mode='solo',category=null;const categoryWrap=document.getElementById('atinaSoloCategoryPicker'),categorySelect=document.getElementById('atinaSoloCategory');
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
  function isServerMode(){return mode==='mime'||mode==='duel'||mode==='party';}
- function availableChallenges(){if(isServerMode())return null;if(typeof games==='undefined'||!Array.isArray(games))return 0;const matchingCategory=games.filter(g=>g&&((mode==='mix')||(!category||g[0]===category)));const matchingDifficulty=matchingCategory.filter(g=>difficulty.value==='mixed'||classifyChallenge(games.indexOf(g))===difficulty.value);return matchingDifficulty.length;}
- function updateLimit(){const serverMode=isServerMode(),max=availableChallenges();count.disabled=serverMode;document.getElementById('atinaPregameMinus').disabled=serverMode;document.getElementById('atinaPregamePlus').disabled=serverMode;count.max=serverMode?'1000':String(max);count.min='1';if(serverMode){count.value=String(Math.max(1,Math.min(1000,Number(count.value)||10)));error.textContent='A quantidade de desafios é definida pelo servidor neste modo.';document.getElementById('atinaPregameConfirm').disabled=false;document.getElementById('atinaPregameStart').disabled=true;return;}if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção/dificuldade.';document.getElementById('atinaPregameConfirm').disabled=true;document.getElementById('atinaPregameStart').disabled=true;}else{document.getElementById('atinaPregameConfirm').disabled=false;const n=Math.max(1,Math.min(max,Number(count.value)||10));count.value=String(n);error.textContent='';}}
- function updateSummary(){const title=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode];summary.textContent=isServerMode()?title+' · desafios geridos pelo servidor · '+difficultyLabel(difficulty.value):title+' · '+count.value+' desafios · '+availableChallenges()+' disponíveis · '+difficultyLabel(difficulty.value);}
- let configurationValidated=false,confirmed=document.getElementById('atinaPregameConfirmed');
- function resetValidation(){configurationValidated=false;confirmed.checked=false;document.getElementById('atinaPregameStart').disabled=true;error.textContent='';}
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';resetValidation();updateLimit();updateSummary();document.getElementById('atinaPregameStart').textContent=mode==='solo'?'Iniciar Solo':mode==='mix'?'Iniciar Mix':'Continuar';overlay.classList.add('open');document.getElementById('atinaPregameMinus').focus();}
+ function availableChallenges(){if(isServerMode())return null;if(typeof games==='undefined'||!Array.isArray(games))return 0;const list=games.filter(g=>g&&((mode==='mix')||(category&&g[0]===category)));return list.filter(g=>difficulty.value==='mixed'||classifyChallenge(games.indexOf(g))===difficulty.value).length;}
+ function refreshCategoryPicker(){categoryWrap.style.display=mode==='solo'&&!category?'block':'none';if(categoryWrap.style.display==='none')return;const names=[...new Set((Array.isArray(games)?games:[]).filter(Boolean).map(g=>g[0]).filter(Boolean))];categorySelect.innerHTML='<option value="">Seleciona uma categoria</option>'+names.map(n=>'<option>'+String(n).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</option>').join('');categorySelect.value=category||'';}
+ function updateLimit(){const server=isServerMode(),max=availableChallenges();count.disabled=server;document.getElementById('atinaPregameMinus').disabled=server;document.getElementById('atinaPregamePlus').disabled=server;count.max=server?'1000':String(max);count.min='1';if(server){count.value=String(Math.max(1,Math.min(1000,Number(count.value)||10)));error.textContent='A quantidade de desafios é definida pelo servidor neste modo.';return;}if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção/dificuldade.';}else{count.value=String(Math.max(1,Math.min(max,Number(count.value)||10)));error.textContent='';}}
+ function updateSummary(){const label=({mix:'Mix',solo:'Modalidades',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode];summary.textContent=isServerMode()?label+' · desafios geridos pelo servidor · '+difficultyLabel(difficulty.value):label+(mode==='solo'&&!category?' · seleciona uma categoria':' · '+count.value+' desafios · '+availableChallenges()+' disponíveis')+' · '+difficultyLabel(difficulty.value);}
+ function validate(){const n=Number(count.value),max=availableChallenges();startBtn.disabled=isServerMode()?!(Number.isInteger(n)&&n>=1&&n<=1000):!(Number.isInteger(n)&&n>=1&&n<=max&&(mode!=='solo'||!!category));}
+ function openConfig(m,c){mode=m;category=c||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';refreshCategoryPicker();updateLimit();updateSummary();validate();startBtn.textContent=mode==='solo'?'Iniciar Modalidades':mode==='mix'?'Iniciar Mix':'Continuar';overlay.classList.add('open');document.getElementById('atinaPregameMinus').focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
- count.addEventListener('input',()=>{resetValidation();updateLimit();updateSummary();});difficulty.addEventListener('change',()=>{resetValidation();updateLimit();updateSummary();});
- confirmed.addEventListener('change',()=>{document.getElementById('atinaPregameStart').disabled=!(confirmed.checked&&configurationValidated);});
+ document.querySelectorAll('#atinaPregameModes [data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;category=mode==='mix'?null:category;refreshCategoryPicker();updateLimit();updateSummary();validate();startBtn.textContent=mode==='solo'?'Iniciar Modalidades':'Iniciar Mix';}));
+ categorySelect.addEventListener('change',()=>{category=categorySelect.value||null;updateLimit();updateSummary();validate();});
+ count.addEventListener('input',()=>{updateLimit();updateSummary();validate();});difficulty.addEventListener('change',()=>{updateLimit();updateSummary();validate();});
  document.getElementById('atinaPregameMinus').addEventListener('click',()=>{count.value=String(Math.max(Number(count.min)||1,(Number(count.value)||1)-1));count.dispatchEvent(new Event('input'));});
- document.getElementById('atinaPregamePlus').addEventListener('click',()=>{const max=Number(count.max)||1000;count.value=String(Math.min(max,(Number(count.value)||0)+1));count.dispatchEvent(new Event('input'));});
- document.getElementById('atinaPregameConfirm').addEventListener('click',()=>{
-  const n=Number(count.value);
-  if(!isServerMode()&&(!Number.isInteger(n)||n<1||n>availableChallenges())){error.textContent='Escolhe uma quantidade entre 1 e '+availableChallenges()+', o máximo disponível nesta seleção.';return;}
-  configurationValidated=true;document.getElementById('atinaPregameStart').disabled=!confirmed.checked;
-  error.textContent='Configuração validada. Confirma a seleção para iniciar.';
- });
- document.getElementById('atinaPregameStart').addEventListener('click',()=>{
-  const n=Number(count.value);
-  if(!isServerMode()&&(!Number.isInteger(n)||n<1||n>availableChallenges())){error.textContent='Escolhe uma quantidade dentro do máximo disponível.';return;}if(isServerMode()&&(!Number.isInteger(n)||n<1||n>1000)){error.textContent='Escolhe um número válido.';return;}
-  if(!confirmed.checked||!configurationValidated){error.textContent='Valida e confirma a configuração antes de iniciar.';return;}
-  const mainCount=document.getElementById('challengeCount'),mainDifficulty=document.getElementById('difficultyMode');
-  if(mainCount){mainCount.value=String(n);mainCount.dispatchEvent(new Event('change'));}
-  if(mainDifficulty){mainDifficulty.value=difficulty.value;mainDifficulty.dispatchEvent(new Event('change'));}
-  try{localStorage.setItem('atinaChallengeCount',String(n));localStorage.setItem('atinaDifficultyMode',difficulty.value);}catch(e){}
-  closeConfig();if(mode==='solo'||mode==='mix'){if(typeof start==='function')start(mode,category);return;}showHomePage('online');const hint=document.getElementById('networkModeHint');if(hint)hint.textContent=({duel:'⚔️ Duelo online: configura as preferências e usa Partida rápida ou cria/entra numa sala.',party:'🎉 Modo Equipas: configura as preferências e cria uma sala ou entra com código.',mime:'🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.'})[mode]||'Segue para a configuração online.';
- });
- document.getElementById('solo').onclick=()=>showHomePage('categories');
- document.getElementById('mix').onclick=()=>openConfig('mix',null);
- document.getElementById('duel').onclick=()=>openConfig('duel',null);
- document.getElementById('party').onclick=()=>openConfig('party',null);
- const categories=document.getElementById('categories');
- if(categories)categories.addEventListener('click',e=>{
-  const tile=e.target.closest('[data-category]');if(!tile)return;
-  if(tile.dataset.category==='Mímicas'){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('mime',tile.dataset.category);return;}
-  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('solo',tile.dataset.category);
- },true);
- overlay.addEventListener('click',e=>{if(e.target===overlay)closeConfig();});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeConfig();});
+ document.getElementById('atinaPregamePlus').addEventListener('click',()=>{count.value=String(Math.min(Number(count.max)||1000,(Number(count.value)||0)+1));count.dispatchEvent(new Event('input'));});
+ startBtn.addEventListener('click',()=>{const n=Number(count.value);if(!isServerMode()&&(!Number.isInteger(n)||n<1||n>availableChallenges()||(mode==='solo'&&!category))){error.textContent='Revê categoria e quantidade.';validate();return;}if(isServerMode()&&(!Number.isInteger(n)||n<1||n>1000)){error.textContent='Escolhe um número válido.';validate();return;}const c=document.getElementById('challengeCount'),d=document.getElementById('difficultyMode');if(c){c.value=String(n);c.dispatchEvent(new Event('change'));}if(d){d.value=difficulty.value;d.dispatchEvent(new Event('change'));}try{localStorage.setItem('atinaChallengeCount',String(n));localStorage.setItem('atinaDifficultyMode',difficulty.value);}catch(e){}closeConfig();if(mode==='solo'||mode==='mix'){if(typeof start==='function')start(mode,category);return;}showHomePage('online');const hint=document.getElementById('networkModeHint');if(hint)hint.textContent=({duel:'⚔️ Duelo online: configura as preferências e usa Partida rápida ou cria/entra numa sala.',party:'🎉 Modo Equipas: configura as preferências e cria uma sala ou entra com código.',mime:'🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.'})[mode]||'Segue para a configuração online';});
+ document.getElementById('solo').onclick=()=>showHomePage('categories');document.getElementById('mix').onclick=()=>openConfig('mix',null);document.getElementById('duel').onclick=()=>openConfig('duel',null);document.getElementById('party').onclick=()=>openConfig('party',null);
+ const cats=document.getElementById('categories');if(cats)cats.addEventListener('click',e=>{const tile=e.target.closest('[data-category]');if(!tile)return;if(tile.dataset.category==='Mímicas'){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('mime',tile.dataset.category);return;}e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('solo',tile.dataset.category);},true);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)closeConfig();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeConfig();});
 })();
 </script>
 <style id="atina-mobile-ui-consolidated-20261120">
