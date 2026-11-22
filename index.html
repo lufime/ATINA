@@ -5010,16 +5010,18 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),confirmed=document.getElementById('atinaPregameConfirmed'),error=document.getElementById('atinaPregameError');
  let mode='solo',category=null;
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
- function updateSummary(){summary.textContent=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode]+' · '+count.value+' desafios · '+difficultyLabel(difficulty.value);}
+ function availableChallenges(){if(typeof games==='undefined'||!Array.isArray(games)||games.length===0)return 1000;const matching=games.filter((g,i)=>{const categoryMatch=!category||g[0]===category;const difficultyMatch=difficulty.value==='mixed'||classifyChallenge(i)===difficulty.value;return categoryMatch&&difficultyMatch;}).length;if(matching>0)return matching;return games.filter(g=>!category||g[0]===category).length||1000;}
+ function updateLimit(){const max=availableChallenges();count.max=String(max);count.min='1';if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção.';document.getElementById('atinaPregameConfirm').disabled=true;document.getElementById('atinaPregameStart').disabled=true;}else{document.getElementById('atinaPregameConfirm').disabled=false;const n=Math.max(1,Math.min(max,Number(count.value)||10));count.value=String(n);error.textContent='Máximo disponível: '+max+' desafios.';}}
+ function updateSummary(){const max=availableChallenges();summary.textContent=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode]+' · '+count.value+' / '+max+' desafios disponíveis · '+difficultyLabel(difficulty.value);}
  let configurationValidated=false;
  function resetValidation(){configurationValidated=false;document.getElementById('atinaPregameStart').disabled=true;error.textContent='';}
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;resetValidation();updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
+ function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;resetValidation();updateLimit();updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
- count.addEventListener('input',()=>{resetValidation();updateSummary();});difficulty.addEventListener('change',()=>{resetValidation();updateSummary();});confirmed.addEventListener('change',resetValidation);
+ count.addEventListener('input',()=>{resetValidation();updateLimit();updateSummary();});difficulty.addEventListener('change',()=>{resetValidation();updateLimit();updateSummary();});confirmed.addEventListener('change',resetValidation);
  document.getElementById('atinaPregameConfirm').addEventListener('click',()=>{
   const n=Number(count.value);
-  if(!Number.isInteger(n)||n<1||n>1000){error.textContent='Escolhe um número entre 1 e 1000.';return;}
+  if(!Number.isInteger(n)||n<1||n>availableChallenges()){error.textContent='Escolhe uma quantidade entre 1 e '+availableChallenges()+', o máximo disponível nesta seleção.';return;}
   if(!confirmed.checked){error.textContent='Assinala a confirmação antes de validar.';return;}
   configurationValidated=true;document.getElementById('atinaPregameStart').disabled=false;
   error.textContent='Configuração validada. Podes iniciar a ronda quando quiseres.';
