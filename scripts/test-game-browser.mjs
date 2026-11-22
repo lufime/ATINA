@@ -189,8 +189,6 @@ try {
     'O atalho Solo deve apresentar a seleção de modalidades.');
   // O utilizador escolhe uma modalidade e inicia a partida.
   await page.locator('#categories [data-category]').filter({hasText: categories[0]}).click();
-  await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
-  await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
   await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
     const state = await page.evaluate(() => ({startType:typeof start,session:localStorage.getItem('atinaAccountSessionV1'),guest:atinaGuestLimitReached(),guestCount:localStorage.getItem('atinaGuestChallengesCompletedV1'),gameCount:games.length,difficulty:difficultyMode,queueLength:queue.length,mode,screen:localStorage.getItem('atinaLastScreen'),dashboardHidden:document.querySelector('[data-home-page="dashboard"]')?.hidden,launchVisible:document.querySelector('[data-atina-launch="solo"]')?.getBoundingClientRect().height>0}));
     throw new Error('Quick Solo não abriu a partida. Diagnóstico: '+JSON.stringify({state,pageDialogs,pageErrors}));
