@@ -25,21 +25,16 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
     if (!uuidPattern.test(reportId)) return json(req, { error: "Report ID inválido" }, 400);
     const existing = await getReportForDelete(reportId);
     if (!existing) return json(req, { error: "Report não encontrado" }, 404);
-    if (existing.screenshot_path) {
-     try { await removeScreenshot(existing.screenshot_path); }
-     catch { return json(req, { error: "Não foi possível limpar a screenshot. O report foi preservado; tenta novamente." }, 503); }
-    }
     let deleted;
     try { deleted = await deleteReport(reportId); }
-    catch {
-     if (existing.screenshot_path) { try { await clearScreenshotPath(reportId); } catch {} }
-     return json(req, { error: "Screenshot removida, mas o report foi preservado. Atualiza e tenta apagar novamente." }, 503);
+    catch { return json(req, { error: "Não foi possível apagar o report. O report e a screenshot foram preservados." }, 503); }
+    if (!deleted) return json(req, { error: "Report não encontrado ou já apagado." }, 404);
+    let screenshot_cleanup_warning = false;
+    if (existing.screenshot_path) {
+     try { await removeScreenshot(existing.screenshot_path); }
+     catch { screenshot_cleanup_warning = true; }
     }
-    if (!deleted) {
-     if (existing.screenshot_path) { try { await clearScreenshotPath(reportId); } catch {} }
-     return json(req, { error: "Screenshot removida, mas o report foi preservado. Atualiza e tenta apagar novamente." }, 503);
-    }
-    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: !existing.screenshot_path });
+    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning });
    } catch (error) { if (error instanceof SyntaxError) return json(req, { error: "Invalid JSON" }, 400); return json(req, { error: "Could not delete report" }, 500); }
   }
   try {
