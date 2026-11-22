@@ -4992,10 +4992,11 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  <section id="atinaPregamePanel">
   <h2 id="atinaPregameTitle">⚙️ Configurar partida</h2>
   <p class="muted small" style="text-align:center">Ajusta as opções e inicia a partida.</p>
-  <label for="atinaPregameMode">Modo de jogo</label>
-  <select id="atinaPregameMode">
-   <option value="solo">Modalidades</option><option value="mix">Mix</option>
-  </select>
+  <label>Modo de jogo</label>
+  <div id="atinaPregameMode" role="group" aria-label="Selecionar modo de jogo">
+   <button type="button" class="atina-mode-choice" data-mode="solo" aria-pressed="false">Modalidades</button>
+   <button type="button" class="atina-mode-choice" data-mode="mix" aria-pressed="false">Mix</button>
+  </div>
   <label for="atinaPregameCount">Número de desafios</label>
   <div id="atinaPregameCountControl"><button type="button" id="atinaPregameMinus" aria-label="Diminuir desafios">−</button><input id="atinaPregameCount" type="number" min="1" max="1000" step="1" value="10" inputmode="numeric"><button type="button" id="atinaPregamePlus" aria-label="Aumentar desafios">+</button></div>
   <label for="atinaPregameDifficulty">Dificuldade</label>
@@ -5026,11 +5027,11 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   else error.textContent='';
   return valid;
  }
- function updateModeUI(){document.getElementById('atinaPregameMode').value=mode;document.getElementById('atinaPregameStart').textContent=({solo:'Iniciar Modalidades',mix:'Iniciar Mix'})[mode]||'Iniciar';}
+ function updateModeUI(){document.querySelectorAll('#atinaPregameMode [data-mode]').forEach(b=>{const selected=b.dataset.mode===mode;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected));});document.getElementById('atinaPregameStart').textContent=({solo:'Iniciar Modalidades',mix:'Iniciar Mix'})[mode]||'Iniciar';}
  function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';updateModeUI();updateLimit();updateSummary();validateConfig();overlay.classList.add('open');document.getElementById('atinaPregameMinus').focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
- document.getElementById('atinaPregameMode').addEventListener('change',e=>{mode=e.target.value;category=mode==='mix'?null:category;updateModeUI();updateLimit();updateSummary();validateConfig();});
+ document.getElementById('atinaPregameMode').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;category=mode==='mix'?null:category;updateModeUI();updateLimit();updateSummary();validateConfig();});
  count.addEventListener('input',()=>{updateLimit();updateSummary();validateConfig();});difficulty.addEventListener('change',()=>{updateLimit();updateSummary();validateConfig();});
  document.getElementById('atinaPregameMinus').addEventListener('click',()=>{count.value=String(Math.max(Number(count.min)||1,(Number(count.value)||1)-1));count.dispatchEvent(new Event('input'));});
  document.getElementById('atinaPregamePlus').addEventListener('click',()=>{const max=Number(count.max)||1000;count.value=String(Math.min(max,(Number(count.value)||0)+1));count.dispatchEvent(new Event('input'));});
