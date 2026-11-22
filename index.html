@@ -4978,6 +4978,11 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 #atinaPregamePanel h2{margin:4px 0 16px;text-align:center;color:#67e8f9}
 #atinaPregamePanel label{display:block;font-weight:700;margin:12px 0 6px}
 #atinaPregamePanel select,#atinaPregamePanel input[type=number]{width:100%;min-height:48px;box-sizing:border-box;padding:10px;border-radius:12px;border:1px solid #45607a;background:#1a2b40;color:#f4f8ff;font-size:16px}
+#atinaPregameCountControl{display:grid;grid-template-columns:54px minmax(0,1fr) 54px;gap:8px;align-items:center}
+#atinaPregameCountControl button{min-height:52px;border-radius:12px;border:1px solid #45607a;background:#1a2b40;color:#67e8f9;font-size:24px;font-weight:700}
+#atinaPregameCount{ text-align:center;font-size:22px!important;font-weight:700}
+#atinaPregameSummary{margin-bottom:8px}
+#atinaPregameError{border:0!important;padding:0!important;background:transparent!important;min-height:0!important;line-height:1.4}
 #atinaPregameSummary{background:#1a2b40;border:1px solid #38536e;border-radius:14px;padding:12px;margin:14px 0;line-height:1.6}
 #atinaPregameConfirmCheck{display:flex!important;align-items:center;gap:10px;font-weight:500!important}
 #atinaPregameConfirmCheck input{width:22px;height:22px;flex:none}
@@ -4990,13 +4995,13 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   <h2 id="atinaPregameTitle">⚙️ Configurar partida</h2>
   <p class="muted small" style="text-align:center">Revê as opções e confirma para continuar.</p>
   <label for="atinaPregameCount">Número de desafios</label>
-  <input id="atinaPregameCount" type="number" min="1" max="1000" step="1" value="10" inputmode="numeric">
+  <div id="atinaPregameCountControl"><button type="button" id="atinaPregameMinus" aria-label="Diminuir desafios">−</button><input id="atinaPregameCount" type="number" min="1" max="1000" step="1" value="10" inputmode="numeric"><button type="button" id="atinaPregamePlus" aria-label="Aumentar desafios">+</button></div>
   <label for="atinaPregameDifficulty">Dificuldade</label>
   <select id="atinaPregameDifficulty">
    <option value="easy">Fácil</option><option value="medium" selected>Média</option><option value="hard">Difícil</option><option value="mixed">Aleatória 🎲</option>
   </select>
   <div id="atinaPregameSummary" aria-live="polite">Solo · 10 desafios · Média</div>
-  <label id="atinaPregameConfirmCheck"><input id="atinaPregameConfirmed" type="checkbox"> Confirmo a configuração acima</label>
+  <p id="atinaPregameError" role="alert" style="color:#ffb7a8;min-height:1.2em;margin:6px 0"></p>
   <p id="atinaPregameError" role="alert" style="color:#ffb7a8;min-height:1.2em;margin:6px 0"></p>
   <div id="atinaPregameButtons">
    <button type="button" class="btn secondary" id="atinaPregameCancel">Cancelar</button>
@@ -5007,30 +5012,31 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 </div>
 <script id="atina-pregame-configuration-v1">
 (function(){
- const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),confirmed=document.getElementById('atinaPregameConfirmed'),error=document.getElementById('atinaPregameError');
+ const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),error=document.getElementById('atinaPregameError');
  let mode='solo',category=null;
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
  function isServerMode(){return mode==='mime'||mode==='duel'||mode==='party';}
  function availableChallenges(){if(isServerMode())return null;if(typeof games==='undefined'||!Array.isArray(games))return 0;const matchingCategory=games.filter(g=>g&&((mode==='mix')||(!category||g[0]===category)));const matchingDifficulty=matchingCategory.filter(g=>difficulty.value==='mixed'||classifyChallenge(games.indexOf(g))===difficulty.value);return matchingDifficulty.length;}
- function updateLimit(){const serverMode=isServerMode(),max=availableChallenges();count.disabled=serverMode;count.max=serverMode?'1000':String(max);count.min='1';if(serverMode){count.value=String(Math.max(1,Math.min(1000,Number(count.value)||10)));error.textContent='A quantidade de desafios é definida pelo servidor neste modo.';document.getElementById('atinaPregameConfirm').disabled=false;document.getElementById('atinaPregameStart').disabled=true;return;}if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção/dificuldade.';document.getElementById('atinaPregameConfirm').disabled=true;document.getElementById('atinaPregameStart').disabled=true;}else{document.getElementById('atinaPregameConfirm').disabled=false;const n=Math.max(1,Math.min(max,Number(count.value)||10));count.value=String(n);error.textContent='Máximo de desafios nesta seleção: '+max+'.';}}
- function updateSummary(){const title=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode];summary.textContent=isServerMode()?title+' · quantidade de desafios gerida pelo servidor · '+difficultyLabel(difficulty.value):title+' · '+count.value+' / '+availableChallenges()+' desafios disponíveis · '+difficultyLabel(difficulty.value);}
+ function updateLimit(){const serverMode=isServerMode(),max=availableChallenges();count.disabled=serverMode;count.max=serverMode?'1000':String(max);count.min='1';if(serverMode){count.value=String(Math.max(1,Math.min(1000,Number(count.value)||10)));error.textContent='A quantidade de desafios é definida pelo servidor neste modo.';document.getElementById('atinaPregameConfirm').disabled=false;document.getElementById('atinaPregameStart').disabled=true;return;}if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção/dificuldade.';document.getElementById('atinaPregameConfirm').disabled=true;document.getElementById('atinaPregameStart').disabled=true;}else{document.getElementById('atinaPregameConfirm').disabled=false;const n=Math.max(1,Math.min(max,Number(count.value)||10));count.value=String(n);error.textContent='';}}
+ function updateSummary(){const title=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode];summary.textContent=isServerMode()?title+' · desafios geridos pelo servidor · '+difficultyLabel(difficulty.value):count.value+' desafios · '+availableChallenges()+' disponíveis · '+difficultyLabel(difficulty.value);}
  let configurationValidated=false;
  function resetValidation(){configurationValidated=false;document.getElementById('atinaPregameStart').disabled=true;error.textContent='';}
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;resetValidation();updateLimit();updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
+ function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';resetValidation();updateLimit();updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
- count.addEventListener('input',()=>{resetValidation();updateLimit();updateSummary();});difficulty.addEventListener('change',()=>{resetValidation();updateLimit();updateSummary();});confirmed.addEventListener('change',resetValidation);
+ count.addEventListener('input',()=>{resetValidation();updateLimit();updateSummary();});difficulty.addEventListener('change',()=>{resetValidation();updateLimit();updateSummary();});
+ document.getElementById('atinaPregameMinus').addEventListener('click',()=>{count.value=String(Math.max(Number(count.min)||1,(Number(count.value)||1)-1));count.dispatchEvent(new Event('input'));});
+ document.getElementById('atinaPregamePlus').addEventListener('click',()=>{const max=Number(count.max)||1000;count.value=String(Math.min(max,(Number(count.value)||0)+1));count.dispatchEvent(new Event('input'));});
  document.getElementById('atinaPregameConfirm').addEventListener('click',()=>{
   const n=Number(count.value);
   if(!isServerMode()&&(!Number.isInteger(n)||n<1||n>availableChallenges())){error.textContent='Escolhe uma quantidade entre 1 e '+availableChallenges()+', o máximo disponível nesta seleção.';return;}
-  if(!confirmed.checked){error.textContent='Assinala a confirmação antes de validar.';return;}
   configurationValidated=true;document.getElementById('atinaPregameStart').disabled=false;
   error.textContent='Configuração validada. Podes iniciar a ronda quando quiseres.';
  });
  document.getElementById('atinaPregameStart').addEventListener('click',()=>{
   const n=Number(count.value);
   if(!isServerMode()&&(!Number.isInteger(n)||n<1||n>availableChallenges())){error.textContent='Escolhe uma quantidade dentro do máximo disponível.';return;}if(isServerMode()&&(!Number.isInteger(n)||n<1||n>1000)){error.textContent='Escolhe um número válido.';return;}
-  if(!confirmed.checked||!configurationValidated){error.textContent='Confirma e valida a configuração antes de iniciar.';return;}
+  if(!configurationValidated){error.textContent='Valida a configuração antes de iniciar.';return;}
   const mainCount=document.getElementById('challengeCount'),mainDifficulty=document.getElementById('difficultyMode');
   if(mainCount){mainCount.value=String(n);mainCount.dispatchEvent(new Event('change'));}
   if(mainDifficulty){mainDifficulty.value=difficulty.value;mainDifficulty.dispatchEvent(new Event('change'));}
