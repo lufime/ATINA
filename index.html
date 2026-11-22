@@ -2570,7 +2570,7 @@ window.atinaReportBridge={
  getContext:function(){
   const screenId=['home','game','mimicaGame','result','rankingPage','networkLobby'].find(id=>{const el=$(id);return el&&!el.hidden&&!el.classList.contains('hidden')&&getComputedStyle(el).display!=='none';})||'unknown';
   const roomId=networkRoom&&networkRoom.room_id?String(networkRoom.room_id).slice(0,80):'';
-  const timer=screenId==='game'?(timerDeadline?Math.max(0,Math.ceil((timerDeadline-Date.now())/1000)):timeLeft):screenId==='mimicaGame'?$('mimeTimer')?.textContent:'';
+  const timer=screenId==='game'?(atinaSoloReportPaused?atinaSoloReportRemaining:timerDeadline?Math.max(0,Math.ceil((timerDeadline-Date.now())/1000)):timeLeft):screenId==='mimicaGame'?$('mimeTimer')?.textContent:'';
   return {screen:screenId,mode:String(mode||'unknown'),room:roomId||undefined,round:screenId==='game'?String(pos+1):screenId==='mimicaGame'?$('mimeRound')?.textContent:undefined,category:screenId==='game' ? $('category')?.textContent : screenId==='mimicaGame' ? $('mimeCategory')?.textContent : undefined,timer:timer||undefined,question:screenId==='game' ? $('question')?.textContent : undefined,clues:screenId==='game' ? $('clues')?.textContent : undefined,score:screenId==='game'&&Array.isArray(scores)?scores.join(' / '):undefined,streak:screenId==='game'?String(correctStreak):undefined,version:document.querySelector('meta[name="atina-game-version"]')?.content,paused:atinaSoloReportPaused};
  },
  pauseSolo:function(){const c=this.getContext();if(c.screen!=='game'||mode!=='solo'||atinaSoloReportPaused)return false;atinaSoloReportOpen();return atinaSoloReportPaused;},
