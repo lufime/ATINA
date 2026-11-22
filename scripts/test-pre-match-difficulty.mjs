@@ -42,8 +42,8 @@ assert.equal(readCount('500',true),10,'storage errors use default');
 
 // Guard integration points: count applies to local queue, cache survives restore, and resets on new game.
 assert(html.includes('atinaMixedDifficultyCache,feedback:'),'random cache is serialized with local progress');
-assert(html.includes('atinaMixedDifficultyCache={};if(mode===' + "'mix'" + ')'),'random cache resets on a new game');
-assert(html.includes('queue=queue.slice(0,atinaChallengeCount)'),'configured count limits local queues');
+assert(html.includes('atinaMixedDifficultyCache={};let eligible=[];if(mode===' + "'mix'" + ')'),'random cache resets on a new game');
+assert(html.includes('queue=atinaBuildRoundQueue(eligible,requestedCount)'),'configured count limits local queues');
 assert(html.includes("['easy','medium','hard']"),'random difficulty uses existing score-supported levels');
 assert(html.includes("Object.entries(p.atinaMixedDifficultyCache).filter(([k,v])=>Number.isInteger(Number(k))&&['easy','medium','hard'].includes(v))"),'restored cache filters invalid indexes and difficulty values');
 
