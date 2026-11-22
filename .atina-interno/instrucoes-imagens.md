@@ -247,3 +247,11 @@ Este padrão é visual e de usabilidade: não autoriza alterações à lógica d
 - O Supabase `atina-development` é produção: não executar migrations, alterações de dados, operações destrutivas ou alterações de configuração em produção sem autorização explícita.
 - Não utilizar Render, em nenhuma circunstância.
 - Não comprometer a segurança, estabilidade ou integridade do ATINA para acelerar merge/deploy.
+
+
+## 22. Bots como jogadores de pleno direito
+- Os bots fazem parte do ATINA na versão Beta e são jogadores de pleno direito, tal como os jogadores humanos.
+- Bots e humanos têm os mesmos direitos e estão sujeitos às mesmas regras de jogo, participação, rondas, desafios e pontuação, salvo regras específicas de um modo que se apliquem igualmente a todos os participantes.
+- Não tratar bots como elementos secundários, meros substitutos ou participantes com direitos reduzidos.
+- Não discriminar, remover, ocultar ou limitar bots apenas por serem bots, sem pedido explícito ou requisito de jogo confirmado.
+- Menus, modos, partidas e documentação devem refletir a participação dos bots quando disponível na versão Beta, distinguindo claramente funcionalidades Beta/experimentais da versão publicada/final quando aplicável.
