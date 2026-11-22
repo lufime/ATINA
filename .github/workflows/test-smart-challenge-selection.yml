@@ -1,0 +1,24 @@
+name: Test smart challenge selection
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'scripts/test-smart-challenge-selection.mjs'
+      - '.github/workflows/test-smart-challenge-selection.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/migrations/**'
+      - 'scripts/test-smart-challenge-selection.mjs'
+      - '.github/workflows/test-smart-challenge-selection.yml'
+jobs:
+  smart-challenge-selection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate no-repeat, fallback priority, and requested count
+        run: node scripts/test-smart-challenge-selection.mjs
