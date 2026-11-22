@@ -193,6 +193,29 @@ try {
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
 assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mostrar categorias sem desafios no banco local (causa do contador 0).');
 
+  // Regressão: dificuldade sem desafios não deve recorrer a desafios de outra dificuldade.
+  await page.evaluate(() => {
+    window.__originalChallengeDifficulty = classifyChallenge;
+    classifyChallenge = () => 'hard';
+    difficultyMode = 'easy';
+    $('difficultyMode').value = 'easy';
+    localStorage.setItem('atinaDifficultyMode', 'easy');
+    showHomePage('categories');
+  });
+  await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
+  await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
+  assert.equal(await page.locator('#atinaPregameCount').inputValue(), '0',
+    'Sem desafios da dificuldade selecionada, a quantidade deve ser zero (sem fallback para outra dificuldade).');
+  assert.equal(await page.locator('#atinaPregameConfirm').isDisabled(), true,
+    'Não deve permitir validar uma configuração sem desafios nessa dificuldade.');
+  await page.locator('#atinaPregameCancel').click();
+  await page.evaluate(() => {
+    classifyChallenge = window.__originalChallengeDifficulty;
+    difficultyMode = 'mixed';
+    $('difficultyMode').value = 'mixed';
+    localStorage.setItem('atinaDifficultyMode', 'mixed');
+  });
+
   // Regressão: o atalho Solo deve abrir a seleção de modalidades antes da partida.
   await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').click();
