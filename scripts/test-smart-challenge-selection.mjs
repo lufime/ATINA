@@ -13,4 +13,9 @@ assert.match(sql, /when p_game_mode='mix' or p_difficulty='mixed'\s+or c.difficu
 assert.match(sql, /insert into private\.atina_challenge_exposures/);
 assert.match(sql, /Parabéns! Já completaste todos os desafios disponíveis/);
 assert.match(sql, /public\.atina_v2_start_local_game\(text,text,text,integer,integer,text\)/);
-console.log('Smart challenge selection migration checks passed.');
+const client = await readFile(new URL('../atina-server-client.js', import.meta.url), 'utf8');
+assert.match(client, /function atinaRenderChallengeProgress\(position, total\)/);
+assert.match(client, /atinaChallengeProgressFill/);
+assert.match(client, /Desafios da partida/);
+assert.match(client, /atinaRenderChallengeProgress\(pos \+ 1, queue\.length\)/);
+console.log('Smart challenge selection and progress UI checks passed.');
