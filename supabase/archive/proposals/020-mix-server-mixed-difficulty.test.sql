@@ -51,7 +51,7 @@ SELECT id FROM inserted;
 
 CREATE TEMP TABLE atina_mix_test_seed AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('a',64)
+  'mix','medium',NULL,0,repeat('a',64),10
 ) AS result;
 
 SELECT is(
@@ -85,17 +85,17 @@ VALUES (
 
 CREATE TEMP TABLE atina_mix_distribution_run AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('b',64)
+  'mix','medium',NULL,0,repeat('b',64),10
 ) AS result;
 
 CREATE TEMP TABLE atina_mix_test_run AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('a',64)
+  'mix','medium',NULL,0,repeat('a',64),10
 ) AS result;
 
 CREATE TEMP TABLE atina_solo_test_run AS
 SELECT public.atina_v2_start_local_game(
-  'solo','medium',NULL,0,repeat('a',64)
+  'solo','medium',NULL,0,repeat('a',64),10
 ) AS result;
 
 SELECT is(
@@ -127,8 +127,8 @@ SELECT is(
      JOIN atina_mix_distribution_run run ON session.id=(run.result->'state'->>'session_id')::uuid
      CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)
      JOIN private.atina_challenges challenge ON challenge.challenge_id=q.challenge_id),
-  3,
-  'Mix contains easy, medium and hard challenges'
+  1,
+  'Mix queue respects the selected difficulty'
 );
 
 SELECT diag(
@@ -145,9 +145,9 @@ SELECT diag(
                FROM private.atina_v2_local_sessions session
                JOIN atina_solo_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid)||
   ' exposure_filter='||position('private.atina_challenge_exposures' in
-    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))||
+    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text,integer)'::regprocedure))||
   ' difficulty_history_filter='||position('private.atina_difficulty_history' in
-    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))
+    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text,integer)'::regprocedure))
 );
 
 SELECT is(
