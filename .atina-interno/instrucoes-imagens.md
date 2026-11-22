@@ -237,3 +237,13 @@ Este padrão é visual e de usabilidade: não autoriza alterações à lógica d
 - Antes de atualizar um documento, confirmar a versão atual publicada. Se não existir número de versão identificável, não inventar: indicar claramente «Versão do jogo: não identificada» e registar a data da atualização.
 - Ao atualizar um documento, atualizar também a data da última atualização. Alterar a versão do jogo indicada apenas quando o documento for verificado/ajustado para uma nova versão do jogo.
 - Manter estes metadados no início do documento, num formato consistente e fácil de localizar.
+
+## 21. Merge e deploy
+- Sempre que uma tarefa envolver alterações de código, e quando for apropriado e seguro, concluir o trabalho com merge e deploy em vez de deixar a alteração apenas numa branch isolada.
+- Antes do merge, executar e validar os checks/CI e testes relevantes; corrigir falhas primeiro.
+- Fazer merge apenas quando os checks estiverem aprovados e não existirem riscos conhecidos que impeçam a integração.
+- Após o merge, fazer deploy quando aplicável e confirmar o resultado/estado do deploy antes de declarar concluído.
+- Respeitar pedidos explícitos para não fazer merge ou deploy, bem como instruções de trabalhar apenas numa branch isolada.
+- O Supabase `atina-development` é produção: não executar migrations, alterações de dados, operações destrutivas ou alterações de configuração em produção sem autorização explícita.
+- Não utilizar Render, em nenhuma circunstância.
+- Não comprometer a segurança, estabilidade ou integridade do ATINA para acelerar merge/deploy.
