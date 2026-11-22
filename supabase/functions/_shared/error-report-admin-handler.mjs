@@ -27,7 +27,7 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
     if (!existing) return json(req, { error: "Report não encontrado" }, 404);
     let deleted;
     try { deleted = await deleteReport(reportId); }
-    catch { return json(req, { error: "Não foi possível apagar o report. O report e a screenshot foram preservados." }, 503); }
+    catch (error) { console.error("[atina-error-reports-admin] report DELETE failed", { code:error?.code, message:error?.message }); return json(req, { error: "Falha ao apagar o report", error_code: error?.code || "DELETE_FAILED" }, 503); }
     if (!deleted) return json(req, { error: "Report não encontrado ou já apagado." }, 404);
     let screenshot_cleanup_warning = false;
     if (existing.screenshot_path) {
