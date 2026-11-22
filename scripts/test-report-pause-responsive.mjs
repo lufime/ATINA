@@ -40,21 +40,24 @@ try {
       autoNextTimeout=null; autoRevealTimeout=null; autoRevealInterval=null;
       timerDeadline=Date.now()+90000; timeLeft=90; timerInterval=null;
     });
-    await page.evaluate(() => document.querySelector('#atinaSoloReportOpen')?.click());
-    const panel=page.locator('#atinaSoloReportPanel');
+    await page.evaluate(() => document.querySelector('#atinaGlobalReportButton')?.click());
+    const panel=page.locator('#atinaGlobalReportDialog');
     await panel.waitFor({state:'visible'});
     const dims=await page.evaluate(() => {
-      const panel=document.querySelector('#atinaSoloReportPanel');
+      const panel=document.querySelector('#atinaGlobalReportDialog');
       const rect=panel.getBoundingClientRect();
-      const category=document.querySelector('#atinaSoloReportCategory').getBoundingClientRect();
-      const description=document.querySelector('#atinaSoloReportDescription').getBoundingClientRect();
+      const category=document.querySelector('#atinaGlobalReportCategory').getBoundingClientRect();
+      const description=document.querySelector('#atinaGlobalReportDescription').getBoundingClientRect();
       return {vw:innerWidth,panelWidth:rect.width,panelLeft:rect.left,panelRight:rect.right,panelScroll:panel.scrollWidth,panelClient:panel.clientWidth,categoryWidth:category.width,descriptionWidth:description.width};
     });
     assert.ok(dims.panelWidth <= viewport.width, `report panel wider than viewport at ${viewport.width}px: ${JSON.stringify(dims)}`);
     assert.ok(dims.panelLeft >= 0 && dims.panelRight <= viewport.width, `panel clipped at ${viewport.width}px: ${JSON.stringify(dims)}`);
     assert.ok(dims.categoryWidth <= dims.panelWidth && dims.descriptionWidth <= dims.panelWidth, `form controls overflow panel: ${JSON.stringify(dims)}`);
     assert.ok(dims.panelScroll <= dims.panelClient + 1, `panel has horizontal overflow at ${viewport.width}px: ${JSON.stringify(dims)}`);
-    assert.equal(await page.locator('#atinaSoloReportOpen').getAttribute('aria-expanded'),'true');
+    assert.equal(await page.locator('#atinaGlobalReportOverlay').evaluate(el=>el.classList.contains('open')),true);
+    assert.equal(await page.evaluate(()=>atinaSoloReportPaused),true,'Solo timer should pause when the global report modal opens');
+    await page.locator('#atinaGlobalReportClose').click();
+    assert.equal(await page.evaluate(()=>atinaSoloReportPaused),false,'Solo timer should resume when the global report is closed');
     await page.close();
     console.log(`PASS responsive report panel at ${viewport.width}x${viewport.height}`);
   }
