@@ -450,6 +450,35 @@ button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;fil
 #atinaUpdateNoticeMessage{overflow-wrap:anywhere;word-break:normal;white-space:normal;hyphens:auto}
 #game .feedback,#game .clue,#game #question,#game .card,[role="status"],[role="alert"],.legal-copy,.online-panel,.online-ranking{min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
 #game .feedback,#game .clue,[role="status"],[role="alert"],.legal-copy{hyphens:auto}
+
+/* ATINA: caixas de mensagens fluidas e preservação de parágrafos */
+#dateNotice,#atinaUpdateNoticeMessage,
+#game .feedback,#game .clue,#game #question,#game .card,
+[role="status"],[role="alert"],.legal-copy,.online-panel,.online-ranking{
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+  height:auto;
+  min-height:0;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+#dateNotice>div{align-items:flex-start;min-width:0}
+#dateNotice>div>div{min-width:0;flex:1 1 auto;white-space:pre-wrap}
+#atinaUpdateNoticeMessage{white-space:pre-wrap}
+#game .feedback,#game .clue,#game #question,[role="status"],[role="alert"],.legal-copy{
+  line-height:1.55;
+  padding-block:clamp(8px,2vw,14px);
+}
+#game .feedback p,#game .clue p,#game #question p,[role="status"] p,[role="alert"] p,.legal-copy p,#atinaUpdateNoticeMessage p{
+  margin-block:0 .85em;
+}
+#game .feedback p:last-child,#game .clue p:last-child,#game #question p:last-child,[role="status"] p:last-child,[role="alert"] p:last-child,.legal-copy p:last-child,#atinaUpdateNoticeMessage p:last-child{margin-bottom:0}
+#game .feedback *,#game .clue *,#game #question *,[role="status"] *,[role="alert"] *,#atinaUpdateNoticeMessage *{min-width:0;max-width:100%;overflow-wrap:anywhere}
+@media(max-width:600px){
+  #game .feedback,#game .clue,#game #question,[role="status"],[role="alert"],#dateNotice,#atinaUpdateNoticeMessage{width:100%;padding-inline:clamp(8px,3vw,14px)}
+}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
@@ -5192,6 +5221,13 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #mimicaGame #mimeReveal{min-height:44px!important;margin:7px 0!important;padding:9px!important;font-size:13px!important}
  #mimicaGame .actions{gap:6px!important;margin:8px 0!important}
  #mimicaGame .actions .btn{min-height:48px!important;padding:9px 7px!important;font-size:13px!important}
+
+/* ATINA: quebra e parágrafos em todos os textos/informações do jogo */
+#game :where(p,li,blockquote,article,section,aside,small,label),
+#game [class*="message" i],#game [class*="info" i],#game [class*="notice" i],#game [class*="text" i],#game [class*="description" i],#game [class*="content" i]{box-sizing:border-box;min-width:0;max-width:100%;height:auto;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+#game p,#game [class*="message" i] p,#game [class*="info" i] p,#game [class*="notice" i] p,#game [class*="text" i] p,#game [class*="description" i] p{white-space:pre-wrap;line-height:1.55;margin-block:0 .85em}
+#game p:last-child,#game [class*="message" i] p:last-child,#game [class*="info" i] p:last-child,#game [class*="notice" i] p:last-child,#game [class*="text" i] p:last-child,#game [class*="description" i] p:last-child{margin-bottom:0}
+#game :where(p,li,blockquote,article,section,aside,small,label) *{min-width:0;max-width:100%;overflow-wrap:anywhere}
 </style>
 <script src="./assets/atina-global-error-report.js"></script>
 </body>
