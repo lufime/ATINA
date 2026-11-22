@@ -4984,8 +4984,6 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 #atinaPregameSummary{margin-bottom:8px}
 #atinaPregameError{border:0!important;padding:0!important;background:transparent!important;min-height:0!important;line-height:1.4}
 #atinaPregameSummary{background:#1a2b40;border:1px solid #38536e;border-radius:14px;padding:12px;margin:14px 0;line-height:1.6}
-#atinaPregameConfirmCheck{display:flex!important;align-items:center;gap:10px;font-weight:500!important}
-#atinaPregameConfirmCheck input{width:22px;height:22px;flex:none}
 #atinaPregameButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 #atinaPregameButtons button{min-height:48px;border-radius:12px}
 @media(max-width:480px){#atinaPregameOverlay{padding:9px}#atinaPregamePanel{border-radius:18px}#atinaPregameButtons{grid-template-columns:1fr}}
@@ -5002,10 +5000,9 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   </select>
   <div id="atinaPregameSummary" aria-live="polite">Solo · 10 desafios · Média</div>
   <p id="atinaPregameError" role="alert" style="color:#ffb7a8;min-height:1.2em;margin:6px 0"></p>
-  <p id="atinaPregameError" role="alert" style="color:#ffb7a8;min-height:1.2em;margin:6px 0"></p>
   <div id="atinaPregameButtons">
    <button type="button" class="btn secondary" id="atinaPregameCancel">Cancelar</button>
-   <button type="button" class="btn secondary" id="atinaPregameConfirm">Confirmar</button>
+   <button type="button" class="btn secondary" id="atinaPregameConfirm">Validar configuração</button>
    <button type="button" class="btn" id="atinaPregameStart" disabled>Iniciar ronda</button>
   </div>
  </section>
@@ -5021,7 +5018,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  function updateSummary(){const title=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode];summary.textContent=isServerMode()?title+' · desafios geridos pelo servidor · '+difficultyLabel(difficulty.value):count.value+' desafios · '+availableChallenges()+' disponíveis · '+difficultyLabel(difficulty.value);}
  let configurationValidated=false;
  function resetValidation(){configurationValidated=false;document.getElementById('atinaPregameStart').disabled=true;error.textContent='';}
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';resetValidation();updateLimit();updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
+ function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';resetValidation();updateLimit();updateSummary();document.getElementById('atinaPregameStart').textContent=mode==='solo'?'Iniciar Solo':mode==='mix'?'Iniciar Mix':'Continuar';overlay.classList.add('open');count.focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
  count.addEventListener('input',()=>{resetValidation();updateLimit();updateSummary();});difficulty.addEventListener('change',()=>{resetValidation();updateLimit();updateSummary();});
