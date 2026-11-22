@@ -25,8 +25,9 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
     if (!uuidPattern.test(reportId)) return json(req, { error: "Report ID inválido" }, 400);
     const deleted = await deleteReport(reportId);
     if (!deleted) return json(req, { error: "Report não encontrado" }, 404);
-    if (deleted.screenshot_path) await removeScreenshot(deleted.screenshot_path);
-    return json(req, { success: true, report_id: reportId });
+    let screenshotCleanupWarning = false;
+    if (deleted.screenshot_path) { try { await removeScreenshot(deleted.screenshot_path); } catch { screenshotCleanupWarning = true; } }
+    return json(req, { success: true, report_id: reportId, screenshot_cleanup_warning: screenshotCleanupWarning });
    } catch (error) { if (error instanceof SyntaxError) return json(req, { error: "Invalid JSON" }, 400); return json(req, { error: "Could not delete report" }, 500); }
   }
   try {
