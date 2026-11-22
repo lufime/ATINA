@@ -63,9 +63,13 @@
   const round=screen==='game'&&typeof pos!=='undefined'?String(pos+1):screen==='mimicaGame'?safe($('mimeRound')?.textContent,40):'';
   const roomId=room?safe(room.room_id,80):'';
   const version=(()=>{const meta=document.querySelector('meta[name="atina-game-version"]');return meta?safe(meta.content,40):''})();
-  return {screen,mode:currentMode,room:roomId||undefined,round:round||undefined,category:category||undefined,timer:timer||undefined,version:version||undefined,paused:pausedSolo};
+  const question=screen==='game'?safe($('question')?.textContent,220):'';
+  const clues=screen==='game'?safe($('clues')?.textContent,480):'';
+  const score=screen==='game'&&typeof scores!=='undefined'?safe(scores.join(' / '),40):'';
+  const streak=screen==='game'&&typeof correctStreak!=='undefined'?safe(correctStreak,30):'';
+  return {screen,mode:currentMode,room:roomId||undefined,round:round||undefined,category:category||undefined,timer:timer||undefined,question:question||undefined,clues:clues||undefined,score:score||undefined,streak:streak||undefined,version:version||undefined,paused:pausedSolo};
  }
- function contextText(ctx){return ['Contexto automático do jogo:', 'Ecrã: '+ctx.screen,'Modo: '+ctx.mode,ctx.room?'Sala: '+ctx.room:'',ctx.round?'Ronda: '+ctx.round:'',ctx.category?'Categoria: '+ctx.category:'',ctx.timer?'Tempo visível: '+ctx.timer:'',ctx.version?'Versão: '+ctx.version:''].filter(Boolean).join('\n');}
+ function contextText(ctx){return ['Contexto automático do jogo:', 'Ecrã: '+ctx.screen,'Modo: '+ctx.mode,ctx.room?'Sala: '+ctx.room:'',ctx.round?'Ronda: '+ctx.round:'',ctx.category?'Categoria: '+ctx.category:'',ctx.timer?'Tempo visível: '+ctx.timer:'',ctx.question?'Desafio: '+ctx.question:'',ctx.clues?'Pistas visíveis: '+ctx.clues:'',ctx.score?'Pontuação: '+ctx.score:'',ctx.streak?'Sequência: '+ctx.streak:'',ctx.version?'Versão: '+ctx.version:''].filter(Boolean).join('\n');}
  function pauseSolo(){
   if(visibleScreen()!=='game'||typeof mode==='undefined'||mode!=='solo'||typeof atinaSoloReportOpen!=='function')return false;
   if(typeof atinaSoloReportPaused!=='undefined'&&atinaSoloReportPaused)return false;
