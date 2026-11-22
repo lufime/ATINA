@@ -1074,8 +1074,8 @@ async function atinaServerRestoreSession() {
   atinaServerSession = saved;
   try {
     const state = await atinaServerRpc('atina_v2_local_game_state', { p_session_id: saved.session_id, p_token: saved.token });
-    screen('game');
     atinaServerApplyState(state);
+    screen('game');
     return true;
   } catch (error) {
     if (atinaServerIsInvalidSession(error)) {
@@ -1087,6 +1087,22 @@ async function atinaServerRestoreSession() {
     return false;
   }
 }
+function atinaServerResumeCardRefresh() {
+  const card = $('atinaResumeSessionCard');
+  if (!card) return;
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(ATINA_SERVER_SESSION_KEY) || 'null'); } catch (_) {}
+  card.hidden = !!networkRoom || !saved?.session_id || !saved?.token;
+}
+async function atinaServerResumeSavedSession() {
+  const button = $('atinaResumeSessionBtn');
+  if (button) { button.disabled = true; button.textContent = 'A recuperar partida…'; }
+  const resumed = await atinaServerRestoreSession();
+  if (button) { button.disabled = false; button.textContent = '▶ Retomar partida'; }
+  if (!resumed) atinaServerResumeCardRefresh();
+  return resumed;
+}
+
 
 /* Multiplayer challenges use only server-issued state and server-side scoring. */
 networkDrawClock = function() {
@@ -1511,13 +1527,14 @@ atinaOnlineCountBoot();
 let atinaServerStartRequested = false;
 (async function atinaServerBoot() {
   try {
-    // Uma sessão individual nunca deve ser recuperada automaticamente ao abrir/atualizar a página.
-    // Apagar a referência local impede que uma partida antiga volte a abrir o ecrã de jogo.
-    localStorage.removeItem(ATINA_SERVER_SESSION_KEY);
+    // A partida individual não abre automaticamente; fica disponível para retoma explícita.
     atinaServerSession = null;
     atinaServerState = null;
     atinaServerStopTimers();
     await networkRestoreSession();
-    if (!networkRoom && !atinaServerStartRequested && !atinaServerSession) screen('home');
-  } catch (_) { screen('home'); }
+    if (!networkRoom) {
+      if (!atinaServerStartRequested && !atinaServerSession) screen('home');
+      atinaServerResumeCardRefresh();
+    }
+  } catch (_) { screen('home'); atinaServerResumeCardRefresh(); }
 })();
