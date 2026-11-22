@@ -1,7 +1,7 @@
 # ATINA — Perguntas frequentes (FAQ)
 
 **Versão do jogo:** v0.1.218  
-**Última atualização do documento:** 21/11/2026
+**Última atualização do documento:** 22/11/2026
 
 Esta página reúne respostas sobre os modos e o funcionamento do ATINA, com base no código consultado.
 
@@ -37,7 +37,7 @@ Os modos online dependem de ligação à Internet. A validação de respostas e 
 Consulta o Perfil e os separadores de Classificação disponíveis. A atualização dos dados depende da ligação e dos serviços.
 
 ## Se o jogo não responder?
-Confirma a ligação, aguarda e tenta novamente. Consulta também **Erros conhecidos**. Se persistir, reporta o modo, o passo e o que aconteceu. Podes anexar uma imagem ou usar **Capturar screenshot do jogo**, que pede autorização do navegador para partilhar o ecrã/separador. Não incluas dados privados.
+Confirma a ligação, aguarda e tenta novamente. Consulta também **Erros conhecidos**. Em qualquer ecrã, usa o botão flutuante **Reportar erro** para enviar uma descrição com contexto automático (ecrã, modo, ronda e tempo, quando aplicável). Podes anexar uma imagem ou capturar o ecrã, com autorização do navegador. Não incluas dados privados.
 
 ---
 

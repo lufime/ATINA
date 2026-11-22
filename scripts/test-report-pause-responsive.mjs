@@ -34,27 +34,45 @@ try {
     await page.route('https://commons.wikimedia.org/**', route => route.fulfill({status:200,contentType:'application/json',body:'{"query":{"pages":{}}}'}));
     await page.goto(`http://127.0.0.1:${server.address().port}/`,{waitUntil:'load'});
     await page.evaluate(() => {
-      document.querySelector('#game')?.classList.remove('hidden');
-      document.querySelector('#game')?.style.setProperty('display','block','important');
+      const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];
+      ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.classList.add('hidden');el.hidden=true;el.setAttribute('aria-hidden','true');el.style.setProperty('display','none','important');});
+      const game=document.querySelector('#game');
+      if(game){game.classList.remove('hidden');game.hidden=false;game.setAttribute('aria-hidden','false');game.style.setProperty('display','block','important');}
       mode='solo'; networkRoom=false; locked=false; timePenaltyApplied=false;
       autoNextTimeout=null; autoRevealTimeout=null; autoRevealInterval=null;
       timerDeadline=Date.now()+90000; timeLeft=90; timerInterval=null;
     });
-    await page.evaluate(() => document.querySelector('#atinaSoloReportOpen')?.click());
-    const panel=page.locator('#atinaSoloReportPanel');
+    await page.evaluate(() => document.querySelector('#atinaGlobalReportButton')?.click());
+    const panel=page.locator('#atinaGlobalReportDialog');
     await panel.waitFor({state:'visible'});
     const dims=await page.evaluate(() => {
-      const panel=document.querySelector('#atinaSoloReportPanel');
+      const panel=document.querySelector('#atinaGlobalReportDialog');
       const rect=panel.getBoundingClientRect();
-      const category=document.querySelector('#atinaSoloReportCategory').getBoundingClientRect();
-      const description=document.querySelector('#atinaSoloReportDescription').getBoundingClientRect();
+      const category=document.querySelector('#atinaGlobalReportCategory').getBoundingClientRect();
+      const description=document.querySelector('#atinaGlobalReportDescription').getBoundingClientRect();
       return {vw:innerWidth,panelWidth:rect.width,panelLeft:rect.left,panelRight:rect.right,panelScroll:panel.scrollWidth,panelClient:panel.clientWidth,categoryWidth:category.width,descriptionWidth:description.width};
     });
     assert.ok(dims.panelWidth <= viewport.width, `report panel wider than viewport at ${viewport.width}px: ${JSON.stringify(dims)}`);
     assert.ok(dims.panelLeft >= 0 && dims.panelRight <= viewport.width, `panel clipped at ${viewport.width}px: ${JSON.stringify(dims)}`);
     assert.ok(dims.categoryWidth <= dims.panelWidth && dims.descriptionWidth <= dims.panelWidth, `form controls overflow panel: ${JSON.stringify(dims)}`);
     assert.ok(dims.panelScroll <= dims.panelClient + 1, `panel has horizontal overflow at ${viewport.width}px: ${JSON.stringify(dims)}`);
-    assert.equal(await page.locator('#atinaSoloReportOpen').getAttribute('aria-expanded'),'true');
+    assert.equal(await page.locator('#atinaGlobalReportOverlay').evaluate(el=>el.classList.contains('open')),true);
+    const reportDebug=await page.evaluate(()=>({context:window.atinaReportBridge.getContext(),paused:window.atinaReportBridge.isSoloPaused()}));
+    assert.equal(reportDebug.paused,true,'Solo timer should pause when the global report modal opens: '+JSON.stringify(reportDebug));
+    await page.locator('#atinaGlobalReportClose').click();
+    assert.equal(await page.evaluate(()=>atinaSoloReportPaused),false,'Solo timer should resume when the global report is closed');
+    for (const target of ['home','mimicaGame','result','rankingPage','networkLobby']) {
+      await page.evaluate(id => {
+        const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];
+        ids.forEach(name=>{const el=document.getElementById(name);if(!el)return;el.classList.add('hidden');el.hidden=true;el.setAttribute('aria-hidden','true');el.style.setProperty('display','none','important');});
+        const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.hidden=false;el.setAttribute('aria-hidden','false');el.style.setProperty('display','block','important');}
+      },target);
+      await page.locator('#atinaGlobalReportButton').click();
+      await panel.waitFor({state:'visible'});
+      const context=await page.locator('#atinaGlobalReportContext').textContent();
+      assert.ok(context.includes('Ecrã: '+target),`global report should open on ${target}: ${context}`);
+      await page.locator('#atinaGlobalReportClose').click();
+    }
     await page.close();
     console.log(`PASS responsive report panel at ${viewport.width}x${viewport.height}`);
   }

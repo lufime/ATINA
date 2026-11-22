@@ -1,7 +1,7 @@
 # ATINA — Erros conhecidos e limitações
 
 **Versão do jogo:** v0.1.218  
-**Última atualização do documento:** 21/11/2026
+**Última atualização do documento:** 22/11/2026
 
 Esta página separa limitações e situações que podem ocorrer de erros reproduzidos e confirmados. Nesta revisão documental não foram reproduzidos testes de jogo; por isso, os pontos abaixo não são apresentados como bugs confirmados.
 
@@ -26,8 +26,8 @@ Estes modos encaminham para o fluxo online. A experiência depende da sala/parti
 ## Problemas ainda não verificados
 Esta revisão não incluiu testes end-to-end em dispositivos nem reproduziu falhas adicionais. Não se adicionam problemas como confirmados sem evidência.
 
-## Reports de erros — alteração em validação
-O fluxo de reportes está a receber correções num PR ainda não publicado: pré-visualização de screenshots na Administração, captura de ecrã diretamente no formulário, opção de eliminar reportes e retoma automática do relógio após envio bem-sucedido. Até os CI e testes de navegador terminarem, estas correções não são consideradas validadas nem disponíveis na versão online.
+## Reportes de erros — em validação
+O PR #358 acrescenta reporte transversal em todos os ecrãs, contexto automático e screenshot por upload/captura. No modo Solo, o relógio pausa e retoma com o tempo preservado; nos modos online não pausa o relógio partilhado. Esta implementação ainda está em CI e não está publicada. As correções anteriores do fluxo administrativo continuam por validar na versão online.
 
 ## Como reportar
 Indica o modo, o passo em que ocorreu, o resultado esperado e o que aconteceu. Se possível, junta uma captura de ecrã pelo ficheiro ou pela opção de captura no formulário. Não incluas palavras-passe, tokens ou dados privados.
