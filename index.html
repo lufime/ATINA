@@ -1046,7 +1046,11 @@ label.section{line-height:1.35!important}
   // secundário escondido. Mantém Duelo e Festa no fluxo online.
   // Os atalhos rápidos abrem primeiro a seleção de modos, evitando arrancar
   // uma partida sem o utilizador passar pelo ecrã de seleção.
-  if((launch==="solo"||launch==="mix")&&typeof showHomePage==="function"){
+  if(launch==="solo"&&typeof showHomePage==="function"){
+   showHomePage("categories");
+   return;
+  }
+  if(launch==="mix"&&typeof showHomePage==="function"){
    showHomePage("play");
    return;
   }
@@ -2980,7 +2984,7 @@ $('mimeNext').onclick=async()=>{
  mimeShowNext();mimeStartClock();
 };
 $('categories').addEventListener('click',e=>{let b=e.target.closest('[data-category]');if(!b)return;if(b.dataset.category==='Mímicas'){showHomePage('online');$('networkModeHint').textContent='🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.';return;}start('solo',b.dataset.category);});
-$('solo').onclick=()=>start('solo');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='⚔️ Duelo online: cada jogador entra com a sua própria conta e telemóvel. Usa Partida rápida para encontrar adversário ou cria/entra numa sala.';};$('party').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='🎉 Modo Equipas: cada participante entra com a sua própria conta e telemóvel. Cria uma sala, distribui os jogadores por equipas e inicia a partida quando todos estiverem prontos.';};$('back').onclick=()=>{if(networkGameActive){networkLeaveRoom();return;}stopTimer();raceStop();locked=true;localStorage.removeItem(ATINA_PROGRESS_KEY);$('resultText').textContent='Partida interrompida. Pontos contabilizados até ao momento: '+scores[0]+' — '+scores[1]+'. Desafios concluídos: '+answeredCount+'.';screen('result');renderGrandFinal();};$('nextClue').onclick=reveal;$('submit').onclick=submit;
+$('solo').onclick=()=>showHomePage('categories');$('mix').onclick=()=>start('mix');$('duel').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='⚔️ Duelo online: cada jogador entra com a sua própria conta e telemóvel. Usa Partida rápida para encontrar adversário ou cria/entra numa sala.';};$('party').onclick=()=>{showHomePage('online');$('networkModeHint').textContent='🎉 Modo Equipas: cada participante entra com a sua própria conta e telemóvel. Cria uma sala, distribui os jogadores por equipas e inicia a partida quando todos estiverem prontos.';};$('back').onclick=()=>{if(networkGameActive){networkLeaveRoom();return;}stopTimer();raceStop();locked=true;localStorage.removeItem(ATINA_PROGRESS_KEY);$('resultText').textContent='Partida interrompida. Pontos contabilizados até ao momento: '+scores[0]+' — '+scores[1]+'. Desafios concluídos: '+answeredCount+'.';screen('result');renderGrandFinal();};$('nextClue').onclick=reveal;$('submit').onclick=submit;
 $('voice').onclick=()=>{
  if(locked)return;
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
