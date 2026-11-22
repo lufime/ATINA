@@ -441,6 +441,15 @@ button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;fil
 .sound-toggle{box-shadow:0 4px 0 #0b1d30,0 8px 14px #0003}
 @media(hover:hover){button:not(:disabled):not(.sound-toggle):hover{filter:brightness(1.07);transform:translateY(-2px)}.tile:not(:disabled):hover{border-color:#d3ad68;box-shadow:0 6px 0 #071321,0 12px 22px #0004}}
 @media(prefers-reduced-motion:reduce){button,.tile{transition:none!important}}
+
+/* ATINA: quebra de linha responsiva para avisos e mensagens informativas */
+#dateNotice{min-width:0;overflow-wrap:anywhere;word-break:normal;white-space:normal}
+#dateNotice>div{display:flex;align-items:flex-start;gap:10px;min-width:0}
+#dateNotice>div>span{flex:0 0 auto}
+#dateNotice>div>div{flex:1;min-width:0;overflow-wrap:anywhere;word-break:normal;white-space:normal}
+#atinaUpdateNoticeMessage{overflow-wrap:anywhere;word-break:normal;white-space:normal;hyphens:auto}
+#game .feedback,#game .clue,#game #question,#game .card,[role="status"],[role="alert"],.legal-copy,.online-panel,.online-ranking{min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+#game .feedback,#game .clue,[role="status"],[role="alert"],.legal-copy{hyphens:auto}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
