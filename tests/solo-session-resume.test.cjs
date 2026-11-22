@@ -13,6 +13,7 @@ test('Solo session is preserved at boot and retake is an explicit user action', 
   assert.match(html, /id="atinaResumeSessionBtn"/);
   assert.match(server, /async function atinaServerResumeSavedSession\(\)/);
   assert.match(server, /atinaServerResumeSavedSession/);
+  assert.match(server, /button\.onclick = atinaServerResumeSavedSession/);
 });
 
 test('manual resume applies server state before switching to game screen', () => {
