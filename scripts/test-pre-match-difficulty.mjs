@@ -27,8 +27,9 @@ const countFn=html.match(/function atinaReadChallengeCount\(\)\{try\{[\s\S]*?\}c
 assert(countFn,'challenge-count reader exists');
 assert(html.includes('id="atinaPregameStart" disabled'),'start is initially disabled until valid configuration');
 assert(html.includes('function validateConfig()')||html.includes('function validate()'),'configuration validates automatically');
-assert(!html.includes('atinaPregameConfirmCheck'),'configuration has no separate confirmation checkbox');
-assert(!html.includes('atinaPregameConfirm'),'configuration has no separate validation button');
+assert(html.includes('id="atinaPregameModes"'),'configuration exposes mode selection');
+assert(html.includes('id="atinaSoloCategoryPicker"'),'Solo category picker exists');
+assert(html.includes('id="atinaSoloCategory"'),'Solo category selection control exists');
 
 const countRuntime=new Function('localStorage',"const ATINA_CHALLENGE_COUNT_KEY='atinaChallengeCount';"+countFn+';return atinaReadChallengeCount;');
 function readCount(value,throws=false){
