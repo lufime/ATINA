@@ -44,4 +44,9 @@ assert(html.includes("Object.entries(p.atinaMixedDifficultyCache).filter(([k,v])
 
 assert(html.includes("!['solo','duel','mix'].includes(p.mode)"),'local progress restore accepts the Mix mode');
 
+// Regression guard: quick-play Solo/Mix shortcuts must enter mode selection, not start directly.
+const quickPlayLauncher=html.match(/document\.addEventListener\('click',function\(event\)\{[\s\S]*?\},false\);/)?.[0]||html.match(/document\.addEventListener\("click",function\(event\)\{[\s\S]*?\},false\);/)?.[0];
+assert(html.includes('showHomePage("play");'),'quick-play shortcuts route to mode selection');
+assert(html.includes('data-atina-launch')&&html.includes('showHomePage("play")'),'quick-play selection entry exists');
+
 console.log('Pre-match selection regression checks passed.');

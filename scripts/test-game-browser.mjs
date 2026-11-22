@@ -181,9 +181,14 @@ try {
     nodes.map(node => node.getAttribute('data-category')).filter(name => name && name !== 'Mímicas'));
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
 
-  // Regressão: o botão de arranque rápido Solo deve iniciar diretamente a sessão.
+  // Regressão: o atalho Solo deve abrir primeiro a seleção de modos.
   await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').click();
+  await page.locator('#home [data-home-page="play"]').first().waitFor({state:'visible',timeout:5000});
+  assert.equal(await page.locator('#solo').isVisible(), true,
+    'O painel de seleção deve mostrar o botão Solo após o atalho rápido.');
+  // O utilizador inicia explicitamente a partida a partir da seleção.
+  await page.locator('#solo').click();
   await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
     const state = await page.evaluate(() => ({startType:typeof start,session:localStorage.getItem('atinaAccountSessionV1'),guest:atinaGuestLimitReached(),guestCount:localStorage.getItem('atinaGuestChallengesCompletedV1'),gameCount:games.length,difficulty:difficultyMode,queueLength:queue.length,mode,screen:localStorage.getItem('atinaLastScreen'),dashboardHidden:document.querySelector('[data-home-page="dashboard"]')?.hidden,launchVisible:document.querySelector('[data-atina-launch="solo"]')?.getBoundingClientRect().height>0}));
     throw new Error('Quick Solo não abriu a partida. Diagnóstico: '+JSON.stringify({state,pageDialogs,pageErrors}));

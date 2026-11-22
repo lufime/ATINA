@@ -1044,8 +1044,10 @@ label.section{line-height:1.35!important}
   const launch=button.getAttribute("data-atina-launch");
   // Os modos locais arrancam diretamente, sem depender de clicar num botão
   // secundário escondido. Mantém Duelo e Festa no fluxo online.
-  if((launch==="solo"||launch==="mix")&&typeof start==="function"){
-   start(launch);
+  // Os atalhos rápidos abrem primeiro a seleção de modos, evitando arrancar
+  // uma partida sem o utilizador passar pelo ecrã de seleção.
+  if((launch==="solo"||launch==="mix")&&typeof showHomePage==="function"){
+   showHomePage("play");
    return;
   }
   const target=launchMap[launch];
