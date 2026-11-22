@@ -211,9 +211,10 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   await page.locator('#atinaPregameCancel').click();
   await page.evaluate(() => {
     classifyChallenge = window.__originalChallengeDifficulty;
-    difficultyMode = 'mixed';
-    $('difficultyMode').value = 'mixed';
-    localStorage.setItem('atinaDifficultyMode', 'mixed');
+    // Restaurar estado consistente para não contaminar o cenário seguinte.
+    difficultyMode = 'medium';
+    $('difficultyMode').value = 'medium';
+    localStorage.setItem('atinaDifficultyMode', 'medium');
   });
 
   // Regressão: o atalho Solo deve abrir a seleção de modalidades antes da partida.
