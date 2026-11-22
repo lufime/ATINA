@@ -58,7 +58,7 @@
  function visibleScreen(){const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];return ids.find(id=>{const el=document.getElementById(id);return el&&!el.hidden&&!el.classList.contains('hidden')&&getComputedStyle(el).display!=='none'})||'unknown';}
  function gameContext(){
   const screen=visibleScreen(),currentMode=safe(typeof mode!=='undefined'?mode:'unknown',40),room=typeof networkRoom!=='undefined'&&networkRoom?networkRoom:null;
-  let timer='';if(screen==='game'&&typeof timeLeft!=='undefined')timer=safe(timeLeft,20)+'s';else if(screen==='mimicaGame')timer=safe($('mimeTimer')?.textContent,30);
+  let timer='';if(screen==='game'&&typeof timeLeft!=='undefined'){const remaining=pausedSolo&&typeof atinaSoloReportRemaining!=='undefined'?atinaSoloReportRemaining:timerDeadline?Math.max(0,Math.ceil((timerDeadline-Date.now())/1000)):timeLeft;timer=safe(remaining,20)+'s'}else if(screen==='mimicaGame')timer=safe($('mimeTimer')?.textContent,30);
   const category=screen==='game'?safe($('category')?.textContent,100):screen==='mimicaGame'?safe($('mimeCategory')?.textContent,100):'';
   const round=screen==='game'&&typeof pos!=='undefined'?String(pos+1):screen==='mimicaGame'?safe($('mimeRound')?.textContent,40):'';
   const roomId=room?safe(room.room_id,80):'';
