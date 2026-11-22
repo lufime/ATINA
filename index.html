@@ -5163,7 +5163,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),confirmed=document.getElementById('atinaPregameConfirmed'),error=document.getElementById('atinaPregameError');
  let mode='solo',category=null;
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
- function updateSummary(){summary.textContent=(mode==='mix'?'Mix':'Solo')+' · '+count.value+' desafios · '+difficultyLabel(difficulty.value);}
+ function updateSummary(){summary.textContent=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode]+' · '+count.value+' desafios · '+difficultyLabel(difficulty.value);}
  function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;error.textContent='';updateSummary();overlay.classList.add('open');count.focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
@@ -5176,14 +5176,16 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   if(mainCount){mainCount.value=String(n);mainCount.dispatchEvent(new Event('change'));}
   if(mainDifficulty){mainDifficulty.value=difficulty.value;mainDifficulty.dispatchEvent(new Event('change'));}
   try{localStorage.setItem('atinaChallengeCount',String(n));localStorage.setItem('atinaDifficultyMode',difficulty.value);}catch(e){}
-  closeConfig();if(typeof start==='function')start(mode,category);
+  closeConfig();if(mode==='solo'||mode==='mix'){if(typeof start==='function')start(mode,category);return;}showHomePage('online');const hint=document.getElementById('networkModeHint');if(hint)hint.textContent=({duel:'⚔️ Duelo: configura as preferências e segue para partida rápida ou sala.',party:'🎉 Modo Festa: configura as preferências e segue para criar ou entrar numa sala.',mime:'🎭 Mímicas: segue para a sala online para preparar a ronda.'})[mode]||'Segue para a configuração online.';
  });
  document.getElementById('solo').onclick=()=>showHomePage('categories');
  document.getElementById('mix').onclick=()=>openConfig('mix',null);
+ document.getElementById('duel').onclick=()=>openConfig('duel',null);
+ document.getElementById('party').onclick=()=>openConfig('party',null);
  const categories=document.getElementById('categories');
  if(categories)categories.addEventListener('click',e=>{
   const tile=e.target.closest('[data-category]');if(!tile)return;
-  if(tile.dataset.category==='Mímicas')return;
+  if(tile.dataset.category==='Mímicas'){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('mime',tile.dataset.category);return;}
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('solo',tile.dataset.category);
  },true);
  overlay.addEventListener('click',e=>{if(e.target===overlay)closeConfig();});
