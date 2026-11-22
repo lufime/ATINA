@@ -54,7 +54,7 @@ body{background:radial-gradient(ellipse at 50% -10%,#173b60 0,#081727 52%,#06111
 #game .card>.row:has(#timerDisplay)>strong{display:none}
 #timerDisplay{display:flex!important;width:100%;min-width:0!important;min-height:94px;box-sizing:border-box!important;flex-direction:column!important;align-items:center;justify-content:center;white-space:normal!important;text-align:center!important;overflow-wrap:anywhere!important;font-size:clamp(25px,7vw,42px)!important;line-height:1.08!important;font-weight:950!important;letter-spacing:.025em!important;border:3px solid #eac05d!important;border-radius:22px!important;background:linear-gradient(110deg,#0b1a2b,#152c42,#0b1a2b)!important;color:#ffdb79!important;box-shadow:0 0 24px #e8b94c25,inset 0 0 18px #e8b94c10!important;padding:12px 8px!important}
 
-#timerDisplay.urgent{color:#ff655e!important;border-color:#ff655e!important;box-shadow:0 0 26px #ff514866!important}
+.timer-prepare-label{white-space:nowrap!important;display:block!important;font-size:clamp(20px,4.8vw,34px)!important;line-height:1.05!important;letter-spacing:.015em!important}.timer-prepare-count{white-space:nowrap!important;display:block!important;font-size:clamp(24px,6vw,38px)!important;line-height:1.05!important}#timerDisplay.urgent{color:#ff655e!important;border-color:#ff655e!important;box-shadow:0 0 26px #ff514866!important}
 #game .card>.row:has(#clueProgress){margin:8px 0 10px}
 #game .card>.row:has(#clueProgress)>strong{font-size:19px}
 .clues{gap:9px;margin:12px 0 16px}
@@ -1988,7 +1988,7 @@ function networkDrawClock(){
  const prepareUntil=Number(networkGameState.prepare_until)||0;
  if(prepareUntil){
   const left=Math.max(0,Math.ceil((prepareUntil-Date.now())/1000));
-  $('timerDisplay').innerHTML='PREPARA-TE<br><span>00:'+String(left).padStart(2,'0')+'</span>';
+  $('timerDisplay').innerHTML='<span class="timer-prepare-label">PREPARA-TE</span><span class="timer-prepare-count">00:'+String(left).padStart(2,'0')+'</span>';
   $('timerDisplay').classList.toggle('urgent',left<=3);
   $('clueProgress').textContent='A partida começa em '+left+' segundos';
   if(networkIsTurnDriver()&&left===0&&!networkGameState._startingChallenge){
