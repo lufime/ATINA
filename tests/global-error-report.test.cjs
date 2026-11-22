@@ -12,6 +12,10 @@ test('transversal report component is mounted in the game entry page', () => {
   assert.match(source, /role="dialog"/);
   assert.match(source, /gameContext\(\)/);
   assert.match(source, /contextText\(ctx\)/);
+  assert.match(source, /question:question\|\|undefined/);
+  assert.match(source, /clues:clues\|\|undefined/);
+  assert.match(source, /ctx\.question\?'Desafio: '\+ctx\.question/);
+  assert.match(source, /ctx\.clues\?'Pistas visíveis: '\+ctx\.clues/);
   assert.match(source, /game_area:ctx\.screen\+' · '\+ctx\.mode/);
 });
 
