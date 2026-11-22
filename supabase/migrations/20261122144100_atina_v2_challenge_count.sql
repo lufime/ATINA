@@ -8,8 +8,8 @@ create or replace function public.atina_v2_start_local_game(
   p_difficulty text,
   p_category text default null,
   p_timed_mode_seconds integer default 60,
-  p_device_token text default null,
-  p_challenge_count integer default 10
+  p_device_token text,
+  p_challenge_count integer
 ) returns jsonb language plpgsql security definer set search_path = '' as $$
 declare
   v_token text;
