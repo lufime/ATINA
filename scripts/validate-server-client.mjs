@@ -5,6 +5,7 @@ const html = readFileSync('index.html', 'utf8');
 const client = readFileSync('atina-server-client.js', 'utf8');
 const pagesConfig = readFileSync('_config.yml', 'utf8');
 const localCompatibility = readFileSync('supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql', 'utf8');
+const challengeCountMigration = readFileSync('supabase/migrations/20261122144100_atina_v2_challenge_count.sql', 'utf8');
 const multiplayerCompatibility = readFileSync('supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql', 'utf8');
 const localMimeCompatibility = readFileSync('supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql', 'utf8');
 const errors = [];
@@ -81,6 +82,11 @@ if (!client.includes("'atina_v2_submit_room_answer'")) errors.push('A RPC multip
 if (!client.includes("'atina_v2_submit_team_proposal'")) errors.push('A proposta de equipa segura não está ligada.');
 if (!client.includes("'atina_v2_resolve_mime_round'")) errors.push('A resolução de Mímicas no servidor não está ligada.');
 
+
+if (!client.includes('p_challenge_count: challengeCount')) errors.push('O cliente não envia a quantidade configurada para a RPC local.');
+if (!client.includes("Number($('challengeCount')?.value ?? 10)")) errors.push('O cliente não lê o seletor de quantidade antes de iniciar.');
+if (!challengeCountMigration.includes('p_challenge_count integer default 10') || !challengeCountMigration.includes('limit p_challenge_count')) errors.push('A migration da RPC não limita a fila à quantidade pedida.');
+if (!challengeCountMigration.includes('v_available < p_challenge_count')) errors.push('A RPC não rejeita seleções com desafios insuficientes.');
 
 const localRpcs = [
   'atina_v2_start_local_game', 'atina_v2_local_game_state',
