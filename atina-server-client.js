@@ -1089,7 +1089,9 @@ async function atinaServerRestoreSession() {
 }
 function atinaServerResumeCardRefresh() {
   const card = $('atinaResumeSessionCard');
+  const button = $('atinaResumeSessionBtn');
   if (!card) return;
+  if (button) button.onclick = atinaServerResumeSavedSession;
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(ATINA_SERVER_SESSION_KEY) || 'null'); } catch (_) {}
   card.hidden = !!networkRoom || !saved?.session_id || !saved?.token;
