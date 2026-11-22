@@ -7,7 +7,9 @@ on:
       - 'tests/error-report-backend-validation.test.cjs'
       - 'tests/error-report-submit-http.test.cjs'
       - 'tests/error-report-admin-http.test.mjs'
+      - 'tests/error-report-functions-deploy-workflow.test.cjs'
       - '.github/workflows/test-error-reports-validation.yml'
+      - '.github/workflows/deploy-error-report-functions-manual.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,4 +22,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node --test tests/error-report-backend-validation.test.cjs tests/error-report-submit-http.test.cjs tests/error-report-admin-http.test.mjs
+      - run: node --test tests/error-report-backend-validation.test.cjs tests/error-report-submit-http.test.cjs tests/error-report-admin-http.test.mjs tests/error-report-functions-deploy-workflow.test.cjs
