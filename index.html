@@ -441,6 +441,10 @@ button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;fil
 .sound-toggle{box-shadow:0 4px 0 #0b1d30,0 8px 14px #0003}
 @media(hover:hover){button:not(:disabled):not(.sound-toggle):hover{filter:brightness(1.07);transform:translateY(-2px)}.tile:not(:disabled):hover{border-color:#d3ad68;box-shadow:0 6px 0 #071321,0 12px 22px #0004}}
 @media(prefers-reduced-motion:reduce){button,.tile{transition:none!important}}
+
+/* Fix mobile preparation timer label: keep PREPARA-TE on one line. */
+#timerDisplay .timer-prepare-label{white-space:nowrap!important;word-break:keep-all!important;overflow-wrap:normal!important;hyphens:none!important;width:max-content!important;max-width:100%!important;font-size:clamp(20px,5.6vw,40px)!important;letter-spacing:.01em!important;}
+@media(max-width:480px){#timerDisplay .timer-prepare-label{font-size:clamp(20px,5.4vw,30px)!important;letter-spacing:0!important;}}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
