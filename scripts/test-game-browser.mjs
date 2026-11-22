@@ -184,7 +184,7 @@ try {
   // Regressão: o atalho Solo deve abrir primeiro a seleção de modos.
   await page.evaluate(() => showHomePage('dashboard'));
   await page.locator('[data-atina-launch="solo"]').click();
-  await page.locator('#home [data-home-page="play"]').waitFor({state:'visible',timeout:5000});
+  await page.locator('#home [data-home-page="play"]').first().waitFor({state:'visible',timeout:5000});
   assert.equal(await page.locator('#solo').isVisible(), true,
     'O painel de seleção deve mostrar o botão Solo após o atalho rápido.');
   // O utilizador inicia explicitamente a partida a partir da seleção.
