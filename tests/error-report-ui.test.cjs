@@ -10,7 +10,7 @@ test('game report form submits report fields with optional screenshot to report 
   assert.match(game, /atina-error-reports-submit/);
   assert.match(game, /nickname:getNickname\(\),category:/);
   assert.match(game, /description,screenshot:screenshotPayload/);
-  assert.match(game, /atinaSoloReportScreenshot/);
+  assert.match(game, /atinaSoloReportScreenshot/);\n  assert.match(game, /atinaSoloReportCapture/);\n  assert.match(game, /getDisplayMedia/);\n  assert.match(game, /Capturar screenshot do jogo/);
   assert.match(game, /3\s*\*\s*1024\s*\*\s*1024/);
   assert.match(game, /readAsDataURL\(file\)/);
   assert.match(game, /screenshotPayload\s*=\s*\{content_type:file\.type,base64:/);
@@ -28,7 +28,7 @@ test('admin reports UI is integrated in existing admin-images page', () => {
   assert.match(admin, /atina-error-reports-admin/);
   assert.match(admin, /reportNicknameFilter/);
   assert.match(admin, /Guardar alterações/);
-  assert.match(admin, /Ver screenshot/);
+  assert.match(admin, /Abrir screenshot em tamanho completo/);\n  assert.match(admin, /Apagar report/);\n  assert.match(admin, /method:\\"DELETE\\"/);
   assert.match(admin, /report.screenshot_url/);
 });
 
