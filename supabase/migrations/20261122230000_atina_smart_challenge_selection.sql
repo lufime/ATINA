@@ -136,11 +136,12 @@ begin
     from (
       select c.challenge_id,
              case
-               when p_game_mode='mix' or p_difficulty='mixed' then 0
                when p_category is not null and c.category=p_category
-                    and c.difficulty=p_difficulty then 0
+                    and (p_game_mode='mix' or p_difficulty='mixed'
+                         or c.difficulty=p_difficulty) then 0
                when p_category is not null and c.category=p_category then 1
-               when c.difficulty=p_difficulty then 2
+               when p_game_mode='mix' or p_difficulty='mixed'
+                    or c.difficulty=p_difficulty then 2
                else 3
              end as priority,
              random() as random_order
