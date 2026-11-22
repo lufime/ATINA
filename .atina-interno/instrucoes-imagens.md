@@ -174,6 +174,50 @@ Aplicar a todos os avisos, alertas, respostas, notificações, confirmações, i
 - Não fazer merge nem deploy sem autorização explícita.
 
 
+## 18. Versões Mobile e Desktop — padrão responsivo
+
+Aplicar este padrão a todas as páginas, formulários, inscrições/registos, autenticação, menus, painéis, modais e componentes novos ou modificados do ATINA. Preparar explicitamente uma experiência Mobile e uma experiência Desktop, mantendo as mesmas funcionalidades e informação.
+
+### 18.1. Versão Mobile
+- Desenvolver com prioridade mobile-first, para ecrãs estreitos e utilização por toque.
+- Ajustar largura, espaçamento, tipografia e componentes ao espaço disponível; evitar texto demasiado pequeno, campos apertados e scroll horizontal.
+- Inputs, selects e formulários devem ocupar a largura disponível, com labels claras e espaçamento consistente.
+- Garantir botões e controlos com áreas de toque confortáveis, ações fáceis de encontrar e estados de foco, erro e sucesso bem visíveis.
+- Empilhar elementos e ações quando necessário; evitar colunas que comprimam ou dificultem a leitura.
+- Não exigir zoom para ler, preencher ou interagir.
+
+### 18.2. Versão Desktop
+- Criar um layout pensado para ecrãs largos, não apenas esticar a versão Mobile.
+- Em Desktop, privilegiar a disposição **horizontal**: organizar secções, cartões, campos, conteúdos e ações lado a lado sempre que adequado, usando colunas e alinhamento em linha para aproveitar a largura do ecrã; evitar empilhamento vertical desnecessário.
+- Manter a disposição horizontal equilibrada, com espaçamento consistente, largura máxima e hierarquia visual; reorganizar para vertical apenas quando a legibilidade ou o conteúdo o justificarem.
+- Usar largura máxima adequada, alinhamento, hierarquia visual, espaçamento e colunas quando melhorarem a leitura ou o preenchimento.
+- Agrupar ações de forma clara e manter os controlos proporcionais; evitar campos, cartões ou conteúdos excessivamente largos.
+- Aproveitar o espaço disponível sem dispersar informação nem prejudicar a navegação.
+- Preservar o mesmo conteúdo, funcionalidades, validações e estados da versão Mobile.
+
+### 18.3. Tablet e tamanhos intermédios
+- Usar breakpoints fluidos entre Mobile e Desktop.
+- Adaptar colunas, grelhas, menus e espaçamentos progressivamente.
+- Evitar sobreposições, cortes, saltos abruptos de layout ou espaços excessivos.
+
+### 18.4. Composição das imagens para Mobile e Desktop
+- As imagens finais mantêm as especificações técnicas do ATINA (1920 × 1080, 16:9).
+- Compor com o elemento principal claramente identificável e suficientemente grande para leitura em ecrãs pequenos.
+- Manter o assunto principal e os detalhes essenciais numa zona central segura, evitando depender de elementos muito próximos das margens.
+- Evitar detalhes essenciais demasiado pequenos, fundos confusos ou composição que só funcione em ecrã grande.
+- Considerar que a imagem pode ser reduzida, recortada ou apresentada em diferentes áreas da interface; preservar o reconhecimento do desafio em ambos os tamanhos.
+- Não criar versões ou formatos alternativos sem pedido; a composição deve funcionar na imagem 16:9 padrão.
+
+### 18.5. Verificação obrigatória
+Antes de concluir qualquer implementação responsiva, validar pelo menos:
+- Mobile estreito.
+- Mobile comum.
+- Tablet.
+- Desktop.
+
+Confirmar ausência de scroll horizontal involuntário, sobreposições, conteúdo cortado, texto ilegível e ações difíceis de tocar ou clicar. Manter consistência com a identidade visual ATINA, reutilizar padrões existentes e evitar CSS duplicado ou contraditório.
+
+Este padrão é visual e de usabilidade: não autoriza alterações à lógica de negócio, dados, permissões ou publicação.
 ## 19. Documentação sempre conforme a versão online atual do jogo
 - Toda a documentação do ATINA deve estar alinhada com a versão atual publicada online e com as funcionalidades online que estão realmente disponíveis.
 - Antes de escrever, atualizar ou validar documentação, confirmar o código atual e, quando acessível, a versão publicada online.
