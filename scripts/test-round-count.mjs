@@ -31,5 +31,5 @@ assert.ok(startSection.includes('queue.length!==requestedCount'), 'game start re
 const nextSection = html.slice(html.indexOf('async function next(){'), html.indexOf('async function activateLandscapePresentation'));
 assert.ok(nextSection.includes('if(!atinaRoundHasNext(pos,queue)){finishRace(null);return;}'), 'round ends at the configured challenge limit');
 assert.ok(!nextSection.includes('queue=shuffle(queue);pos=0;'), 'round no longer loops/restarts the selected queue');
-assert.ok(html.includes('🏁 Ronda concluída — '+ ' '+ ' desafios') || html.includes('🏁 Ronda concluída — '+ ' challenges') || html.includes('🏁 Ronda concluída — '+ ' challenges'), 'results label is updated for count-based round completion');
+assert.ok(html.includes("const title=winner===null?'🏁 Ronda concluída — '+queue.length+' desafios'"), 'results label shows count-based completion');
 console.log('Round challenge-count tests passed.');
