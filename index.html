@@ -4998,7 +4998,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   <p id="atinaPregameError" role="alert" style="color:#ffb7a8;min-height:1.2em;margin:6px 0"></p>
   <div id="atinaPregameButtons">
    <button type="button" class="btn secondary" id="atinaPregameCancel">Cancelar</button>
-   <button type="button" class="btn" id="atinaPregameStart">Iniciar ronda</button>
+   <button type="button" class="btn secondary" id="atinaPregameConfirm">Confirmar</button>
+   <button type="button" class="btn" id="atinaPregameStart" disabled>Iniciar ronda</button>
   </div>
  </section>
 </div>
@@ -5008,14 +5009,23 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  let mode='solo',category=null;
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
  function updateSummary(){summary.textContent=({mix:'Mix',solo:'Solo',duel:'Duelo',party:'Modo Festa',mime:'Mímicas'})[mode]+' · '+count.value+' desafios · '+difficultyLabel(difficulty.value);}
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;error.textContent='';updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
+ let configurationValidated=false;
+ function resetValidation(){configurationValidated=false;document.getElementById('atinaPregameStart').disabled=true;error.textContent='';}
+ function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';confirmed.checked=false;resetValidation();updateSummary();document.getElementById('atinaPregameStart').textContent=(mode==='solo'||mode==='mix')?'Iniciar ronda':'Continuar';overlay.classList.add('open');count.focus();}
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
- count.addEventListener('input',updateSummary);difficulty.addEventListener('change',updateSummary);
+ count.addEventListener('input',()=>{resetValidation();updateSummary();});difficulty.addEventListener('change',()=>{resetValidation();updateSummary();});confirmed.addEventListener('change',resetValidation);
+ document.getElementById('atinaPregameConfirm').addEventListener('click',()=>{
+  const n=Number(count.value);
+  if(!Number.isInteger(n)||n<1||n>1000){error.textContent='Escolhe um número entre 1 e 1000.';return;}
+  if(!confirmed.checked){error.textContent='Assinala a confirmação antes de validar.';return;}
+  configurationValidated=true;document.getElementById('atinaPregameStart').disabled=false;
+  error.textContent='Configuração validada. Podes iniciar a ronda quando quiseres.';
+ });
  document.getElementById('atinaPregameStart').addEventListener('click',()=>{
   const n=Number(count.value);
   if(!Number.isInteger(n)||n<1||n>1000){error.textContent='Escolhe um número entre 1 e 1000.';return;}
-  if(!confirmed.checked){error.textContent='Assinala a confirmação antes de iniciar.';return;}
+  if(!confirmed.checked||!configurationValidated){error.textContent='Confirma e valida a configuração antes de iniciar.';return;}
   const mainCount=document.getElementById('challengeCount'),mainDifficulty=document.getElementById('difficultyMode');
   if(mainCount){mainCount.value=String(n);mainCount.dispatchEvent(new Event('change'));}
   if(mainDifficulty){mainDifficulty.value=difficulty.value;mainDifficulty.dispatchEvent(new Event('change'));}
