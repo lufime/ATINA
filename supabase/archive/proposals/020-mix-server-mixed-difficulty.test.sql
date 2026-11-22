@@ -51,7 +51,7 @@ SELECT id FROM inserted;
 
 CREATE TEMP TABLE atina_mix_test_seed AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('a',64),10
+  'mix','medium',NULL,0,repeat('a',64),6
 ) AS result;
 
 SELECT is(
@@ -85,17 +85,17 @@ VALUES (
 
 CREATE TEMP TABLE atina_mix_distribution_run AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('b',64),10
+  'mix','medium',NULL,0,repeat('b',64),6
 ) AS result;
 
 CREATE TEMP TABLE atina_mix_test_run AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('a',64),10
+  'mix','medium',NULL,0,repeat('a',64),6
 ) AS result;
 
 CREATE TEMP TABLE atina_solo_test_run AS
 SELECT public.atina_v2_start_local_game(
-  'solo','medium',NULL,0,repeat('a',64),10
+  'solo','medium',NULL,0,repeat('a',64),6
 ) AS result;
 
 SELECT is(
