@@ -1,0 +1,23 @@
+name: Test pre-match difficulty
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'scripts/test-pre-match-difficulty.mjs'
+      - '.github/workflows/test-pre-match-difficulty.yml'
+  push:
+    branches:
+      - 'feat/pre-match-global-settings'
+    paths:
+      - 'index.html'
+      - 'scripts/test-pre-match-difficulty.mjs'
+      - '.github/workflows/test-pre-match-difficulty.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node scripts/test-pre-match-difficulty.mjs
