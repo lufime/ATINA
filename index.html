@@ -2,53 +2,8 @@
 (function(){
  const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),error=document.getElementById('atinaPregameError');
  let mode='solo',category=null;
- function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
- function isServerMode(){return mode==='mime'||mode==='duel'||mode==='party';}
- function availableChallenges(){if(isServerMode())return null;if(typeof games==='undefined'||!Array.isArray(games))return 0;const matchingCategory=games.filter(g=>g&&((mode==='mix')||(!category||g[0]===category)));const matchingDifficulty=matchingCategory.filter(g=>difficulty.value==='mixed'||classifyChallenge(games.indexOf(g))===difficulty.value);return matchingDifficulty.length;}
- function updateLimit(){const serverMode=isServerMode(),max=availableChallenges();count.disabled=serverMode;document.getElementById('atinaPregameMinus').disabled=serverMode;document.getElementById('atinaPregamePlus').disabled=serverMode;count.max=serverMode?'1000':String(max);count.min='1';if(serverMode){count.value=String(Math.max(1,Math.min(1000,Number(count.value)||10)));error.textContent='A quantidade de desafios é definida pelo servidor neste modo.';return;}if(max<1){count.value='0';error.textContent='Não existem desafios disponíveis para esta seleção/dificuldade.';}else{const n=Math.max(1,Math.min(max,Number(count.value)||10));count.value=String(n);error.textContent='';}}
- function updateSummary(){const title=({mix:'Mix',solo:'Modalidades'})[mode];summary.textContent=isServerMode()?title+' · desafios geridos pelo servidor · '+difficultyLabel(difficulty.value):title+' · '+count.value+' desafios · '+availableChallenges()+' disponíveis · '+difficultyLabel(difficulty.value);}
- function validateConfig(){
-  const n=Number(count.value),max=availableChallenges(),valid=isServerMode()?Number.isInteger(n)&&n>=1&&n<=1000:Number.isInteger(n)&&n>=1&&n<=max;
-  document.getElementById('atinaPregameStart').disabled=!valid;
-  if(!valid){error.textContent=isServerMode()?'Escolhe um número válido entre 1 e 1000.':'Escolhe uma quantidade entre 1 e '+max+', o máximo disponível nesta seleção.';}
-  else error.textContent='';
-  return valid;
- }
- function updateModeUI(){document.querySelectorAll('#atinaPregameMode [data-mode]').forEach(b=>{const selected=b.dataset.mode===mode;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected));});document.getElementById('atinaPregameStart').textContent=({solo:'Iniciar Modalidades',mix:'Iniciar Mix'})[mode]||'Iniciar';}
- function openConfig(nextMode,nextCategory){mode=nextMode;category=nextCategory||null;count.value=String(Math.max(1,Math.min(1000,Number(document.getElementById('challengeCount')?.value)||10)));difficulty.value=document.getElementById('difficultyMode')?.value||'medium';updateModeUI();updateLimit();updateSummary();validateConfig();overlay.classList.add('open');document.getElementById('atinaPregameMinus').focus();}
- function closeConfig(){overlay.classList.remove('open');}
- document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
- document.getElementById('atinaPregameMode').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;category=mode==='mix'?null:category;updateModeUI();updateLimit();updateSummary();validateConfig();});
- count.addEventListener('input',()=>{updateLimit();updateSummary();validateConfig();});difficulty.addEventListener('change',()=>{updateLimit();updateSummary();validateConfig();});
- document.getElementById('atinaPregameMinus').addEventListener('click',()=>{count.value=String(Math.max(Number(count.min)||1,(Number(count.value)||1)-1));count.dispatchEvent(new Event('input'));});
- document.getElementById('atinaPregamePlus').addEventListener('click',()=>{const max=Number(count.max)||1000;count.value=String(Math.min(max,(Number(count.value)||0)+1));count.dispatchEvent(new Event('input'));});
- document.getElementById('atinaPregameStart').addEventListener('click',()=>{
-  const n=Number(count.value);
-  if(!isServerMode()&&(!Number.isInteger(n)||n<1||n>availableChallenges())){error.textContent='Escolhe uma quantidade dentro do máximo disponível.';return;}if(isServerMode()&&(!Number.isInteger(n)||n<1||n>1000)){error.textContent='Escolhe um número válido.';return;}
-  if(!validateConfig())return;
-  const mainCount=document.getElementById('challengeCount'),mainDifficulty=document.getElementById('difficultyMode');
-  if(mainCount){mainCount.value=String(n);mainCount.dispatchEvent(new Event('change'));}
-  if(mainDifficulty){mainDifficulty.value=difficulty.value;mainDifficulty.dispatchEvent(new Event('change'));}
-  try{localStorage.setItem('atinaChallengeCount',String(n));localStorage.setItem('atinaDifficultyMode',difficulty.value);}catch(e){}
-  closeConfig();if(mode==='solo'||mode==='mix'){if(typeof start==='function')start(mode,category);return;}showHomePage('online');const hint=document.getElementById('networkModeHint');if(hint)hint.textContent=({duel:'⚔️ Duelo online: configura as preferências e usa Partida rápida ou cria/entra numa sala.',party:'🎉 Modo Equipas: configura as preferências e cria uma sala ou entra com código.',mime:'🎭 Mímicas selecionado. Cada pessoa entra nesta sala no seu próprio telemóvel; o anfitrião inicia a partida quando todos estiverem prontos.'})[mode]||'Segue para a configuração online.';
- });
- document.getElementById('solo').onclick=()=>showHomePage('categories');
- document.getElementById('mix').onclick=()=>openConfig('mix',null);
- document.getElementById('duel').onclick=()=>openConfig('duel',null);
- document.getElementById('party').onclick=()=>openConfig('party',null);
- const categories=document.getElementById('categories');
- if(categories)categories.addEventListener('click',e=>{
-  const tile=e.target.closest('[data-category]');if(!tile)return;
-  if(tile.dataset.category==='Mímicas'){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('mime',tile.dataset.category);return;}
-  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openConfig('solo',tile.dataset.category);
- },true);
- overlay.addEventListener('click',e=>{if(e.target===overlay)closeConfig();});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeConfig();});
-})();
-</script><script id="atina-pregame-configuration-v1">
-(function(){
- const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),error=document.getElementById('atinaPregameError');
- let mode='solo',category=null;\n const categoryWrap=document.getElementById('atinaSoloCategoryPicker'),categorySelect=document.getElementById('atinaSoloCategory');\n function refreshCategoryPicker(){if(!categoryWrap||!categorySelect)return;const needed=mode==='solo'&&category===null;categoryWrap.style.display=needed?'block':'none';if(!needed)return;const names=[...new Set((Array.isArray(games)?games:[]).filter(Boolean).map(g=>g[0]).filter(Boolean))];categorySelect.innerHTML='<option value="">Seleciona uma categoria</option>'+names.map(name=>'<option value="'+String(name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')+'">'+String(name).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</option>').join('');if(category)categorySelect.value=category;}
+ const categoryWrap=document.getElementById('atinaSoloCategoryPicker'),categorySelect=document.getElementById('atinaSoloCategory');
+ function refreshCategoryPicker(){if(!categoryWrap||!categorySelect)return;const needed=mode==='solo'&&category===null;categoryWrap.style.display=needed?'block':'none';if(!needed)return;const names=[...new Set((Array.isArray(games)?games:[]).filter(Boolean).map(g=>g[0]).filter(Boolean))];categorySelect.innerHTML='<option value="">Seleciona uma categoria</option>'+names.map(name=>'<option value="'+String(name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')+'">'+String(name).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</option>').join('');if(category)categorySelect.value=category;}
  function difficultyLabel(v){return ({easy:'Fácil',medium:'Média',hard:'Difícil',mixed:'Aleatória'})[v]||'Média';}
  function isServerMode(){return mode==='mime'||mode==='duel'||mode==='party';}
  function availableChallenges(){if(isServerMode())return null;if(typeof games==='undefined'||!Array.isArray(games))return 0;const matchingCategory=games.filter(g=>g&&((mode==='mix')||(!category||g[0]===category)));const matchingDifficulty=matchingCategory.filter(g=>difficulty.value==='mixed'||classifyChallenge(games.indexOf(g))===difficulty.value);return matchingDifficulty.length;}
@@ -66,7 +21,8 @@
  function closeConfig(){overlay.classList.remove('open');}
  document.getElementById('atinaPregameCancel').addEventListener('click',closeConfig);
  document.getElementById('atinaPregameMode').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;mode=b.dataset.mode;category=mode==='mix'?null:category;refreshCategoryPicker();updateModeUI();updateLimit();updateSummary();validateConfig();});
- categorySelect?.addEventListener('change',()=>{category=categorySelect.value||null;updateLimit();updateSummary();validateConfig();});\n count.addEventListener('input',()=>{updateLimit();updateSummary();validateConfig();});difficulty.addEventListener('change',()=>{updateLimit();updateSummary();validateConfig();});
+ categorySelect?.addEventListener('change',()=>{category=categorySelect.value||null;updateLimit();updateSummary();validateConfig();});
+ count.addEventListener('input',()=>{updateLimit();updateSummary();validateConfig();});difficulty.addEventListener('change',()=>{updateLimit();updateSummary();validateConfig();});
  document.getElementById('atinaPregameMinus').addEventListener('click',()=>{count.value=String(Math.max(Number(count.min)||1,(Number(count.value)||1)-1));count.dispatchEvent(new Event('input'));});
  document.getElementById('atinaPregamePlus').addEventListener('click',()=>{const max=Number(count.max)||1000;count.value=String(Math.min(max,(Number(count.value)||0)+1));count.dispatchEvent(new Event('input'));});
  document.getElementById('atinaPregameStart').addEventListener('click',()=>{
