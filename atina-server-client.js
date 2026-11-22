@@ -906,11 +906,14 @@ async function atinaServerStart(gameMode, category = null) {
     if (['solo', 'mix'].includes(gameMode) && atinaAccountSessionToken() && !atinaCloudProfile) {
       try { atinaCloudProfile = await atinaServerRpc('atina_account_profile', {p_session_token: atinaAccountSessionToken()}); atinaProgressRender(atinaCloudProfile); } catch (_) {}
     }
+    const configuredChallengeCount = Number($('challengeCount')?.value ?? 10);
+    const challengeCount = Number.isInteger(configuredChallengeCount) && configuredChallengeCount >= 1 && configuredChallengeCount <= 1000 ? configuredChallengeCount : 10;
     const response = await atinaServerRpc('atina_v2_start_local_game', {
       p_game_mode: gameMode,
       p_difficulty: difficulty,
       p_category: category,
       p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
+      p_challenge_count: challengeCount,
       p_device_token: ['solo', 'mix'].includes(gameMode) && atinaCloudProfile
         ? atinaAccountSessionToken() : null
     });
