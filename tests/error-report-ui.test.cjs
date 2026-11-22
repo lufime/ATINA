@@ -48,6 +48,26 @@ test('report contents are rendered through textContent and DOM nodes', () => {
   assert.doesNotMatch(render, /innerHTML.*report\.(nickname|description|internal_note)/);
 });
 
+test('screenshot capture handles unsupported browsers, enforces size, and stops media tracks', () => {
+  const capture = game.slice(game.indexOf('const captureButton=$("atinaSoloReportCapture")'), game.indexOf('remove?.addEventListener', game.indexOf('const captureButton=$("atinaSoloReportCapture")')));
+  assert.match(capture, /getDisplayMedia/);
+  assert.match(capture, /track/);
+  assert.match(capture, /blob\.size>ATINA_REPORT_SCREENSHOT_MAX_BYTES/);
+  assert.match(capture, /stream\?\.getTracks\(\)\.forEach\(track=>track\.stop\(\)\)/);
+  assert.match(capture, /canvas\.toBlob/);
+  assert.match(capture, /catch\(error\)/);
+});
+test('clock resumes only after successful report and failed submission keeps description', () => {
+  const start=game.indexOf('form.addEventListener(\'submit\',async event=>');
+  const end=game.indexOf('});\n})();',start);
+  assert.ok(start>=0&&end>start);
+  const submitFlow=game.slice(start,end);
+  assert.match(submitFlow,/if\(!response\.ok\|\|!data\.success\)throw/);
+  assert.match(submitFlow,/atinaSoloReportResume\(\)/);
+  assert.match(submitFlow,/catch\(error\)/);
+  assert.doesNotMatch(submitFlow,/catch\(error\)[\s\S]*atinaSoloReportResume\(\)/);
+  assert.match(submitFlow,/finally\{submit\.disabled=false;/);
+});
 test('embedded JavaScript scripts parse without syntax errors', () => {
   const scripts = [];
   let cursor = 0;
