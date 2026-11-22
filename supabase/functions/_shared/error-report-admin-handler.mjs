@@ -16,7 +16,7 @@ export function createAdminHandler({ authenticate, isAdmin, listReports, updateR
   if (!user) return json(req, { error: "Unauthorized" }, 401);
   let adminAllowed; try { adminAllowed = await isAdmin(user.id); } catch { return json(req, { error: "Admin authorization check failed" }, 503); }
   if (!adminAllowed) return json(req, { error: "Administrador não autorizado: a conta autenticada não está registada para gerir reports." }, 403);
-  if (req.method === "GET") { try { const reports = (await listReports()) ?? []; const enriched = await Promise.all(reports.map(async report => { let screenshot_url = null, screenshot_error = false; if (report.screenshot_path) { try { screenshot_url = await signedScreenshotUrl(report.screenshot_path); } catch { screenshot_error = true; } } return { ...report, screenshot_url, screenshot_error }; })); return json(req, { reports: enriched }); } catch { return json(req, { error: "Could not load reports" }, 500); } }
+  if (req.method === "GET") { try { const reports = (await listReports()) ?? []; const enriched = await Promise.all(reports.map(async report => { let screenshot_url = null, screenshot_error = false; if (report.screenshot_path) { try { screenshot_url = await signedScreenshotUrl(report.screenshot_path); } catch { screenshot_error = true; } } return { ...report, screenshot_url, ...(screenshot_error ? { screenshot_error: true } : {}) }; })); return json(req, { reports: enriched }); } catch { return json(req, { error: "Could not load reports" }, 500); } }
   if (req.method === "DELETE") {
    try {
     const body = await req.json();
