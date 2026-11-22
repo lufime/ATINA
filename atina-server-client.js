@@ -811,7 +811,7 @@ function atinaRenderChallengeCatalogProgress(data, selectedCategory, selectedDif
     else card.appendChild(panel);
   }
   const fmt = n => Number(n || 0).toLocaleString('pt-PT');
-  const safeLabel = value => String(value ?? '').replace(/[&<>\"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\": '&#39;'}[ch]));
+  const safeLabel = value => String(value ?? '').replace(/[&<>\"']/g, ch => ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '\"' ? '&quot;' : '&#39;');
   const row = (label, total, seen, remaining) => '<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0"><span>'+safeLabel(label)+'</span><strong>'+fmt(seen)+' / '+fmt(total)+' · '+fmt(remaining)+' restantes</strong></div>';
   const categories = Array.isArray(data.categories) ? data.categories : [];
   const difficulties = Array.isArray(data.difficulties) ? data.difficulties : [];
