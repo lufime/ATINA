@@ -211,8 +211,8 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
   assert.equal(await page.locator('#atinaPregameCount').inputValue(), '0',
     'Sem desafios da dificuldade selecionada, a quantidade deve ser zero (sem fallback para outra dificuldade).');
-  assert.equal(await page.locator('#atinaPregameConfirm').isDisabled(), true,
-    'Não deve permitir validar uma configuração sem desafios nessa dificuldade.');
+  assert.equal(await page.locator('#atinaPregameStart').isDisabled(), true,
+    'Não deve permitir iniciar uma configuração sem desafios nessa dificuldade.');
   await page.locator('#atinaPregameCancel').click();
   await page.evaluate(() => {
     classifyChallenge = window.__originalChallengeDifficulty;
