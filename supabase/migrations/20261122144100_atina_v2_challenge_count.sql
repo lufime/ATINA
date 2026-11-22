@@ -20,6 +20,7 @@ declare
   v_queue integer[];
   v_session private.atina_v2_local_sessions;
   v_card jsonb;
+  v_available integer;
 begin
   if p_game_mode is null or p_game_mode not in ('solo', 'duel', 'mix') then
     raise exception 'Modo inválido nesta versão.' using errcode = '22023';
