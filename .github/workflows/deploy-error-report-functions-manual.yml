@@ -32,6 +32,13 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy atina-error-reports-admin --project-ref qvvlqrgbtjujsejvenld
+      - name: Verify both report functions are listed in production
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          functions=$(supabase functions list --project-ref qvvlqrgbtjujsejvenld)
+          echo "$functions" | grep -F 'atina-error-reports-submit'
+          echo "$functions" | grep -F 'atina-error-reports-admin'
 
   reject-unconfirmed:
     if: inputs.confirmation != 'DEPLOY ATINA REPORT FUNCTIONS'
