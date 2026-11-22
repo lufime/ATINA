@@ -6,6 +6,8 @@ import { chromium } from 'playwright';
 const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const challengeImageBank = indexHtml.match(/const games=\[[\s\S]*?\];/);
 assert.ok(challengeImageBank, 'Banco de desafios deve existir no HTML.');
+const gameCategories = new Set([...challengeImageBank[0].matchAll(/\[\s*\"([^\"]+)\"\s*,\s*\"[^\"]+\"\s*,/g)].map(match => match[1]));
+assert.ok(gameCategories.size > 0, 'Banco local deve ter categorias reconhecíveis.');
 assert.doesNotMatch(challengeImageBank[0], /https?:\/\//, 'Banco de desafios não deve conter imagens externas.');
 const solutionImageCatalog = JSON.parse(await readFile(new URL('../solution-images.json', import.meta.url), 'utf8'));
 assert.ok(Array.isArray(solutionImageCatalog.images), 'Catálogo de imagens deve ter uma lista válida.');
@@ -189,6 +191,7 @@ try {
   const categories = await page.locator('#categories [data-category]').evaluateAll(nodes =>
     nodes.map(node => node.getAttribute('data-category')).filter(name => name && name !== 'Mímicas'));
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
+assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mostrar categorias sem desafios no banco local (causa do contador 0).');
 
   // Regressão: o atalho Solo deve abrir a seleção de modalidades antes da partida.
   await page.evaluate(() => showHomePage('dashboard'));
