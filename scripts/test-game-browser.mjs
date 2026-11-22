@@ -279,8 +279,7 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   // Resposta errada não fecha a ronda; a resposta certa seguinte fecha-a.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#solo').click();
-  await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
-  await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
+  await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
   await confirmPregame();
   await page.locator('#game').waitFor({state:'visible'});
   await page.locator('#answer').fill('Resposta errada');
