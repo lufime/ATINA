@@ -6,8 +6,8 @@ drop function if exists public.atina_v2_start_local_game(text, text, text, integ
 create or replace function public.atina_v2_start_local_game(
   p_game_mode text,
   p_difficulty text,
-  p_category text default null,
-  p_timed_mode_seconds integer default 60,
+  p_category text,
+  p_timed_mode_seconds integer,
   p_device_token text,
   p_challenge_count integer
 ) returns jsonb language plpgsql security definer set search_path = '' as $$
