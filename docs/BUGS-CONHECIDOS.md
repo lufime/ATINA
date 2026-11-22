@@ -1,9 +1,10 @@
 # ATINA — Erros conhecidos e limitações
 
-**Versão do jogo:** v0.1.218  
+**Versão do jogo (código):** v0.1.253  
+**Versão online:** não confirmada nesta revisão  
 **Última atualização do documento:** 22/11/2026
 
-Esta página separa limitações e situações que podem ocorrer de erros reproduzidos e confirmados. Nesta revisão documental não foram reproduzidos testes de jogo; por isso, os pontos abaixo não são apresentados como bugs confirmados.
+Esta página distingue situações possíveis de erros reproduzidos. Não foram realizados testes funcionais completos em dispositivos nesta atualização documental.
 
 ## Situações a considerar
 
@@ -23,17 +24,22 @@ O carregamento ou atualização pode demorar quando a ligação ou o serviço es
 ### Duelo e Modo Festa
 Estes modos encaminham para o fluxo online. A experiência depende da sala/partida e dos dispositivos dos participantes; não são descritos aqui como modos locais no mesmo dispositivo.
 
-## Problemas ainda não verificados
-Esta revisão não incluiu testes end-to-end em dispositivos nem reproduziu falhas adicionais. Não se adicionam problemas como confirmados sem evidência.
+## Reportar erros — comportamento implementado no código
+O botão transversal **Reportar erro** permite enviar uma descrição, contexto automático do ecrã/partida e anexar ou capturar uma imagem, quando o navegador autoriza.
 
-## Reportes de erros — em validação
-O PR #358 acrescenta reporte transversal em todos os ecrãs, contexto automático e screenshot por upload/captura. No modo Solo, o relógio pausa e retoma com o tempo preservado; nos modos online não pausa o relógio partilhado. Esta implementação ainda está em CI e não está publicada. As correções anteriores do fluxo administrativo continuam por validar na versão online.
+- **Solo:** o relógio pausa durante o reporte e o tempo restante é preservado; o fluxo retoma após fechar ou concluir o reporte.
+- **Online:** o relógio partilhado não é pausado.
+
+A presença desta implementação no código não confirma, por si só, que já esteja publicada online.
+
+## Problemas ainda não verificados
+Esta revisão documental não incluiu testes end-to-end em dispositivos nem reproduziu falhas adicionais. Não se adicionam problemas como confirmados sem evidência.
 
 ## Como reportar
-Indica o modo, o passo em que ocorreu, o resultado esperado e o que aconteceu. Se possível, junta uma captura de ecrã pelo ficheiro ou pela opção de captura no formulário. Não incluas palavras-passe, tokens ou dados privados.
+Indica o modo, o passo em que ocorreu, o resultado esperado e o que aconteceu. Se possível, junta uma captura de ecrã. Não incluas palavras-passe, tokens ou dados privados.
 
 ## Estado das correções
-Uma correção só é considerada concluída após implementação e validação.
+Uma correção só é considerada concluída após implementação e validação. A versão online deve ser confirmada separadamente.
 
 ---
 
