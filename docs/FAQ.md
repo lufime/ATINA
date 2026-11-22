@@ -37,7 +37,7 @@ Os modos online dependem de ligação à Internet. A validação de respostas e 
 Consulta o Perfil e os separadores de Classificação disponíveis. A atualização dos dados depende da ligação e dos serviços.
 
 ## Se o jogo não responder?
-Confirma a ligação, aguarda e tenta novamente. Consulta também **Erros conhecidos**. Se persistir, reporta o modo, o passo em que ocorreu e uma captura de ecrã, sem dados privados.
+Confirma a ligação, aguarda e tenta novamente. Consulta também **Erros conhecidos**. Se persistir, reporta o modo, o passo e o que aconteceu. Podes anexar uma imagem ou usar **Capturar screenshot do jogo**, que pede autorização do navegador para partilhar o ecrã/separador. Não incluas dados privados.
 
 ---
 
