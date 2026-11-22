@@ -54,7 +54,8 @@ assert(html.includes("!['solo','duel','mix'].includes(p.mode)"),'local progress 
 const quickPlayLauncher=html.match(/document\.addEventListener\('click',function\(event\)\{[\s\S]*?\},false\);/)?.[0]||html.match(/document\.addEventListener\("click",function\(event\)\{[\s\S]*?\},false\);/)?.[0];
 assert(html.includes('showHomePage("play");'),'quick-play shortcuts route to mode selection');
 assert(html.includes('data-atina-launch')&&html.includes('showHomePage("play")'),'quick-play selection entry exists');
-assert(html.includes("$('solo').onclick=()=>showHomePage('categories')"),'Solo opens category selection before starting');
+assert(html.includes("$('solo').onclick=()=>openConfig('solo',null)"),'Solo opens configuration and selection directly');
+assert(!html.includes("$('solo').onclick=()=>showHomePage('categories')"),'Solo bypasses the intermediate categories page');
 assert(html.includes("start('solo',b.dataset.category)"),'category selection starts Solo with the chosen category');
 
 console.log('Pre-match selection regression checks passed.');
