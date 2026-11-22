@@ -225,6 +225,9 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   // Regressão: o atalho Solo deve abrir diretamente a configuração/seleção, sem a página de categorias.
   await page.evaluate(() => {
     $('challengeCount').value = '10';
+    $('challengeCount').dispatchEvent(new Event('change'));
+    atinaChallengeCount = 10;
+    localStorage.setItem('atinaChallengeCount', '10');
     difficultyMode = 'medium';
     $('difficultyMode').value = 'medium';
     showHomePage('dashboard');
