@@ -113,6 +113,11 @@ await page.route('https://commons.wikimedia.org/**', route => route.fulfill({
 await page.route('https://images.unsplash.com/**', route => route.abort());
 
 try {
+  async function confirmPregame(){
+    await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
+    await page.locator('#atinaPregameConfirmed').check();
+    await page.locator('#atinaPregameStart').click();
+  }
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil:'load'});
   assert.equal(await page.evaluate(() => typeof window.ATINARoomRuntime?.turnKey), 'function',
     'O runtime reconstruído do modo sala tem de carregar no browser.');
@@ -189,6 +194,10 @@ try {
     'O atalho Solo deve apresentar a seleção de modalidades.');
   // O utilizador escolhe uma modalidade e inicia a partida.
   await page.locator('#categories [data-category]').filter({hasText: categories[0]}).click();
+  await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
+  assert.equal(await page.locator('#atinaPregameCount').inputValue(),'10','Solo deve iniciar com 10 desafios por defeito.');
+  assert.equal(await page.locator('#atinaPregameDifficulty').inputValue(),'medium','Solo deve iniciar com dificuldade média por defeito.');
+  await confirmPregame();
   await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
     const state = await page.evaluate(() => ({startType:typeof start,session:localStorage.getItem('atinaAccountSessionV1'),guest:atinaGuestLimitReached(),guestCount:localStorage.getItem('atinaGuestChallengesCompletedV1'),gameCount:games.length,difficulty:difficultyMode,queueLength:queue.length,mode,screen:localStorage.getItem('atinaLastScreen'),dashboardHidden:document.querySelector('[data-home-page="dashboard"]')?.hidden,launchVisible:document.querySelector('[data-atina-launch="solo"]')?.getBoundingClientRect().height>0}));
     throw new Error('Quick Solo não abriu a partida. Diagnóstico: '+JSON.stringify({state,pageDialogs,pageErrors}));
@@ -204,6 +213,7 @@ try {
   for (const category of categories) {
     await page.evaluate(() => showHomePage('categories'));
     await page.locator('#categories [data-category]').filter({hasText: category}).click();
+    await confirmPregame();
     await page.locator('#game').waitFor({state:'visible',timeout:5000}).catch(async () => {
       const state=await page.evaluate(name=>({category:name,mode,difficultyMode,queueLength:queue.length,gameCount:games.length,categoryText:document.querySelector('#category')?.textContent,screen:localStorage.getItem('atinaLastScreen'),matchingGames:games.filter(g=>g&&g[0]===name).length,matchingIndices:games.map((g,i)=>g&&g[0]===name?i:null).filter(i=>i!==null).slice(0,8)}),category);
       throw new Error('Modalidade não abriu no browser: '+JSON.stringify({state,dialogs:pageDialogs.slice(-5),errors:pageErrors.slice(-5)}));
@@ -225,6 +235,7 @@ try {
   // Confirmar que Mix inicia uma sessão própria e que PASSO e CONTINUAR funcionam.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#mix').click();
+  await confirmPregame();
   await page.locator('#game').waitFor({state:'visible'});
   await page.locator('#pass').click();
   await page.getByText(/Desafio passado/).waitFor();
@@ -236,6 +247,7 @@ try {
   await page.locator('#solo').click();
   await page.locator('#home [data-home-page="categories"]').first().waitFor({state:'visible',timeout:5000});
   await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
+  await confirmPregame();
   await page.locator('#game').waitFor({state:'visible'});
   await page.locator('#answer').fill('Resposta errada');
   await page.locator('#submit').click();
@@ -248,13 +260,16 @@ try {
   // Os modos que exigem vários dispositivos encaminham para a área online.
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#duel').click();
+  await confirmPregame();
   await page.locator('#networkModeHint').getByText(/Duelo online/).waitFor();
   await page.evaluate(() => showHomePage('play'));
   await page.locator('#party').click();
+  await confirmPregame();
   await page.locator('#networkModeHint').getByText(/Modo Equipas/).waitFor();
   // Mímicas encaminha para o fluxo de sala online.
   await page.evaluate(() => showHomePage('categories'));
   await page.locator('#categories [data-category="Mímicas"]').click();
+  await confirmPregame();
   await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
 
   // Navegação principal, definições e páginas de perfil/classificação sem erros JS.
