@@ -23,7 +23,7 @@ try{
 }finally{Math.random=originalRandom;}
 
 // Verify challenge-count validation against the actual reader function.
-const countFn=html.match(/function atinaReadChallengeCount\(\)\{[\s\S]*?\n\}/)?.[0];
+const countFn=html.match(/function atinaReadChallengeCount\(\)\{try\{[\s\S]*?\}catch\(e\)\{return 10;\}\}/)?.[0];
 assert(countFn,'challenge-count reader exists');
 const countRuntime=new Function('localStorage',"const ATINA_CHALLENGE_COUNT_KEY='atinaChallengeCount';"+countFn+';return atinaReadChallengeCount;');
 function readCount(value,throws=false){
