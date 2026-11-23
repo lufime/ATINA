@@ -787,6 +787,39 @@ function atinaRenderChallengeProgress(position, total) {
   }
 }
 
+async function atinaProfileCatalogProgressRefresh() {
+  const token = atinaAccountSessionToken();
+  const mount = document.querySelector('#home [data-home-page="profile"]');
+  if (!token || !mount) return;
+  let panel = document.getElementById('atinaProfileChallengeCatalog');
+  if (!panel) {
+    panel = document.createElement('section');
+    panel.id = 'atinaProfileChallengeCatalog';
+    panel.className = 'card';
+    panel.setAttribute('aria-live', 'polite');
+    panel.style.cssText = 'margin:12px 0;padding:14px;border:1px solid #52708a;border-radius:14px;background:linear-gradient(145deg,#172f48,#102237);';
+    const account = mount.querySelector('#atinaCloudProgressPanel');
+    if (account) account.insertAdjacentElement('afterend', panel);
+    else mount.appendChild(panel);
+  }
+  panel.innerHTML = '<h3 style="margin:0 0 8px">📚 Progresso dos desafios</h3><p class="muted small">A carregar os teus desafios descobertos…</p>';
+  try {
+    const data = await atinaServerRpc('atina_challenge_catalog_progress', { p_session_token: token });
+    const fmt = n => Number(n || 0).toLocaleString('pt-PT');
+    const safe = value => String(value ?? '').replace(/[&<>"']/g, ch => ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '"' ? '&quot;' : '&#39;');
+    const pct = data.total ? Math.round((Number(data.seen || 0) / Number(data.total)) * 100) : 0;
+    const row = (label, total, seen, remaining) => '<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #304a61"><span>'+safe(label)+'</span><strong>'+fmt(seen)+' / '+fmt(total)+' <small>('+fmt(remaining)+' restantes)</small></strong></div>';
+    const cats = Array.isArray(data.categories) ? data.categories : [];
+    const diffs = Array.isArray(data.difficulties) ? data.difficulties : [];
+    const diffNames = {easy:'Fácil',medium:'Normal',hard:'Difícil',mixed:'Aleatória'};
+    panel.innerHTML = '<h3 style="margin:0 0 8px">📚 Progresso dos desafios</h3><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:8px 0"><div style="padding:9px 5px;border:1px solid #3b5871;border-radius:10px;text-align:center;background:#10283d"><strong>'+fmt(data.seen)+'</strong><small style="display:block">Descobertos</small></div><div style="padding:9px 5px;border:1px solid #3b5871;border-radius:10px;text-align:center;background:#10283d"><strong>'+fmt(data.total)+'</strong><small style="display:block">Total</small></div><div style="padding:9px 5px;border:1px solid #3b5871;border-radius:10px;text-align:center;background:#10283d"><strong>'+fmt(data.remaining)+'</strong><small style="display:block">Restantes</small></div></div><div style="height:9px;background:#263b50;border-radius:999px;overflow:hidden"><div role="progressbar" aria-label="Percentagem de desafios descobertos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'" style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#38c5dd,#71f1c0);border-radius:inherit"></div></div><p class="muted small" style="text-align:center;margin:5px 0 12px">'+pct+'% descobertos</p><div><strong>Por categoria</strong>'+cats.map(x=>row(x.category,x.total,x.seen,x.remaining)).join('')+'</div><div style="margin-top:12px"><strong>Por dificuldade</strong>'+diffs.map(x=>row(diffNames[x.difficulty]||x.difficulty,x.total,x.seen,x.remaining)).join('')+'</div>';
+  } catch (error) {
+    panel.innerHTML = '<h3 style="margin:0 0 8px">📚 Progresso dos desafios</h3><p role="status" class="muted small">Não foi possível carregar os contadores agora. Tenta novamente mais tarde.</p>';
+    console.warn('ATINA: não foi possível carregar progresso no perfil.', error);
+  }
+}
+window.atinaProfileCatalogProgressRefresh = atinaProfileCatalogProgressRefresh;
+
 async function atinaChallengeCatalogProgressRefresh() {
   const token = atinaAccountSessionToken();
   if (!token || !atinaServerState) return;
