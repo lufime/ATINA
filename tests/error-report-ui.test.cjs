@@ -96,3 +96,9 @@ test('global report screenshot remove action is hidden until a valid preview loa
   assert.match(globalReport, /preview\.onload=\(\)=>\{preview\.hidden=false;\$\('atinaGlobalReportRemoveScreenshot'\)\.hidden=false/);
   assert.match(globalReport, /preview\.onerror=\(\)=>\{preview\.hidden=true;\$\('atinaGlobalReportRemoveScreenshot'\)\.hidden=true/);
 });
+
+
+test('global report preview CSS respects the hidden attribute', () => {
+  assert.match(globalReport, /#atinaGlobalReportPreview:not\(\[hidden\]\)\{display:block/);
+  assert.doesNotMatch(globalReport, /#atinaGlobalReportPreview\{display:block/);
+});
