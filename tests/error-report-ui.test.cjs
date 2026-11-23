@@ -38,6 +38,17 @@ test('admin report UI previews screenshots and provides guarded deletion', () =>
   assert.match(admin, /report\.screenshot_url/);
 });
 
+test('admin renders screenshots from signed URLs without requiring the hidden storage path', () => {
+  const start = admin.indexOf('function renderReports()');
+  const end = admin.indexOf('function messageStatus', start);
+  assert.ok(start >= 0 && end > start);
+  const render = admin.slice(start, end);
+  assert.match(render, /if\(report\.screenshot_url\)/);
+  assert.match(render, /else if\(report\.screenshot_error\)/);
+  assert.doesNotMatch(render, /report\.screenshot_path/);
+  assert.match(render, /Ilustração de screenshot em falta/);
+});
+
 test('report contents are rendered through textContent and DOM nodes', () => {
   const start = admin.indexOf('function renderReports()');
   const end = admin.indexOf('function messageStatus', start);
