@@ -120,3 +120,12 @@ test('global report explains native screenshot attachment on mobile browsers', (
   assert.match(globalReport, /screenshot com os botões do iPhone\/Android/i);
   assert.match(globalReport, /anexa-a através de Escolher ficheiro/i);
 });
+
+test('global error report shares report context with ChatGPT and game instructions using a medium button', () => {
+  assert.match(globalReport, /id="atinaGlobalReportShare">[^<]*Partilhar com o ChatGPT/);
+  assert.match(globalReport, /#atinaGlobalReportShare\{min-height:44px;padding:9px 14px;font-size:14px/);
+  assert.match(globalReport, /navigator\.share\(shareData\)/);
+  assert.match(globalReport, /https:\/\/lufime\.github\.io\/ATINA\/index\.html#howto/);
+  assert.match(globalReport, /navigator\.clipboard\.writeText\(message\)/);
+  assert.match(globalReport, /shareData\.files=\[file\]/);
+});
