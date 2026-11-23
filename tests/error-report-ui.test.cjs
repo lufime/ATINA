@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const game = fs.readFileSync('index.html', 'utf8');
 const admin = fs.readFileSync('admin-images.html', 'utf8');
+const globalReport = fs.readFileSync('assets/atina-global-error-report.js', 'utf8');
 
 test('game report supports optional uploaded or directly captured screenshots', () => {
   assert.match(game, /atina-error-reports-submit/);
@@ -86,4 +87,12 @@ test('embedded JavaScript scripts parse without syntax errors', () => {
     scripts.push(source);
   }
   assert.ok(scripts.length > 0, 'expected at least one inline JavaScript block to parse');
+});
+
+
+test('global report screenshot remove action is hidden until a valid preview loads', () => {
+  assert.match(globalReport, /id="atinaGlobalReportRemoveScreenshot" hidden/);
+  assert.match(globalReport, /function clearImage\(\)[\s\S]*atinaGlobalReportRemoveScreenshot'\)\.hidden=true/);
+  assert.match(globalReport, /preview\.onload=\(\)=>\{preview\.hidden=false;\$\('atinaGlobalReportRemoveScreenshot'\)\.hidden=false/);
+  assert.match(globalReport, /preview\.onerror=\(\)=>\{preview\.hidden=true;\$\('atinaGlobalReportRemoveScreenshot'\)\.hidden=true/);
 });
