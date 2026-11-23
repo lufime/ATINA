@@ -5242,5 +5242,34 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 </style>
 <script src="./assets/atina-settings-cache.js"></script>
 <script src="./assets/atina-global-error-report.js"></script>
+
+<style id="atina-mobile-polish-20261123">
+/* Mobile refinement: safe viewport, readable inputs, comfortable touch, no horizontal overflow. Desktop unaffected. */
+@media (max-width:700px){
+ html{scroll-padding-top:12px}
+ body{overflow-x:hidden;max-width:100%;-webkit-text-size-adjust:100%}
+ body,body *{box-sizing:border-box}
+ .wrap{width:100%;max-width:100%;padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+ #home,#game,#atinaMainNav,.home-page-nav,.card,.home-block{min-width:0;max-width:100%}
+ #home .tile,#game .card,.home-welcome,.daily-mission{overflow-wrap:anywhere}
+ button,.btn,[role=button],input[type=button],input[type=submit]{touch-action:manipulation}
+ #game button,#home button,#game .btn,#home .btn{min-height:44px}
+ #game input,#game textarea,#game select,#home input,#home textarea,#home select{font-size:16px!important;max-width:100%;min-width:0}
+ img,video,canvas,svg{max-width:100%;height:auto}
+ .home-page-nav,#atinaMainNav{position:relative!important;top:auto!important}
+ .home-page-nav .home-nav-btn,#atinaMainNav .home-nav-btn{min-width:0;overflow-wrap:anywhere}
+ #game :target{scroll-margin-top:12px}
+ [role=dialog],.modal,.overlay{max-width:100vw}
+}
+@media(max-width:380px){
+ .wrap{padding-left:7px!important;padding-right:7px!important}
+ #game .actions,#home .actions{gap:6px}
+ #game .actions .btn,#home .actions .btn{padding-inline:8px!important;overflow-wrap:anywhere}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto!important}
+}
+</style>
+
 </body>
 </html>
