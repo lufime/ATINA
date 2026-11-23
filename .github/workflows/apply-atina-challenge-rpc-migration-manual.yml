@@ -1,0 +1,81 @@
+name: Apply one approved Supabase migration (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type APPLY ATINA CHALLENGE RPC MIGRATION to authorize this exact migration
+        required: true
+        type: string
+      project_ref:
+        description: Confirm the production Supabase project ref
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atina-production-single-migration
+  cancel-in-progress: false
+
+jobs:
+  apply-single-migration:
+    if: inputs.confirmation == 'APPLY ATINA CHALLENGE RPC MIGRATION' && inputs.project_ref == 'qvvlqrgbtjujsejvenld' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify target and selected migration
+        shell: bash
+        env:
+          CONFIRMED_PROJECT_REF: ${{ inputs.project_ref }}
+        run: |
+          set -euo pipefail
+          expected_ref="qvvlqrgbtjujsejvenld"
+          migration="supabase/migrations/20261123100000_atina_challenge_catalog_progress_rpc.sql"
+          test "$CONFIRMED_PROJECT_REF" = "$expected_ref"
+          test -f "$migration"
+          echo "Target project ref confirmed: $CONFIRMED_PROJECT_REF"
+          echo "Selected migration: $migration"
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: 3.2.0
+      - name: Create isolated migration directory (selected migration only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/atina-single-migration/supabase/migrations
+          cp supabase/config.toml /tmp/atina-single-migration/supabase/config.toml
+          cp supabase/migrations/20261123100000_atina_challenge_catalog_progress_rpc.sql /tmp/atina-single-migration/supabase/migrations/
+          test "$(find /tmp/atina-single-migration/supabase/migrations -maxdepth 1 -type f | wc -l)" -eq 1
+      - name: Dry-run selected migration against production
+        working-directory: /tmp/atina-single-migration
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          CONFIRMED_PROJECT_REF: ${{ inputs.project_ref }}
+        run: supabase db push --remote="$CONFIRMED_PROJECT_REF" --dry-run
+      - name: Apply selected migration only
+        working-directory: /tmp/atina-single-migration
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          CONFIRMED_PROJECT_REF: ${{ inputs.project_ref }}
+        run: supabase db push --remote="$CONFIRMED_PROJECT_REF" --yes
+      - name: Verify RPC exists with read-only query
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          CONFIRMED_PROJECT_REF: ${{ inputs.project_ref }}
+        run: |
+          set -euo pipefail
+          supabase db query "SELECT 1 / CASE WHEN to_regprocedure('public.atina_challenge_catalog_progress(text)') IS NOT NULL THEN 1 ELSE 0 END AS rpc_verified;" --remote="$CONFIRMED_PROJECT_REF" --read-only
+  reject-unconfirmed:
+    if: inputs.confirmation != 'APPLY ATINA CHALLENGE RPC MIGRATION' || inputs.project_ref != 'qvvlqrgbtjujsejvenld' || github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reject without exact confirmation and target
+        run: |
+          echo "Confirmation, project ref, or branch guard failed. No database command was run."
+          exit 1
