@@ -294,7 +294,10 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   await page.locator('#continue').click();
   await page.waitForFunction(() => document.querySelector('#level')?.textContent.includes('DESAFIO 2'));
   if (scrollBeforeContinue > 20) {
-    await page.waitForFunction(() => window.scrollY < 20, null, {timeout:5000});
+    await page.waitForFunction(() => {
+      const game = document.querySelector('#game');
+      return game && game.getBoundingClientRect().top < 20;
+    }, null, {timeout:5000});
   }
 
   // Resposta errada não fecha a ronda; a resposta certa seguinte fecha-a.
