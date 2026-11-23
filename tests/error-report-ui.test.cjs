@@ -130,14 +130,17 @@ test('global error report shares report context with ChatGPT and game instructio
   assert.match(globalReport, /shareData\.files=\[file\]/);
 });
 
-test('ChatGPT report analysis action is only in admin reports', () => {
+test('ChatGPT report sharing is prominent at the top of admin report cards without changing player sharing', () => {
   assert.doesNotMatch(globalReport, /atinaGlobalReportOpenChatGPT|Copiar reporte e abrir ChatGPT/);
   const start = admin.indexOf('function renderReports()');
   const end = admin.indexOf('function messageStatus', start);
   assert.ok(start >= 0 && end > start);
   const render = admin.slice(start, end);
-  assert.match(render, /aiReview\.textContent="Preparar análise no ChatGPT"/);
+  assert.match(render, /aiReview\.textContent="Partilhar report com ChatGPT"/);
   assert.match(render, /sharePrompt\.textContent="Partilhar contexto"/);
   assert.match(render, /Copiar contexto/);
   assert.match(render, /Abrir ChatGPT/);
+  const shareAction = render.indexOf('const aiReview=');
+  assert.ok(shareAction > render.indexOf('card.appendChild(meta);'), 'share action follows report title and metadata');
+  assert.ok(shareAction < render.indexOf('const desc='), 'share action is before report description and screenshot');
 });
