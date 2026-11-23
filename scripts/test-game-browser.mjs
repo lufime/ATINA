@@ -284,8 +284,21 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   await page.locator('#game').waitFor({state:'visible'});
   await page.locator('#pass').click();
   await page.getByText(/Desafio passado/).waitFor();
+  assert.equal(await page.locator('#atinaRoundNumber').textContent(), '1', 'HUD deve mostrar um desafio concluído após PASSO.');
+  assert.ok(await page.locator('.atina-live-stats').textContent().then(text => text.includes('Concluídos')), 'HUD deve identificar claramente desafios concluídos.');
+  const scrollBeforeContinue = await page.evaluate(() => {
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo({top:max,behavior:'auto'});
+    return max;
+  });
   await page.locator('#continue').click();
   await page.waitForFunction(() => document.querySelector('#level')?.textContent.includes('DESAFIO 2'));
+  if (scrollBeforeContinue > 20) {
+    await page.waitForFunction(() => {
+      const game = document.querySelector('#game');
+      return game && game.getBoundingClientRect().top < 20;
+    }, null, {timeout:5000});
+  }
 
   // Resposta errada não fecha a ronda; a resposta certa seguinte fecha-a.
   await page.evaluate(() => showHomePage('play'));
