@@ -121,13 +121,16 @@ test('global report explains native screenshot attachment on mobile browsers', (
   assert.match(globalReport, /anexa-a através de Escolher ficheiro/i);
 });
 
-test('ChatGPT report sharing is removed from the player and administration', () => {
+test('ChatGPT report sharing is available only in the administration', () => {
   assert.doesNotMatch(globalReport, /atinaGlobalReportShare|Partilhar com o ChatGPT|navigator\.share|shareData\.files/);
   const start = admin.indexOf('function renderReports()');
   const end = admin.indexOf('function messageStatus', start);
   assert.ok(start >= 0 && end > start);
   const render = admin.slice(start, end);
-  assert.doesNotMatch(render, /ChatGPT|chatgpt\.com|navigator\.share|aiPrompt|Copiar contexto|Abrir ChatGPT/);
+  assert.match(render, /Partilhar com ChatGPT/);
+  assert.match(render, /navigator\.share/);
+  assert.match(render, /navigator\.clipboard\.writeText/);
+  assert.match(render, /chatgpt\.com/);
   assert.match(render, /Apagar report/);
   assert.match(render, /card\.appendChild\(desc\)/);
 });
