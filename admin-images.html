@@ -689,7 +689,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
       });
       updateChallengeCategoryFilter();
       await Promise.all(challengeCache.map(challenge=>new Promise(resolve=>{
-        const url=challenge._imageAsset?.image_url||challenge.solution_image_url;
+        const url=challenge._imageAsset?.game_image_url||challenge._imageAsset?.image_url||challenge.solution_image_url;
         if(!url){resolve();return;}
         const probe=new Image();
         probe.onload=()=>{
@@ -810,7 +810,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
     $("challengeId").value=x.challenge_id; $("challengeCategory").value=x.category||""; $("challengeEmoji").value=x.emoji||"";
     $("challengeAnswer").value=x.answer||""; $("challengeDifficulty").value=x.difficulty||"medium";
     renderClueFields(x.clues||[]); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
-    $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||x._imageAsset?.image_url||x.image_url||""; updateChallengeImagePreview();
+    $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||x._imageAsset?.game_image_url||x._imageAsset?.image_url||x.image_url||""; updateChallengeImagePreview();
     $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id; setFormDirty(false);
     $("challengeForm").classList.remove("hidden"); $("challengePagination").classList.add("hidden"); $("challengeList").nextElementSibling?.classList.add("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
   }
