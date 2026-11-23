@@ -16,7 +16,7 @@ context.atinaRememberCorrectChallenge(27); assert.deepEqual([...context.atinaRea
 context.window.atinaCloudProfile.nickname='Bob'; assert.deepEqual([...context.atinaReadCorrectChallenges()],[],'players have isolated histories');
 context.atinaRememberCorrectChallenge(8); context.window.atinaCloudProfile.nickname='Alice'; assert.deepEqual([...context.atinaReadCorrectChallenges()].sort((a,b)=>a-b),[12,27]);
 context.window.atinaCloudProfile=null; assert.deepEqual([...context.atinaReadCorrectChallenges()],[],'guest history is separate from account histories');
-const startCode=html.slice(startIndex,html.indexOf('function mixDraw()',startIndex)); assert.match(startCode,/!atinaReadCorrectChallenges\(\)\.has\(x\.i\)/,'start filters completed challenges');
+const startCode=html.slice(startIndex,html.indexOf('function mixDraw()',startIndex)); assert.match(startCode,/!answeredChallenges\.has\(x\.i\)/,'start filters completed challenges');
 const modalIndex=html.indexOf('function availableChallenges()');const modalCode=html.slice(modalIndex,modalIndex+600);assert.match(modalCode,/atinaReadCorrectChallenges/,'pregame available count uses player completion history');assert.match(modalCode,/!answered\.has\(i\)/,'pregame counts only unanswered challenges');
 const endIndex=html.indexOf("const isCorrect=message.startsWith('Certo!'),isTimeout=message.includes('Tempo esgotado');");assert.ok(endIndex>=0);assert.match(html.slice(endIndex,endIndex+260),/if\(isCorrect\)atinaRememberCorrectChallenge\(queue\[pos\]\);/,'only correct answers are stored');
 console.log('Player-specific available challenge tests passed.');
