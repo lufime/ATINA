@@ -156,7 +156,7 @@ async function atinaProfileChallengeProgressRefresh() {
   atinaProfileChallengeProgressBusy = true;
   try {
     const data = await atinaServerRpc('atina_challenge_catalog_progress', { p_session_token: token });
-    const anchor = document.getElementById('atinaCloudProgressPanel');
+    const anchor = document.getElementById('atinaProfileAccountMount');
     if (!anchor || !data) return;
     let panel = document.getElementById('atinaProfileChallengeProgress');
     if (!panel) {
