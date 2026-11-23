@@ -2538,6 +2538,7 @@ function showHomePage(page,restore=false){
  if(location.hash!=='#'+page){
   try{history.replaceState(null,'','#'+page);}catch(e){}
  }
+ if(page==='profile'&&typeof atinaProfileChallengeProgressRefresh==='function')void atinaProfileChallengeProgressRefresh();
  if(page==='online')atinaLoadOnlinePlayers();
  if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
  if(page==='ranking'&&typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();
