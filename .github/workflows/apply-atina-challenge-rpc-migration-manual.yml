@@ -11,9 +11,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: atina-production-single-migration
+  cancel-in-progress: false
+
 jobs:
   apply-single-migration:
-    if: inputs.confirmation == 'APPLY ATINA CHALLENGE RPC MIGRATION'
+    if: inputs.confirmation == 'APPLY ATINA CHALLENGE RPC MIGRATION' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
     timeout-minutes: 15
@@ -59,10 +63,10 @@ jobs:
           set -euo pipefail
           supabase db query "SELECT 1 / CASE WHEN to_regprocedure('public.atina_challenge_catalog_progress(text)') IS NOT NULL THEN 1 ELSE 0 END AS rpc_verified;" --remote=qvvlqrgbtjujsejvenld --read-only
   reject-unconfirmed:
-    if: inputs.confirmation != 'APPLY ATINA CHALLENGE RPC MIGRATION'
+    if: inputs.confirmation != 'APPLY ATINA CHALLENGE RPC MIGRATION' || github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Reject without exact confirmation
         run: |
-          echo "Confirmation did not match. No database command was run."
+          echo "Confirmation or branch guard failed. No database command was run."
           exit 1
