@@ -41,7 +41,7 @@
     <textarea id="atinaGlobalReportDescription" maxlength="2000" required placeholder="Descreve o problema e o que esperavas que acontecesse."></textarea>
     <label for="atinaGlobalReportScreenshot">Screenshot (opcional, até 3 MB)</label>
     <input id="atinaGlobalReportScreenshot" type="file" accept="image/png,image/jpeg,image/webp">
-    <button type="button" id="atinaGlobalReportCapture">📷 Capturar screenshot</button><p id="atinaGlobalReportCaptureHint" hidden style="font-size:13px;color:#d6dfeb">Captura de ecrã não disponível neste navegador. Podes anexar uma imagem manualmente.</p>
+    <button type="button" id="atinaGlobalReportCapture">📷 Capturar screenshot</button><p id="atinaGlobalReportCaptureHint" hidden style="font-size:13px;color:#d6dfeb">Neste iPhone ou Android, tira primeiro uma screenshot com os botões do dispositivo e depois escolhe-a aqui na galeria/Ficheiros.</p>
     <img id="atinaGlobalReportPreview" alt="Pré-visualização da screenshot" hidden>
     <button type="button" id="atinaGlobalReportRemoveScreenshot" hidden>Remover screenshot</button>
     <button type="submit" id="atinaGlobalReportSubmit" class="primary">Enviar reporte</button>
@@ -53,7 +53,7 @@
  document.body.appendChild(root);
  const $=id=>document.getElementById(id);
  const overlay=$('atinaGlobalReportOverlay'),form=$('atinaGlobalReportForm'),status=$('atinaGlobalReportStatus'),submit=$('atinaGlobalReportSubmit');
- const MAX=3*1024*1024;let screenshot=null,pausedSolo=false,previewDataUrl=null;const capture=$('atinaGlobalReportCapture'),captureHint=$('atinaGlobalReportCaptureHint');if(!navigator.mediaDevices?.getDisplayMedia){capture.hidden=true;captureHint.hidden=false;}
+ const MAX=3*1024*1024;let screenshot=null,pausedSolo=false,previewDataUrl=null;const capture=$('atinaGlobalReportCapture'),captureHint=$('atinaGlobalReportCaptureHint');if(!navigator.mediaDevices?.getDisplayMedia){capture.hidden=true;captureHint.hidden=false;captureHint.textContent='A captura direta do ecrã não é suportada neste navegador móvel. Tira uma screenshot com os botões do iPhone/Android e anexa-a através de Escolher ficheiro.';}
  const safe=(v,max=120)=>String(v??'').replace(/[\r\n]+/g,' ').trim().slice(0,max);
  function visibleScreen(){const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];return ids.find(id=>{const el=document.getElementById(id);return el&&!el.hidden&&!el.classList.contains('hidden')&&getComputedStyle(el).display!=='none'})||'unknown';}
  function gameContext(){
