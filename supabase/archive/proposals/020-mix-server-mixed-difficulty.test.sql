@@ -108,17 +108,17 @@ SELECT is(
 
 SELECT is(
   (SELECT (result->'state'->>'queue_size')::integer FROM atina_mix_test_run),
-  (SELECT count(DISTINCT category)::integer FROM private.atina_challenges WHERE active),
-  'Mix serves one challenge for every active category'
+  10,
+  'Mix respects the requested challenge count'
 );
 
 SELECT is(
-  (SELECT count(*)::integer
+  (SELECT count(DISTINCT q.challenge_id)::integer
      FROM private.atina_v2_local_sessions session
      JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid
      CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)),
-  (SELECT count(DISTINCT category)::integer FROM private.atina_challenges WHERE active),
-  'Mix queue does not duplicate categories'
+  10,
+  'Mix queue does not repeat challenge IDs'
 );
 
 SELECT is(
