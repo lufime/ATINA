@@ -122,14 +122,14 @@ test('global report explains native screenshot attachment on mobile browsers', (
 });
 
 test('player report form has no ChatGPT share button; sharing is handled in admin', () => {
-  assert.doesNotMatch(globalReport, /atinaGlobalReportShare|Partilhar com o ChatGPT|navigator\\.share\\(shareData\\)/);
-  assert.doesNotMatch(globalReport, /shareData\\.files=\\[file\\]/);
+  assert.doesNotMatch(globalReport, /atinaGlobalReportShare|Partilhar com o ChatGPT|navigator\.share\\(shareData\\)/);
+  assert.doesNotMatch(globalReport, /shareData\.files=\\[file\\]/);
   const start = admin.indexOf('function renderReports()');
   const end = admin.indexOf('function messageStatus', start);
   assert.ok(start >= 0 && end > start);
   const render = admin.slice(start, end);
-  assert.match(render, /aiReview\\.textContent="Partilhar report com ChatGPT"/);
-  assert.match(render, /navigator\\.share\\(/);
+  assert.match(render, /aiReview\.textContent="Partilhar report com ChatGPT"/);
+  assert.match(render, /navigator\.share\\(/);
   assert.match(render, /Copiar contexto/);
   assert.match(render, /Abrir ChatGPT/);
 });
