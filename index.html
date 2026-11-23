@@ -479,6 +479,15 @@ button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;fil
 @media(max-width:600px){
   #game .feedback,#game .clue,#game #question,[role="status"],[role="alert"],#dateNotice,#atinaUpdateNoticeMessage{width:100%;padding-inline:clamp(8px,3vw,14px)}
 }
+
+/* Mobile preparation countdown and bottom-overlay spacing */
+@media(max-width:600px){
+ #game>.card{padding-bottom:124px!important}
+ #game .card>.row:has(#timerDisplay){margin:8px 0 12px!important}
+ #timerDisplay{min-height:78px!important;padding:8px 6px!important;border-radius:17px!important;font-size:clamp(22px,6vw,34px)!important;line-height:1.04!important}
+ #timerDisplay .timer-prepare-label{font-size:clamp(20px,5.8vw,31px)!important;letter-spacing:0!important;white-space:nowrap!important}
+ #timerDisplay .timer-prepare-count{font-size:clamp(28px,8vw,40px)!important;white-space:nowrap!important}
+}
 </style>
 <style>
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
