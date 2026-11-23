@@ -1,30 +1,22 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
-
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const helperStart = html.indexOf("const ATINA_CORRECT_CHALLENGES_KEY='atinaCorrectChallengesV1';");
 const startIndex = html.indexOf('function start(m,chosen=null){');
-assert.ok(helperStart >= 0 && startIndex > helperStart, 'Persisted correct-answer history helper is present');
+assert.ok(helperStart >= 0 && startIndex > helperStart, 'per-player correct-answer history helper exists');
 const helperCode = html.slice(helperStart, startIndex);
 const store = new Map();
-const context = { localStorage: {
-  getItem: key => store.has(key) ? store.get(key) : null,
-  setItem: (key, value) => store.set(key, String(value))
-}};
-vm.createContext(context);
-vm.runInContext(helperCode, context);
-assert.equal(context.atinaReadCorrectChallenges().size, 0);
-context.atinaRememberCorrectChallenge(12);
-assert.deepEqual([...context.atinaReadCorrectChallenges()], [12]);
-context.atinaRememberCorrectChallenge(12);
-assert.deepEqual([...context.atinaReadCorrectChallenges()], [12], 'duplicate ids are deduplicated');
-context.atinaRememberCorrectChallenge(27);
-assert.deepEqual([...context.atinaReadCorrectChallenges()].sort((a,b)=>a-b), [12,27]);
-
-const startCode = html.slice(startIndex, html.indexOf('function mixDraw()', startIndex));
-assert.match(startCode, /!atinaReadCorrectChallenges\(\)\.has\(x\.i\)/, 'all classic modes exclude answered IDs');
-const endIndex = html.indexOf("const isCorrect=message.startsWith('Certo!'),isTimeout=message.includes('Tempo esgotado');");
-assert.ok(endIndex >= 0);
-assert.match(html.slice(endIndex, endIndex+260), /if\(isCorrect\)atinaRememberCorrectChallenge\(queue\[pos\]\);/, 'only correct answers persist as completed');
-console.log('Correct-answer exclusion checks passed.');
+const context = { window:{atinaCloudProfile:{nickname:'Alice'}}, localStorage:{getItem:key=>store.has(key)?store.get(key):null,setItem:(key,value)=>store.set(key,String(value)) }};
+vm.createContext(context); vm.runInContext(helperCode,context);
+assert.equal(context.atinaReadCorrectChallenges().size,0);
+context.atinaRememberCorrectChallenge(12); assert.deepEqual([...context.atinaReadCorrectChallenges()],[12]);
+context.atinaRememberCorrectChallenge(12); assert.deepEqual([...context.atinaReadCorrectChallenges()],[12],'duplicates deduplicated');
+context.atinaRememberCorrectChallenge(27); assert.deepEqual([...context.atinaReadCorrectChallenges()].sort((a,b)=>a-b),[12,27]);
+context.window.atinaCloudProfile.nickname='Bob'; assert.deepEqual([...context.atinaReadCorrectChallenges()],[],'players have isolated histories');
+context.atinaRememberCorrectChallenge(8); context.window.atinaCloudProfile.nickname='Alice'; assert.deepEqual([...context.atinaReadCorrectChallenges()].sort((a,b)=>a-b),[12,27]);
+context.window.atinaCloudProfile=null; assert.deepEqual([...context.atinaReadCorrectChallenges()],[],'guest history is separate from account histories');
+const startCode=html.slice(startIndex,html.indexOf('function mixDraw()',startIndex)); assert.match(startCode,/!atinaReadCorrectChallenges\(\)\.has\(x\.i\)/,'start filters completed challenges');
+const modalIndex=html.indexOf('function availableChallenges()');const modalCode=html.slice(modalIndex,modalIndex+600);assert.match(modalCode,/atinaReadCorrectChallenges/,'pregame available count uses player completion history');assert.match(modalCode,/!answered\.has\(i\)/,'pregame counts only unanswered challenges');
+const endIndex=html.indexOf("const isCorrect=message.startsWith('Certo!'),isTimeout=message.includes('Tempo esgotado');");assert.ok(endIndex>=0);assert.match(html.slice(endIndex,endIndex+260),/if\(isCorrect\)atinaRememberCorrectChallenge\(queue\[pos\]\);/,'only correct answers are stored');
+console.log('Player-specific available challenge tests passed.');
