@@ -7,7 +7,7 @@ const startIndex = html.indexOf('function start(m,chosen=null){');
 assert.ok(helperStart >= 0 && startIndex > helperStart, 'per-player correct-answer history helper exists');
 const helperCode = html.slice(helperStart, startIndex);
 const store = new Map();
-const context = { window:{atinaCloudProfile:{nickname:'Alice'}}, localStorage:{getItem:key=>store.has(key)?store.get(key):null,setItem:(key,value)=>store.set(key,String(value)) }};
+const context = { window:{atinaCloudProfile:{nickname:'Alice'}}, localStorage:{getItem:key=>store.has(key)?store.get(key):null,setItem:(key,value)=>store.set(key,String(value)) },encodeURIComponent};
 vm.createContext(context); vm.runInContext(helperCode,context);
 assert.equal(context.atinaReadCorrectChallenges().size,0);
 context.atinaRememberCorrectChallenge(12); assert.deepEqual([...context.atinaReadCorrectChallenges()],[12]);
