@@ -3783,7 +3783,20 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   if(/^https:\/\//i.test(licenseUrl)){const link=document.createElement('a');link.href=licenseUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Consultar licença';provenance.append(document.createTextNode(' · '),link);}
   status.textContent='Solução: '+cleanAnswer;
   target.append(frame);
-  if(target.dataset.solutionKey===key)target.append(provenance);
+  const rawSummary=String(visualDescription||'').trim();
+  const summaryIsEditorial=rawSummary&&!/^EXACT ANSWER:|^SUBJECT TYPE:|^VISUAL DESCRIPTION:|^CATEGORY:|^SEARCH RULE:/i.test(rawSummary);
+  const solutionSummary=summaryIsEditorial?rawSummary:('A solução é '+cleanAnswer+'. Está relacionada com a categoria '+(cleanCategory||'do desafio')+'.');
+  const summary=document.createElement('section');
+  summary.className='solution-summary';
+  summary.style.cssText='margin:12px 0 4px;padding:12px 13px;border:1px solid #365777;border-radius:12px;background:linear-gradient(145deg,#142b43,#0d1d30);color:#dce7f2;line-height:1.55';
+  const summaryTitle=document.createElement('strong');
+  summaryTitle.textContent='📝 Resumo da solução';
+  summaryTitle.style.cssText='display:block;color:#f3c65e;margin-bottom:5px';
+  const summaryText=document.createElement('p');
+  summaryText.textContent=solutionSummary;
+  summaryText.style.cssText='margin:0;font-size:14px;line-height:1.55;overflow-wrap:anywhere';
+  summary.append(summaryTitle,summaryText);
+  if(target.dataset.solutionKey===key)target.append(summary,provenance);
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível carregar uma imagem neste momento.';}
 }
 
