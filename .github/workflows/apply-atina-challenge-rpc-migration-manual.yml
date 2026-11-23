@@ -1,0 +1,63 @@
+name: Apply one approved Supabase migration (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type APPLY ATINA CHALLENGE RPC MIGRATION to authorize this exact migration
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  apply-single-migration:
+    if: inputs.confirmation == 'APPLY ATINA CHALLENGE RPC MIGRATION'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify target and selected migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ vars.SUPABASE_PRODUCTION_PROJECT_REF }}" = "qvvlqrgbtjujsejvenld"
+          migration="supabase/migrations/20261123100000_atina_challenge_catalog_progress_rpc.sql"
+          test -f "$migration"
+          echo "Target project ref verified."
+          echo "Selected migration: $migration"
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Create isolated migration directory (selected migration only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/atina-single-migration/supabase/migrations
+          cp supabase/config.toml /tmp/atina-single-migration/supabase/config.toml
+          cp supabase/migrations/20261123100000_atina_challenge_catalog_progress_rpc.sql /tmp/atina-single-migration/supabase/migrations/
+          test "$(find /tmp/atina-single-migration/supabase/migrations -maxdepth 1 -type f | wc -l)" -eq 1
+      - name: Dry-run selected migration against production
+        working-directory: /tmp/atina-single-migration
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase db push --remote=qvvlqrgbtjujsejvenld --dry-run
+      - name: Apply selected migration only
+        working-directory: /tmp/atina-single-migration
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase db push --remote=qvvlqrgbtjujsejvenld --yes
+      - name: Post-apply verification reminder
+        run: echo "Migration command completed. Verify public.atina_challenge_catalog_progress(text) with an approved read-only SQL check."
+  reject-unconfirmed:
+    if: inputs.confirmation != 'APPLY ATINA CHALLENGE RPC MIGRATION'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reject without exact confirmation
+        run: |
+          echo "Confirmation did not match. No database command was run."
+          exit 1
