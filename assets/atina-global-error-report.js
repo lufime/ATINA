@@ -15,7 +15,7 @@
  #atinaGlobalReportDialog button.primary{background:#d3ad68;color:#18212c;border-color:#d3ad68}
  #atinaGlobalReportDialog button:disabled{opacity:.6}
  #atinaGlobalReportContext{font-size:12px;line-height:1.45;color:#d6dfeb;border:1px solid #425b74;background:#102238;border-radius:10px;padding:10px;white-space:pre-wrap;overflow-wrap:anywhere}
- #atinaGlobalReportPreview{display:block;width:100%;max-height:240px;object-fit:contain;margin-top:8px;border-radius:10px}
+ #atinaGlobalReportPreview:not([hidden]){display:block;width:100%;max-height:240px;object-fit:contain;margin-top:8px;border-radius:10px}
  #atinaGlobalReportStatus{min-height:24px;margin:8px 0;font-size:13px;font-weight:750}
  #atinaSoloReportOpen,#atinaSoloReportPanel{display:none!important}
  @media(max-width:420px){#atinaGlobalReportDialog{padding:12px;border-radius:14px}#atinaGlobalReportDialog h2{font-size:19px}#atinaGlobalReportButton{padding:10px 13px;font-size:13px}}
