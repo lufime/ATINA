@@ -130,9 +130,13 @@ test('global error report shares report context with ChatGPT and game instructio
   assert.match(globalReport, /shareData\.files=\[file\]/);
 });
 
-test('global report has a direct copy-and-open ChatGPT fallback', () => {
-  assert.match(globalReport, /id="atinaGlobalReportOpenChatGPT">Copiar reporte e abrir ChatGPT/);
-  assert.match(globalReport, /atinaGlobalReportOpenChatGPT'\)\.addEventListener\('click'/);
-  assert.match(globalReport, /navigator\.clipboard\.writeText\(message\)/);
-  assert.match(globalReport, /window\.open\('https:\/\/chatgpt\.com\//);
+test('ChatGPT report analysis action is only in admin reports', () => {
+  assert.doesNotMatch(globalReport, /atinaGlobalReportOpenChatGPT|Copiar reporte e abrir ChatGPT/);
+  const start = admin.indexOf('function renderReports()');
+  const end = admin.indexOf('function messageStatus', start);
+  assert.ok(start >= 0 && end > start);
+  const render = admin.slice(start, end);
+  assert.match(render, /aiReview\.textContent="Copiar reporte e abrir ChatGPT"/);
+  assert.match(render, /Copiar contexto/);
+  assert.match(render, /Abrir ChatGPT/);
 });
