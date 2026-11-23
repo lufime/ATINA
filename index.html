@@ -3758,8 +3758,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   }
   if(target.dataset.solutionKey!==key)return;
   if(!item){
-   status.textContent='Ainda não existe uma imagem verificada para esta resposta. Não vamos mostrar uma imagem potencialmente errada.';
-   await atinaAppendWikipediaSolutionExcerpt(target,cleanAnswer,key);return;
+   status.textContent='Ainda não existe uma imagem verificada para esta resposta. Não vamos mostrar uma imagem potencialmente errada.';return;
   }
   const frame=document.createElement('div');
   frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
@@ -3783,7 +3782,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   if(/^https:\/\//i.test(sourceUrl)){const sourceLink=document.createElement('a');sourceLink.href=sourceUrl;sourceLink.target='_blank';sourceLink.rel='noopener noreferrer';sourceLink.textContent='Fonte da imagem';provenance.append(sourceLink)}else if(item.sourceName==='ATINA')provenance.append(document.createTextNode('Imagem própria ATINA'));
   if(/^https:\/\//i.test(licenseUrl)){const link=document.createElement('a');link.href=licenseUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Consultar licença';provenance.append(document.createTextNode(' · '),link);}
   status.textContent='Solução: '+cleanAnswer;
-  target.append(frame);await atinaAppendWikipediaSolutionExcerpt(target,cleanAnswer,key);
+  target.append(frame);
   if(target.dataset.solutionKey===key)target.append(provenance);
  }catch(error){if(target.dataset.solutionKey===key)status.textContent='Não foi possível carregar uma imagem neste momento.';}
 }
