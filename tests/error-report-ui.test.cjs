@@ -129,3 +129,10 @@ test('global error report shares report context with ChatGPT and game instructio
   assert.match(globalReport, /navigator\.clipboard\.writeText\(message\)/);
   assert.match(globalReport, /shareData\.files=\[file\]/);
 });
+
+test('global report has a direct copy-and-open ChatGPT fallback', () => {
+  assert.match(globalReport, /id="atinaGlobalReportOpenChatGPT">Copiar reporte e abrir ChatGPT/);
+  assert.match(globalReport, /atinaGlobalReportOpenChatGPT'\)\.addEventListener\('click'/);
+  assert.match(globalReport, /navigator\.clipboard\.writeText\(message\)/);
+  assert.match(globalReport, /window\.open\('https:\/\/chatgpt\.com\//);
+});
