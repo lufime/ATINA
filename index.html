@@ -2539,6 +2539,7 @@ function showHomePage(page,restore=false){
   try{history.replaceState(null,'','#'+page);}catch(e){}
  }
  if(page==='online')atinaLoadOnlinePlayers();
+ if(page==='profile'&&hasSession&&typeof window.atinaProfileCatalogProgressRefresh==='function')void window.atinaProfileCatalogProgressRefresh();
  if(page==='ranking'&&typeof atinaProgressLoadLeaderboard==='function')atinaProgressLoadLeaderboard();
  if(page==='ranking'&&typeof atinaProgressLoadPointsLeaderboard==='function')atinaProgressLoadPointsLeaderboard();
  if(page==='ranking'&&typeof atinaProgressLoadQiLeaderboard==='function')atinaProgressLoadQiLeaderboard();
