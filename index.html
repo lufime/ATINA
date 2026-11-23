@@ -3758,8 +3758,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
   }
   if(target.dataset.solutionKey!==key)return;
   if(!item){
-   status.textContent='Ainda não existe uma imagem verificada para esta resposta. Não vamos mostrar uma imagem potencialmente errada.';
-   await atinaAppendWikipediaSolutionExcerpt(target,cleanAnswer,key);return;
+   status.textContent='Ainda não existe uma imagem verificada para esta resposta. Não vamos mostrar uma imagem potencialmente errada.';return;
   }
   const frame=document.createElement('div');
   frame.style.cssText='position:relative;overflow:hidden;margin-top:10px;border-radius:13px;background:#091827;border:1px solid #365777;isolation:isolate';
