@@ -28,7 +28,7 @@ test('report is available globally and offers screenshot upload/capture', () => 
   assert.match(source, /screenshot\s*\}\)/);
 });
 
-test('Solo clock pauses via existing pause routine and resumes on modal close/success', () => {
+test('visual reports require an attached screenshot before submission', () => {\n  assert.match(source, /atinaGlobalReportCategory\\)\\.value==='visual'&&!screenshot/);\n  assert.match(source, /Para reportar um problema Visual, anexa uma screenshot antes de enviar/);\n});\n\ntest('Solo clock pauses via existing pause routine and resumes on modal close/success', () => {
   assert.match(source, /bridge\?\.pauseSolo\?\.\(\)/);
   assert.match(source, /bridge\?\.resumeSolo\?\.\(\)/);
   assert.match(source, /function close\(\).*resumeSolo/s);
