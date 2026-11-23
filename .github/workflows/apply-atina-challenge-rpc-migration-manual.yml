@@ -24,10 +24,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "${{ vars.SUPABASE_PRODUCTION_PROJECT_REF }}" = "qvvlqrgbtjujsejvenld"
+          target="qvvlqrgbtjujsejvenld"
           migration="supabase/migrations/20261123100000_atina_challenge_catalog_progress_rpc.sql"
+          test "$target" = "qvvlqrgbtjujsejvenld"
           test -f "$migration"
-          echo "Target project ref verified."
+          echo "Target project ref verified: $target"
           echo "Selected migration: $migration"
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -51,8 +52,12 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase db push --remote=qvvlqrgbtjujsejvenld --yes
-      - name: Post-apply verification reminder
-        run: echo "Migration command completed. Verify public.atina_challenge_catalog_progress(text) with an approved read-only SQL check."
+      - name: Verify RPC exists with read-only query
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          supabase db query "SELECT 1 / CASE WHEN to_regprocedure('public.atina_challenge_catalog_progress(text)') IS NOT NULL THEN 1 ELSE 0 END AS rpc_verified;" --remote=qvvlqrgbtjujsejvenld --read-only
   reject-unconfirmed:
     if: inputs.confirmation != 'APPLY ATINA CHALLENGE RPC MIGRATION'
     runs-on: ubuntu-latest
