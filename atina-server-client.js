@@ -181,46 +181,12 @@ async function atinaProfileChallengeProgressRefresh() {
     atinaProfileChallengeProgressBusy = false;
   }
 }
-let atinaProfileChallengeProgressBusy = false;
-async function atinaProfileChallengeProgressRefresh() {
-  const panel = $('atinaProfileChallengeProgress');
-  const token = atinaAccountSessionToken();
-  if (!panel || !token || atinaProfileChallengeProgressBusy) return;
-  atinaProfileChallengeProgressBusy = true;
-  const summary = $('atinaProfileChallengeSummary');
-  const breakdown = $('atinaProfileChallengeBreakdown');
-  const fill = $('atinaProfileChallengeFill');
-  try {
-    const data = await atinaServerRpc('atina_challenge_catalog_progress', { p_session_token: token });
-    if (!data || !summary || !breakdown) return;
-    const total = Math.max(0, Number(data.total) || 0);
-    const seen = Math.min(total, Math.max(0, Number(data.seen) || 0));
-    const remaining = Math.max(0, Number(data.remaining) || total - seen);
-    const percent = total ? Math.round(seen / total * 100) : 0;
-    const fmt = n => Number(n || 0).toLocaleString('pt-PT');
-    const esc = v => String(v ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-    summary.textContent = fmt(seen) + ' de ' + fmt(total) + ' desafios vistos · ' + fmt(remaining) + ' restantes · ' + percent + '%';
-    if (fill) fill.style.width = percent + '%';
-    const group = (title, rows, labelKey) => {
-      const list = Array.isArray(rows) ? rows : [];
-      return '<div style="margin-top:10px"><strong style="color:#f0d49a">' + title + '</strong>' +
-        list.map(row => '<div style="display:flex;justify-content:space-between;gap:8px;padding:4px 0"><span>' + esc(row[labelKey]) + '</span><span>' + fmt(row.seen) + '/' + fmt(row.total) + ' · ' + fmt(row.remaining) + ' restantes</span></div>').join('') + '</div>';
-    };
-    breakdown.innerHTML = group('Por categoria', data.categories, 'category') + group('Por dificuldade', data.difficulties, 'difficulty');
-  } catch (error) {
-    if (summary) summary.textContent = 'Não foi possível carregar o progresso dos desafios neste momento.';
-    console.warn('ATINA: falha ao atualizar progresso de desafios no perfil.', error);
-  } finally {
-    atinaProfileChallengeProgressBusy = false;
-  }
-}
 function atinaProgressRender(profile) {
   const signedInName = $('atinaSignedInUserName');
   if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
   atinaRenderLevelGallery(profile || {level:1,xp:0});
   if (!profile) return;
   void atinaProgressLoadMyQi(profile);
-  void atinaProfileChallengeProgressRefresh();
   void atinaProfileLoadRanks(profile);
   const xp = Math.max(0, Number(profile.xp) || 0);
   const points = Math.max(0, Number(profile.points) || 0);
