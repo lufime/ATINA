@@ -121,23 +121,30 @@ test('global report explains native screenshot attachment on mobile browsers', (
   assert.match(globalReport, /anexa-a através de Escolher ficheiro/i);
 });
 
-test('global error report shares report context with ChatGPT and game instructions using a medium button', () => {
-  assert.match(globalReport, /id="atinaGlobalReportShare">[^<]*Partilhar com o ChatGPT/);
-  assert.match(globalReport, /#atinaGlobalReportShare\{min-height:44px;padding:9px 14px;font-size:14px/);
-  assert.match(globalReport, /navigator\.share\(shareData\)/);
-  assert.match(globalReport, /https:\/\/lufime\.github\.io\/ATINA\/index\.html#howto/);
-  assert.match(globalReport, /navigator\.clipboard\.writeText\(message\)/);
-  assert.match(globalReport, /shareData\.files=\[file\]/);
+test('player report form has no ChatGPT share button; sharing is handled in admin', () => {
+  assert.doesNotMatch(globalReport, /atinaGlobalReportShare|Partilhar com o ChatGPT|navigator\.share/);
+  assert.doesNotMatch(globalReport, /shareData\.files/);
+  const start = admin.indexOf('function renderReports()');
+  const end = admin.indexOf('function messageStatus', start);
+  assert.ok(start >= 0 && end > start);
+  const render = admin.slice(start, end);
+  assert.match(render, /aiReview\.textContent="Partilhar report com ChatGPT"/);
+  assert.match(render, /navigator\.share/);
+  assert.match(render, /Copiar contexto/);
+  assert.match(render, /Abrir ChatGPT/);
 });
 
-test('ChatGPT report analysis action is only in admin reports', () => {
+test('ChatGPT report sharing is prominent at the top of admin report cards without changing player sharing', () => {
   assert.doesNotMatch(globalReport, /atinaGlobalReportOpenChatGPT|Copiar reporte e abrir ChatGPT/);
   const start = admin.indexOf('function renderReports()');
   const end = admin.indexOf('function messageStatus', start);
   assert.ok(start >= 0 && end > start);
   const render = admin.slice(start, end);
-  assert.match(render, /aiReview\.textContent="Preparar análise no ChatGPT"/);
+  assert.match(render, /aiReview\.textContent="Partilhar report com ChatGPT"/);
   assert.match(render, /sharePrompt\.textContent="Partilhar contexto"/);
   assert.match(render, /Copiar contexto/);
   assert.match(render, /Abrir ChatGPT/);
+  const shareAction = render.indexOf('const aiReview=');
+  assert.ok(shareAction > render.indexOf('card.appendChild(meta);'), 'share action follows report title and metadata');
+  assert.ok(shareAction < render.indexOf('const desc='), 'share action is before report description and screenshot');
 });
