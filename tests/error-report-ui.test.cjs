@@ -102,3 +102,10 @@ test('global report preview CSS respects the hidden attribute', () => {
   assert.match(globalReport, /#atinaGlobalReportPreview:not\(\[hidden\]\)\{display:block/);
   assert.doesNotMatch(globalReport, /#atinaGlobalReportPreview\{display:block/);
 });
+
+
+test('global report explains native screenshot attachment on mobile browsers', () => {
+  assert.match(globalReport, /captura direta do ecrã não é suportada neste navegador móvel/i);
+  assert.match(globalReport, /screenshot com os botões do iPhone\/Android/i);
+  assert.match(globalReport, /anexa-a através de Escolher ficheiro/i);
+});
