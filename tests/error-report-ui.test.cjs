@@ -136,7 +136,8 @@ test('ChatGPT report analysis action is only in admin reports', () => {
   const end = admin.indexOf('function messageStatus', start);
   assert.ok(start >= 0 && end > start);
   const render = admin.slice(start, end);
-  assert.match(render, /aiReview\.textContent="Copiar reporte e abrir ChatGPT"/);
+  assert.match(render, /aiReview\.textContent="Preparar análise no ChatGPT"/);
+  assert.match(render, /sharePrompt\.textContent="Partilhar contexto"/);
   assert.match(render, /Copiar contexto/);
   assert.match(render, /Abrir ChatGPT/);
 });
