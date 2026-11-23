@@ -86,3 +86,32 @@ test('HTTP POST hides backend errors behind a generic failure', async () => {
     assert.doesNotMatch(JSON.stringify(data), /private database detail/);
   } finally { await app.close(); }
 });
+
+test('HTTP POST preserves an optional screenshot payload at the backend boundary', async () => {
+  const screenshot = { content_type: 'image/jpeg', base64: 'aGVsbG8=' };
+  let received = null;
+  const app = await startServer(async fields => {
+    received = fields.screenshot;
+    return { data: { report_id: 'with-screenshot', created_at: '2026-11-21T00:00:00Z' } };
+  });
+  try {
+    const response = await fetch(app.base, { method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ ...validBody, screenshot }) });
+    const data = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(data.success, true);
+    assert.deepEqual(received, screenshot);
+  } finally { await app.close(); }
+});
+
+test('HTTP POST explicitly forwards null when no screenshot is attached', async () => {
+  let received = 'not-called';
+  const app = await startServer(async fields => {
+    received = fields.screenshot;
+    return { data: { report_id: 'without-screenshot', created_at: '2026-11-21T00:00:00Z' } };
+  });
+  try {
+    const response = await fetch(app.base, { method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify(validBody) });
+    assert.equal(response.status, 200);
+    assert.equal(received, null);
+  } finally { await app.close(); }
+});
