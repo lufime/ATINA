@@ -51,7 +51,7 @@ SELECT id FROM inserted;
 
 CREATE TEMP TABLE atina_mix_test_seed AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('a',64)
+  'mix','medium',NULL,0,10,repeat('a',64)
 ) AS result;
 
 SELECT is(
@@ -85,17 +85,17 @@ VALUES (
 
 CREATE TEMP TABLE atina_mix_distribution_run AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('b',64)
+  'mix','medium',NULL,0,10,repeat('b',64)
 ) AS result;
 
 CREATE TEMP TABLE atina_mix_test_run AS
 SELECT public.atina_v2_start_local_game(
-  'mix','medium',NULL,0,repeat('a',64)
+  'mix','medium',NULL,0,10,repeat('a',64)
 ) AS result;
 
 CREATE TEMP TABLE atina_solo_test_run AS
 SELECT public.atina_v2_start_local_game(
-  'solo','medium',NULL,0,repeat('a',64)
+  'solo','medium',NULL,0,10,repeat('a',64)
 ) AS result;
 
 SELECT is(
@@ -108,17 +108,17 @@ SELECT is(
 
 SELECT is(
   (SELECT (result->'state'->>'queue_size')::integer FROM atina_mix_test_run),
-  (SELECT count(DISTINCT category)::integer FROM private.atina_challenges WHERE active),
-  'Mix serves one challenge for every active category'
+  10,
+  'Mix respects the requested challenge count'
 );
 
 SELECT is(
-  (SELECT count(*)::integer
+  (SELECT count(DISTINCT q.challenge_id)::integer
      FROM private.atina_v2_local_sessions session
      JOIN atina_mix_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid
      CROSS JOIN LATERAL unnest(session.challenge_queue) q(challenge_id)),
-  (SELECT count(DISTINCT category)::integer FROM private.atina_challenges WHERE active),
-  'Mix queue does not duplicate categories'
+  10,
+  'Mix queue does not repeat challenge IDs'
 );
 
 SELECT is(
@@ -145,9 +145,9 @@ SELECT diag(
                FROM private.atina_v2_local_sessions session
                JOIN atina_solo_test_run run ON session.id=(run.result->'state'->>'session_id')::uuid)||
   ' exposure_filter='||position('private.atina_challenge_exposures' in
-    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))||
+    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,integer,text)'::regprocedure))||
   ' difficulty_history_filter='||position('private.atina_difficulty_history' in
-    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,text)'::regprocedure))
+    pg_get_functiondef('public.atina_v2_start_local_game(text,text,text,integer,integer,text)'::regprocedure))
 );
 
 SELECT is(
