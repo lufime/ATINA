@@ -30,7 +30,7 @@ WHERE player.device_token_hash=extensions.digest(convert_to(repeat('c',64),'UTF8
 
 CREATE TEMP TABLE atina_xp_extra_session AS
 SELECT public.atina_v2_start_local_game(
-  'solo','medium','__xp_extra_test__',0,repeat('c',64)
+  'solo','medium','__xp_extra_test__',0,10,repeat('c',64)
 ) AS result;
 
 UPDATE private.atina_v2_local_sessions
