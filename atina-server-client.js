@@ -965,7 +965,7 @@ function atinaServerApplyState(state, announce = false) {
       challenge.category,
       'solutionImage',
       Array.isArray(challenge.tags) ? challenge.tags : [],
-      challenge.solution_image_url || null,
+      challenge.solution_image_url || (typeof challenge.image_url === 'string' && /^https:\/\/qvvlqrgbtjujsejvenld\.supabase\.co\/storage\/v1\/object\/public\/atina-challenge-images\/challenges\/\d+\/[a-f0-9]{64}\.webp$/i.test(challenge.image_url) && challenge.image_url.includes('/challenges/' + String(challenge.id) + '/') ? challenge.image_url : null),
       challenge.solution_description || '',
       challenge.solution_image_credit || null
     ).then(() => atinaRenderSolutionWikipedia(challenge, !!atinaServerState?.round_locked, atinaServerState?.challenge?.id)).catch(() => {});
