@@ -1386,10 +1386,10 @@ label.section{line-height:1.35!important}
 })();
 </script>
 <style id="atina-timer-wrap-fix-v1">
-/* Timer: permite quebra de linha em ecrãs estreitos, sem cortar o texto. */
-#timerDisplay{white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
-#timerDisplay .timer-prepare-label{white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;max-width:100%!important}
-#timerDisplay .timer-prepare-count{white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;max-width:100%!important}
+/* Timer: mantém o rótulo de preparação e a contagem em linhas separadas, sem quebrar palavras. */
+#timerDisplay{white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+#timerDisplay .timer-prepare-label{white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;max-width:100%!important}
+#timerDisplay .timer-prepare-count{white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;max-width:100%!important}
 </style>
 </head>
 <body><div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.276"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.276</strong></div><main class="wrap">
