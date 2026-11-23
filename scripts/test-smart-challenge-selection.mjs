@@ -29,3 +29,12 @@ assert.match(client, /function atinaRenderChallengeCatalogProgress\(data, select
 assert.match(client, /Já completaste todos os desafios desta categoria/);
 assert.match(client, /Já completaste todos os desafios desta dificuldade/);
 assert.match(client, /Contacta o administrador para adicionar novos desafios/);
+
+// Profile must reuse the authenticated catalog RPC and display global/category/difficulty progress.
+assert.match(client, /function atinaProfileCatalogProgressRefresh\(\)/);
+assert.match(client, /atina_challenge_catalog_progress/);
+assert.match(client, /Descobertos/);
+assert.match(client, /Por categoria/);
+assert.match(client, /Por dificuldade/);
+const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+assert.match(indexHtml, /page==='profile'&&hasSession&&typeof window\.atinaProfileCatalogProgressRefresh/);
