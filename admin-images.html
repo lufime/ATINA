@@ -480,6 +480,34 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       const title=document.createElement("strong");title.textContent=(reportCategoryLabels[report.category]||report.category)+" · "+(report.nickname||"Pseudónimo não indicado");card.appendChild(title);
       const meta=document.createElement("div");meta.className="challenge-meta";meta.textContent=(report.created_at?new Date(report.created_at).toLocaleString("pt-PT"):"Data não indicada")+" · Estado: "+(reportLabels[report.status]||report.status);card.appendChild(meta);
       const desc=document.createElement("p");desc.style.whiteSpace="pre-wrap";desc.textContent=report.description||"";card.appendChild(desc);
+      const shareButton=document.createElement("button");
+      shareButton.type="button";
+      shareButton.className="secondary";
+      shareButton.textContent="Partilhar com ChatGPT";
+      shareButton.setAttribute("aria-label","Partilhar contexto deste report com ChatGPT");
+      shareButton.addEventListener("click",async()=>{
+        const context=[
+          "Análise de report de erro do ATINA (contexto da administração).",
+          "Categoria: "+(reportCategoryLabels[report.category]||report.category||"Não indicada"),
+          "Pseudónimo: "+(report.nickname||"Não indicado"),
+          "Data: "+(report.created_at?new Date(report.created_at).toLocaleString("pt-PT"):"Não indicada"),
+          "Estado: "+(reportLabels[report.status]||report.status||"Não indicado"),
+          report.game_version?"Versão: "+report.game_version:"",
+          report.game_area?"Área: "+report.game_area:"",
+          "Descrição do report:",
+          report.description||"(sem descrição)",
+          report.screenshot_url?"Screenshot anexada (não incluí o link temporário).":"Sem screenshot anexada.",
+          "Ajuda-me a analisar a causa provável e sugerir passos de diagnóstico/correção. Não assumas acesso ao código nem aos dados do jogo."
+        ].filter(Boolean).join("\\n");
+        if(typeof navigator.share==="function"){
+          try{await navigator.share({title:"Report ATINA",text:context});return;}
+          catch(error){if(error.name==="AbortError")return;}
+        }
+        try{await navigator.clipboard.writeText(context);}catch(error){alert("Não foi possível copiar automaticamente o contexto. Seleciona e copia o texto do report.");return;}
+        const opened=window.open("https://chatgpt.com/","_blank","noopener,noreferrer");
+        messageStatus(opened?"Contexto copiado. Cola-o na conversa do ChatGPT.":"Contexto copiado. Abre o ChatGPT e cola-o na conversa.");
+      });
+      card.appendChild(shareButton);
             {
         const screenshotBox=document.createElement("div");screenshotBox.style.cssText="margin:12px 0;padding:12px;border:1px solid #36516e;border-radius:12px;background:#0b1d2d";
         const screenshotTitle=document.createElement("strong");screenshotTitle.textContent="Screenshot";screenshotTitle.style.cssText="display:block;margin-bottom:8px;color:#d3ad68";screenshotBox.appendChild(screenshotTitle);
