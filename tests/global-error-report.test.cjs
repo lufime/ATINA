@@ -29,7 +29,7 @@ test('report is available globally and offers screenshot upload/capture', () => 
 });
 
 test('visual reports require an attached screenshot before submission', () => {
-  assert.match(source, /atinaGlobalReportCategory\\)\\.value==='visual'&&!screenshot/);
+  assert.ok(source.includes("$('atinaGlobalReportCategory').value==='visual'&&!screenshot"));
   assert.match(source, /Para reportar um problema Visual, anexa uma screenshot antes de enviar/);
 });
 
