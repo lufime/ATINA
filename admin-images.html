@@ -677,7 +677,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     const folderIds = [...new Set([
       ...(optimizedFolders.data || []).filter(item => item.id === null).map(item => item.name),
       ...(originalFolders.data || []).filter(item => item.id === null).map(item => item.name)
-    ])].filter(id => /^\\d+$/.test(String(id)));
+    ])].filter(id => /^\d+$/.test(String(id)));
     const found = [];
     for (let offset = 0; offset < folderIds.length; offset += 12) {
       const batch = folderIds.slice(offset, offset + 12);
