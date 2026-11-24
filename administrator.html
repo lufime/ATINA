@@ -880,7 +880,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   async function deleteExplorerAsset(asset, statusElement = null) {
     if (!asset) return;
     const label = (asset.challenge_id == null ? "" : " do desafio " + asset.challenge_id) + (asset.file_name ? " · " + asset.file_name : "");
-    if (!window.confirm("Apagar esta imagem" + label + "? O ficheiro será removido permanentemente do armazenamento e não pode ser recuperado.")) return;
+    if (!window.confirm("Apagar esta imagem" + label + "? O ficheiro e o respetivo registo de imagem serão removidos. O desafio será preservado.")) return;
     const status = statusElement || $("explorerImageActionStatus");
     try {
       if (status) status.textContent = "A apagar a imagem…";
@@ -893,10 +893,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           body:JSON.stringify({action:"delete",storage_path:asset.storage_path})
         });
         const result = await response.json().catch(()=>({}));
-        if (!response.ok || !result.deleted) throw new Error(result.error || "Não foi possível apagar o ficheiro.");
-      } else if (asset.challenge_id != null) {
+        if (!response.ok && response.status !== 404) throw new Error(result.error || "Não foi possível apagar o ficheiro.");
+      }
+      if (asset.challenge_id != null) {
         await imageManageExplorerRequest({action:"delete",challenge_id:Number(asset.challenge_id)});
-      } else {
+      } else if (!asset.storage_path) {
         throw new Error("Não foi encontrado um ficheiro ou registo válido para apagar.");
       }
       if (explorerSelectedImage && String(explorerSelectedImage.asset_key) === String(asset.asset_key)) {
