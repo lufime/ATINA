@@ -768,26 +768,21 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         storageWarning = error.message || "Não foi possível consultar todos os ficheiros do armazenamento.";
         console.warn("Explorador: falha ao consultar Storage", error);
       }
-      const assetsByChallenge = new Map();
-      for (const asset of storageAssets) assetsByChallenge.set(String(asset.challenge_id), asset);
+      const assetsByPath = new Map();
+      for (const asset of storageAssets) assetsByPath.set(String(asset.storage_path), asset);
+      const registeredOnly = [];
       for (const asset of registeredAssets) {
-        const key = String(asset.challenge_id);
-        const stored = assetsByChallenge.get(key);
-        if (!stored) {
-          assetsByChallenge.set(key, asset);
-          continue;
+        const paths = [asset.storage_path, ...(asset.storage_paths || []), asset.original_storage_path, ...(asset.original_storage_paths || [])].filter(Boolean);
+        const matched = paths.map(path => assetsByPath.get(String(path))).filter(Boolean);
+        if (matched.length) {
+          for (const stored of matched) {
+            assetsByPath.set(String(stored.storage_path), {...stored,...asset,asset_key:stored.asset_key,storage_path:stored.storage_path,image_url:stored.image_url || asset.image_url,storage_paths:[stored.storage_path],original_storage_path:stored.is_original ? stored.storage_path : (asset.original_storage_path || null),original_storage_paths:stored.is_original ? [stored.storage_path] : (asset.original_storage_paths || []),file_name:stored.file_name,is_original:stored.is_original});
+          }
+        } else {
+          registeredOnly.push({...asset,asset_key:"record:" + String(asset.challenge_id),storage_paths:paths,original_storage_paths:asset.original_storage_paths || (asset.original_storage_path ? [asset.original_storage_path] : [])});
         }
-        assetsByChallenge.set(key, {
-          ...stored,
-          ...asset,
-          storage_path: asset.storage_path || stored.storage_path || null,
-          original_storage_path: asset.original_storage_path || stored.original_storage_path || null,
-          storage_paths: [...new Set([...(stored.storage_paths || []), ...(asset.storage_paths || []), ...(asset.storage_path ? [asset.storage_path] : [])])],
-          original_storage_paths: [...new Set([...(stored.original_storage_paths || []), ...(asset.original_storage_paths || []), ...(asset.original_storage_path ? [asset.original_storage_path] : [])])],
-          stored_file_count: Math.max(Number(asset.stored_file_count || 0), Number(stored.stored_file_count || 0))
-        });
       }
-      explorerImageAssets = [...assetsByChallenge.values()].sort((a,b) => Number(a.challenge_id) - Number(b.challenge_id));
+      explorerImageAssets = [...assetsByPath.values(), ...registeredOnly].sort((a,b) => (Number(a.challenge_id ?? Number.MAX_SAFE_INTEGER) - Number(b.challenge_id ?? Number.MAX_SAFE_INTEGER)) || String(a.storage_path || a.asset_key || "").localeCompare(String(b.storage_path || b.asset_key || ""), "pt"));
       $("explorerImageCount").textContent = String(explorerImageAssets.length);
       const query = $("dbSearch").value.trim().toLocaleLowerCase("pt-PT");
       const rows = explorerImageAssets.filter(asset => {
