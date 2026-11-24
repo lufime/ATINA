@@ -732,10 +732,41 @@ function atinaServerStartTimers() {
 function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallengeId = null) {
   const target = $('solutionImage');
   if (!target) return;
-  // A descrição editorial e o link «Sobre esta imagem» deixaram de ser
-  // apresentados; a descrição continua disponível apenas como contexto
-  // interno para encontrar uma imagem adequada.
-  target.querySelector('[data-solution-wikipedia]')?.remove();
+  const previous = target.querySelector('[data-solution-wikipedia]');
+  previous?.remove();
+  // A história só pode aparecer depois de o servidor confirmar que a ronda foi revelada.
+  if (!isLocked || !challenge || !Number.isFinite(Number(challenge.id)) ||
+      Number(activeChallengeId) !== Number(challenge.id)) return;
+  const description = String(challenge.solution_description || '').trim();
+  const sourceUrl = String(challenge.solution_wikipedia_url || '').trim();
+  const safeSourceUrl = /^https:\/\//i.test(sourceUrl) ? sourceUrl : '';
+  if (!description && !safeSourceUrl) return;
+
+  const panel = document.createElement('section');
+  panel.dataset.solutionWikipedia = 'true';
+  panel.setAttribute('aria-label', 'História da solução');
+  const heading = document.createElement('h3');
+  heading.textContent = '📚 História da solução';
+  panel.appendChild(heading);
+
+  if (description) {
+    const paragraphs = description.split(/\n\s*\n/).map(text => text.trim()).filter(Boolean);
+    (paragraphs.length ? paragraphs : [description]).forEach(text => {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = text;
+      panel.appendChild(paragraph);
+    });
+  }
+  if (safeSourceUrl) {
+    const link = document.createElement('a');
+    link.href = safeSourceUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Consultar fonte e saber mais';
+    panel.appendChild(link);
+  }
+  target.appendChild(panel);
+  target.classList.remove('hidden');
 }
 
 const atinaImageCreditCache = new Map();
