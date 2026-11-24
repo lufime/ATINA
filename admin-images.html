@@ -163,6 +163,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       <a href="#players" data-admin-tab="players">Jogadores</a>
       <a href="#challenges" data-admin-tab="challenges">Base de dados dos desafios</a>
       <a href="#reports" data-admin-tab="reports">Reports de erros</a>
+      <a href="#database" data-admin-tab="database">Explorador da base</a>
     </div>
   </nav>
   <p>Área reservada à administração. Os ficheiros são enviados para o Supabase Storage.</p>
@@ -193,6 +194,22 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <h2 style="margin-top:18px">O que precisa de atenção</h2>
     <div id="dashboardTasks" class="hint">A carregar tarefas…</div>
     <p class="note">Os números e as tarefas são consultados diretamente na base de dados, apenas depois de entrares como administrador.</p>
+  </section>
+  <section class="panel hidden tab-panel" id="databasePanel" data-tab-panel="database">
+    <div class="dash-head"><h2>Explorador da base de dados</h2><button class="secondary refresh" id="dbRefresh" type="button">Atualizar</button></div>
+    <p class="note">Consulta, edição e eliminação de registos operacionais autorizados. As eliminações exigem confirmação reforçada; dados privados e respostas dos desafios não são expostos.</p>
+    <div class="form-grid">
+      <div><label for="dbTable">Tabela</label><select id="dbTable"><option value="">A carregar tabelas…</option></select></div>
+      <div><label for="dbSearch">Pesquisar</label><input id="dbSearch" type="search" placeholder="Pesquisar registos"></div>
+    </div>
+    <div class="dash-head" style="margin-top:12px"><span class="note" id="dbMeta" aria-live="polite">Seleciona uma tabela.</span><div class="challenge-actions"><button class="secondary refresh" id="dbPrev" type="button" disabled>Anterior</button><button class="secondary refresh" id="dbNext" type="button" disabled>Seguinte</button></div></div>
+    <div class="dash-head" style="margin-top:10px;gap:12px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:8px"><input id="dbSelectPage" type="checkbox"> Selecionar esta página</label>
+      <span class="note" id="dbSelectedCount">0 selecionados</span>
+      <button class="secondary refresh" id="dbDeleteSelected" type="button" disabled>Apagar selecionados</button>
+    </div>
+    <div id="dbColumns" class="note" style="margin:10px 0"></div>
+    <div id="dbRows" style="overflow-x:auto" aria-live="polite">A carregar…</div>
   </section>
   <section class="panel hidden tab-panel" id="reportsPanel" data-tab-panel="reports">
     <div class="dash-head"><h2>Reports de erros</h2><button class="secondary refresh" id="refreshReports" type="button">Atualizar</button></div>
@@ -295,7 +312,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 (() => {
-  const tabNames = ["home","images","upload","logo","players","challenges","reports"];
+  const tabNames = ["home","images","upload","logo","players","challenges","reports","database"];
   function activateTab(name) {
     const tab = tabNames.includes(name) ? name : "home";
     const imageScroll = document.getElementById("imageManagerScroll");
@@ -324,10 +341,10 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       link.setAttribute("aria-current", link.dataset.adminTab === tab ? "page" : "false");
     });
     const title = document.querySelector(".admin-header h1");
-    if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores",challenges:"Base de dados dos desafios",reports:"Reports de erros"}[tab]);
+    if (title) title.textContent = "ATINA · " + ({home:"Início",images:"Gestão de imagens",upload:"Envio de imagens",logo:"Logótipo",players:"Jogadores",challenges:"Base de dados dos desafios",reports:"Reports de erros",database:"Explorador da base de dados"}[tab]);
   }
   const $ = (id) => document.getElementById(id);
-  window.addEventListener("hashchange", () => { activateTab(location.hash.slice(1)); if (location.hash === "#reports") loadReports(); });
+  window.addEventListener("hashchange", () => { activateTab(location.hash.slice(1)); if (location.hash === "#reports") loadReports(); if (location.hash === "#database") loadDbExplorerTables(); });
   window.addEventListener("message",event=>{const frame=$("imageManagerFrame");if(!frame||event.source!==frame.contentWindow||event.data?.type!=="atina-image-manager-height")return;const height=Math.max(700,Number(event.data.height)||700);frame.style.height=height+"px";frame.style.minHeight="0";});
   $("imageManagerFrame").addEventListener("load",()=>{const frame=$("imageManagerFrame");try{const doc=frame.contentDocument;const resize=()=>{const main=doc.querySelector("main"),gallery=doc.getElementById("gallery");const height=Math.max(doc.documentElement.scrollHeight,doc.body.scrollHeight,main?.scrollHeight||0,gallery?.scrollHeight||0)+100;frame.style.height=height+"px";};resize();if("ResizeObserver"in window){const observer=new ResizeObserver(resize);observer.observe(doc.documentElement);observer.observe(doc.body);const gallery=doc.getElementById("gallery");if(gallery)observer.observe(gallery);}new MutationObserver(resize).observe(doc.body,{childList:true,subtree:true,attributes:true});doc.defaultView.addEventListener("load",resize);doc.defaultView.addEventListener("resize",resize);[250,750,1500,3000,6000].forEach(ms=>setTimeout(resize,ms));}catch(error){console.warn("Não foi possível medir a gestão incorporada",error);}});
   const SUPABASE_URL = "https://qvvlqrgbtjujsejvenld.supabase.co";
@@ -344,10 +361,12 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     $("imagesInfo").classList.toggle("hidden", !session);
     $("challengesPanel").classList.toggle("hidden", !session);
     $("reportsPanel").classList.toggle("hidden", !session);
+    $("databasePanel").classList.toggle("hidden", !session);
     const diagnostic = $("reportsAdminDiagnostic");
     if (diagnostic) diagnostic.textContent = session ? "UUID da conta autenticada: " + session.user.id : "Diagnóstico de autenticação: sessão não iniciada.";
     if (session && location.hash === "#challenges") loadChallenges();
     if (session && location.hash === "#reports") loadReports();
+    if (session && location.hash === "#database") loadDbExplorerTables();
     $("adminLinks").classList.toggle("hidden", !session);
     $("adminNavigation").classList.toggle("hidden", !session);
     $("logoutTop").classList.toggle("hidden", !session);
@@ -441,6 +460,142 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       $("dashboardUpdated").textContent = "Atualizado em " + new Date().toLocaleString("pt-PT");
     } catch (error) { $("dashboardUpdated").textContent = "Erro ao atualizar"; target.textContent = error.message; }
   }
+
+  let dbExplorerPage = 0;
+  let dbExplorerTable = "";
+  let dbExplorerSearchTimer = null;
+  let dbExplorerCurrentRows = [];
+  const DB_EXPLORER_PAGE_SIZE = 30;
+  function dbExplorerEsc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  }
+  async function dbExplorerRequest(payload) {
+    const { data: { session } } = await client.auth.getSession();
+    if (!session) throw new Error("A sessão expirou. Entra novamente.");
+    const response = await fetch(SUPABASE_URL + "/functions/v1/atina-admin-db-explorer", {
+      method: "POST",
+      headers: {"Authorization":"Bearer " + session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Não foi possível consultar a base de dados.");
+    return data;
+  }
+  async function loadDbExplorerTables() {
+    const select = $("dbTable");
+    if (!select || $("databasePanel").classList.contains("hidden")) return;
+    $("dbRows").textContent = "A carregar tabelas autorizadas…";
+    try {
+      const data = await dbExplorerRequest({action:"tables"});
+      const previous = dbExplorerTable;
+      select.innerHTML = (data.tables || []).map(t => '<option value="' + dbExplorerEsc(t.name) + '">' + dbExplorerEsc(t.label) + ' · ' + dbExplorerEsc(t.name) + '</option>').join("");
+      if (!data.tables?.length) throw new Error("Não existem tabelas autorizadas para consulta.");
+      dbExplorerTable = data.tables.some(t => t.name === previous) ? previous : data.tables[0].name;
+      select.value = dbExplorerTable;
+      await loadDbExplorerRows();
+    } catch (error) {
+      $("dbMeta").textContent = "Acesso indisponível";
+      $("dbRows").textContent = error.message;
+    }
+  }
+  async function loadDbExplorerRows() {
+    if (!dbExplorerTable) return;
+    $("dbRows").textContent = "A consultar registos…";
+    $("dbMeta").textContent = "A consultar…";
+    $("dbPrev").disabled = true; $("dbNext").disabled = true;
+    try {
+      const data = await dbExplorerRequest({
+        action:"rows",table:dbExplorerTable,page:dbExplorerPage,
+        search:$("dbSearch").value.trim()
+      });
+      $("dbColumns").textContent = "Colunas: " + (data.columns || []).join(" · ");
+      $("dbMeta").textContent = Number(data.total || 0).toLocaleString("pt-PT") + " registos · página " + (dbExplorerPage + 1) + " de " + Math.max(1, Math.ceil((data.total || 0) / DB_EXPLORER_PAGE_SIZE));
+      const columns = data.columns || [];
+      const rows = data.rows || [];
+      const keyColumn = data.key;
+      dbExplorerCurrentRows = rows;
+      if (!rows.length) {
+        $("dbRows").textContent = "Sem registos para apresentar.";
+      } else {
+        $("dbRows").innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th></th>' + columns.map(c => '<th style="text-align:left;padding:9px;border-bottom:1px solid #456078;color:var(--gold);white-space:nowrap">' + dbExplorerEsc(c) + '</th>').join("") + '<th>Ações</th></tr></thead><tbody>' + rows.map(row => {
+          const key = String(row[keyColumn]);
+          return '<tr><td style="padding:8px"><input class="db-row-select" type="checkbox" value="' + dbExplorerEsc(key) + '" aria-label="Selecionar registo"></td>' + columns.map(c => '<td style="padding:8px 9px;border-bottom:1px solid #29425b;vertical-align:top;max-width:320px;overflow-wrap:anywhere">' + dbExplorerEsc(typeof row[c] === "object" && row[c] !== null ? JSON.stringify(row[c]) : row[c]) + '</td>').join("") + '<td style="padding:8px;white-space:nowrap"><button type="button" class="secondary refresh db-edit" data-db-edit="' + dbExplorerEsc(key) + '">Editar</button> <button type="button" class="secondary refresh db-delete" data-db-delete="' + dbExplorerEsc(key) + '">Apagar</button></td></tr>';
+        }).join("") + '</tbody></table>';
+      }
+      $("dbSelectPage").checked = false;
+      updateDbExplorerSelection();
+      $("dbPrev").disabled = dbExplorerPage <= 0;
+      $("dbNext").disabled = (dbExplorerPage + 1) * DB_EXPLORER_PAGE_SIZE >= Number(data.total || 0);
+    } catch (error) {
+      $("dbMeta").textContent = "Erro na consulta";
+      $("dbRows").textContent = error.message;
+    }
+  }
+  function updateDbExplorerSelection() {
+    const selected = [...document.querySelectorAll(".db-row-select:checked")];
+    $("dbSelectedCount").textContent = selected.length + " selecionados";
+    $("dbDeleteSelected").disabled = selected.length === 0;
+    $("dbSelectPage").checked = selected.length > 0 && selected.length === document.querySelectorAll(".db-row-select").length;
+  }
+  async function deleteDbExplorerKeys(keys) {
+    if (!keys.length) return;
+    const confirmation = "APAGAR " + keys.length;
+    if (!window.confirm("Atenção: vais apagar permanentemente " + keys.length + " registo(s) da tabela " + dbExplorerTable + ". Esta operação não pode ser anulada.")) return;
+    const typed = window.prompt('Para confirmar, escreve exatamente "' + confirmation + '".');
+    if (typed !== confirmation) { window.alert("Confirmação incorreta. Nada foi apagado."); return; }
+    try {
+      const result = await dbExplorerRequest({action:"delete",table:dbExplorerTable,keys});
+      window.alert(result.deleted + " registo(s) apagado(s).");
+      dbExplorerPage = 0;
+      await loadDbExplorerRows();
+    } catch (error) { window.alert(error.message); }
+  }
+  $("dbRows").addEventListener("change", event => {
+    if (event.target.matches(".db-row-select")) updateDbExplorerSelection();
+  });
+  $("dbSelectPage").addEventListener("change", event => {
+    document.querySelectorAll(".db-row-select").forEach(box => { box.checked = event.target.checked; });
+    updateDbExplorerSelection();
+  });
+  $("dbDeleteSelected").addEventListener("click", () => {
+    const keys = [...document.querySelectorAll(".db-row-select:checked")].map(box => box.value);
+    deleteDbExplorerKeys(keys);
+  });
+  $("dbRows").addEventListener("click", async event => {
+    const editButton = event.target.closest(".db-edit");
+    const deleteButton = event.target.closest(".db-delete");
+    if (deleteButton) { deleteDbExplorerKeys([deleteButton.dataset.dbDelete]); return; }
+    if (editButton) {
+      const row = dbExplorerCurrentRows.find(item => String(item[$("dbTable").selectedOptions[0]?.dataset.key || dbExplorerKeyColumn()]) === editButton.dataset.dbEdit);
+      if (!row) { window.alert("Registo não encontrado na página atual."); return; }
+      const editable = dbExplorerEditableColumns();
+      const changes = {};
+      editable.forEach(column => { changes[column] = row[column]; });
+      const typed = window.prompt("Edita os campos permitidos em formato JSON. Não alteres os nomes das propriedades.", JSON.stringify(changes, null, 2));
+      if (typed === null) return;
+      try {
+        const parsed = JSON.parse(typed);
+        await dbExplorerRequest({action:"update",table:dbExplorerTable,key:row[dbExplorerKeyColumn()],changes:parsed});
+        window.alert("Registo atualizado.");
+        await loadDbExplorerRows();
+      } catch (error) { window.alert(error.message || "JSON inválido."); }
+    }
+  });
+  function dbExplorerKeyColumn() {
+    return ({atina_points_ranking:"id",atina_site_notice:"id",atina_social_game_catalog:"game_code"})[dbExplorerTable];
+  }
+  function dbExplorerEditableColumns() {
+    return ({atina_points_ranking:["nickname","score","mode","player_number"],atina_site_notice:["active","message"],atina_social_game_catalog:["display_name","default_duration_seconds","supports_teams","active"]})[dbExplorerTable] || [];
+  }
+  $("dbTable").addEventListener("change", () => { dbExplorerTable = $("dbTable").value; dbExplorerPage = 0; loadDbExplorerRows(); });
+  $("dbSearch").addEventListener("input", () => {
+    clearTimeout(dbExplorerSearchTimer);
+    dbExplorerSearchTimer = setTimeout(() => { dbExplorerPage = 0; loadDbExplorerRows(); }, 300);
+  });
+  $("dbPrev").addEventListener("click", () => { if (dbExplorerPage > 0) { dbExplorerPage--; loadDbExplorerRows(); } });
+  $("dbNext").addEventListener("click", () => { dbExplorerPage++; loadDbExplorerRows(); });
+  $("dbRefresh").addEventListener("click", () => loadDbExplorerTables());
+
   const reportLabels = {new:"Novo",in_review:"Em análise",fixing:"Em correção",resolved:"Resolvido",archived:"Arquivado"};
   const reportCategoryLabels = {visual:"Visual",game:"Jogo",points_xp:"Pontuação / XP",technical:"Técnico",other:"Outro"};
   let reportCache = [];
