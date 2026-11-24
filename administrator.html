@@ -773,7 +773,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     try {
       const data = await imageManageExplorerRequest({action:"list"});
       const registeredAssets = Array.isArray(data.assets) ? data.assets : [];
-      const storageAssets = await loadStorageExplorerAssets();
+      let storageAssets = [];
+      let storageWarning = "";
+      try {
+        storageAssets = await loadStorageExplorerAssets();
+      } catch (error) {
+        storageWarning = error.message || "Não foi possível consultar todos os ficheiros do armazenamento.";
+        console.warn("Explorador: falha ao consultar Storage", error);
+      }
       const assetsByChallenge = new Map();
       for (const asset of storageAssets) assetsByChallenge.set(String(asset.challenge_id), asset);
       for (const asset of registeredAssets) {
@@ -801,7 +808,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         const haystack = [asset.challenge_id,asset.solution,asset.status,asset.storage_path,asset.mime_type].join(" ").toLocaleLowerCase("pt-PT");
         return statusMatch && (!query || haystack.includes(query));
       });
-      $("dbMeta").textContent = rows.length.toLocaleString("pt-PT") + " de " + explorerImageAssets.length.toLocaleString("pt-PT") + " imagens";
+      $("dbMeta").textContent = rows.length.toLocaleString("pt-PT") + " de " + explorerImageAssets.length.toLocaleString("pt-PT") + " imagens" + (storageWarning ? " · Storage: " + storageWarning : "");
       $("dbRows").innerHTML = rows.length ? rows.map(asset => {
         const id = String(asset.challenge_id);
         const name = id.padStart(4,"0") + " · " + (asset.solution || "Desafio " + id);
