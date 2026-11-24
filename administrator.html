@@ -1350,7 +1350,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
       method: "POST", headers: { "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON_KEY }, body
     });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok || !result.success || result.watermark_applied !== true || result.status !== "published") {
+    if (!response.ok || !result.success || result.watermark_applied !== true) {
       throw new Error("Desafio " + asset.challenge_id + ": " + (result.error || "A aplicação do logótipo não foi confirmada."));
     }
   }
@@ -1365,13 +1365,13 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
       $("wmStatus").textContent = "A preparar o desafio " + asset.challenge_id + " — " + asset.solution + "…";
       await applyWatermarkToAsset(asset, session);
       await watermarkStats();
-      $("wmStatus").textContent = "Teste concluído: desafio " + asset.challenge_id + ". Original preservado; estado mantido como Published.";
+      $("wmStatus").textContent = "Teste concluído: desafio " + asset.challenge_id + ". Original preservado; estado original mantido.";
     } catch (error) { $("wmStatus").textContent = "Erro: " + (error.message || "falha desconhecida"); }
     finally { button.disabled = false; }
   });
   $("watermarkAll").addEventListener("click", async () => {
     const button = $("watermarkAll");
-    if (!confirm("Aplicar o logótipo a todas as imagens registadas que ainda faltam? O processo será sequencial, preservará os originais e manterá o estado Published. Pode demorar. Continuar?")) return;
+    if (!confirm("Aplicar o logótipo a todas as imagens registadas que ainda faltam? O processo será sequencial, preservará os originais e manterá o estado atual de cada imagem. Pode demorar. Continuar?")) return;
     button.disabled = true; $("watermarkNext").disabled = true;
     let processed = 0; let failed = null;
     try {
