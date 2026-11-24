@@ -225,6 +225,55 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 @media(max-width:900px){.win-content{grid-template-columns:minmax(0,1fr) 190px}.win-explorer{grid-template-columns:190px minmax(0,1fr)}}
 @media(max-width:680px){.win-explorer{grid-template-columns:1fr;min-height:0}.win-sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:8px;border-right:0;border-bottom:1px solid #344c65}.win-side-heading{grid-column:1/-1;padding:6px 7px 3px}.win-tree-group{display:contents}.win-tree-item{min-height:34px;padding:6px;font-size:11px}.win-tree-icon{width:16px}.win-side-foot{display:none}.win-toolbar{min-height:48px;padding:6px}.win-tool{width:31px;min-width:31px;height:31px;min-height:31px}.win-address{padding:6px 8px}.win-address-label{display:none}.win-address strong{font-size:11px}.win-toolbar-search{min-height:48px;flex-wrap:wrap}.win-view{font-size:10px;padding:5px 7px}.win-content{grid-template-columns:1fr}.win-content-main{padding:10px}.win-preview{border-left:0;border-top:1px solid #293e54}.win-preview-placeholder{min-height:130px}.win-preview-image{max-height:220px}.win-items{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:7px}.win-items.details .win-image-card{grid-template-columns:62px minmax(0,1fr);gap:8px}.win-items.details .win-image-thumb{width:62px}.win-items.details .win-image-status{display:none}.win-pagination{margin-left:auto}}
 
+
+/* Ajustes de robustez e ergonomia móvel */
+@media(max-width:680px){
+  html{scroll-padding-top:88px}
+  body{padding-left:max(6px,env(safe-area-inset-left));padding-right:max(6px,env(safe-area-inset-right));padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+  main{min-width:0}
+  .panel{min-width:0;overflow:hidden}
+  .admin-nav{max-width:100%;overscroll-behavior-x:contain}
+  .admin-nav .submenu{scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .admin-nav .submenu a{scroll-snap-align:start}
+  .win-explorer{width:100%;max-width:100%;min-width:0}
+  .win-sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .win-tree-item{min-width:0;overflow:hidden}
+  .win-tree-item>span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .win-toolbar{min-width:0;gap:4px}
+  .win-address{min-width:0;overflow:hidden}
+  .win-toolbar-search{align-items:stretch}
+  .win-search{min-width:0;flex:1 1 100%;height:42px}
+  .win-view-tools{width:100%;justify-content:flex-end}
+  .win-content,.win-content-main{min-width:0}
+  .win-content-main{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .win-table-scroll{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+  .win-table-scroll table{min-width:640px;width:max-content!important}
+  .win-db-controls{align-items:stretch}
+  .win-db-controls>label,.win-db-controls>#dbSelectedCount{flex:1 1 100%}
+  .win-db-controls>#dbDeleteSelected{flex:1 1 100%;width:100%}
+  .win-pagination{width:100%;margin:4px 0 0;justify-content:space-between}
+  .win-pagination button{flex:1}
+  .win-preview{min-width:0}
+  #imageManagerFrame{width:calc(100% + 20px)!important;margin-left:-10px!important;margin-right:-10px!important}
+  .challenge-actions button{flex:1 1 100%;min-width:0}
+  .bulk-selection button{flex:1 1 calc(50% - 8px)}
+  .quick-scroll,.image-manager-scroll{bottom:calc(10px + env(safe-area-inset-bottom))}
+}
+@media(max-width:380px){
+  .win-sidebar{grid-template-columns:1fr}
+  .win-toolbar{flex-wrap:wrap}
+  .win-address{order:1;flex:1 1 calc(100% - 80px)}
+  #explorerRefresh{order:2}
+  .win-toolbar-search{padding:7px}
+  .win-view-tools{justify-content:stretch}
+  .win-view-tools button{flex:1}
+  .bulk-selection button{flex-basis:100%}
+}
+.win-table-scroll{max-width:100%;overflow-x:auto}
+.win-table-scroll table{min-width:640px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -932,7 +981,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       if (!rows.length) {
         $("dbRows").textContent = "Sem registos para apresentar.";
       } else {
-        $("dbRows").innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th></th>' + columns.map(c => '<th style="text-align:left;padding:9px;border-bottom:1px solid #456078;color:var(--gold);white-space:nowrap">' + dbExplorerEsc(c) + '</th>').join("") + '<th>Ações</th></tr></thead><tbody>' + rows.map(row => {
+        $("dbRows").innerHTML = '<div class="win-table-scroll"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr><th></th>' + columns.map(c => '<th style="text-align:left;padding:9px;border-bottom:1px solid #456078;color:var(--gold);white-space:nowrap">' + dbExplorerEsc(c) + '</th>').join("") + '<th>Ações</th></tr></thead><tbody>' + rows.map(row => {
           const key = String(row[keyColumn]);
           return '<tr><td style="padding:8px"><input class="db-row-select" type="checkbox" value="' + dbExplorerEsc(key) + '" aria-label="Selecionar registo"></td>' + columns.map(c => '<td style="padding:8px 9px;border-bottom:1px solid #29425b;vertical-align:top;max-width:320px;overflow-wrap:anywhere">' + dbExplorerEsc(typeof row[c] === "object" && row[c] !== null ? JSON.stringify(row[c]) : row[c]) + '</td>').join("") + '<td style="padding:8px;white-space:nowrap"><button type="button" class="secondary refresh db-edit" data-db-edit="' + dbExplorerEsc(key) + '">Editar</button> <button type="button" class="secondary refresh db-delete" data-db-delete="' + dbExplorerEsc(key) + '">Apagar</button></td></tr>';
         }).join("") + '</tbody></table>';
