@@ -34,6 +34,20 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const payload = await req.json().catch(() => ({}));
+    if (payload?.action === "delete") {
+      const path = typeof payload.storage_path === "string" ? payload.storage_path.trim() : "";
+      const segments = path.split("/");
+      if (!path || path.length > 1024 || path.startsWith("/") || path.includes("\\") ||
+          segments.some((part: string) => !part || part === "." || part === "..")) {
+        return reply({ error: "Caminho de imagem inválido." }, 400);
+      }
+      const { data: removed, error: removeError } = await admin.storage.from(BUCKET).remove([path]);
+      if (removeError) throw removeError;
+      if (!removed?.length) return reply({ error: "O ficheiro não foi encontrado ou não foi apagado." }, 404);
+      return reply({ deleted: true, storage_path: path });
+    }
+
     const bucket = admin.storage.from(BUCKET);
     const queue = [""];
     const visited = new Set<string>();
@@ -106,6 +120,6 @@ Deno.serve(async (req: Request) => {
     assets.sort((a, b) => String(a.storage_path).localeCompare(String(b.storage_path), "pt"));
     return reply({ assets, total: assets.length, folders_scanned: foldersVisited, bucket: BUCKET });
   } catch (err) {
-    return reply({ error: err instanceof Error ? err.message : "Storage listing failed." }, 500);
+    return reply({ error: err instanceof Error ? err.message : "Storage operation failed." }, 500);
   }
 });
