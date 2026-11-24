@@ -28,7 +28,7 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy atina-admin-db-explorer --project-ref qvvlqrgbtjujsejvenld
-      - name: Verify function is listed in production
+      - name: Apply database audit migration\n        env:\n          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}\n        run: supabase db push --project-ref qvvlqrgbtjujsejvenld --yes\n      - name: Verify function is listed in production
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
