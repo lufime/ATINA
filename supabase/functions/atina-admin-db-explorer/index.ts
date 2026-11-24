@@ -80,7 +80,7 @@ Deno.serve(async (request: Request) => {
       });
     }
 
-    if (body.action !== "rows" || !(body.table in TABLES)) {
+    if (body.action !== "rows" || typeof body.table !== "string" || !Object.prototype.hasOwnProperty.call(TABLES, body.table)) {
       return json({ error: "Tabela ou operação não autorizada." }, 400);
     }
 
