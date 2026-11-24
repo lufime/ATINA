@@ -797,8 +797,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       });
       $("dbMeta").textContent = rows.length.toLocaleString("pt-PT") + " de " + explorerImageAssets.length.toLocaleString("pt-PT") + " imagens" + (storageWarning ? " · Storage: " + storageWarning : "");
       $("dbRows").innerHTML = rows.length ? rows.map(asset => {
-        const id = String(asset.challenge_id);
-        const name = id.padStart(4,"0") + " · " + (asset.solution || "Desafio " + id);
+        const id = asset.challenge_id == null ? "—" : String(asset.challenge_id);
+        const name = (asset.challenge_id == null ? "" : id.padStart(4,"0") + " · ") + (asset.solution || asset.file_name || "Ficheiro de imagem");
         const imageUrl = /^https?:\/\//i.test(String(asset.image_url || "")) ? asset.image_url : "";
         const status = IMAGE_STATUS_LABELS[String(asset.status || "").toLowerCase()] || asset.status || "Sem estado";
         const size = Number(asset.file_size_bytes || 0);
