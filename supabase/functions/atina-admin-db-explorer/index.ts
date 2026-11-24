@@ -26,7 +26,7 @@ function validChanges(table: TableName, changes: unknown): changes is Record<str
   if (!entries.length || entries.some(([key]) => !(config.editable as readonly string[]).includes(key))) return false;
   for (const [key, value] of entries) {
     if (key === "active" || key === "supports_teams") { if (typeof value !== "boolean") return false; }
-    else if (key === "score" || key === "player_number" || key === "default_duration_seconds") { if (!Number.isInteger(value)) return false; }
+    else if (key === "score" || key === "default_duration_seconds") { if (!Number.isInteger(value)) return false; }\n    else if (key === "player_number") { if (value !== null && !Number.isInteger(value)) return false; }
     else if (key === "nickname" || key === "mode" || key === "message" || key === "display_name") { if (typeof value !== "string" || value.length > 2000) return false; }
   }
   return true;
