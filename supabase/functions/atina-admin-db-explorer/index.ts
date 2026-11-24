@@ -66,9 +66,11 @@ Deno.serve(async (request: Request) => {
       const { data: before, error: readError } = await db.from(table).select(config.key).eq(config.key, body.key).maybeSingle();
       if (readError) throw readError;
       if (!before) return json({ error: "Registo não encontrado." }, 404);
-      const { data: audit, error: auditError } = await db.from("atina_admin_db_explorer_audit").insert({ actor_user_id: authData.user.id, operation: "update", table_name: table, record_keys: [body.key], changed_columns: Object.keys(body.changes), outcome: "started" }).select("id").single();
+      const changes = { ...body.changes };
+      if (table === "atina_site_notice") changes.updated_at = new Date().toISOString();
+      const { data: audit, error: auditError } = await db.from("atina_admin_db_explorer_audit").insert({ actor_user_id: authData.user.id, operation: "update", table_name: table, record_keys: [body.key], changed_columns: Object.keys(changes), outcome: "started" }).select("id").single();
       if (auditError) throw auditError;
-      const { data, error } = await db.from(table).update(body.changes).eq(config.key, body.key).select(config.columns.join(",")).maybeSingle();
+      const { data, error } = await db.from(table).update(changes).eq(config.key, body.key).select(config.columns.join(",")).maybeSingle();
       await db.from("atina_admin_db_explorer_audit").update({ outcome: error ? "failed" : "completed", result_count: data ? 1 : 0 }).eq("id", audit.id);
       if (error) throw error;
       if (!data) return json({ error: "O registo não foi alterado." }, 409);
