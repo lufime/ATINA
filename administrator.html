@@ -820,7 +820,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     const size = Number(asset.file_size_bytes || 0);
     $("explorerPreview").innerHTML =
       (imageUrl ? '<img class="win-preview-image" src="' + dbExplorerEsc(imageUrl) + '" alt="Imagem do desafio ' + dbExplorerEsc(id) + '">' : '<div class="win-preview-placeholder"><span>🖼️</span><strong>Pré-visualização indisponível</strong></div>') +
-      '<h3 class="win-preview-title">' + dbExplorerEsc(String(id).padStart(4,"0") + " · " + (asset.solution || "Desafio " + id)) + '</h3>' +
+      '<h3 class="win-preview-title">' + dbExplorerEsc((asset.challenge_id == null ? "" : String(id).padStart(4,"0") + " · ") + (asset.solution || asset.file_name || "Ficheiro")) + '</h3>' +
       '<div class="win-preview-subtitle">' + dbExplorerEsc(status) + '</div>' +
       '<div class="win-preview-data">' +
       '<div><span>ID do desafio</span><strong>' + dbExplorerEsc(id) + '</strong></div>' +
@@ -828,11 +828,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       '<div><span>Formato</span><strong>' + dbExplorerEsc(asset.mime_type || "—") + '</strong></div>' +
       '<div><span>Tamanho</span><strong>' + (size ? Math.round(size/1024) + " KB" : "—") + '</strong></div>' +
       '<div><span>Autor</span><strong>' + dbExplorerEsc(asset.author || "—") + '</strong></div>' +
-      '<div><span>Armazenamento</span><strong>' + dbExplorerEsc(asset.storage_path || asset.original_storage_path || "—") + '</strong></div>' +
+      '<div><span>Tipo</span><strong>' + (asset.is_original ? "Original" : "Ficheiro do jogo / histórico") + '</strong></div>' +\n      '<div><span>Ficheiro</span><strong>' + dbExplorerEsc(asset.file_name || (asset.storage_path || "").split("/").pop() || "Registo") + '</strong></div>' +\n      '<div><span>Localização</span><strong>' + dbExplorerEsc(asset.storage_path || asset.original_storage_path || "—") + '</strong></div>' +\n      '<div><span>Data</span><strong>' + dbExplorerEsc(asset.updated_at ? new Date(asset.updated_at).toLocaleString("pt-PT") : "—") + '</strong></div>' +
       '</div><div class="win-preview-actions">' +
       (imageUrl ? '<button type="button" class="secondary" id="explorerOpenImage">Abrir imagem</button>' : '') +
       '<button type="button" class="secondary" id="explorerDownloadImage">Transferir original</button>' +
-      '<button type="button" class="secondary" id="explorerChooseReplacement">Editar / substituir imagem</button>' +
+      '<button type="button" class="secondary" id="explorerChooseReplacement" ' + (asset.challenge_id == null ? "disabled" : "") + '>Editar / substituir imagem do desafio</button>' +
       '<button type="button" class="secondary" id="explorerDeleteImage" style="border-color:#a94b55;color:#ffd9dc">Apagar imagem</button>' +
       '<input id="explorerReplacementFile" type="file" accept="image/webp,image/png,image/jpeg" hidden>' +
       '</div><p class="win-preview-subtitle" id="explorerImageActionStatus" role="status" aria-live="polite"></p>';
