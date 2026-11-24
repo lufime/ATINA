@@ -716,45 +716,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     return data;
   }
   async function loadStorageExplorerAssets() {
-    const bucket = client.storage.from("atina-challenge-images");
-    const [challengeData, root] = await Promise.all([
-      imageManageExplorerRequest({action:"challenge_list"}),
-      bucket.list("", {limit:1000, offset:0, sortBy:{column:"name",order:"asc"}})
+    const {data:{session}} = await client.auth.getSession();
+    if (!session) throw new Error("A sessão expirou. Entra novamente.");
+    const [libraryResponse, challengeData] = await Promise.all([
+      fetch(SUPABASE_URL + "/functions/v1/atina-admin-image-library", {
+        method:"POST",
+        headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+        body:"{}"
+      }),
+      imageManageExplorerRequest({action:"challenge_list"})
     ]);
-    if (root.error) throw root.error;
+    const libraryData = await libraryResponse.json().catch(()=>({}));
+    if (!libraryResponse.ok) throw new Error(libraryData.error || "Não foi possível consultar o armazenamento de imagens.");
     const challenges = Array.isArray(challengeData.challenges) ? challengeData.challenges : [];
     const challengeMap = new Map(challenges.map(row => [String(row.challenge_id), row]));
-    const queue = [""];
-    const visited = new Set();
-    const found = [];
-    while (queue.length) {
-      const folder = queue.shift();
-      if (!folder || visited.has(folder)) continue;
-      visited.add(folder);
-      let offset = 0;
-      while (true) {
-        const page = await bucket.list(folder, {limit:1000, offset, sortBy:{column:"name",order:"asc"}});
-        if (page.error) throw page.error;
-        const entries = page.data || [];
-        for (const item of entries) {
-          const path = folder ? folder + "/" + item.name : item.name;
-          if (item.id === null) { if (!visited.has(path)) queue.push(path); continue; }
-          const mime = String(item.metadata?.mimetype || "");
-          if (!mime.startsWith("image/")) continue;
-          const segments = path.split("/");
-          const parentId = [...segments].reverse().find(segment => /^\\d+$/.test(segment));
-          const filenameId = item.name.match(/^(\\d+)[-_]/)?.[1];
-          const challengeId = parentId || filenameId || null;
-          const challenge = challengeId ? challengeMap.get(String(Number(challengeId))) : null;
-          const isOriginal = /(^|\/)originals(\/|$)/i.test(path);
-          found.push({asset_key:"storage:" + path,challenge_id:challengeId ? Number(challengeId) : null,image_url:bucket.getPublicUrl(path).data.publicUrl,storage_path:path,original_storage_path:isOriginal ? path : null,storage_paths:[path],original_storage_paths:isOriginal ? [path] : [],mime_type:mime,file_size_bytes:Number(item.metadata?.size || 0),status:"stored",solution:challenge?.answer || item.name,author:"ATINA",source:"Supabase Storage",stored_file_count:1,updated_at:item.updated_at || item.created_at || null,created_at:item.created_at || null,file_name:item.name,is_original:isOriginal});
-        }
-        if (entries.length < 1000) break;
-        offset += entries.length;
-      }
-    }
-    return found.sort((a,b) => String(a.storage_path).localeCompare(String(b.storage_path), "pt"));
+    return (Array.isArray(libraryData.assets) ? libraryData.assets : []).map(asset => ({
+      ...asset,
+      solution: asset.challenge_id == null ? asset.file_name : (challengeMap.get(String(Number(asset.challenge_id)))?.answer || asset.file_name)
+    }));
   }
+
   async function loadExplorerImages() {
     $("dbMeta").textContent = "A consultar biblioteca…";
     $("dbRows").innerHTML = '<div class="win-empty">A carregar imagens ATINA…</div>';
