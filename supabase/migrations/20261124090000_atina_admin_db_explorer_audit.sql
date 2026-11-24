@@ -12,3 +12,4 @@ create table if not exists public.atina_admin_db_explorer_audit (
 alter table public.atina_admin_db_explorer_audit enable row level security;
 revoke all on public.atina_admin_db_explorer_audit from anon, authenticated;
 grant all on public.atina_admin_db_explorer_audit to service_role;
+grant usage, select on sequence public.atina_admin_db_explorer_audit_id_seq to service_role;\n
