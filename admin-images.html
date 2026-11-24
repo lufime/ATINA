@@ -593,6 +593,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   }
   function applyExplorerLocation(state) {
     if (!state) return;
+    $("dbSearch").value = "";
     if (state.mode === "table") {
       explorerMode = "table";
       dbExplorerTable = state.value;
@@ -619,14 +620,14 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
         : button.dataset.explorerKind === "images" && (button.dataset.imageStatus || "") === (state.value || "");
       button.classList.toggle("active", active);
     });
-    $("dbSearch").value = "";
     $("explorerUp").disabled = state.mode !== "table";
   }
   function updateExplorerLayout() {
     const isTable = explorerMode === "table";
     $("explorerDbControls").classList.toggle("hidden", !isTable);
-    $("explorerDetails").classList.toggle("active", explorerViewMode === "details");
-    $("explorerIcons").classList.toggle("active", explorerViewMode === "icons");
+    $("explorerDetails").classList.toggle("active", isTable || explorerViewMode === "details");
+    $("explorerIcons").classList.toggle("active", !isTable && explorerViewMode === "icons");
+    $("explorerIcons").disabled = isTable;
     $("dbRows").classList.toggle("details", explorerViewMode === "details");
     $("dbRows").classList.toggle("icons", explorerViewMode === "icons");
     $("dbSearch").placeholder = isTable ? "Pesquisar registos nesta tabela…" : "Pesquisar imagens por ID, solução ou estado…";
@@ -727,9 +728,11 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   async function downloadExplorerImage() {
     if (!explorerSelectedImage) return;
     try {
+      const {data:{session}} = await client.auth.getSession();
+      if (!session) throw new Error("A sessão expirou. Entra novamente.");
       const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
         method:"POST",
-        headers:{"Authorization":"Bearer "+(await client.auth.getSession()).data.session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+        headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
         body:JSON.stringify({action:"download",challenge_id:Number(explorerSelectedImage.challenge_id)})
       });
       if (!response.ok) { const data=await response.json().catch(()=>({})); throw new Error(data.error || "Não foi possível transferir a imagem."); }
@@ -898,7 +901,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     if(asset?.image_url&&/^https?:\/\//i.test(asset.image_url))window.open(asset.image_url,"_blank","noopener,noreferrer");
   });
   $("explorerDetails").addEventListener("click",()=>{explorerViewMode="details";updateExplorerLayout();if(explorerMode==="images")loadExplorerImages();});
-  $("explorerIcons").addEventListener("click",()=>{explorerViewMode="icons";updateExplorerLayout();if(explorerMode==="images")loadExplorerImages();});
+  $("explorerIcons").addEventListener("click",()=>{if(explorerMode==="table")return;explorerViewMode="icons";updateExplorerLayout();loadExplorerImages();});
   $("explorerBack").addEventListener("click",()=>{if(explorerHistoryIndex>0){explorerHistoryIndex--;applyExplorerLocation(explorerHistory[explorerHistoryIndex]);updateExplorerHistoryButtons();}});
   $("explorerForward").addEventListener("click",()=>{if(explorerHistoryIndex<explorerHistory.length-1){explorerHistoryIndex++;applyExplorerLocation(explorerHistory[explorerHistoryIndex]);updateExplorerHistoryButtons();}});
   $("explorerUp").addEventListener("click",()=>explorerNavigate("images","","Biblioteca de imagens"));
