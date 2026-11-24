@@ -1,0 +1,45 @@
+name: Deploy ATINA database explorer (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type DEPLOY ATINA DATABASE EXPLORER to authorize this production deployment
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-database-explorer:
+    if: inputs.confirmation == 'DEPLOY ATINA DATABASE EXPLORER'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Deploy read-only database explorer
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy atina-admin-db-explorer --project-ref qvvlqrgbtjujsejvenld
+      - name: Verify function is listed in production
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          functions=$(supabase functions list --project-ref qvvlqrgbtjujsejvenld)
+          echo "$functions" | grep -F 'atina-admin-db-explorer'
+
+  reject-unconfirmed:
+    if: inputs.confirmation != 'DEPLOY ATINA DATABASE EXPLORER'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reject deployment without exact confirmation
+        run: |
+          echo "Confirmation text did not match. No deployment was attempted."
+          exit 1
