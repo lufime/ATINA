@@ -721,7 +721,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     if (root.error) throw root.error;
     const challenges = Array.isArray(challengeData.challenges) ? challengeData.challenges : [];
     const challengeMap = new Map(challenges.map(row => [String(row.challenge_id), row]));
-    const queue = (root.data || []).filter(item => item.id === null).map(item => item.name);
+    const queue = [""];
     const visited = new Set();
     const found = [];
     while (queue.length) {
@@ -734,7 +734,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         if (page.error) throw page.error;
         const entries = page.data || [];
         for (const item of entries) {
-          const path = folder + "/" + item.name;
+          const path = folder ? folder + "/" + item.name : item.name;
           if (item.id === null) { if (!visited.has(path)) queue.push(path); continue; }
           const mime = String(item.metadata?.mimetype || "");
           if (!mime.startsWith("image/")) continue;
@@ -1083,7 +1083,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   $("dbRows").addEventListener("dblclick",event=>{
     const imageCard=event.target.closest("[data-explorer-image-key]");
     if(!imageCard)return;
-    const asset=explorerImageAssets.find(item=>String(item.challenge_id)===imageCard.dataset.explorerImageKey);
+    const asset=explorerImageAssets.find(item=>String(item.asset_key || ("record:" + item.challenge_id))===imageCard.dataset.explorerImageKey);
     if(asset?.image_url&&/^https?:\/\//i.test(asset.image_url))window.open(asset.image_url,"_blank","noopener,noreferrer");
   });
   $("explorerDetails").addEventListener("click",()=>{explorerViewMode="details";updateExplorerLayout();if(explorerMode==="images")loadExplorerImages();});
