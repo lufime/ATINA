@@ -804,7 +804,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         const size = Number(asset.file_size_bytes || 0);
         return '<button type="button" class="win-image-card" data-explorer-image-key="' + dbExplorerEsc(asset.asset_key || ("record:" + id)) + '">' +
           '<span class="win-image-thumb">' + (imageUrl ? '<img src="' + dbExplorerEsc(imageUrl) + '" alt="" loading="lazy">' : '<span>🖼️</span>') + '</span>' +
-          '<span class="win-image-info"><span class="win-image-name">' + dbExplorerEsc(name) + '</span><span class="win-image-meta">' + dbExplorerEsc(asset.mime_type || "Imagem") + (size ? " · " + Math.round(size/1024) + " KB" : "") + '</span></span>' +
+          '<span class="win-image-info"><span class="win-image-name">' + dbExplorerEsc(name) + '</span><span class="win-image-meta">' + dbExplorerEsc((asset.is_original ? "Original · " : "") + (asset.mime_type || "Imagem") + (size ? " · " + Math.round(size/1024) + " KB" : "") + (asset.file_name ? " · " + asset.file_name : "")) + '</span></span>' +
           '<span class="win-image-status">' + dbExplorerEsc(status) + '</span></button>';
       }).join("") : '<div class="win-empty">Não foram encontradas imagens nesta localização.</div>';
       if (explorerViewMode === "details") $("dbRows").classList.add("details");
