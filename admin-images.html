@@ -700,6 +700,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
           image_url:publicUrl,
           storage_path:imageFiles.length ? "challenges/" + id + "/" + imageFiles[0].name : null,
           original_storage_path:originalFiles.length ? "originals/challenges/" + id + "/" + originalFiles[0].name : null,
+          storage_paths:imageFiles.map(file => "challenges/" + id + "/" + file.name),
+          original_storage_paths:originalFiles.map(file => "originals/challenges/" + id + "/" + file.name),
           mime_type:preferred.metadata?.mimetype || "image/webp",
           file_size_bytes:Number(preferred.metadata?.size || 0),
           status:"stored",
@@ -774,10 +776,71 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       '</div><div class="win-preview-actions">' +
       (imageUrl ? '<button type="button" class="secondary" id="explorerOpenImage">Abrir imagem</button>' : '') +
       '<button type="button" class="secondary" id="explorerDownloadImage">Transferir original</button>' +
-      '</div>';
+      '<button type="button" class="secondary" id="explorerChooseReplacement">Editar / substituir imagem</button>' +
+      '<button type="button" class="secondary" id="explorerDeleteImage" style="border-color:#a94b55;color:#ffd9dc">Apagar imagem</button>' +
+      '<input id="explorerReplacementFile" type="file" accept="image/webp,image/png,image/jpeg" hidden>' +
+      '</div><p class="win-preview-subtitle" id="explorerImageActionStatus" role="status" aria-live="polite"></p>';
     const open = $("explorerOpenImage");
     if (open) open.addEventListener("click",()=>window.open(imageUrl,"_blank","noopener,noreferrer"));
     $("explorerDownloadImage").addEventListener("click",downloadExplorerImage);
+    $("explorerChooseReplacement").addEventListener("click",()=>$("explorerReplacementFile").click());
+    $("explorerReplacementFile").addEventListener("change",event=>{
+      const file=event.target.files?.[0];
+      if(file) replaceExplorerImage(file);
+    });
+    $("explorerDeleteImage").addEventListener("click",deleteExplorerImage);
+  }
+  async function replaceExplorerImage(file) {
+    if (!explorerSelectedImage) return;
+    if (!["image/webp","image/png","image/jpeg"].includes(file.type)) { window.alert("Escolhe uma imagem WebP, PNG ou JPEG."); return; }
+    if (file.size > 15 * 1024 * 1024) { window.alert("A imagem não pode exceder 15 MB."); return; }
+    const status = $("explorerImageActionStatus");
+    try {
+      const {data:{session}} = await client.auth.getSession();
+      if (!session) throw new Error("A sessão expirou. Entra novamente.");
+      status.textContent = "A guardar a imagem editada…";
+      const body = new FormData();
+      body.append("challenge_id", String(explorerSelectedImage.challenge_id));
+      body.append("file", file, file.name || "atina-editada.webp");
+      body.append("source", "Imagem editada para o jogo ATINA");
+      body.append("source_url", "gerada-por-ia://chatgpt");
+      body.append("author", explorerSelectedImage.author || "ATINA");
+      body.append("license", explorerSelectedImage.license || "© ATINA — Todos os direitos reservados. Uso exclusivo no projeto ATINA.");
+      body.append("attribution", explorerSelectedImage.attribution || "ATINA");
+      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-upload", {
+        method:"POST",
+        headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY},
+        body
+      });
+      const result = await response.json().catch(()=>({}));
+      if (!response.ok) throw new Error(result.error || "Não foi possível guardar a imagem.");
+      status.textContent = "Imagem substituída. Atualiza a biblioteca para rever a versão guardada.";
+      await loadExplorerImages();
+    } catch(error) {
+      status.textContent = error.message || "Falha ao editar a imagem.";
+    }
+  }
+  async function deleteExplorerImage() {
+    if (!explorerSelectedImage) return;
+    const asset = explorerSelectedImage;
+    if (!window.confirm("Apagar a imagem do desafio " + asset.challenge_id + "? Esta ação remove o ficheiro do armazenamento ou o registo de imagem associado e não pode ser anulada.")) return;
+    const status = $("explorerImageActionStatus");
+    try {
+      status.textContent = "A apagar a imagem…";
+      if (asset.status === "stored") {
+        const paths = [...(asset.storage_paths || []), ...(asset.original_storage_paths || [])];
+        if (!paths.length) throw new Error("Não foram encontrados ficheiros para apagar.");
+        const {error} = await client.storage.from("atina-challenge-images").remove(paths);
+        if (error) throw error;
+      } else {
+        await imageManageExplorerRequest({action:"delete",challenge_id:Number(asset.challenge_id)});
+      }
+      explorerSelectedImage = null;
+      $("explorerPreview").innerHTML = '<div class="win-preview-placeholder"><span>🗂️</span><strong>Imagem apagada</strong><p>A biblioteca foi atualizada.</p></div>';
+      await loadExplorerImages();
+    } catch(error) {
+      status.textContent = error.message || "Não foi possível apagar a imagem.";
+    }
   }
   async function downloadExplorerImage() {
     if (!explorerSelectedImage) return;
