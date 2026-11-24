@@ -463,7 +463,8 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 
   let dbExplorerPage = 0;
   let dbExplorerTable = "";
-  let dbExplorerSearchTimer = null;\n  let dbExplorerCurrentRows = [];
+  let dbExplorerSearchTimer = null;
+  let dbExplorerCurrentRows = [];
   const DB_EXPLORER_PAGE_SIZE = 30;
   function dbExplorerEsc(value) {
     return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
