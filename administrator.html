@@ -184,7 +184,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 .win-columns{display:none;padding:7px 10px;border-bottom:1px solid #2c435a;color:#8fa8c0}
 .win-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:10px;align-content:start;min-height:360px}
 .win-items.details{display:flex;flex-direction:column;gap:0}
-.win-image-card{position:relative;display:flex;flex-direction:column;gap:7px;min-width:0;padding:8px;border:1px solid #2b435a;border-radius:9px;background:#102338;color:#e7eff8;text-align:left;cursor:pointer}
+.win-image-row{display:flex;align-items:stretch;gap:6px;min-width:0}.win-image-row>.win-image-card{flex:1;min-width:0}.win-image-delete{flex:0 0 auto;align-self:center;padding:7px 9px;border:1px solid #a94b55;border-radius:8px;background:#3b202b;color:#ffd9dc;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.win-image-delete:hover,.win-image-delete:focus{background:#612b38;border-color:#f08b95}.win-image-card{position:relative;display:flex;flex-direction:column;gap:7px;min-width:0;padding:8px;border:1px solid #2b435a;border-radius:9px;background:#102338;color:#e7eff8;text-align:left;cursor:pointer}
 .win-image-card:hover,.win-image-card.selected{border-color:#d3ad68;background:#18324a}
 .win-image-thumb{display:flex;align-items:center;justify-content:center;aspect-ratio:16/10;overflow:hidden;border-radius:6px;background:#071421}
 .win-image-thumb img{width:100%;height:100%;object-fit:contain}
@@ -783,10 +783,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         const imageUrl = /^https?:\/\//i.test(String(asset.image_url || "")) ? asset.image_url : "";
         const status = IMAGE_STATUS_LABELS[String(asset.status || "").toLowerCase()] || asset.status || "Sem estado";
         const size = Number(asset.file_size_bytes || 0);
-        return '<button type="button" class="win-image-card" data-explorer-image-key="' + dbExplorerEsc(asset.asset_key || ("record:" + id)) + '">' +
+        const imageKey = asset.asset_key || ("record:" + id);
+        return '<div class="win-image-row"><button type="button" class="win-image-card" data-explorer-image-key="' + dbExplorerEsc(imageKey) + '">' +
           '<span class="win-image-thumb">' + (imageUrl ? '<img src="' + dbExplorerEsc(imageUrl) + '" alt="" loading="lazy">' : '<span>🖼️</span>') + '</span>' +
           '<span class="win-image-info"><span class="win-image-name">' + dbExplorerEsc(name) + '</span><span class="win-image-meta">' + dbExplorerEsc((asset.is_original ? "Original · " : "") + (asset.mime_type || "Imagem") + (size ? " · " + Math.round(size/1024) + " KB" : "") + (asset.file_name ? " · " + asset.file_name : "")) + '</span></span>' +
-          '<span class="win-image-status">' + dbExplorerEsc(status) + '</span></button>';
+          '<span class="win-image-status">' + dbExplorerEsc(status) + '</span></button><button type="button" class="win-image-delete" data-explorer-delete-key="' + dbExplorerEsc(imageKey) + '" aria-label="Apagar ' + dbExplorerEsc(name) + '" title="Apagar imagem">Apagar</button></div>';
       }).join("") : '<div class="win-empty">Não foram encontradas imagens nesta localização.</div>';
       if (explorerViewMode === "details") $("dbRows").classList.add("details");
       else $("dbRows").classList.remove("details");
@@ -1067,6 +1068,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     explorerNavigate("images",status,IMAGE_STATUS_LABELS[status]||"Biblioteca de imagens");
   }));
   $("dbRows").addEventListener("click",event=>{
+    const deleteButton=event.target.closest("[data-explorer-delete-key]");
+    if(deleteButton){
+      event.preventDefault();
+      event.stopPropagation();
+      selectExplorerImage(deleteButton.dataset.explorerDeleteKey);
+      deleteExplorerImage();
+      return;
+    }
     const imageCard=event.target.closest("[data-explorer-image-key]");
     if(imageCard) selectExplorerImage(imageCard.dataset.explorerImageKey);
   });
