@@ -147,6 +147,84 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 .challenge-sort-row{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;margin:8px 0 12px}.challenge-sort-row label{white-space:nowrap;margin:0}
 @media(max-width:600px){.challenge-basic-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.challenge-search-field{grid-column:1/-1}.challenge-advanced-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:0 9px 9px}.challenge-advanced-filters>summary{padding:10px;font-size:14px}.challenge-advanced-hint{max-width:58%;line-height:1.25}.challenge-sort-row{grid-template-columns:auto minmax(0,1fr);gap:8px}.challenge-sort-row label{font-size:12px}}
 @media(max-width:360px){.challenge-advanced-grid{grid-template-columns:1fr}}
+
+/* Explorador de ficheiros ATINA — interface inspirada no Windows */
+.win-explorer{display:grid;grid-template-columns:228px minmax(0,1fr);min-height:620px;overflow:hidden;border:1px solid #344c65;border-radius:14px;background:#0b1725;color:#edf3fa}
+.win-sidebar{display:flex;flex-direction:column;gap:4px;padding:14px 10px;background:#101f30;border-right:1px solid #344c65;min-width:0}
+.win-side-heading{padding:12px 10px 6px;color:#91a7bd;font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+.win-tree-group{border-top:1px solid #293e54;margin-top:8px;padding-top:3px}
+.win-tree-item{display:flex;align-items:center;gap:9px;width:100%;min-height:39px;margin:1px 0;padding:7px 9px;border:1px solid transparent;border-radius:8px;background:transparent;color:#dce7f2;text-align:left;font-size:13px;font-weight:600;cursor:pointer}
+.win-tree-item:hover{background:#1a3047;border-color:#294760}
+.win-tree-item.active{background:#1d3852;border-color:#42617c;color:#fff}
+.win-tree-icon{width:20px;text-align:center;font-size:15px}
+.win-tree-item>span:nth-child(2){min-width:0;flex:1}
+.win-tree-count{color:#8fa8c0;font-size:11px}
+.win-tree-empty{display:block;padding:8px 10px;color:#8297ad;font-size:12px}
+.win-side-foot{margin-top:auto;padding:14px 8px 4px;color:#71879d;font-size:10px;border-top:1px solid #293e54}
+.win-main{min-width:0;display:flex;flex-direction:column}
+.win-toolbar{display:flex;align-items:center;gap:7px;min-height:56px;padding:8px 12px;border-bottom:1px solid #293e54;background:#122338}
+.win-tool{width:36px;min-width:36px;height:36px;min-height:36px;margin:0;padding:0;border:1px solid transparent;border-radius:8px;background:transparent;color:#dce7f2;font-size:20px}
+.win-tool:hover:not(:disabled){background:#1d3852;border-color:#385570}
+.win-tool:disabled{opacity:.3;cursor:default}
+.win-address{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:8px 12px;border:1px solid #3a536d;border-radius:8px;background:#091827}
+.win-address-label{color:#8097ad;font-size:11px;white-space:nowrap}
+.win-address strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:650}
+.win-toolbar-search{min-height:54px;justify-content:space-between;gap:10px;background:#0f2032}
+.win-search{display:flex;align-items:center;gap:9px;flex:1;min-width:100px;margin:0;padding:0 12px;border:1px solid #3a536d;border-radius:8px;background:#091827;color:#8fa8c0}
+.win-search span{font-size:20px}
+.win-search input{height:36px!important;min-height:36px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;font-size:13px!important}
+.win-view-tools{display:flex;gap:4px}
+.win-view{width:auto;min-height:34px;margin:0;padding:6px 9px;border:1px solid transparent;border-radius:7px;background:transparent;color:#b7c7d7;font-size:11px;font-weight:700;white-space:nowrap}
+.win-view.active,.win-view:hover{background:#1c3852;border-color:#3c5a75;color:#fff}
+.win-content{display:grid;grid-template-columns:minmax(0,1fr) 230px;flex:1;min-height:490px}
+.win-content-main{min-width:0;padding:13px 14px;overflow:hidden}
+.win-content-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.win-content-heading strong{font-size:14px;color:#f4f7fb}
+.win-content-heading span{color:#8da3b8;font-size:11px;text-align:right}
+.win-columns{display:none;padding:7px 10px;border-bottom:1px solid #2c435a;color:#8fa8c0}
+.win-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:10px;align-content:start;min-height:360px}
+.win-items.details{display:flex;flex-direction:column;gap:0}
+.win-image-card{position:relative;display:flex;flex-direction:column;gap:7px;min-width:0;padding:8px;border:1px solid #2b435a;border-radius:9px;background:#102338;color:#e7eff8;text-align:left;cursor:pointer}
+.win-image-card:hover,.win-image-card.selected{border-color:#d3ad68;background:#18324a}
+.win-image-thumb{display:flex;align-items:center;justify-content:center;aspect-ratio:16/10;overflow:hidden;border-radius:6px;background:#071421}
+.win-image-thumb img{width:100%;height:100%;object-fit:contain}
+.win-image-thumb span{font-size:28px}
+.win-image-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:800}
+.win-image-meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#91a7bd;font-size:10px}
+.win-items.details .win-image-card{display:grid;grid-template-columns:76px minmax(0,1fr) minmax(90px,.55fr);align-items:center;gap:12px;padding:6px 9px;border:0;border-bottom:1px solid #263d53;border-radius:0;background:transparent}
+.win-items.details .win-image-card:hover,.win-items.details .win-image-card.selected{background:#18324a}
+.win-items.details .win-image-thumb{width:76px;aspect-ratio:16/10}
+.win-items.details .win-image-info{min-width:0}
+.win-items.details .win-image-name{display:block}
+.win-items.details .win-image-meta{display:block}
+.win-items.details .win-image-status{color:#a9bbcc;font-size:11px;text-align:right}
+.win-empty{grid-column:1/-1;padding:40px 14px;color:#8fa8c0;text-align:center;font-size:13px}
+.win-preview{padding:15px 13px;border-left:1px solid #293e54;background:#0e1d2d}
+.win-preview-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;text-align:center;color:#91a7bd}
+.win-preview-placeholder>span{font-size:34px;margin-bottom:12px}
+.win-preview-placeholder strong{color:#e7eff8;font-size:14px}
+.win-preview-placeholder p{font-size:11px;line-height:1.5}
+.win-preview-image{display:block;width:100%;max-height:190px;object-fit:contain;border-radius:8px;background:#071421}
+.win-preview-title{margin:12px 0 4px;color:#f4f7fb;font-size:14px;overflow-wrap:anywhere}
+.win-preview-subtitle{color:#91a7bd;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+.win-preview-data{display:grid;grid-template-columns:1fr;gap:7px;margin:14px 0}
+.win-preview-data div{padding-bottom:6px;border-bottom:1px solid #293e54}
+.win-preview-data span{display:block;color:#8097ad;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.win-preview-data strong{display:block;margin-top:3px;color:#dce7f2;font-size:11px;overflow-wrap:anywhere}
+.win-preview-actions{display:grid;gap:7px;margin-top:12px}
+.win-preview-actions button{width:100%;margin:0;min-height:38px;font-size:12px}
+.win-db-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #293e54;color:#9eb0c2;font-size:11px}
+.win-db-controls label{display:flex;align-items:center;gap:6px;margin:0;font-size:11px}
+.win-db-controls input{width:16px;height:16px;min-height:16px;accent-color:#d3ad68}
+.win-db-controls button{width:auto;min-height:32px;margin:0;padding:6px 9px;font-size:11px}
+.win-pagination{display:flex;gap:6px;margin-left:auto}
+.win-explorer table{color:#dce7f2}
+.win-explorer table th{position:sticky;top:0;background:#102338}
+.win-explorer table tr:hover td{background:#152d43}
+.win-explorer .db-row-select{width:16px;height:16px;min-height:16px;accent-color:#d3ad68}
+@media(max-width:900px){.win-content{grid-template-columns:minmax(0,1fr) 190px}.win-explorer{grid-template-columns:190px minmax(0,1fr)}}
+@media(max-width:680px){.win-explorer{grid-template-columns:1fr;min-height:0}.win-sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:8px;border-right:0;border-bottom:1px solid #344c65}.win-side-heading{grid-column:1/-1;padding:6px 7px 3px}.win-tree-group{display:contents}.win-tree-item{min-height:34px;padding:6px;font-size:11px}.win-tree-icon{width:16px}.win-side-foot{display:none}.win-toolbar{min-height:48px;padding:6px}.win-tool{width:31px;min-width:31px;height:31px;min-height:31px}.win-address{padding:6px 8px}.win-address-label{display:none}.win-address strong{font-size:11px}.win-toolbar-search{min-height:48px;flex-wrap:wrap}.win-view{font-size:10px;padding:5px 7px}.win-content{grid-template-columns:1fr}.win-content-main{padding:10px}.win-preview{border-left:0;border-top:1px solid #293e54}.win-preview-placeholder{min-height:130px}.win-preview-image{max-height:220px}.win-items{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:7px}.win-items.details .win-image-card{grid-template-columns:62px minmax(0,1fr);gap:8px}.win-items.details .win-image-thumb{width:62px}.win-items.details .win-image-status{display:none}.win-pagination{margin-left:auto}}
+
 </style>
 </head>
 <body>
@@ -196,20 +274,56 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <p class="note">Os números e as tarefas são consultados diretamente na base de dados, apenas depois de entrares como administrador.</p>
   </section>
   <section class="panel hidden tab-panel" id="databasePanel" data-tab-panel="database">
-    <div class="dash-head"><h2>Explorador da base de dados</h2><button class="secondary refresh" id="dbRefresh" type="button">Atualizar</button></div>
-    <p class="note">Consulta, edição e eliminação de registos operacionais autorizados. As eliminações exigem confirmação reforçada; dados privados e respostas dos desafios não são expostos.</p>
-    <div class="form-grid">
-      <div><label for="dbTable">Tabela</label><select id="dbTable"><option value="">A carregar tabelas…</option></select></div>
-      <div><label for="dbSearch">Pesquisar</label><input id="dbSearch" type="search" placeholder="Pesquisar registos"></div>
+    <div class="dash-head"><h2>Explorador ATINA</h2><button class="secondary refresh" id="dbRefresh" type="button">Atualizar</button></div>
+    <p class="note">Navega pelas imagens e tabelas como no Explorador do Windows. As operações na base de dados mantêm as permissões e a auditoria existentes.</p>
+    <div class="win-explorer" id="winExplorer">
+      <aside class="win-sidebar" aria-label="Pastas e locais">
+        <div class="win-side-heading">Acesso rápido</div>
+        <button type="button" class="win-tree-item active" data-explorer-kind="images" data-image-status=""><span class="win-tree-icon">🖼️</span><span>Biblioteca de imagens</span><span class="win-tree-count" id="explorerImageCount">—</span></button>
+        <div class="win-tree-group">
+          <div class="win-side-heading">Estado das imagens</div>
+          <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="pending"><span class="win-tree-icon">🟡</span><span>Pendentes</span></button>
+          <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="approved"><span class="win-tree-icon">🟢</span><span>Aprovadas</span></button>
+          <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="published"><span class="win-tree-icon">🌐</span><span>Publicadas</span></button>
+          <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="broken"><span class="win-tree-icon">🔴</span><span>Com erro</span></button>
+        </div>
+        <div class="win-tree-group">
+          <div class="win-side-heading">Base de dados</div>
+          <div id="explorerTableTree"><span class="win-tree-empty">A carregar tabelas…</span></div>
+        </div>
+        <div class="win-side-foot">ATINA · Administração</div>
+      </aside>
+      <div class="win-main">
+        <div class="win-toolbar">
+          <button type="button" class="win-tool" id="explorerBack" title="Anterior" disabled>←</button>
+          <button type="button" class="win-tool" id="explorerForward" title="Seguinte" disabled>→</button>
+          <button type="button" class="win-tool" id="explorerUp" title="Biblioteca de imagens">↑</button>
+          <div class="win-address"><span class="win-address-label">Localização</span><strong id="explorerPath">ATINA › Biblioteca de imagens</strong></div>
+          <button type="button" class="win-tool" id="explorerRefresh" title="Atualizar">↻</button>
+        </div>
+        <div class="win-toolbar win-toolbar-search">
+          <label class="win-search"><span>⌕</span><input id="dbSearch" type="search" placeholder="Pesquisar nesta localização…" autocomplete="off"></label>
+          <div class="win-view-tools"><button type="button" class="win-view active" id="explorerDetails" title="Vista de detalhes">☷ Detalhes</button><button type="button" class="win-view" id="explorerIcons" title="Vista de ícones">▦ Ícones</button></div>
+        </div>
+        <div class="win-content">
+          <div class="win-content-main">
+            <div class="win-content-heading"><strong id="explorerHeading">Biblioteca de imagens</strong><span id="dbMeta" aria-live="polite">A carregar…</span></div>
+            <div id="dbColumns" class="win-columns note"></div>
+            <div id="dbRows" class="win-items" aria-live="polite">A carregar…</div>
+            <div class="win-db-controls" id="explorerDbControls">
+              <label><input id="dbSelectPage" type="checkbox"> Selecionar esta página</label>
+              <span id="dbSelectedCount">0 selecionados</span>
+              <button class="secondary refresh" id="dbDeleteSelected" type="button" disabled>Apagar selecionados</button>
+              <div class="win-pagination"><button class="secondary refresh" id="dbPrev" type="button" disabled>Anterior</button><button class="secondary refresh" id="dbNext" type="button" disabled>Seguinte</button></div>
+            </div>
+          </div>
+          <aside class="win-preview" id="explorerPreview">
+            <div class="win-preview-placeholder"><span>🗂️</span><strong>Detalhes</strong><p>Seleciona um ficheiro ou registo para veres a pré-visualização e as respetivas informações.</p></div>
+          </aside>
+        </div>
+      </div>
     </div>
-    <div class="dash-head" style="margin-top:12px"><span class="note" id="dbMeta" aria-live="polite">Seleciona uma tabela.</span><div class="challenge-actions"><button class="secondary refresh" id="dbPrev" type="button" disabled>Anterior</button><button class="secondary refresh" id="dbNext" type="button" disabled>Seguinte</button></div></div>
-    <div class="dash-head" style="margin-top:10px;gap:12px;flex-wrap:wrap">
-      <label style="display:flex;align-items:center;gap:8px"><input id="dbSelectPage" type="checkbox"> Selecionar esta página</label>
-      <span class="note" id="dbSelectedCount">0 selecionados</span>
-      <button class="secondary refresh" id="dbDeleteSelected" type="button" disabled>Apagar selecionados</button>
-    </div>
-    <div id="dbColumns" class="note" style="margin:10px 0"></div>
-    <div id="dbRows" style="overflow-x:auto" aria-live="polite">A carregar…</div>
+    <select id="dbTable" class="hidden" aria-hidden="true" tabindex="-1"><option value="">A carregar tabelas…</option></select>
   </section>
   <section class="panel hidden tab-panel" id="reportsPanel" data-tab-panel="reports">
     <div class="dash-head"><h2>Reports de erros</h2><button class="secondary refresh" id="refreshReports" type="button">Atualizar</button></div>
@@ -461,6 +575,174 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     } catch (error) { $("dashboardUpdated").textContent = "Erro ao atualizar"; target.textContent = error.message; }
   }
 
+  let explorerMode = "";
+  let explorerImageStatus = "";
+  let explorerImageAssets = [];
+  let explorerSelectedImage = null;
+  let explorerViewMode = "details";
+  let explorerHistory = [];
+  let explorerHistoryIndex = -1;
+  const IMAGE_STATUS_LABELS = {pending:"Pendentes",approved:"Aprovadas",published:"Publicadas",broken:"Com erro",generated:"Geradas"};
+  function explorerNavigate(mode, value = "", label = "") {
+    const state = {mode, value, label};
+    explorerHistory = explorerHistory.slice(0, explorerHistoryIndex + 1);
+    explorerHistory.push(state);
+    explorerHistoryIndex = explorerHistory.length - 1;
+    applyExplorerLocation(state);
+    updateExplorerHistoryButtons();
+  }
+  function applyExplorerLocation(state) {
+    if (!state) return;
+    $("dbSearch").value = "";
+    if (state.mode === "table") {
+      explorerMode = "table";
+      dbExplorerTable = state.value;
+      $("dbTable").value = state.value;
+      $("explorerPath").textContent = "ATINA › Base de dados › " + state.label;
+      $("explorerHeading").textContent = state.label;
+      $("explorerPreview").innerHTML = '<div class="win-preview-placeholder"><span>▤</span><strong>' + dbExplorerEsc(state.label) + '</strong><p>Tabela de dados. Seleciona um registo para editar ou consultar os detalhes.</p></div>';
+      updateExplorerLayout();
+      loadDbExplorerRows();
+    } else {
+      explorerMode = "images";
+      explorerImageStatus = state.value || "";
+      const label = state.label || "Biblioteca de imagens";
+      $("explorerPath").textContent = "ATINA › Imagens › " + label;
+      $("explorerHeading").textContent = label;
+      explorerSelectedImage = null;
+      $("explorerPreview").innerHTML = '<div class="win-preview-placeholder"><span>🖼️</span><strong>Biblioteca de imagens</strong><p>Seleciona uma imagem para veres a pré-visualização e os dados do ficheiro.</p></div>';
+      updateExplorerLayout();
+      loadExplorerImages();
+    }
+    document.querySelectorAll("[data-explorer-kind]").forEach(button => {
+      const active = state.mode === "table"
+        ? button.dataset.explorerKind === "table" && button.dataset.tableName === state.value
+        : button.dataset.explorerKind === "images" && (button.dataset.imageStatus || "") === (state.value || "");
+      button.classList.toggle("active", active);
+    });
+    $("explorerUp").disabled = state.mode !== "table";
+  }
+  function updateExplorerLayout() {
+    const isTable = explorerMode === "table";
+    $("explorerDbControls").classList.toggle("hidden", !isTable);
+    $("explorerDetails").classList.toggle("active", isTable || explorerViewMode === "details");
+    $("explorerIcons").classList.toggle("active", !isTable && explorerViewMode === "icons");
+    $("explorerIcons").disabled = isTable;
+    $("dbRows").classList.toggle("details", explorerViewMode === "details");
+    $("dbRows").classList.toggle("icons", explorerViewMode === "icons");
+    $("dbSearch").placeholder = isTable ? "Pesquisar registos nesta tabela…" : "Pesquisar imagens por ID, solução ou estado…";
+  }
+  function updateExplorerHistoryButtons() {
+    $("explorerBack").disabled = explorerHistoryIndex <= 0;
+    $("explorerForward").disabled = explorerHistoryIndex < 0 || explorerHistoryIndex >= explorerHistory.length - 1;
+  }
+  function renderExplorerTableTree(tables) {
+    $("explorerTableTree").innerHTML = (tables || []).map(table =>
+      '<button type="button" class="win-tree-item" data-explorer-kind="table" data-table-name="' + dbExplorerEsc(table.name) + '" data-table-label="' + dbExplorerEsc(table.label) + '"><span class="win-tree-icon">▤</span><span>' + dbExplorerEsc(table.label) + '</span></button>'
+    ).join("");
+    document.querySelectorAll("[data-explorer-kind]").forEach(button => button.classList.remove("active"));
+    if (explorerHistoryIndex >= 0) applyExplorerActiveState(explorerHistory[explorerHistoryIndex]);
+  }
+  function applyExplorerActiveState(state) {
+    document.querySelectorAll("[data-explorer-kind]").forEach(button => {
+      const active = state.mode === "table"
+        ? button.dataset.explorerKind === "table" && button.dataset.tableName === state.value
+        : button.dataset.explorerKind === "images" && (button.dataset.imageStatus || "") === (state.value || "");
+      button.classList.toggle("active", active);
+    });
+  }
+  async function imageManageExplorerRequest(payload) {
+    const {data:{session}} = await client.auth.getSession();
+    if (!session) throw new Error("A sessão expirou. Entra novamente.");
+    const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+      method:"POST",
+      headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok) throw new Error(data.error || "Não foi possível consultar a biblioteca de imagens.");
+    return data;
+  }
+  async function loadExplorerImages() {
+    $("dbMeta").textContent = "A consultar biblioteca…";
+    $("dbRows").innerHTML = '<div class="win-empty">A carregar imagens ATINA…</div>';
+    $("dbColumns").textContent = "";
+    $("dbPrev").disabled = true; $("dbNext").disabled = true;
+    try {
+      const data = await imageManageExplorerRequest({action:"list"});
+      explorerImageAssets = Array.isArray(data.assets) ? data.assets : [];
+      $("explorerImageCount").textContent = String(explorerImageAssets.length);
+      const query = $("dbSearch").value.trim().toLocaleLowerCase("pt-PT");
+      const rows = explorerImageAssets.filter(asset => {
+        const statusMatch = !explorerImageStatus || String(asset.status || "").toLowerCase() === explorerImageStatus;
+        const haystack = [asset.challenge_id,asset.solution,asset.status,asset.storage_path,asset.mime_type].join(" ").toLocaleLowerCase("pt-PT");
+        return statusMatch && (!query || haystack.includes(query));
+      });
+      $("dbMeta").textContent = rows.length.toLocaleString("pt-PT") + " de " + explorerImageAssets.length.toLocaleString("pt-PT") + " imagens";
+      $("dbRows").innerHTML = rows.length ? rows.map(asset => {
+        const id = String(asset.challenge_id);
+        const name = id.padStart(4,"0") + " · " + (asset.solution || "Desafio " + id);
+        const imageUrl = /^https?:\/\//i.test(String(asset.image_url || "")) ? asset.image_url : "";
+        const status = IMAGE_STATUS_LABELS[String(asset.status || "").toLowerCase()] || asset.status || "Sem estado";
+        const size = Number(asset.file_size_bytes || 0);
+        return '<button type="button" class="win-image-card" data-explorer-image-id="' + dbExplorerEsc(id) + '">' +
+          '<span class="win-image-thumb">' + (imageUrl ? '<img src="' + dbExplorerEsc(imageUrl) + '" alt="" loading="lazy">' : '<span>🖼️</span>') + '</span>' +
+          '<span class="win-image-info"><span class="win-image-name">' + dbExplorerEsc(name) + '</span><span class="win-image-meta">' + dbExplorerEsc(asset.mime_type || "Imagem") + (size ? " · " + Math.round(size/1024) + " KB" : "") + '</span></span>' +
+          '<span class="win-image-status">' + dbExplorerEsc(status) + '</span></button>';
+      }).join("") : '<div class="win-empty">Não foram encontradas imagens nesta localização.</div>';
+      if (explorerViewMode === "details") $("dbRows").classList.add("details");
+      else $("dbRows").classList.remove("details");
+      $("dbRows").classList.toggle("icons", explorerViewMode === "icons");
+    } catch (error) {
+      $("dbMeta").textContent = "Falha ao carregar";
+      $("dbRows").innerHTML = '<div class="win-empty">' + dbExplorerEsc(error.message) + '</div>';
+    }
+  }
+  function selectExplorerImage(id) {
+    const asset = explorerImageAssets.find(item => String(item.challenge_id) === String(id));
+    if (!asset) return;
+    explorerSelectedImage = asset;
+    document.querySelectorAll("[data-explorer-image-id]").forEach(card => card.classList.toggle("selected", card.dataset.explorerImageId === String(id)));
+    const imageUrl = /^https?:\/\//i.test(String(asset.image_url || "")) ? asset.image_url : "";
+    const status = IMAGE_STATUS_LABELS[String(asset.status || "").toLowerCase()] || asset.status || "Sem estado";
+    const size = Number(asset.file_size_bytes || 0);
+    $("explorerPreview").innerHTML =
+      (imageUrl ? '<img class="win-preview-image" src="' + dbExplorerEsc(imageUrl) + '" alt="Imagem do desafio ' + dbExplorerEsc(id) + '">' : '<div class="win-preview-placeholder"><span>🖼️</span><strong>Pré-visualização indisponível</strong></div>') +
+      '<h3 class="win-preview-title">' + dbExplorerEsc(String(id).padStart(4,"0") + " · " + (asset.solution || "Desafio " + id)) + '</h3>' +
+      '<div class="win-preview-subtitle">' + dbExplorerEsc(status) + '</div>' +
+      '<div class="win-preview-data">' +
+      '<div><span>ID do desafio</span><strong>' + dbExplorerEsc(id) + '</strong></div>' +
+      '<div><span>Estado</span><strong>' + dbExplorerEsc(status) + '</strong></div>' +
+      '<div><span>Formato</span><strong>' + dbExplorerEsc(asset.mime_type || "—") + '</strong></div>' +
+      '<div><span>Tamanho</span><strong>' + (size ? Math.round(size/1024) + " KB" : "—") + '</strong></div>' +
+      '<div><span>Autor</span><strong>' + dbExplorerEsc(asset.author || "—") + '</strong></div>' +
+      '<div><span>Armazenamento</span><strong>' + dbExplorerEsc(asset.storage_path || "—") + '</strong></div>' +
+      '</div><div class="win-preview-actions">' +
+      (imageUrl ? '<button type="button" class="secondary" id="explorerOpenImage">Abrir imagem</button>' : '') +
+      '<button type="button" class="secondary" id="explorerDownloadImage">Transferir original</button>' +
+      '</div>';
+    const open = $("explorerOpenImage");
+    if (open) open.addEventListener("click",()=>window.open(imageUrl,"_blank","noopener,noreferrer"));
+    $("explorerDownloadImage").addEventListener("click",downloadExplorerImage);
+  }
+  async function downloadExplorerImage() {
+    if (!explorerSelectedImage) return;
+    try {
+      const {data:{session}} = await client.auth.getSession();
+      if (!session) throw new Error("A sessão expirou. Entra novamente.");
+      const response = await fetch(SUPABASE_URL + "/functions/v1/atina-image-manage", {
+        method:"POST",
+        headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+        body:JSON.stringify({action:"download",challenge_id:Number(explorerSelectedImage.challenge_id)})
+      });
+      if (!response.ok) { const data=await response.json().catch(()=>({})); throw new Error(data.error || "Não foi possível transferir a imagem."); }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href=url; link.download=String(explorerSelectedImage.challenge_id).padStart(4,"0")+"-atina-original";
+      document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    } catch(error) { window.alert(error.message); }
+  }
   let dbExplorerPage = 0;
   let dbExplorerTable = "";
   let dbExplorerSearchTimer = null;
@@ -492,7 +774,10 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       if (!data.tables?.length) throw new Error("Não existem tabelas autorizadas para consulta.");
       dbExplorerTable = data.tables.some(t => t.name === previous) ? previous : data.tables[0].name;
       select.value = dbExplorerTable;
-      await loadDbExplorerRows();
+      renderExplorerTableTree(data.tables);
+      if (!explorerMode) explorerNavigate("images", "", "Biblioteca de imagens");
+      else if (explorerMode === "table") await loadDbExplorerRows();
+      else await loadExplorerImages();
     } catch (error) {
       $("dbMeta").textContent = "Acesso indisponível";
       $("dbRows").textContent = error.message;
@@ -590,8 +875,37 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   $("dbTable").addEventListener("change", () => { dbExplorerTable = $("dbTable").value; dbExplorerPage = 0; loadDbExplorerRows(); });
   $("dbSearch").addEventListener("input", () => {
     clearTimeout(dbExplorerSearchTimer);
-    dbExplorerSearchTimer = setTimeout(() => { dbExplorerPage = 0; loadDbExplorerRows(); }, 300);
+    dbExplorerSearchTimer = setTimeout(() => {
+      dbExplorerPage = 0;
+      if (explorerMode === "images") loadExplorerImages();
+      else loadDbExplorerRows();
+    }, 300);
   });
+  $("explorerTableTree").addEventListener("click", event => {
+    const button = event.target.closest("[data-explorer-kind='table']");
+    if (!button) return;
+    explorerNavigate("table",button.dataset.tableName,button.dataset.tableLabel);
+  });
+  document.querySelectorAll("[data-explorer-kind='images']").forEach(button => button.addEventListener("click",()=>{
+    const status=button.dataset.imageStatus||"";
+    explorerNavigate("images",status,IMAGE_STATUS_LABELS[status]||"Biblioteca de imagens");
+  }));
+  $("dbRows").addEventListener("click",event=>{
+    const imageCard=event.target.closest("[data-explorer-image-id]");
+    if(imageCard) selectExplorerImage(imageCard.dataset.explorerImageId);
+  });
+  $("dbRows").addEventListener("dblclick",event=>{
+    const imageCard=event.target.closest("[data-explorer-image-id]");
+    if(!imageCard)return;
+    const asset=explorerImageAssets.find(item=>String(item.challenge_id)===imageCard.dataset.explorerImageId);
+    if(asset?.image_url&&/^https?:\/\//i.test(asset.image_url))window.open(asset.image_url,"_blank","noopener,noreferrer");
+  });
+  $("explorerDetails").addEventListener("click",()=>{explorerViewMode="details";updateExplorerLayout();if(explorerMode==="images")loadExplorerImages();});
+  $("explorerIcons").addEventListener("click",()=>{if(explorerMode==="table")return;explorerViewMode="icons";updateExplorerLayout();loadExplorerImages();});
+  $("explorerBack").addEventListener("click",()=>{if(explorerHistoryIndex>0){explorerHistoryIndex--;applyExplorerLocation(explorerHistory[explorerHistoryIndex]);updateExplorerHistoryButtons();}});
+  $("explorerForward").addEventListener("click",()=>{if(explorerHistoryIndex<explorerHistory.length-1){explorerHistoryIndex++;applyExplorerLocation(explorerHistory[explorerHistoryIndex]);updateExplorerHistoryButtons();}});
+  $("explorerUp").addEventListener("click",()=>explorerNavigate("images","","Biblioteca de imagens"));
+  $("explorerRefresh").addEventListener("click",()=>explorerMode==="images"?loadExplorerImages():loadDbExplorerRows());
   $("dbPrev").addEventListener("click", () => { if (dbExplorerPage > 0) { dbExplorerPage--; loadDbExplorerRows(); } });
   $("dbNext").addEventListener("click", () => { dbExplorerPage++; loadDbExplorerRows(); });
   $("dbRefresh").addEventListener("click", () => loadDbExplorerTables());
