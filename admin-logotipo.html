@@ -54,7 +54,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <p class="note" id="dashboardUpdated">A carregar estatísticas…</p>
     <div class="stats" id="dashboardStats">
       <div class="stat"><strong>—</strong><span>Desafios</span></div>
-      <div class="stat"><strong>—</strong><span>Imagens publicadas</span></div>
+      <div class="stat"><strong>—</strong><span>Imagens registadas</span></div>
       <div class="stat"><strong>—</strong><span>Por confirmar</span></div>
       <div class="stat"><strong>—</strong><span>Sem imagem</span></div>
     </div>
@@ -85,7 +85,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     <h2>Logótipo nas imagens publicadas</h2>
     <p class="note">Submenu: processamento individual ou em massa.</p>
     <div id="watermarkProgress"></div>
-    <p>Processamento de uma imagem de cada vez. O original é preservado no Storage e o estado de publicação é mantido. Começa pelo teste de uma imagem.</p>
+    <p>Processamento de uma imagem de cada vez. O original é preservado no Storage e o estado atual de cada imagem é mantido. Começa pelo teste de uma imagem.</p>
     <div class="stats">
       <div class="stat"><strong id="wmDone">0</strong><span>Com logótipo</span></div>
       <div class="stat"><strong id="wmTotal">88</strong><span>Imagens publicadas</span></div>
@@ -218,14 +218,14 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Não foi possível consultar as imagens.");
-    const published = (data.assets || []).filter(a => a.status === "published");
-    const done = published.filter(a => a.watermark_applied === true).length;
-    const total = published.length;
+    const registered = (data.assets || []).filter(a => a.storage_path);
+    const done = registered.filter(a => a.watermark_applied === true).length;
+    const total = registered.length;
     $("wmDone").textContent = done;
     $("wmTotal").textContent = total;
     $("wmRemaining").textContent = total - done;
     $("wmPercent").textContent = total ? (done * 100 / total).toFixed(1).replace(".", ",") + "%" : "0%";
-    return published;
+    return registered;
   }
   async function makeWatermarked(blob) {
     const imageUrl = URL.createObjectURL(blob);
@@ -285,7 +285,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       if (!session) throw new Error("A sessão expirou. Entra novamente.");
       const assets = await watermarkStats();
       const asset = assets.find(a => a.watermark_applied !== true);
-      if (!asset) { $("wmStatus").textContent = "Todas as imagens publicadas já têm logótipo."; return; }
+      if (!asset) { $("wmStatus").textContent = "Todas as imagens registadas já têm logótipo."; return; }
       $("wmStatus").textContent = "A preparar o desafio " + asset.challenge_id + " — " + asset.solution + "…";
       await applyWatermarkToAsset(asset, session);
       await watermarkStats();
@@ -295,7 +295,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   });
   $("watermarkAll").addEventListener("click", async () => {
     const button = $("watermarkAll");
-    if (!confirm("Aplicar o logótipo a todas as imagens publicadas que ainda faltam? O processo será sequencial, preservará os originais e manterá o estado Published. Pode demorar. Continuar?")) return;
+    if (!confirm("Aplicar o logótipo a todas as imagens registadas que ainda faltam? O processo será sequencial, preservará os originais e manterá o estado Published. Pode demorar. Continuar?")) return;
     button.disabled = true; $("watermarkNext").disabled = true;
     let processed = 0; let failed = null;
     try {
@@ -315,7 +315,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
       }
       await watermarkStats();
       if (failed) $("wmStatus").textContent = "Processo interrompido após " + processed + " imagens. " + failed.message + " As restantes continuam por tratar; podes retomar em massa.";
-      else $("wmStatus").textContent = "Concluído. Foram tratadas " + processed + " imagens nesta execução. Todas as imagens publicadas têm agora o logótipo.";
+      else $("wmStatus").textContent = "Concluído. Foram tratadas " + processed + " imagens nesta execução. Todas as imagens registadas têm agora o logótipo.";
     } catch (error) {
       $("wmStatus").textContent = "Processo interrompido após " + processed + " imagens: " + (error.message || "falha desconhecida") + ". Podes retomar em massa.";
     } finally { button.disabled = false; $("watermarkNext").disabled = false; }
