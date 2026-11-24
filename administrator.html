@@ -184,7 +184,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
 .win-columns{display:none;padding:7px 10px;border-bottom:1px solid #2c435a;color:#8fa8c0}
 .win-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:10px;align-content:start;min-height:360px}
 .win-items.details{display:flex;flex-direction:column;gap:0}
-.win-image-row{display:flex;align-items:stretch;gap:6px;min-width:0}.win-image-row>.win-image-card{flex:1;min-width:0}.win-image-delete{flex:0 0 auto;align-self:center;padding:7px 9px;border:1px solid #a94b55;border-radius:8px;background:#3b202b;color:#ffd9dc;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.win-image-delete:hover,.win-image-delete:focus{background:#612b38;border-color:#f08b95}.win-image-card{position:relative;display:flex;flex-direction:column;gap:7px;min-width:0;padding:8px;border:1px solid #2b435a;border-radius:9px;background:#102338;color:#e7eff8;text-align:left;cursor:pointer}
+.win-image-row{display:flex;align-items:stretch;gap:6px;min-width:0}.win-image-row>.win-image-card{flex:1;min-width:0}.win-image-delete{flex:0 0 auto;align-self:center;padding:7px 9px;border:1px solid #a94b55;border-radius:8px;background:#3b202b;color:#ffd9dc;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.win-image-delete:hover,.win-image-delete:focus{background:#612b38;border-color:#f08b95}.win-image-row{display:flex;align-items:stretch;gap:7px;min-width:0}.win-image-row>.win-image-card{flex:1;min-width:0}.win-image-delete{flex:0 0 66px;width:66px;min-height:38px;margin:0;padding:6px 8px;border:1px solid #a94b55;border-radius:8px;background:#642b36;color:#ffe4e6;font-size:12px;font-weight:800}.win-image-delete:hover:not(:disabled){background:#853746;border-color:#ff7888}@media(max-width:680px){.win-image-row{gap:5px}.win-image-delete{flex-basis:58px;width:58px;min-height:34px;padding:5px;font-size:11px}}\n.win-image-card{position:relative;display:flex;flex-direction:column;gap:7px;min-width:0;padding:8px;border:1px solid #2b435a;border-radius:9px;background:#102338;color:#e7eff8;text-align:left;cursor:pointer}
 .win-image-card:hover,.win-image-card.selected{border-color:#d3ad68;background:#18324a}
 .win-image-thumb{display:flex;align-items:center;justify-content:center;aspect-ratio:16/10;overflow:hidden;border-radius:6px;background:#071421}
 .win-image-thumb img{width:100%;height:100%;object-fit:contain}
@@ -867,29 +867,43 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       status.textContent = error.message || "Falha ao editar a imagem.";
     }
   }
-  async function deleteExplorerImage() {
-    if (!explorerSelectedImage) return;
-    const asset = explorerSelectedImage;
-    if (!window.confirm("Apagar a imagem do desafio " + asset.challenge_id + "? Esta ação remove o ficheiro do armazenamento ou o registo de imagem associado e não pode ser anulada.")) return;
-    const status = $("explorerImageActionStatus");
+  async function deleteExplorerAsset(asset, statusElement = null) {
+    if (!asset) return;
+    const label = (asset.challenge_id == null ? "" : " do desafio " + asset.challenge_id) + (asset.file_name ? " · " + asset.file_name : "");
+    if (!window.confirm("Apagar esta imagem" + label + "? O ficheiro será removido permanentemente do armazenamento e não pode ser recuperado.")) return;
+    const status = statusElement || $("explorerImageActionStatus");
     try {
-      status.textContent = "A apagar a imagem…";
-      if (asset.status === "stored" || asset.storage_path) {
-        const paths = [asset.storage_path || asset.original_storage_path].filter(Boolean);
-        if (!paths.length) throw new Error("Não foram encontrados ficheiros para apagar.");
-        const {error} = await client.storage.from("atina-challenge-images").remove(paths);
-        if (error) throw error;
-      } else {
+      if (status) status.textContent = "A apagar a imagem…";
+      if (asset.storage_path) {
+        const {data:{session}} = await client.auth.getSession();
+        if (!session) throw new Error("A sessão expirou. Entra novamente.");
+        const response = await fetch(SUPABASE_URL + "/functions/v1/atina-admin-image-library", {
+          method:"POST",
+          headers:{"Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY,"Content-Type":"application/json"},
+          body:JSON.stringify({action:"delete",storage_path:asset.storage_path})
+        });
+        const result = await response.json().catch(()=>({}));
+        if (!response.ok || !result.deleted) throw new Error(result.error || "Não foi possível apagar o ficheiro.");
+      } else if (asset.challenge_id != null) {
         await imageManageExplorerRequest({action:"delete",challenge_id:Number(asset.challenge_id)});
+      } else {
+        throw new Error("Não foi encontrado um ficheiro ou registo válido para apagar.");
       }
-      explorerSelectedImage = null;
-      $("explorerPreview").innerHTML = '<div class="win-preview-placeholder"><span>🗂️</span><strong>Imagem apagada</strong><p>A biblioteca foi atualizada.</p></div>';
+      if (explorerSelectedImage && String(explorerSelectedImage.asset_key) === String(asset.asset_key)) {
+        explorerSelectedImage = null;
+        $("explorerPreview").innerHTML = '<div class="win-preview-placeholder"><span>🗂️</span><strong>Imagem apagada</strong><p>A biblioteca foi atualizada.</p></div>';
+      }
       await loadExplorerImages();
     } catch(error) {
-      status.textContent = error.message || "Não foi possível apagar a imagem.";
+      if (status) status.textContent = error.message || "Não foi possível apagar a imagem.";
+      else window.alert(error.message || "Não foi possível apagar a imagem.");
     }
   }
-  async function downloadExplorerImage() {
+  async function deleteExplorerImage() {
+    if (!explorerSelectedImage) return;
+    await deleteExplorerAsset(explorerSelectedImage, $("explorerImageActionStatus"));
+  }
+    async function downloadExplorerImage() {
     if (!explorerSelectedImage) return;
     try {
       if (explorerSelectedImage.status === "stored" || explorerSelectedImage.storage_path) {
