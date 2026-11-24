@@ -792,7 +792,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   }
   async function replaceExplorerImage(file) {
     if (!explorerSelectedImage) return;
-    if (!/^image\\/(webp|png|jpeg)$/.test(file.type)) { window.alert("Escolhe uma imagem WebP, PNG ou JPEG."); return; }
+    if (!["image/webp","image/png","image/jpeg"].includes(file.type)) { window.alert("Escolhe uma imagem WebP, PNG ou JPEG."); return; }
     if (file.size > 15 * 1024 * 1024) { window.alert("A imagem não pode exceder 15 MB."); return; }
     const status = $("explorerImageActionStatus");
     try {
