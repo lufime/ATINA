@@ -743,7 +743,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           const filenameId = item.name.match(/^(\\d+)[-_]/)?.[1];
           const challengeId = parentId || filenameId || null;
           const challenge = challengeId ? challengeMap.get(String(Number(challengeId))) : null;
-          const isOriginal = /(^|\\/)originals(\\/|$)/i.test(path);
+          const isOriginal = /(^|\/)originals(\/|$)/i.test(path);
           found.push({asset_key:"storage:" + path,challenge_id:challengeId ? Number(challengeId) : null,image_url:bucket.getPublicUrl(path).data.publicUrl,storage_path:path,original_storage_path:isOriginal ? path : null,storage_paths:[path],original_storage_paths:isOriginal ? [path] : [],mime_type:mime,file_size_bytes:Number(item.metadata?.size || 0),status:"stored",solution:challenge?.answer || item.name,author:"ATINA",source:"Supabase Storage",stored_file_count:1,updated_at:item.updated_at || item.created_at || null,created_at:item.created_at || null,file_name:item.name,is_original:isOriginal});
         }
         if (entries.length < 1000) break;
