@@ -582,7 +582,7 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
   let explorerViewMode = "details";
   let explorerHistory = [];
   let explorerHistoryIndex = -1;
-  const IMAGE_STATUS_LABELS = {pending:"Pendentes",approved:"Aprovadas",published:"Publicadas",broken:"Com erro",generated:"Geradas"};
+  const IMAGE_STATUS_LABELS = {pending:"Pendentes",approved:"Aprovadas",published:"Publicadas",broken:"Com erro",generated:"Geradas",stored:"No armazenamento"};
   function explorerNavigate(mode, value = "", label = "") {
     const state = {mode, value, label};
     explorerHistory = explorerHistory.slice(0, explorerHistoryIndex + 1);
@@ -663,6 +663,57 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     if (!response.ok) throw new Error(data.error || "Não foi possível consultar a biblioteca de imagens.");
     return data;
   }
+  async function loadStorageExplorerAssets() {
+    const bucket = client.storage.from("atina-challenge-images");
+    const [challengeData, optimizedFolders, originalFolders] = await Promise.all([
+      imageManageExplorerRequest({action:"challenge_list"}),
+      bucket.list("challenges", {limit:1000, offset:0, sortBy:{column:"name",order:"asc"}}),
+      bucket.list("originals/challenges", {limit:1000, offset:0, sortBy:{column:"name",order:"asc"}})
+    ]);
+    if (optimizedFolders.error) throw optimizedFolders.error;
+    if (originalFolders.error) throw originalFolders.error;
+    const challenges = Array.isArray(challengeData.challenges) ? challengeData.challenges : [];
+    const challengeMap = new Map(challenges.map(row => [String(row.challenge_id), row]));
+    const folderIds = [...new Set([
+      ...(optimizedFolders.data || []).filter(item => item.id === null).map(item => item.name),
+      ...(originalFolders.data || []).filter(item => item.id === null).map(item => item.name)
+    ])].filter(id => /^\\d+$/.test(String(id)));
+    const found = [];
+    for (let offset = 0; offset < folderIds.length; offset += 12) {
+      const batch = folderIds.slice(offset, offset + 12);
+      const results = await Promise.all(batch.map(async id => {
+        const [optimized, originals] = await Promise.all([
+          bucket.list("challenges/" + id, {limit:1000, offset:0, sortBy:{column:"updated_at",order:"desc"}}),
+          bucket.list("originals/challenges/" + id, {limit:1000, offset:0, sortBy:{column:"updated_at",order:"desc"}})
+        ]);
+        if (optimized.error) throw optimized.error;
+        if (originals.error) throw originals.error;
+        const imageFiles = (optimized.data || []).filter(file => file.id && String(file.metadata?.mimetype || "").startsWith("image/"));
+        const originalFiles = (originals.data || []).filter(file => file.id && String(file.metadata?.mimetype || "").startsWith("image/"));
+        if (!imageFiles.length && !originalFiles.length) return null;
+        const preferred = imageFiles[0] || originalFiles[0];
+        const path = (imageFiles.length ? "challenges/" + id + "/" + preferred.name : "originals/challenges/" + id + "/" + preferred.name);
+        const challenge = challengeMap.get(String(id));
+        const publicUrl = bucket.getPublicUrl(path).data.publicUrl;
+        return {
+          challenge_id:Number(id),
+          image_url:publicUrl,
+          storage_path:imageFiles.length ? "challenges/" + id + "/" + imageFiles[0].name : null,
+          original_storage_path:originalFiles.length ? "originals/challenges/" + id + "/" + originalFiles[0].name : null,
+          mime_type:preferred.metadata?.mimetype || "image/webp",
+          file_size_bytes:Number(preferred.metadata?.size || 0),
+          status:"stored",
+          solution:challenge?.answer || "Desafio " + id,
+          author:"ATINA",
+          source:"Supabase Storage",
+          stored_file_count:imageFiles.length + originalFiles.length,
+          updated_at:preferred.updated_at || preferred.created_at || null
+        };
+      }));
+      found.push(...results.filter(Boolean));
+    }
+    return found.sort((a,b)=>a.challenge_id-b.challenge_id);
+  }
   async function loadExplorerImages() {
     $("dbMeta").textContent = "A consultar biblioteca…";
     $("dbRows").innerHTML = '<div class="win-empty">A carregar imagens ATINA…</div>';
@@ -671,6 +722,9 @@ label{display:block;font-size:13px;font-weight:700;margin:13px 0 6px}input,butto
     try {
       const data = await imageManageExplorerRequest({action:"list"});
       explorerImageAssets = Array.isArray(data.assets) ? data.assets : [];
+      if (!explorerImageAssets.length) {
+        explorerImageAssets = await loadStorageExplorerAssets();
+      }
       $("explorerImageCount").textContent = String(explorerImageAssets.length);
       const query = $("dbSearch").value.trim().toLocaleLowerCase("pt-PT");
       const rows = explorerImageAssets.filter(asset => {
