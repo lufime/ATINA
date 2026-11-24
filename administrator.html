@@ -335,6 +335,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="approved"><span class="win-tree-icon">🟢</span><span>Aprovadas</span></button>
           <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="published"><span class="win-tree-icon">🌐</span><span>Publicadas</span></button>
           <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="broken"><span class="win-tree-icon">🔴</span><span>Com erro</span></button>
+          <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="original"><span class="win-tree-icon">📁</span><span>Ficheiros originais</span></button>
+          <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="recent"><span class="win-tree-icon">✨</span><span>Novas · últimos 30 dias</span></button>
+          <button type="button" class="win-tree-item" data-explorer-kind="images" data-image-status="old"><span class="win-tree-icon">🗃️</span><span>Antigas · mais de 30 dias</span></button>
         </div>
         <div class="win-tree-group">
           <div class="win-side-heading">Base de dados</div>
@@ -631,7 +634,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   let explorerViewMode = "details";
   let explorerHistory = [];
   let explorerHistoryIndex = -1;
-  const IMAGE_STATUS_LABELS = {pending:"Pendentes",approved:"Aprovadas",published:"Publicadas",broken:"Com erro",generated:"Geradas",stored:"No armazenamento"};
+  const IMAGE_STATUS_LABELS = {pending:"Pendentes",approved:"Aprovadas",published:"Em uso no jogo",broken:"Com erro",generated:"Novas / geradas",stored:"No armazenamento",original:"Originais",recent:"Novas · últimos 30 dias",old:"Antigas · mais de 30 dias",rejected:"Rejeitadas"};
   function explorerNavigate(mode, value = "", label = "") {
     const state = {mode, value, label};
     explorerHistory = explorerHistory.slice(0, explorerHistoryIndex + 1);
@@ -786,7 +789,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       $("explorerImageCount").textContent = String(explorerImageAssets.length);
       const query = $("dbSearch").value.trim().toLocaleLowerCase("pt-PT");
       const rows = explorerImageAssets.filter(asset => {
-        const statusMatch = !explorerImageStatus || String(asset.status || "").toLowerCase() === explorerImageStatus;
+        const assetDate = asset.updated_at || asset.created_at || null;\n        const ageDays = assetDate ? (Date.now() - new Date(assetDate).getTime()) / 86400000 : null;\n        const statusMatch = !explorerImageStatus || (explorerImageStatus === "original" ? asset.is_original === true : explorerImageStatus === "recent" ? ageDays !== null && ageDays <= 30 : explorerImageStatus === "old" ? ageDays !== null && ageDays > 30 : String(asset.status || "").toLowerCase() === explorerImageStatus);
         const haystack = [asset.challenge_id,asset.solution,asset.status,asset.storage_path,asset.mime_type].join(" ").toLocaleLowerCase("pt-PT");
         return statusMatch && (!query || haystack.includes(query));
       });
