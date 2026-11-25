@@ -48,7 +48,7 @@ test('database migration maps every source classification and validates complete
 
 test('game loads geographic metadata and applies the selected scope to Solo and Mix queues', () => {
   assert.match(game, /atina_public_challenge_geographic_scopes/);
-  assert.match(game, /rows\.length!==1089/);
+  assert.match(game, /rows\.length===0/);
   assert.match(game, /id="atinaGeographicScope"/);
   assert.match(game, /function start\(m,chosen=null,geographicScope="Todos"\)/);
   assert.match(game, /matchesGeographicScope\(x\.i\)/);
