@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.9  
+**Versão das instruções:** 2.0  
 **Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
@@ -510,3 +510,20 @@ Aplicar estes exemplos e critérios como orientação complementar, sem substitu
 - Esta regra aplica-se a todo o projeto, a todos os ambientes com dados reais e a todos os fluxos de criação, importação, geração ou edição de conteúdo. Não utilizar Render.
 
 **Regra essencial: primeiro consultar e comparar com a base de dados; só depois, se estiver confirmado que é necessário e existir autorização, adicionar.**
+
+## 40. Qualificação e calibração da dificuldade
+Aplicar a todos os desafios novos e existentes, ativos ou inativos, sem confundir dificuldade com raridade da resposta ou preferência pessoal.
+- **Fácil:** a solução é reconhecível através de conhecimentos comuns ou de pistas diretas; normalmente basta relacionar uma ou duas pistas, sem conhecimento especializado.
+- **Médio:** exige combinar várias pistas, interpretar contexto ou mobilizar conhecimentos gerais menos imediatos; a solução torna-se clara com raciocínio acessível.
+- **Difícil:** exige conhecimento específico menos comum, inferência mais elaborada ou vários passos de raciocínio; não deve depender apenas de uma pista obscura, ambígua ou injusta.
+- Avaliar a dificuldade pela experiência real de resolução, considerando a pergunta, a solução, a sequência e a progressão das pistas, o público-alvo e o modo de jogo.
+- A primeira pista deve ser adequada ao nível atribuído; as pistas seguintes devem acrescentar informação progressivamente, sem tornar a solução impossível nem a revelar demasiado cedo.
+- Não classificar como Difícil apenas porque a resposta é pouco conhecida, nem como Fácil apenas porque o tema é popular. A dificuldade resulta do caminho necessário para chegar à solução.
+- Em desafios de lógica, cálculo ou ciência, considerar o número de passos, os conhecimentos prévios e a clareza dos dados; validar o raciocínio e o resultado.
+- Em desafios de cultura, história, geografia e personalidades, considerar se a resposta exige conhecimento especializado ou se as pistas permitem deduzi-la sem adivinhação.
+- Não impor quotas artificiais de desafios por nível. A distribuição deve refletir a dificuldade real do catálogo e ser revista com dados de utilização e testes editoriais.
+- Quando existirem dados suficientes, comparar taxas de acerto, número de pistas utilizadas e desistências por desafio e por modo. Não tirar conclusões a partir de amostras pequenas ou de uma única partida.
+- Auditar os níveis atribuídos, identificando discrepâncias entre o rótulo e a experiência efetiva. Registar os IDs revistos, preservados, corrigidos e pendentes; não alterar respostas ou pistas para justificar um nível.
+- Se a dificuldade não puder ser determinada com segurança, assinalar para validação editorial em vez de escolher um nível arbitrariamente.
+- O filtro de dificuldade deve usar o nível registado para cada desafio e manter o mesmo significado em todos os modos que disponibilizem essa opção.
+
