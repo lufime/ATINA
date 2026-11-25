@@ -18,6 +18,8 @@ jobs:
           node-version: 20
       - name: Validar catálogo público sem respostas secretas
         run: node scripts/validate-public-challenges.mjs
+      - name: Testar classificação geográfica e sincronização com produção
+        run: node --test tests/geographic-classification.test.cjs
       - name: Verificar sintaxe do gerador privado
         run: node --check scripts/generate-private-challenge-seed.mjs
       - name: Verificar sintaxe do validador privado

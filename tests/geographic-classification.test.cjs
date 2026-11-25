@@ -5,6 +5,7 @@ const vm = require('node:vm');
 
 const csv = fs.readFileSync('.atina-interno/classificacao-tematica-desafios.csv', 'utf8');
 const migration = fs.readFileSync('supabase/migrations/20261125120000_atina_challenge_geographic_scope.sql', 'utf8');
+const correctionMigration = fs.readFileSync('supabase/migrations/20261125180000_atina_geographic_scope_reconciliation.sql', 'utf8');
 const game = fs.readFileSync('index.html', 'utf8');
 
 function parseCsv(source) {
@@ -32,18 +33,24 @@ test('geographic classification source contains all 1,089 unique reviewed challe
   assert.equal(rows.length, 1089);
   assert.equal(new Set(rows.map(row => row.challenge_id)).size, 1089);
   assert.ok(rows.every(row => ['Portugal', 'Internacional', 'Universal'].includes(row.classification)));
-  assert.ok(rows.every(row => row.review_status === 'Revisão textual efetuada; validação editorial concluída'));
+  assert.ok(rows.every(row => ['Revisão textual efetuada; validação editorial concluída', 'Reconciliado com produção em 25/11/2026; validação histórica individual pendente'].includes(row.review_status)));
 });
 
 test('database migration maps every source classification and validates completeness', () => {
   const rows = parseCsv(csv);
   for (const row of rows) {
-    assert.ok(migration.includes(`(${Number(row.challenge_id)}, '${row.classification}')`), `missing classification for challenge ${row.challenge_id}`);
+    assert.ok(
+      migration.includes(`(${Number(row.challenge_id)}, '${row.classification}')`) ||
+      correctionMigration.includes(`(${Number(row.challenge_id)}, '${row.classification}')`),
+      `missing final classification for challenge ${row.challenge_id}`
+    );
   }
   assert.match(migration, /v_total > 0 and v_classified <> v_total/);
   assert.match(migration, /atina_challenges_geographic_scope_check/);
   assert.match(migration, /atina_public_challenge_geographic_scopes/);
   assert.match(migration, /grant execute .* to anon, authenticated/s);
+  assert.match(correctionMigration, /v_updated NOT IN \(0, 177\)/);
+  assert.match(correctionMigration, /IS DISTINCT FROM/);
 });
 
 test('game loads geographic metadata and applies the selected scope to Solo and Mix queues', () => {
