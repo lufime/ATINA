@@ -1151,3 +1151,21 @@ create index if not exists atina_challenges_geographic_scope_active_idx
   on private.atina_challenges (geographic_scope, category)
   where active;
 
+
+
+-- Publicly expose only active challenge IDs and their geographic scope for client-side filtering.
+create or replace function public.atina_public_challenge_geographic_scopes()
+returns table(challenge_id integer, geographic_scope text)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select c.challenge_id, c.geographic_scope
+    from private.atina_challenges as c
+   where c.active
+   order by c.challenge_id;
+$$;
+
+revoke all on function public.atina_public_challenge_geographic_scopes() from public;
+grant execute on function public.atina_public_challenge_geographic_scopes() to anon, authenticated;
