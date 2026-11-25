@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - index.html
+      - .atina-interno/classificacao-tematica-desafios.csv
+      - supabase/migrations/20261125120000_atina_challenge_geographic_scope.sql
       - administrator.html
       - tests/error-report-ui.test.cjs
       - tests/geographic-classification.test.cjs
@@ -16,6 +18,8 @@ on:
     branches: [main]
     paths:
       - index.html
+      - .atina-interno/classificacao-tematica-desafios.csv
+      - supabase/migrations/20261125120000_atina_challenge_geographic_scope.sql
       - administrator.html
       - tests/error-report-ui.test.cjs
       - tests/error-report-backend.integration.test.cjs
