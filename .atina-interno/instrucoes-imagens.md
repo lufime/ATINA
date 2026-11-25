@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.5  
+**Versão das instruções:** 1.6  
 **Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
@@ -396,9 +396,24 @@ Quando os campos correspondentes existirem na plataforma ou forem solicitados pa
 - Usar um texto curto, simples, direto e agradável de ler. A explicação deve esclarecer a resposta sem se tornar longa, pesada, repetitiva ou maçadora.
 - Dar apenas o contexto necessário para o jogador compreender a solução. Evitar introduções genéricas, rodeios, detalhes secundários e informação que não ajude a perceber a resposta.
 - Preferir frases claras e vocabulário acessível, com um tom próximo, interessante e educativo, sem parecer um texto académico ou uma enciclopédia.
-- Como orientação, usar normalmente 1 a 3 frases curtas; só ultrapassar esse tamanho quando a explicação realmente o exigir.
+- Como orientação, usar normalmente 3 a 5 frases curtas, com informação suficiente para ensinar algo sem cansar; em perguntas simples, usar menos quando bastar e só ultrapassar esse tamanho quando a explicação realmente o exigir.
 - Não repetir a solução várias vezes nem repetir na descrição o que já está evidente na pergunta.
 - Manter os factos essenciais e a precisão: ser breve não significa omitir uma condição importante, simplificar de forma enganadora ou deixar dúvidas sobre a resposta.
 - As curiosidades devem seguir o mesmo estilo: uma ou duas frases curtas, interessantes e verificadas, sem transformar a curiosidade numa segunda explicação longa.
 - Adaptar o tom e a extensão à idade, ao tema e à dificuldade do desafio.
 - Antes de guardar ou entregar o texto, rever e retirar palavras desnecessárias, repetições e pormenores que tornem a leitura cansativa.
+
+
+## 36. Elementos educativos e de descoberta
+- A apresentação editorial recomendada pode incluir, além da solução e da descrição, os elementos «Sabias que...?» e «O que aprendemos?».
+- **«Sabias que...?»** deve apresentar uma curiosidade curta, surpreendente e diretamente relacionada com a solução. Deve acrescentar um facto novo, confirmado e fácil de recordar; não repetir a descrição.
+- **«O que aprendemos?»** deve resumir numa frase a ideia ou conhecimento principal que o jogador pode levar daquele desafio. Usar apenas quando acrescentar valor educativo, sem repetir a resposta ou a curiosidade.
+- Incluir contexto histórico, geográfico, científico, cultural ou biográfico quando ajudar realmente a compreender a solução; não acrescentar contexto só para aumentar o tamanho do texto.
+- Pormenores especiais, comparações, recordes, datas e números podem enriquecer a explicação quando forem relevantes, corretos e fáceis de compreender.
+- Usar comparações apenas quando clarificarem o tema; evitar analogias forçadas ou que possam induzir em erro.
+- A estrutura não é uma lista de campos obrigatórios. Escolher apenas os elementos que tornam aquele desafio mais claro e interessante.
+- Manter a descrição da solução, por regra, em 3 a 5 frases curtas; a curiosidade em 1 a 2 frases; e «O que aprendemos?» numa única frase.
+- Se o desafio não tiver uma curiosidade fiável ou uma conclusão educativa adicional, omitir esse elemento. Nunca inventar conteúdo para preencher a estrutura.
+- Evitar transformar a resposta numa aula, num artigo ou numa ficha enciclopédica. O objetivo é despertar curiosidade e transmitir conhecimento num tempo de leitura curto.
+- Todos os elementos devem ser redigidos por palavras próprias, em português de Portugal, com tom natural, positivo, acessível e adequado ao público do ATINA.
+- Confirmar factos e referências antes de os apresentar; não copiar textos das fontes e não alterar a solução oficial sem validação e autorização.
