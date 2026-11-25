@@ -433,3 +433,48 @@ Aplicar a todos os desafios novos e existentes, classificando cada um numa únic
 - Nas auditorias, rever todos os desafios abrangidos em lotes sequenciais de até 500 registos. Registar os IDs analisados, corrigidos, preservados e pendentes; não alterar os que já estejam corretamente classificados.
 - Não alterar a solução oficial nem outros dados do desafio apenas para fazer coincidir a classificação. Se existir conflito entre a solução, as pistas e a categoria geográfica, assinalar para revisão.
 - Objetivo: garantir que **Portugal** reúne os desafios de origem portuguesa, **Internacional** os de origem internacional e **Universal** os temas comuns e sem origem nacional específica.
+
+
+### 38.1 Critérios complementares de classificação
+Aplicar estes exemplos e critérios como orientação complementar, sem substituir a regra principal de classificação pela origem e pelo foco central do desafio.
+
+**Portugal**
+- Pessoas e personalidades portuguesas, incluindo figuras históricas, culturais, científicas e desportivas cuja identidade e percurso sejam relevantemente portugueses.
+- Cidades, localidades, regiões, monumentos, património e paisagens de Portugal.
+- Gastronomia, produtos, tradições, festas, costumes e manifestações culturais de origem portuguesa.
+- História, literatura, música, arte, cinema, instituições e acontecimentos especificamente portugueses.
+- Descobertas, invenções e obras cuja origem portuguesa esteja historicamente confirmada.
+
+**Internacional**
+- Pessoas e personalidades de outros países, quando o desafio incide sobre a sua origem ou percurso nacional.
+- Cidades, capitais, regiões, monumentos e património de outros países.
+- Gastronomia, produtos, tradições e manifestações culturais cuja origem estrangeira esteja confirmada.
+- História, literatura, música, arte, cinema, instituições e acontecimentos especificamente associados a outros países.
+- Descobertas, invenções e obras cuja origem estrangeira esteja historicamente confirmada.
+
+**Universal**
+- Matemática, lógica, raciocínio e conceitos abstratos.
+- Ciência, natureza, universo e fenómenos naturais sem foco nacional.
+- Animais, plantas e elementos naturais apresentados de forma geral, sem associação geográfica específica.
+- Emoções, valores, relações humanas e conceitos comuns às sociedades.
+- Objetos, profissões, atividades e conhecimentos gerais sem origem nacional específica.
+- Temas que podem ser compreendidos em diferentes países e culturas sem depender de uma realidade nacional particular.
+
+**Regras de consistência**
+- Cada desafio deve ter uma única classificação principal: Portugal, Internacional ou Universal. Não duplicar o mesmo desafio nas três categorias.
+- A classificação representa a origem ou o foco central do tema, nunca o país onde o desafio foi criado, carregado, traduzido ou onde é mais popular.
+- A presença de um tema em Portugal não o torna automaticamente português; a divulgação mundial de um tema não o torna automaticamente Universal.
+- Se o desafio tratar uma realidade especificamente portuguesa, classificar como Portugal; se tratar uma realidade especificamente de outro país, classificar como Internacional; se tratar um tema comum sem foco nacional, classificar como Universal.
+- Em temas partilhados por vários países, considerar a origem histórica comprovada e o foco efetivo da pergunta. Se não existir uma origem única ou a atribuição for controversa, assinalar para validação em vez de forçar uma categoria.
+- Em pessoas, considerar a identidade, o percurso e o contexto relevante para o desafio. Não decidir apenas pelo local de nascimento, residência ou popularidade.
+- Em gastronomia, tradições, obras, invenções e património, confirmar fontes históricas e culturais fiáveis antes de atribuir uma origem.
+- As pistas, a solução, a descrição e a imagem devem ser coerentes com a categoria. Não atribuir incorretamente uma origem, nacionalidade ou contexto geográfico.
+- O filtro geográfico deve apresentar os desafios segundo a classificação principal guardada, sem misturar categorias nem inferir a categoria a partir do texto das pistas.
+- A auditoria deve abranger desafios ativos e inativos. Em cada lote de até 500, registar os IDs analisados, corrigidos, preservados e pendentes, bem como a justificação das classificações duvidosas.
+- A deteção de uma categoria em falta, contraditória ou duvidosa deve gerar um registo pendente para validação; não alterar automaticamente a solução oficial, as pistas ou outros campos para forçar coerência.
+- Antes de concluir uma auditoria, verificar também a correspondência entre a classificação guardada e o comportamento do filtro no jogo. A existência da categoria na base de dados, por si só, não comprova que o filtro funciona corretamente.
+
+**Exemplos orientadores**
+- Torre de Belém: Portugal — monumento português.
+- Torre Eiffel: Internacional — monumento de origem francesa.
+- Água: Universal — elemento comum, sem origem nacional específica.
