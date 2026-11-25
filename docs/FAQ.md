@@ -1,6 +1,6 @@
 # ATINA — Perguntas frequentes (FAQ)
 
-**Versão do jogo (código):** v0.1.287  
+**Versão do jogo (código):** indicada no selo do ecrã inicial  
 **Versão online:** não confirmada nesta revisão  
 **Última atualização do documento:** 25/11/2026
 
