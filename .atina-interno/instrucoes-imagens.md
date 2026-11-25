@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.3  
+**Versão das instruções:** 1.4  
 **Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
@@ -335,3 +335,57 @@ Este padrão é visual e de usabilidade: não autoriza alterações à lógica d
 - Uma autorização para gerar imagens não equivale a autorização para as carregar, aprovar ou publicar.
 - Respeitar sempre o âmbito exato do pedido e interromper antes de qualquer ação que ultrapasse esse âmbito.
 - Quando uma tarefa exigir várias etapas, executar as etapas preparatórias autorizadas e pedir autorização apenas para a etapa protegida que ainda não esteja autorizada.
+
+
+## 31. Descrição das soluções, explicações e conteúdo educativo
+Aplicar aos desafios do ATINA sempre que exista uma área, campo ou funcionalidade destinada a explicar a resposta correta.
+- Sempre que adequado, cada desafio deve ter uma descrição da solução que explique claramente por que motivo aquela é a resposta correta.
+- A explicação deve responder diretamente à pergunta, sem se limitar a repetir a solução ou o enunciado.
+- Incluir o contexto essencial: o que é, quem é, onde fica, quando aconteceu, como funciona ou por que é importante, conforme o tema.
+- Usar linguagem natural, simples, rigorosa e adequada ao público do ATINA; escrever em português de Portugal, salvo quando o conteúdo exigir outra língua.
+- Ajustar a extensão à dificuldade e ao tema: explicações curtas para perguntas simples e explicações mais desenvolvidas quando o assunto o justificar. Evitar texto excessivo ou informação irrelevante.
+- Distinguir claramente a resposta correta da explicação complementar. Nunca permitir que uma curiosidade altere, contradiga ou torne ambígua a solução.
+- Em perguntas de escolha múltipla, explicar, quando útil, o motivo da opção correta e esclarecer brevemente confusões comuns com opções semelhantes, sem desvalorizar o jogador.
+- Em perguntas de cálculo, lógica ou ciência, apresentar o raciocínio essencial por etapas, confirmar operações, unidades, fórmulas e resultado final.
+- Em perguntas históricas, geográficas ou culturais, incluir datas, locais, nomes e contexto apenas quando estiverem confirmados e forem relevantes.
+- Em perguntas sobre pessoas, confirmar cuidadosamente nomes, funções, datas e acontecimentos; evitar afirmações especulativas ou dados pessoais desnecessários.
+- Em perguntas sobre obras de ficção, explicar a referência sem reproduzir diálogos, excertos, cenas ou outros conteúdos protegidos.
+- Não inventar explicações para preencher campos. Se não houver informação suficiente para uma explicação fiável, assinalar que precisa de validação em vez de fabricar conteúdo.
+- Não alterar a resposta oficial do desafio ao escrever a explicação. Se a solução existente parecer errada, ambígua ou desatualizada, registar o problema para auditoria e pedir validação antes de a modificar.
+
+## 32. Curiosidades e factos adicionais
+- Sempre que exista informação fiável e verdadeiramente interessante, acrescentar uma curiosidade relacionada diretamente com a pergunta ou com a solução.
+- A curiosidade deve acrescentar conhecimento novo, não repetir a resposta nem reformular a explicação.
+- Privilegiar factos surpreendentes, pormenores pouco conhecidos, recordes, origem de palavras, descobertas, contexto histórico, ligações culturais, aplicações práticas ou detalhes científicos relevantes.
+- Manter cada curiosidade concisa, clara, memorável e adequada à idade e ao contexto do jogo.
+- Confirmar a veracidade da curiosidade em fontes credíveis e, sempre que possível, independentes. Para factos controversos, recentes ou sujeitos a alteração, procurar confirmação adicional e indicar a data ou o contexto temporal quando necessário.
+- Distinguir factos comprovados, estimativas, teorias, lendas e interpretações. Nunca apresentar uma lenda ou hipótese como facto confirmado.
+- Evitar curiosidades sensacionalistas, falsas, enganosas, irrelevantes, repetidas ou baseadas apenas em rumores.
+- Se não existir uma curiosidade suficientemente fiável e relevante, não inventar nem forçar uma; deixar o campo vazio ou assinalar que não foi encontrada uma curiosidade adequada, conforme a estrutura existente.
+- Não copiar a redação das fontes consultadas. Reescrever de forma original e concisa, respeitando direitos de autor e propriedade intelectual.
+
+## 33. Fontes, rigor factual e atualização do conteúdo
+- Confirmar respostas, explicações e curiosidades através de fontes fiáveis e adequadas ao assunto: organismos oficiais, instituições científicas, universidades, museus, publicações de referência, documentação técnica ou fontes primárias.
+- Dar preferência a fontes primárias e oficiais quando existirem; usar fontes secundárias credíveis para contextualizar ou corroborar.
+- Não usar resultados de pesquisa, excertos automáticos ou conteúdos gerados por IA como única confirmação de um facto importante.
+- Guardar ou associar referências/fontes aos conteúdos sempre que a estrutura técnica do ATINA o permita, sem expor links desnecessários durante o jogo.
+- Para informação que muda com o tempo — cargos, recordes, populações, classificações, estatísticas, preços, leis, calendários e acontecimentos atuais — verificar a data e indicar o período a que o facto se refere.
+- Quando fontes credíveis divergirem, não escolher arbitrariamente: registar a divergência, procurar contexto e sinalizar o caso para validação.
+- Rever ortografia, gramática, pontuação, nomes próprios, unidades, datas e consistência terminológica antes de concluir.
+- Evitar conteúdo discriminatório, humilhante, ofensivo, partidário ou inadequado; tratar temas sensíveis com rigor, neutralidade e contexto.
+- As explicações e curiosidades devem ser originais na redação, educativas e coerentes com a identidade do ATINA.
+- Não alterar em massa descrições, respostas ou curiosidades existentes sem auditoria, comparação e autorização explícita quando houver escrita na base de dados de produção.
+
+## 34. Estrutura editorial recomendada por desafio
+Quando os campos correspondentes existirem na plataforma ou forem solicitados para preparação editorial, organizar o conteúdo nesta ordem:
+1. **Solução:** resposta oficial, curta e inequívoca.
+2. **Descrição da solução:** explicação do que é a resposta e por que está correta.
+3. **Contexto adicional:** informação necessária para compreender melhor o tema, quando aplicável.
+4. **Curiosidade:** um facto adicional interessante e verificado, quando existir.
+5. **Fonte(s):** referências usadas para validar a resposta e os factos complementares.
+6. **Nota de validação:** dúvida, divergência, data de referência ou necessidade de revisão, apenas quando aplicável.
+- Não criar campos novos nem alterar o schema da base de dados por iniciativa própria; primeiro verificar a estrutura atual e obter autorização para alterações técnicas.
+- Não tornar todos os campos obrigatórios se o tema não justificar todos os conteúdos.
+- Evitar repetir a mesma informação entre solução, descrição, contexto e curiosidade.
+- Manter a resposta e a explicação compreensíveis sem depender de links externos ou de conhecimento prévio do jogador.
+- Garantir que o conteúdo apresentado ao jogador é consistente com a versão online atual do jogo e com os documentos oficiais.
