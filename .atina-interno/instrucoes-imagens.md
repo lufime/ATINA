@@ -474,6 +474,17 @@ Aplicar estes exemplos e critérios como orientação complementar, sem substitu
 - A deteção de uma categoria em falta, contraditória ou duvidosa deve gerar um registo pendente para validação; não alterar automaticamente a solução oficial, as pistas ou outros campos para forçar coerência.
 - Antes de concluir uma auditoria, verificar também a correspondência entre a classificação guardada e o comportamento do filtro no jogo. A existência da categoria na base de dados, por si só, não comprova que o filtro funciona corretamente.
 
+### 38.2 Desportos e origem histórica
+
+- Classificar como **Portugal** os desportos ou modalidades cuja criação ou codificação histórica esteja especificamente ligada a Portugal, desde que essa origem esteja confirmada.
+- Classificar como **Internacional** os desportos cuja criação, codificação ou desenvolvimento da forma moderna tenha uma origem histórica identificável noutro país ou região, mesmo que atualmente sejam praticados em todo o mundo.
+- A popularidade, difusão ou prática mundial de um desporto não o torna **Universal**.
+- Distinguir a origem de uma prática ancestral da criação ou codificação do desporto moderno. Quando a pergunta se referir à modalidade moderna, usar a origem da sua forma moderna; quando se referir explicitamente à prática ancestral, classificar de acordo com esse contexto.
+- Em modalidades com antecedentes em vários países, desenvolvimento gradual, origem partilhada ou atribuição histórica controversa, não escolher arbitrariamente um país. Registar como pendente de validação e justificar a divergência.
+- Classificar como **Universal** apenas os conceitos ou atividades físicas gerais sem uma origem nacional ou regional específica relevante para o desafio; não usar esta categoria como alternativa à falta de pesquisa.
+- Exemplos orientadores: futebol moderno — Inglaterra; basquetebol — Estados Unidos; voleibol — Estados Unidos; judo — Japão; karaté — Okinawa/Japão; taekwondo — Coreia. Confirmar sempre o contexto histórico e a formulação concreta do desafio antes de aplicar a classificação.
+- As pistas, a descrição da solução e a imagem devem respeitar a origem histórica confirmada, sem simplificar origens partilhadas ou controversas.
+
 **Exemplos orientadores**
 - Torre de Belém: Portugal — monumento português.
 - Torre Eiffel: Internacional — monumento de origem francesa.
