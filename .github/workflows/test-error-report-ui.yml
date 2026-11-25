@@ -5,6 +5,7 @@ on:
       - index.html
       - administrator.html
       - tests/error-report-ui.test.cjs
+      - tests/geographic-classification.test.cjs
       - assets/atina-global-error-report.js
       - tests/global-error-report.test.cjs
       - tests/error-report-backend.integration.test.cjs
@@ -31,7 +32,7 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno check supabase/functions/atina-error-reports-admin/index.ts supabase/functions/atina-error-reports-submit/index.ts
-      - run: node --test tests/error-report-ui.test.cjs tests/global-error-report.test.cjs
+      - run: node --test tests/error-report-ui.test.cjs tests/global-error-report.test.cjs tests/geographic-classification.test.cjs
       - name: Executar integração backend (opt-in, ambiente isolado)
         env:
           ATINA_ERROR_REPORTS_TEST_URL: ${{ secrets.ATINA_ERROR_REPORTS_TEST_URL }}
