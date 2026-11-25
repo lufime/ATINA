@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.7  
+**Versão das instruções:** 1.8  
 **Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
@@ -415,3 +415,21 @@ Quando os campos correspondentes existirem na plataforma ou forem solicitados pa
 - Evitar transformar a resposta numa aula, num artigo ou numa ficha enciclopédica. O objetivo é despertar curiosidade e transmitir conhecimento num tempo de leitura curto.
 - Todos os elementos devem ser redigidos por palavras próprias, em português de Portugal, com tom natural, positivo, acessível e adequado ao público do ATINA.
 - Confirmar factos e referências antes de os apresentar; não copiar textos das fontes e não alterar a solução oficial sem validação e autorização.
+
+
+## 38. Classificação geográfica e de origem dos desafios
+Aplicar a todos os desafios novos e existentes, classificando cada um numa única categoria: **Portugal**, **Internacional** ou **Universal**.
+- **Portugal:** usar quando a solução ou o tema central do desafio tem origem em Portugal ou é especificamente português. Inclui pessoas, lugares, acontecimentos, história, cultura, tradições, instituições, obras, produtos e outros elementos cuja origem portuguesa esteja confirmada.
+- **Internacional:** usar quando a solução ou o tema central tem origem noutro país ou está especificamente associado a outro país, cultura ou contexto nacional. Identificar a origem real; não classificar como Internacional apenas por o tema ser conhecido fora de Portugal.
+- **Universal:** usar quando o tema é comum, transversal ou aplicável a vários países e culturas, sem uma origem nacional específica que justifique Portugal ou Internacional. Inclui conceitos gerais, ciência, natureza, matemática, lógica, fenómenos comuns, objetos e conhecimentos universais.
+- Classificar pela origem e pelo conteúdo central da solução do desafio, não pela língua em que está escrito, pelo local onde o jogador se encontra, pela popularidade do tema ou pela nacionalidade de quem joga.
+- Não classificar automaticamente como Portugal um tema apenas porque aparece em Portugal, nem como Internacional apenas porque é conhecido mundialmente. Distinguir origem, local de ocorrência e alcance internacional.
+- Quando um desafio abordar especificamente uma realidade portuguesa, mesmo que o assunto também exista noutros países, classificar como Portugal. Quando abordar especificamente a realidade de outro país, classificar como Internacional.
+- Quando o desafio tratar um conceito geral ou uma realidade partilhada por vários países sem foco nacional, classificar como Universal.
+- Em desafios sobre pessoas, considerar a origem e a identidade principal relevantes para a pergunta; não usar apenas o local de nascimento se isso não representar adequadamente o tema. Em casos de dupla nacionalidade, percurso internacional ou origem disputada, avaliar o foco do desafio e confirmar os factos.
+- Em desafios sobre obras, gastronomia, tradições, acontecimentos e património, confirmar a origem histórica e cultural antes de classificar. Não inferir a origem apenas pelo idioma, aparência ou local atual de exposição.
+- Se a origem for incerta, partilhada, transnacional ou não houver informação suficiente, não adivinhar: assinalar o desafio como pendente de validação.
+- Aplicar a mesma regra de forma consistente a perguntas, pistas, soluções, imagens e restantes conteúdos associados ao desafio. As pistas devem respeitar a classificação e não atribuir ao país errado características, factos ou referências.
+- Nas auditorias, rever todos os desafios abrangidos em lotes sequenciais de até 500 registos. Registar os IDs analisados, corrigidos, preservados e pendentes; não alterar os que já estejam corretamente classificados.
+- Não alterar a solução oficial nem outros dados do desafio apenas para fazer coincidir a classificação. Se existir conflito entre a solução, as pistas e a categoria geográfica, assinalar para revisão.
+- Objetivo: garantir que **Portugal** reúne os desafios de origem portuguesa, **Internacional** os de origem internacional e **Universal** os temas comuns e sem origem nacional específica.
