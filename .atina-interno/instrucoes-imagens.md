@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.6  
+**Versão das instruções:** 1.7  
 **Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
@@ -405,15 +405,13 @@ Quando os campos correspondentes existirem na plataforma ou forem solicitados pa
 
 
 ## 36. Elementos educativos e de descoberta
-- A apresentação editorial recomendada pode incluir, além da solução e da descrição, os elementos «Sabias que...?» e «O que aprendemos?».
-- **«Sabias que...?»** deve apresentar uma curiosidade curta, surpreendente e diretamente relacionada com a solução. Deve acrescentar um facto novo, confirmado e fácil de recordar; não repetir a descrição.
-- **«O que aprendemos?»** deve resumir numa frase a ideia ou conhecimento principal que o jogador pode levar daquele desafio. Usar apenas quando acrescentar valor educativo, sem repetir a resposta ou a curiosidade.
-- Incluir contexto histórico, geográfico, científico, cultural ou biográfico quando ajudar realmente a compreender a solução; não acrescentar contexto só para aumentar o tamanho do texto.
+- A apresentação editorial recomendada deve privilegiar a solução e uma descrição breve, clara e educativa.
+- **«Sabias que...?»** pode ser incluído quando existir uma curiosidade curta, interessante e diretamente relacionada com a solução. Deve acrescentar um facto novo, confirmado e fácil de recordar; não repetir a descrição.
+- Incluir contexto histórico, geográfico, científico, cultural ou biográfico apenas quando ajudar realmente a compreender a solução; não acrescentar contexto só para aumentar o tamanho do texto.
 - Pormenores especiais, comparações, recordes, datas e números podem enriquecer a explicação quando forem relevantes, corretos e fáceis de compreender.
 - Usar comparações apenas quando clarificarem o tema; evitar analogias forçadas ou que possam induzir em erro.
-- A estrutura não é uma lista de campos obrigatórios. Escolher apenas os elementos que tornam aquele desafio mais claro e interessante.
-- Manter a descrição da solução, por regra, em 3 a 5 frases curtas; a curiosidade em 1 a 2 frases; e «O que aprendemos?» numa única frase.
-- Se o desafio não tiver uma curiosidade fiável ou uma conclusão educativa adicional, omitir esse elemento. Nunca inventar conteúdo para preencher a estrutura.
+- Não criar uma secção, campo ou mensagem intitulada «O que aprendemos?» nem apresentar esse tipo de resumo no jogo.
+- A curiosidade é opcional. Se não existir uma curiosidade fiável e relevante, omitir esse elemento; nunca inventar conteúdo para preencher a estrutura.
 - Evitar transformar a resposta numa aula, num artigo ou numa ficha enciclopédica. O objetivo é despertar curiosidade e transmitir conhecimento num tempo de leitura curto.
 - Todos os elementos devem ser redigidos por palavras próprias, em português de Portugal, com tom natural, positivo, acessível e adequado ao público do ATINA.
 - Confirmar factos e referências antes de os apresentar; não copiar textos das fontes e não alterar a solução oficial sem validação e autorização.
