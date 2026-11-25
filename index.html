@@ -2774,7 +2774,7 @@ async function refreshGeographicScopes(){
   const response=await fetch(ATINA_GAME_SUPABASE_URL+'/rest/v1/rpc/atina_public_challenge_geographic_scopes',{method:'POST',headers:{apikey:ATINA_GAME_SUPABASE_KEY,Authorization:'Bearer '+ATINA_GAME_SUPABASE_KEY,'Content-Type':'application/json'},body:'{}',cache:'no-store'});
   if(!response.ok)throw new Error('A consulta da classificação geográfica falhou ('+response.status+').');
   const rows=await response.json();
-  if(!Array.isArray(rows)||rows.length!==1089||rows.some(row=>!Number.isInteger(Number(row.challenge_id))||!['Portugal','Internacional','Universal'].includes(row.geographic_scope)))throw new Error('A classificação geográfica recebida está incompleta ou inválida.');
+  if(!Array.isArray(rows)||rows.length===0||rows.some(row=>!Number.isInteger(Number(row.challenge_id))||!['Portugal','Internacional','Universal'].includes(row.geographic_scope)))throw new Error('A classificação geográfica recebida está incompleta ou inválida.');
   atinaGeographicScopeById=new Map(rows.map(row=>[Number(row.challenge_id),row.geographic_scope]));
   atinaGeographicScopesReady=true;
   const select=document.getElementById('atinaGeographicScope');if(select)select.disabled=false;
