@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.8  
+**Versão das instruções:** 1.9  
 **Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
@@ -489,3 +489,24 @@ Aplicar estes exemplos e critérios como orientação complementar, sem substitu
 - Torre de Belém: Portugal — monumento português.
 - Torre Eiffel: Internacional — monumento de origem francesa.
 - Água: Universal — elemento comum, sem origem nacional específica.
+
+
+## 39. Verificação obrigatória da base de dados antes de adicionar conteúdo
+**Antes de adicionar qualquer elemento ao ATINA, consultar sempre a base de dados de produção e verificar o estado atual. Esta verificação é obrigatória, mesmo quando o pedido parece simples ou quando o conteúdo foi preparado localmente.**
+
+- Considerar o Supabase `atina-development` (ref `qvvlqrgbtjujsejvenld`) como **produção**. Todas as consultas e operações devem ser tratadas com o cuidado devido a dados reais.
+- Antes de adicionar um desafio, pista, resposta, descrição, curiosidade, imagem, categoria, classificação, opção, registo ou qualquer outro conteúdo, fazer primeiro consultas de leitura à base de dados para identificar a estrutura relevante e os registos existentes.
+- Confirmar as tabelas, colunas, relações e formatos atualmente utilizados. Não presumir nomes de tabelas, campos, IDs, categorias ou estruturas com base apenas no código, em conversas anteriores ou em exemplos.
+- Procurar correspondências exatas e possíveis duplicados semânticos: respostas iguais, temas equivalentes, perguntas ou pistas muito semelhantes, imagens repetidas e conteúdos já existentes noutras categorias ou estados.
+- Verificar também registos inativos, arquivados ou não apresentados nos filtros habituais, quando forem relevantes para evitar duplicações.
+- Comparar o novo conteúdo com os desafios e materiais existentes, garantindo que acrescenta valor e não repete conteúdo já disponível. Se houver duplicação ou dúvida relevante, não adicionar; apresentar o conflito para decisão.
+- Confirmar que a categoria, origem geográfica, dificuldade, resposta oficial, pistas e restantes campos são coerentes com os dados e regras existentes.
+- Para imagens, verificar primeiro os registos e ficheiros existentes, as associações aos desafios e possíveis duplicados antes de gerar, carregar ou associar uma nova imagem.
+- Registar os IDs e os resultados consultados que fundamentam a decisão. Não inventar IDs nem afirmar que a base de dados foi verificada se a consulta não foi executada com sucesso.
+- Se a base de dados estiver inacessível, a consulta falhar ou não for possível confirmar os registos relevantes, **parar antes de adicionar** e informar claramente que a verificação ficou por fazer. Não substituir a consulta por suposições ou por uma pesquisa apenas no repositório.
+- Repetir uma consulta de leitura imediatamente antes da escrita quando existir intervalo significativo entre a verificação e a operação, para detetar alterações entretanto feitas por outros processos.
+- A consulta prévia não autoriza alterações. **Não executar INSERT, UPDATE, DELETE, alterações de schema, migrations, operações em massa, merge, deploy ou publicação sem autorização explícita.** Mostrar o plano e aguardar autorização quando a escrita não tiver sido pedida de forma inequívoca.
+- Após uma adição expressamente autorizada, confirmar o resultado diretamente na base de dados e verificar que o novo registo ficou correto, sem duplicações nem efeitos indesejados.
+- Esta regra aplica-se a todo o projeto, a todos os ambientes com dados reais e a todos os fluxos de criação, importação, geração ou edição de conteúdo. Não utilizar Render.
+
+**Regra essencial: primeiro consultar e comparar com a base de dados; só depois, se estiver confirmado que é necessário e existir autorização, adicionar.**
