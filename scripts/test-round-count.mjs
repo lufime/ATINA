@@ -23,7 +23,7 @@ assert.equal(hasNextRuntime(0, Array.from({ length: 10 }, (_, i) => i)), true, '
 assert.equal(hasNextRuntime(8, Array.from({ length: 10 }, (_, i) => i)), true, 'ten challenge round advances through challenge nine');
 assert.equal(hasNextRuntime(9, Array.from({ length: 10 }, (_, i) => i)), false, 'ten challenge round stops after challenge ten');
 
-const startSection = html.slice(html.indexOf('function start(m,chosen=null){'), html.indexOf('function mixDraw(){'));
+const startSection = html.slice(html.indexOf('function start(m,chosen=null'), html.indexOf('function mixDraw(){'));
 assert.ok(startSection.includes('const requestedCount=atinaChallengeCount'), 'game start captures the selected count');
 assert.ok(startSection.includes('queue=atinaBuildRoundQueue(eligible,requestedCount)'), 'all game modes build a queue with the selected count');
 assert.ok(startSection.includes('queue.length!==requestedCount'), 'game start rejects an incomplete queue instead of silently playing fewer challenges');
