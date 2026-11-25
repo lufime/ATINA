@@ -3,7 +3,7 @@ on:
   pull_request:
     paths:
       - index.html
-      - admin-images.html
+      - administrator.html
       - tests/error-report-ui.test.cjs
       - assets/atina-global-error-report.js
       - tests/global-error-report.test.cjs
@@ -15,7 +15,7 @@ on:
     branches: [main]
     paths:
       - index.html
-      - admin-images.html
+      - administrator.html
       - tests/error-report-ui.test.cjs
       - tests/error-report-backend.integration.test.cjs
       - .github/workflows/test-error-report-ui.yml
