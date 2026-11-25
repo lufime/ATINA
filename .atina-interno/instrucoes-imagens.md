@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.4  
+**Versão das instruções:** 1.5  
 **Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
@@ -389,3 +389,16 @@ Quando os campos correspondentes existirem na plataforma ou forem solicitados pa
 - Evitar repetir a mesma informação entre solução, descrição, contexto e curiosidade.
 - Manter a resposta e a explicação compreensíveis sem depender de links externos ou de conhecimento prévio do jogador.
 - Garantir que o conteúdo apresentado ao jogador é consistente com a versão online atual do jogo e com os documentos oficiais.
+
+
+## 35. Estilo de escrita das descrições das soluções
+- Escrever sempre as descrições das soluções por palavras próprias, com redação original e natural; não copiar nem adaptar de perto textos de sites, livros, artigos ou outras fontes.
+- Usar um texto curto, simples, direto e agradável de ler. A explicação deve esclarecer a resposta sem se tornar longa, pesada, repetitiva ou maçadora.
+- Dar apenas o contexto necessário para o jogador compreender a solução. Evitar introduções genéricas, rodeios, detalhes secundários e informação que não ajude a perceber a resposta.
+- Preferir frases claras e vocabulário acessível, com um tom próximo, interessante e educativo, sem parecer um texto académico ou uma enciclopédia.
+- Como orientação, usar normalmente 1 a 3 frases curtas; só ultrapassar esse tamanho quando a explicação realmente o exigir.
+- Não repetir a solução várias vezes nem repetir na descrição o que já está evidente na pergunta.
+- Manter os factos essenciais e a precisão: ser breve não significa omitir uma condição importante, simplificar de forma enganadora ou deixar dúvidas sobre a resposta.
+- As curiosidades devem seguir o mesmo estilo: uma ou duas frases curtas, interessantes e verificadas, sem transformar a curiosidade numa segunda explicação longa.
+- Adaptar o tom e a extensão à idade, ao tema e à dificuldade do desafio.
+- Antes de guardar ou entregar o texto, rever e retirar palavras desnecessárias, repetições e pormenores que tornem a leitura cansativa.
