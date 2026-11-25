@@ -1,8 +1,8 @@
 # ATINA — Perguntas frequentes (FAQ)
 
-**Versão do jogo (código):** v0.1.253  
+**Versão do jogo (código):** indicada no selo do ecrã inicial  
 **Versão online:** não confirmada nesta revisão  
-**Última atualização do documento:** 22/11/2026
+**Última atualização do documento:** 25/11/2026
 
 Esta página reúne respostas sobre os modos e o funcionamento do ATINA, com base no código atual consultado. A publicação online não foi verificada.
 
@@ -39,6 +39,9 @@ Duelo e Modo Festa encaminham para o fluxo online. Segue as indicações da part
 
 ## Preciso de Internet?
 Os modos e validação descritos dependem de ligação à Internet. Não foi confirmado um modo offline completo.
+
+## Como é calculado o número de jogadores online?
+O indicador apresenta jogadores com atividade recente, sem duplicar a mesma conta quando está ligada através de mais do que uma sessão.
 
 ## Onde vejo o meu progresso?
 Consulta o Perfil e os separadores de Classificação disponíveis. A atualização dos dados depende da ligação e dos serviços.
