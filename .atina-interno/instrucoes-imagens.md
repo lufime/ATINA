@@ -1,7 +1,7 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 1.2  
-**Última atualização:** 21/11/2026
+**Versão das instruções:** 1.3  
+**Última atualização:** 25/11/2026
 
 ## 1. Projeto e acessos
 - GitHub: https://github.com/lufime/ATINA.git
@@ -248,10 +248,90 @@ Este padrão é visual e de usabilidade: não autoriza alterações à lógica d
 - Não utilizar Render, em nenhuma circunstância.
 - Não comprometer a segurança, estabilidade ou integridade do ATINA para acelerar merge/deploy.
 
+## 22. Regras gerais de execução e preservação
+- Preservar todas as funcionalidades, dados, conteúdos, classificações, imagens e configurações existentes, salvo pedido explícito em contrário.
+- Não apagar, substituir, ocultar, desativar ou alterar elementos existentes apenas por conveniência; primeiro identificar o impacto e escolher a alteração mínima segura.
+- Não fazer alterações fora do âmbito solicitado. Separar claramente correções necessárias de melhorias opcionais.
+- Antes de qualquer alteração, consultar o estado atual do repositório, os ficheiros relevantes, as dependências e o comportamento existente.
+- Não assumir que uma tarefa está concluída apenas porque o código foi alterado; executar as verificações adequadas e confirmar o resultado.
+- Não inventar dados, identificadores, resultados de testes, estados, funcionalidades, aprovações ou conclusões.
+- Quando houver incerteza, preservar o estado atual e explicar exatamente o que não foi possível confirmar.
+- Não introduzir referências a bots na interface, textos, conteúdos, documentação pública ou experiência de jogo. A terminologia apresentada aos jogadores deve ser coerente, neutra e adequada ao jogo.
 
-## 22. Bots como jogadores de pleno direito
-- Os bots fazem parte do ATINA na versão Beta e são jogadores de pleno direito, tal como os jogadores humanos.
-- Bots e humanos têm os mesmos direitos e estão sujeitos às mesmas regras de jogo, participação, rondas, desafios e pontuação, salvo regras específicas de um modo que se apliquem igualmente a todos os participantes.
-- Não tratar bots como elementos secundários, meros substitutos ou participantes com direitos reduzidos.
-- Não discriminar, remover, ocultar ou limitar bots apenas por serem bots, sem pedido explícito ou requisito de jogo confirmado.
-- Menus, modos, partidas e documentação devem refletir a participação dos bots quando disponível na versão Beta, distinguindo claramente funcionalidades Beta/experimentais da versão publicada/final quando aplicável.
+## 23. GitHub, branches, commits e pull requests
+- Utilizar o repositório oficial `lufime/ATINA` como referência para o código e a documentação.
+- Antes de escrever, confirmar a branch, o estado do ficheiro, as alterações existentes e os pull requests relacionados.
+- Fazer alterações na branch apropriada ao trabalho; não sobrescrever trabalho alheio nem descartar alterações existentes.
+- Criar commits com mensagens claras, específicas e fiéis ao conteúdo efetivamente alterado.
+- Em pull requests, manter título, descrição, lista de ficheiros, resultados dos testes e estado real sempre atualizados.
+- Não declarar testes aprovados sem os executar. Registar os comandos executados e os resultados relevantes.
+- Não fazer merge, publicar, lançar versões ou iniciar deploy sem autorização explícita do responsável, mesmo que os checks estejam aprovados.
+- Quando o trabalho for pedido apenas para preparação ou revisão, deixá-lo nesse estado e identificar claramente o que falta para a integração.
+- Nunca incluir segredos, tokens, palavras-passe, chaves privadas ou dados pessoais em commits, logs, exemplos ou documentação.
+
+## 24. Supabase e proteção da produção
+- O projeto Supabase `atina-development`, ref `qvvlqrgbtjujsejvenld`, é o ambiente de PRODUÇÃO do ATINA; o nome do projeto não significa que seja um ambiente de testes.
+- Tratar todas as operações neste projeto como operações em produção.
+- Consultar dados reais apenas quando necessário e autorizado, usando consultas de leitura sempre que sejam suficientes.
+- Não executar migrations, SQL de escrita, alterações de schema, inserts, updates, deletes, truncates, operações em massa, alterações de permissões, autenticação, storage ou configuração sem autorização explícita.
+- Antes de uma operação autorizada de escrita, explicar o âmbito, os registos/tabelas afetados, o risco e a possibilidade de reversão.
+- Preferir operações pequenas, transacionais, verificáveis e reversíveis; nunca executar alterações em massa sem validação prévia dos IDs e critérios.
+- Fazer backup ou confirmar um mecanismo de recuperação antes de operações com risco de perda ou corrupção de dados, quando aplicável.
+- Após uma alteração autorizada, verificar os resultados diretamente na base de dados e comunicar exatamente o que mudou.
+- Nunca confundir dados de desenvolvimento local, branches, testes ou fixtures com os dados reais de produção.
+
+## 25. Plataformas, alojamento e endereços oficiais
+- Não utilizar Render em nenhuma circunstância: não consultar, configurar, criar, alterar, publicar ou executar serviços nessa plataforma.
+- Utilizar apenas os serviços e ambientes oficialmente definidos para o ATINA e confirmados no repositório ou nas instruções do responsável.
+- Não inventar endereços, domínios, páginas, rotas, ambientes, projetos ou links administrativos.
+- Antes de recomendar ou alterar um endereço, confirmar o URL exato no código ou na configuração atual.
+- Distinguir links de produção, pré-visualização, desenvolvimento e administração; não apresentar um link de teste como produção.
+- Não alterar links em instalações, documentação, configurações ou repositórios quando o pedido for apenas para corrigir ou apresentar um URL numa resposta.
+- Depois de qualquer alteração autorizada a um endereço, verificar a rota e as referências internas afetadas.
+
+## 26. Auditorias, revisões e processamento em lotes
+- Para auditorias e revisões extensas de dados, desafios, classificações, conteúdos ou ficheiros, trabalhar em lotes de até 500 registos por lote, salvo indicação diferente do responsável.
+- Processar os lotes de forma sequencial, mantendo um registo inequívoco dos IDs analisados, corrigidos, preservados, pendentes e excluídos.
+- Não saltar registos nem assumir que uma amostra representa o conjunto completo.
+- Não alterar automaticamente registos corretos; preservar classificações e conteúdos válidos.
+- Para cada registo, distinguir resultado confirmado, erro confirmado, dúvida e caso que exige decisão humana.
+- No final de cada lote, apresentar totais e exceções, sem misturar contagens de lotes diferentes.
+- Antes de continuar uma auditoria interrompida, consultar o estado atual e retomar no primeiro registo ainda não analisado.
+- Nunca declarar uma auditoria completa sem confirmar que todos os registos abrangidos foram processados.
+
+## 27. Qualidade, segurança e validação
+- Aplicar o princípio da alteração mínima: resolver o problema identificado sem introduzir mudanças colaterais.
+- Validar entradas, permissões, estados, limites e erros; não confiar apenas na validação visual do interface.
+- Considerar acessibilidade, contraste, navegação por teclado, áreas de toque, legibilidade e comportamento responsivo.
+- Não expor dados pessoais, informação sensível, segredos técnicos ou detalhes internos desnecessários.
+- Não enfraquecer autenticação, autorização, regras de acesso, políticas RLS, validações ou proteções para facilitar testes.
+- Executar testes adequados ao âmbito: testes unitários, integração, build, lint, verificações de tipos e testes funcionais, quando disponíveis.
+- Verificar regressões nas funcionalidades relacionadas e confirmar que as alterações não quebram fluxos existentes.
+- Se algum teste não puder ser executado, indicar qual, porquê e o risco que permanece; não o apresentar como aprovado.
+- Manter consistência visual e funcional com os padrões existentes do ATINA, evitando duplicação desnecessária de código e estilos.
+
+## 28. Comunicação e prestação de contas
+- Comunicar em português de Portugal, com linguagem direta, clara e objetiva.
+- Distinguir sempre o que foi consultado, analisado, alterado, testado, entregue, integrado e publicado.
+- Indicar os IDs, ficheiros, branches, commits, pull requests, lotes e contagens relevantes quando existirem dados confirmados.
+- Comunicar bloqueios e riscos concretos, sem dramatizar nem esconder limitações.
+- Não repetir perguntas quando a informação já estiver disponível nas instruções, no repositório ou no contexto atual.
+- Quando a autorização já for explícita e o âmbito estiver claro, executar o trabalho completo dentro desses limites, sem interromper entre etapas rotineiras.
+- Pedir esclarecimento apenas quando faltar uma decisão essencial ou quando a ação puder afetar produção, dados, publicação, segurança ou conteúdo irreversível sem autorização suficiente.
+- Nunca afirmar que uma ação foi executada, que um ficheiro foi entregue ou que uma alteração está publicada sem confirmação verificável.
+
+## 29. Continuidade e conclusão do trabalho
+- Agrupar tarefas relacionadas e concluí-las de forma sequencial sempre que isso seja seguro e esteja dentro da autorização recebida.
+- Manter um registo de progresso com o que está concluído, em curso, pendente, bloqueado e por validar.
+- Retomar do último ponto confirmado, sem repetir trabalho concluído nem perder alterações válidas.
+- No fim, executar uma revisão global do âmbito solicitado e verificar se documentação, código, dados e interface permanecem coerentes.
+- Entregar um resumo final com alterações realizadas, validações efetuadas, resultados, ficheiros/links relevantes e passos ainda dependentes de autorização.
+- Não iniciar trabalho em segundo plano nem prometer acompanhamento futuro sem uma funcionalidade efetivamente configurada para esse efeito.
+
+## 30. Autorizações e limites de publicação
+- Uma autorização para consultar ou auditar não equivale a autorização para alterar dados.
+- Uma autorização para editar documentação não equivale a autorização para alterar código, dados de produção ou configurações.
+- Uma autorização para preparar um pull request não equivale a autorização para fazer merge ou publicar.
+- Uma autorização para gerar imagens não equivale a autorização para as carregar, aprovar ou publicar.
+- Respeitar sempre o âmbito exato do pedido e interromper antes de qualquer ação que ultrapasse esse âmbito.
+- Quando uma tarefa exigir várias etapas, executar as etapas preparatórias autorizadas e pedir autorização apenas para a etapa protegida que ainda não esteja autorizada.
