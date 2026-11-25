@@ -8,12 +8,12 @@ const client = readFileSync(new URL('../atina-server-client.js', import.meta.url
 // Localizar o script principal pelo conteúdo, não pela posição de uma tag
 // adjacente (que muda quando se acrescentam scripts ou atributos).
 const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)];
-const mainScript = inlineScripts.find(([, body]) => body.includes('function start(m,chosen=null)') && body.includes('function mixDraw'));
+const mainScript = inlineScripts.find(([, body]) => body.includes('function start(m,chosen=null') && body.includes('function mixDraw'));
 if (!mainScript) throw new Error('Não foi possível localizar o JavaScript principal.');
 new vm.Script(mainScript[1], { filename: 'index.html inline script' });
 new vm.Script(client, { filename: 'atina-server-client.js' });
 
-const localStart = html.match(/function start\(m,chosen=null\)\{([^]*?)\}\s*function mixDraw/);
+const localStart = html.match(/function start\(m,chosen=null(?:,geographicScope="Todos")?\)\{([^]*?)\}\s*function mixDraw/);
 if (!localStart || !localStart[1].includes('raceFinished=false')) throw new Error('O início local não reinicializa o estado da partida.');
 const localNext = html.match(/async function next\(\)\{([^]*?)\}\s*async function activateLandscapePresentation/);
 if (!localNext || !localNext[1].includes('await challengePause()') || !localNext[1].includes('await mixDraw()')) throw new Error('A transição local não apresenta a pausa e a preparação entre desafios.');
