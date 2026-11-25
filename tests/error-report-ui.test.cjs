@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const game = fs.readFileSync('index.html', 'utf8');
-const admin = fs.readFileSync('admin-images.html', 'utf8');
+const admin = fs.readFileSync('administrator.html', 'utf8');
 const globalReport = fs.readFileSync('assets/atina-global-error-report.js', 'utf8');
 
 test('game report supports optional uploaded or directly captured screenshots', () => {
