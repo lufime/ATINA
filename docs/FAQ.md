@@ -20,7 +20,7 @@ No ecrã inicial, abre **Jogar** e escolhe o modo. No Solo, o botão abre direta
 A seleção e os controlos de configuração são ajustados ao que está disponível. A configuração é validada automaticamente; o início fica disponível quando a seleção é válida.
 
 ## Posso escolher a região dos desafios?
-Nas partidas Solo e Mix, a configuração permite escolher **Todos os âmbitos**, **Portugal**, **Internacional** ou **Universal**. A seleção é aplicada aos desafios disponíveis e respeita também a categoria, a dificuldade e os desafios já concluídos. A lista é carregada a partir da classificação geográfica do catálogo.
+Nas partidas Solo e Mix, a configuração permite escolher **Todos os âmbitos**, **Portugal**, **Internacional** ou **Universal**. O âmbito é enviado ao servidor e aplicado diretamente à seleção dos desafios, em conjunto com a categoria, a dificuldade e os desafios já concluídos. A seleção é validada no catálogo real, sem depender de posições locais nem de uma associação presumida entre índices e IDs.
 
 ## Como funcionam as pistas?
 As pistas são reveladas progressivamente. A primeira pista não é revelada automaticamente por uma contagem decrescente: usa **Revelar próxima pista** para a revelar quando quiseres.
