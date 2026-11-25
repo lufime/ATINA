@@ -19,7 +19,6 @@ assert.match(client, /atinaChallengeProgressFill/);
 assert.match(client, /Desafios da partida/);
 assert.match(client, /atinaRenderChallengeProgress\(pos \+ 1, queue\.length\)/);
 console.log('Smart challenge selection and progress UI checks passed.');
-
 const progressRpc = sql.slice(sql.indexOf('create or replace function public.atina_challenge_catalog_progress'), sql.indexOf('revoke all on function public.atina_challenge_catalog_progress'));
 assert.match(progressRpc, /atina_challenge_exposures/);
 assert.match(progressRpc, /categories/);
@@ -29,11 +28,10 @@ assert.match(client, /function atinaRenderChallengeCatalogProgress\(data, select
 assert.match(client, /Já completaste todos os desafios desta categoria/);
 assert.match(client, /Já completaste todos os desafios desta dificuldade/);
 assert.match(client, /Contacta o administrador para adicionar novos desafios/);
-
 const mixFix = await readFile(new URL('../supabase/migrations/20261126100000_atina_mix_fallback_preserve_difficulty.sql', import.meta.url), 'utf8');
-assert.match(mixFix, /Expected 2 Mix fallback exclusion queries/);
-assert.match(mixFix, /Expected 1 Mix empty-queue fallback/);
+assert.match(mixFix, /Unexpected fallback query structure/);
+assert.match(mixFix, /Unexpected empty-queue fallback structure/);
 assert.match(mixFix, /p_difficulty=''mixed'' or c\.difficulty=p_difficulty/);
-assert.match(mixFix, /<> 4/);
+assert.match(mixFix, /<>7/);
 assert.match(mixFix, /pg_get_functiondef/);
 console.log('Mix fallback difficulty migration checks passed.');
