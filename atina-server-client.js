@@ -1048,7 +1048,7 @@ async function atinaServerRefresh() {
     atinaServerBusy = false;
   }
 }
-async function atinaServerStart(gameMode, category = null) {
+async function atinaServerStart(gameMode, category = null, geographicScope = 'Todos') {
   atinaServerStartRequested = true;
   atinaServerStopTimers();
   atinaServerBusy = true;
@@ -1069,7 +1069,8 @@ async function atinaServerStart(gameMode, category = null) {
       p_timed_mode_seconds: Number.isFinite(duration) ? duration : 60,
       p_challenge_count: challengeCount,
       p_device_token: ['solo', 'mix'].includes(gameMode) && atinaCloudProfile
-        ? atinaAccountSessionToken() : null
+        ? atinaAccountSessionToken() : null,
+      p_geographic_scope: ['Portugal', 'Internacional', 'Universal'].includes(geographicScope) ? geographicScope : 'Todos'
     });
     if (!response?.token || !response?.state?.session_id) throw new Error('Não foi possível iniciar a sessão segura.');
     atinaServerSession = { session_id: response.state.session_id, token: response.token };
@@ -1084,7 +1085,7 @@ async function atinaServerStart(gameMode, category = null) {
     atinaServerStartRequested = false;
   }
 }
-start = function(gameMode, category = null) { if (typeof atinaGuestLimitReached === 'function' && atinaGuestLimitReached()) { if (typeof atinaShowGuestRegistration === 'function') atinaShowGuestRegistration(); return Promise.resolve(); } if (typeof atinaActivateAutomaticSpeech === 'function') atinaActivateAutomaticSpeech(); return atinaServerStart(gameMode, category); };
+start = function(gameMode, category = null, geographicScope = 'Todos') { if (typeof atinaGuestLimitReached === 'function' && atinaGuestLimitReached()) { if (typeof atinaShowGuestRegistration === 'function') atinaShowGuestRegistration(); return Promise.resolve(); } if (typeof atinaActivateAutomaticSpeech === 'function') atinaActivateAutomaticSpeech(); return atinaServerStart(gameMode, category, geographicScope); };
 submit = async function() {
   if (!atinaServerState || locked || atinaServerBusy) return;
   const answer = $('answer').value.trim();
