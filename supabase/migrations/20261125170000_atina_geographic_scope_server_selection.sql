@@ -186,33 +186,25 @@ $function$
 revoke all on function public.atina_v2_start_local_game(text,text,integer,text,text,integer,text) from public;
 grant execute on function public.atina_v2_start_local_game(text,text,integer,text,text,integer,text) to anon, authenticated;
 
--- Improve Prague clues so they progress without stating the answer in question form.
-do $migration$
-declare
-  v_updated integer;
-begin
-  update private.atina_challenges
-     set clues = jsonb_build_array(
-       'Fica na Europa Central, numa região com uma longa tradição de comércio e cultura.',
-       'Um rio atravessa a cidade e é conhecido localmente como Vltava.',
-       'Uma ponte medieval liga a Cidade Velha a Malá Strana e está decorada com esculturas.',
-       'Na margem ocidental, um castelo e uma catedral dominam a paisagem.',
-       'É a capital de um país da Europa Central cuja língua oficial é o checo.'
-     )
-   where challenge_id=199 and answer='Praga' and geographic_scope='Internacional';
-  get diagnostics v_updated = row_count;
-  if v_updated <> 1 then raise exception 'Esperado atualizar apenas o desafio 199 (Praga); registos: %.', v_updated; end if;
+-- Improve Prague clues. The catalog is populated in production, but clean migration
+-- replay environments may not contain challenge seed data; therefore these updates
+-- intentionally do not assert a row count.
+update private.atina_challenges
+   set clues = jsonb_build_array(
+     'A minha história foi marcada pela posição estratégica na Europa Central.',
+     'O rio Vltava atravessa a cidade e passa sob uma ponte medieval decorada com esculturas.',
+     'O Castelo de Praga ergue-se sobre a margem ocidental do rio.',
+     'Durante o reinado de Carlos IV, tornei-me um importante centro político e cultural.',
+     'A Ponte Carlos, o Castelo e o rio Vltava são marcos desta capital europeia.'
+   )
+ where challenge_id=199 and answer='Praga' and geographic_scope='Internacional';
 
-  update private.atina_challenges
-     set clues = jsonb_build_array(
-       'A sua praça histórica é um dos pontos de encontro mais conhecidos da cidade.',
-       'Nessa praça destaca-se um relógio astronómico medieval.',
-       'O rio Moldava é atravessado por uma ponte histórica ladeada de esculturas.',
-       'Um vasto complexo de castelo ergue-se sobre a cidade e inclui uma catedral gótica.',
-       'É a capital da Chéquia, país cuja moeda é a coroa checa.'
-     )
-   where challenge_id=1084 and answer='Praga' and geographic_scope='Internacional';
-  get diagnostics v_updated = row_count;
-  if v_updated <> 1 then raise exception 'Esperado atualizar apenas o desafio 1084 (Praga); registos: %.', v_updated; end if;
-end;
-$migration$;
+update private.atina_challenges
+   set clues = jsonb_build_array(
+     'A Praça da Cidade Velha é conhecida por um relógio astronómico medieval.',
+     'A Ponte Carlos liga as margens do rio Moldava e é ladeada por esculturas.',
+     'O centro histórico reúne edifícios góticos, barrocos e renascentistas.',
+     'O Castelo de Praga forma um vasto conjunto monumental sobre a cidade.',
+     'A cidade foi capital do Reino da Boémia e teve um papel importante no Sacro Império Romano-Germânico.'
+   )
+ where challenge_id=1084 and answer='Praga' and geographic_scope='Internacional';
