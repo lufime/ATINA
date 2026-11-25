@@ -67,7 +67,7 @@ test('all inline game scripts parse after geographic filtering changes', () => {
     const attributes = game.slice(opening, tagEnd + 1).toLowerCase();
     const source = game.slice(tagEnd + 1, closing);
     cursor = closing + 9;
-    if (attributes.includes(' src=') || attributes.includes(' type="application/json"') || attributes.includes(" type='application/json'") || !source.trim()) continue;
+    if (attributes.includes(' src=') || attributes.includes('application/json') || attributes.includes('application/ld+json') || !source.trim()) continue;
     assert.doesNotThrow(() => new vm.Script(source, { filename: 'index-inline-script.js' }));
     scripts++;
   }
