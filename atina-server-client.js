@@ -1558,6 +1558,8 @@ function atinaOnlineCountBoot() {
       counter.textContent = '● ' + total + ' jogadores online';
       counter.title = 'Total de jogadores online, sem duplicações.';
       counter.dataset.count = String(total);
+      delete counter.dataset.humans;
+      delete counter.dataset.bots;
     } catch (error) {
       console.warn('ATINA: não foi possível atualizar a presença online.', error);
       counter.textContent = '● Presença online indisponível';
