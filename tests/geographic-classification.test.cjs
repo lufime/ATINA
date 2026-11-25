@@ -40,7 +40,7 @@ test('database migration maps every source classification and validates complete
   for (const row of rows) {
     assert.ok(migration.includes(`(${Number(row.challenge_id)}, '${row.classification}')`), `missing classification for challenge ${row.challenge_id}`);
   }
-  assert.match(migration, /geographic_scope set not null/);
+  assert.match(migration, /v_total > 0 and v_classified <> v_total/);
   assert.match(migration, /atina_challenges_geographic_scope_check/);
   assert.match(migration, /atina_public_challenge_geographic_scopes/);
   assert.match(migration, /grant execute .* to anon, authenticated/s);
