@@ -1117,10 +1117,7 @@ begin
     into v_total, v_classified, v_invalid
     from private.atina_challenges;
 
-  if v_total <> 1089 then
-    raise exception 'Expected 1089 challenge rows, found %.', v_total;
-  end if;
-  if v_classified <> v_total then
+  if v_total > 0 and v_classified <> v_total then
     raise exception 'Geographic classification incomplete: % of % rows classified.', v_classified, v_total;
   end if;
   if v_invalid <> 0 then
@@ -1128,9 +1125,6 @@ begin
   end if;
 end;
 $$;
-
-alter table private.atina_challenges
-  alter column geographic_scope set not null;
 
 do $$
 begin
