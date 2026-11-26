@@ -1,6 +1,6 @@
 -- Return authoritative active challenge availability for the Solo/Mix pre-game selector.
 -- The privileged table read stays behind a SECURITY DEFINER helper in the private schema.
--- The public API wrapper is SECURITY INVOKER and returns only an integer count.
+-- Only the narrowly-scoped public wrapper is executable by API roles.
 -- Code-only migration: do not apply to production without explicit approval.
 
 create or replace function private.atina_count_active_challenges_for_selection(
@@ -38,9 +38,8 @@ begin
 end;
 $function$;
 
-revoke all on function private.atina_count_active_challenges_for_selection(text,text,text) from public;
-grant usage on schema private to anon, authenticated;
-grant execute on function private.atina_count_active_challenges_for_selection(text,text,text) to anon, authenticated;
+-- API roles cannot call the privileged helper directly or gain private-schema access through this migration.
+revoke all on function private.atina_count_active_challenges_for_selection(text,text,text) from public, anon, authenticated;
 
 create or replace function public.atina_public_challenge_selection_count(
   p_geographic_scope text default 'Todos',
@@ -50,7 +49,7 @@ create or replace function public.atina_public_challenge_selection_count(
 returns integer
 language sql
 stable
-security invoker
+security definer
 set search_path to ''
 as $function$
   select private.atina_count_active_challenges_for_selection(
