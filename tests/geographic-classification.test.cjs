@@ -28,10 +28,10 @@ function parseCsv(source) {
     .map(item => Object.fromEntries(headers.map((header, index) => [header, item[index]])));
 }
 
-test('geographic classification source contains all 1,089 unique reviewed challenge IDs', () => {
+test('geographic classification source contains all 1,131 unique reviewed challenge IDs', () => {
   const rows = parseCsv(csv);
-  assert.equal(rows.length, 1089);
-  assert.equal(new Set(rows.map(row => row.challenge_id)).size, 1089);
+  assert.equal(rows.length, 1131);
+  assert.equal(new Set(rows.map(row => row.challenge_id)).size, 1131);
   assert.ok(rows.every(row => ['Portugal', 'Internacional', 'Universal'].includes(row.classification)));
   assert.ok(rows.every(row => ['Revisão textual efetuada; validação editorial concluída', 'Reconciliado com produção em 25/11/2026; validação histórica individual pendente'].includes(row.review_status)));
 });
