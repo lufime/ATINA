@@ -196,3 +196,467 @@ body.atina-screen-game #game #feedback,
   html{scroll-behavior:auto}
   *,*::before,*::after{transition:none!important;animation:none!important}
 }
+
+
+/* ATINA — avisos negativos sem bloco de fundo vermelho.
+   Mantém o contorno e o texto vermelhos para preservar a leitura do estado. */
+:is(
+  #feedback.is-wrong,
+  #feedback[data-tone="negative"],
+  [role="alert"][data-tone="negative"],
+  .atina-message--negative,
+  .atina-notice--negative,
+  .error:not(button):not(input):not(.btn),
+  .negative:not(button):not(input):not(.btn),
+  .is-error:not(button):not(input):not(.btn)
+){
+  background:var(--atina-game-panel)!important;
+  border-color:var(--atina-game-negative)!important;
+  color:#ffc0b8!important;
+}
+
+/* ATINA — paleta coerente para fundos, cartões e painéis.
+   Cores semânticas ficam reservadas aos avisos; superfícies normais usam azuis. */
+:root{
+  --atina-game-bg:#071321;
+  --atina-game-panel:#102238;
+  --atina-game-panel-raised:#162d45;
+  --atina-game-panel-soft:#0c1c2d;
+  --atina-game-border:rgba(151,190,219,.20);
+  --atina-game-border-strong:rgba(98,212,208,.38);
+}
+/* Superfície base: mesma cor em todas as áreas de conteúdo. */
+#home .home-block,
+#home .home-page-panel:not(.hidden),
+.home-block,
+.home-page-panel:not(.hidden),
+.card,
+.online-panel,
+.online-ranking,
+.daily-mission,
+.quick-match-panel,
+#result,
+#rankingPage,
+#networkLobby,
+#networkScoreboard,
+#atinaFaqPage,
+#atinaFriendsPage,
+#atinaAccessPage,
+#atinaHowToPage,
+#surprisePanel,
+#networkTimeoutPanel,
+#atinaSoloReportPanel,
+#teamVotePanel,
+#solutionImage,
+.solution-panel,
+.result-panel{
+  background:var(--atina-game-panel)!important;
+  border-color:var(--atina-game-border)!important;
+  color:var(--atina-game-text)!important;
+}
+/* Cartões interiores e elementos de escolha: um nível acima do painel. */
+#home .tile,
+.tile,
+.atina-badges>*,
+.pill{
+  background:var(--atina-game-panel-raised)!important;
+  border-color:var(--atina-game-border)!important;
+  color:var(--atina-game-text)!important;
+}
+/* Áreas de navegação, formulários e informação secundária: nível mais escuro. */
+#atinaMainNav,
+.home-page-nav,
+.home-nav-more-grid,
+#home input:not([type=checkbox]):not([type=radio]),
+#home select,
+#home textarea,
+#game input:not([type=checkbox]):not([type=radio]),
+#game select,
+#game textarea,
+#home .answer,
+#game .answer{
+  background:var(--atina-game-panel-soft)!important;
+}
+/* Acolhimento com destaque azul, sem cores de estado. */
+#home .home-welcome,
+.home-welcome{
+  background:linear-gradient(135deg,#15354e,#10263c)!important;
+  border-color:var(--atina-game-border-strong)!important;
+}
+/* Superfície do desafio e pistas mantêm contraste sem blocos cromáticos fortes. */
+body.atina-screen-game #game>.card{
+  background:var(--atina-game-panel)!important;
+}
+body.atina-screen-game #game .clue{
+  background:var(--atina-game-panel-raised)!important;
+}
+body.atina-screen-game #game .clue.hidden-clue{
+  background:var(--atina-game-panel-soft)!important;
+}
+/* Estados negativos sem fundo vermelho em qualquer página. */
+:is(
+  #feedback.is-wrong,
+  #feedback[data-tone="negative"],
+  [role="alert"][data-tone="negative"],
+  .atina-message--negative,
+  .atina-notice--negative,
+  .error:not(button):not(input):not(.btn),
+  .negative:not(button):not(input):not(.btn),
+  .is-error:not(button):not(input):not(.btn)
+){
+  background:var(--atina-game-panel)!important;
+}
+
+/* ATINA — acabamento de videojogo: HUD, missões, escolhas e feedback visual.
+   Só apresentação; não altera fluxos, conteúdo, pontuação ou mecânicas. */
+:root{
+  --atina-game-glow:rgba(98,212,208,.16);
+  --atina-game-gold-glow:rgba(240,195,107,.13);
+}
+/* Identidade e HUD: leitura imediata de estado e progresso. */
+.brand{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 92% 0%,rgba(98,212,208,.13),transparent 42%),
+    linear-gradient(135deg,#122d46 0%,#102238 72%)!important;
+}
+.brand:after{
+  content:"";
+  position:absolute;
+  inset:auto 18px 0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--atina-game-primary),var(--atina-game-accent),transparent);
+  opacity:.75;
+  pointer-events:none;
+}
+.brand .stats>*{
+  box-shadow:inset 0 1px rgba(255,255,255,.04),0 4px 12px rgba(0,0,0,.16);
+  font-variant-numeric:tabular-nums;
+}
+/* Navegação com estado ativo semelhante a separador de jogo. */
+#atinaMainNav .home-nav-btn.active,
+.home-page-nav .home-nav-btn.active{
+  position:relative;
+  box-shadow:inset 0 0 0 1px rgba(98,212,208,.12),0 4px 14px rgba(0,0,0,.16)!important;
+}
+#atinaMainNav .home-nav-btn.active:after,
+.home-page-nav .home-nav-btn.active:after{
+  content:"";
+  position:absolute;
+  left:24%;right:24%;bottom:3px;height:2px;
+  border-radius:2px;background:var(--atina-game-primary);
+  box-shadow:0 0 9px var(--atina-game-glow);
+}
+/* Títulos de secção e cartões: hierarquia visual de níveis e missões. */
+#home .section,.section{
+  display:flex;align-items:center;gap:9px;
+  color:var(--atina-game-accent)!important;
+  text-transform:uppercase;
+  letter-spacing:.09em!important;
+  font-size:12px;
+}
+#home .section:before,.section:before{
+  content:"";
+  width:17px;height:3px;flex:0 0 17px;border-radius:3px;
+  background:var(--atina-game-primary);
+  box-shadow:0 0 10px var(--atina-game-glow);
+}
+#home .home-block,
+#home .home-page-panel:not(.hidden),
+.home-block,
+.home-page-panel:not(.hidden),
+.daily-mission,
+.quick-match-panel,
+.online-panel,
+.online-ranking,
+#result,#rankingPage,#networkLobby,#networkScoreboard,
+#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage{
+  position:relative;
+  overflow:hidden;
+}
+#home .home-block:before,
+#home .home-page-panel:not(.hidden):before,
+.home-block:before,
+.daily-mission:before,
+.quick-match-panel:before,
+.online-panel:before,
+.online-ranking:before{
+  content:"";
+  position:absolute;left:0;top:14px;bottom:14px;width:3px;
+  border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,var(--atina-game-primary),rgba(98,212,208,.08));
+  pointer-events:none;
+}
+/* Cartões de escolha com resposta tátil e destaque sem exagero. */
+#home .tile,.tile{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,#193650,#142b42)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 7px 18px rgba(0,0,0,.17)!important;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+#home .tile:after,.tile:after{
+  content:"";
+  position:absolute;right:-24px;top:-30px;width:74px;height:74px;
+  border:1px solid rgba(98,212,208,.12);border-radius:22px;
+  transform:rotate(35deg);pointer-events:none;
+}
+#home .tile:hover,.tile:hover{
+  transform:translateY(-2px);
+  border-color:var(--atina-game-border-strong)!important;
+  background:linear-gradient(145deg,#1c405a,#17334c)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 10px 22px rgba(0,0,0,.23),0 0 0 1px var(--atina-game-glow)!important;
+}
+#home .tile:active,.tile:active{transform:translateY(0) scale(.99)}
+/* Ecrã de boas-vindas e início rápido: entrada clara para a partida. */
+#home .home-welcome,.home-welcome{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(98,212,208,.16),transparent 45%),
+    linear-gradient(135deg,#15354e,#10263c)!important;
+}
+.home-welcome-kicker,.atina-fast-play-title{
+  color:var(--atina-game-primary)!important;
+  font-size:11px!important;font-weight:900!important;
+  letter-spacing:.14em!important;text-transform:uppercase;
+}
+.atina-fast-play{
+  border:1px solid var(--atina-game-border-strong)!important;
+  border-radius:var(--atina-game-radius)!important;
+  background:linear-gradient(145deg,#102b43,#0c1c2d)!important;
+  box-shadow:var(--atina-game-shadow)!important;
+}
+.atina-fast-play-title{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.atina-fast-play-title span{color:var(--atina-game-muted)!important;letter-spacing:0;text-transform:none;font-weight:650}
+/* Progresso, XP e estatísticas com aparência de HUD. */
+.daily-stat,.daily-stats>*,
+.atina-xp-panel,.atina-badges>*,
+.atina-count{
+  border-color:var(--atina-game-border)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 4px 12px rgba(0,0,0,.14);
+}
+.daily-stat{
+  background:linear-gradient(145deg,#193650,#10263b)!important;
+  border:1px solid var(--atina-game-border)!important;border-radius:12px!important;
+}
+.daily-stat b,.atina-xp-panel strong{color:var(--atina-game-accent)}
+.daily-progress{background:#071725!important;border:1px solid rgba(151,190,219,.12)}
+.daily-progress span{box-shadow:0 0 10px var(--atina-game-glow)}
+.atina-xp-panel{background:linear-gradient(145deg,#102b43,#0c1c2d)!important}
+/* Botões: controlos consistentes, com ação principal claramente identificável. */
+.btn:not(.secondary):not(.danger){
+  box-shadow:0 5px 14px rgba(0,0,0,.20),inset 0 1px rgba(255,255,255,.24)!important;
+  letter-spacing:.01em;
+}
+.btn:not(.secondary):not(.danger):hover{
+  box-shadow:0 7px 18px rgba(0,0,0,.24),0 0 0 2px var(--atina-game-glow),inset 0 1px rgba(255,255,255,.28)!important;
+  transform:translateY(-1px);
+}
+.btn.secondary,button.secondary,.btn.back,#back{
+  box-shadow:inset 0 1px rgba(255,255,255,.04)!important;
+}
+.btn.danger,button.danger,#pass{
+  box-shadow:inset 0 1px rgba(255,255,255,.06)!important;
+}
+/* Feedback do desafio: painel integrado no HUD, sem fundos vermelhos. */
+#game #feedback{
+  background:#0c1c2d!important;
+  border:1px solid var(--atina-game-border)!important;
+  box-shadow:inset 3px 0 var(--atina-game-accent);
+}
+#game #feedback.is-correct,[data-tone="positive"]{
+  box-shadow:inset 3px 0 var(--atina-game-positive);
+}
+#game #feedback.is-wrong,[data-tone="negative"]{
+  background:var(--atina-game-panel)!important;
+  box-shadow:inset 3px 0 var(--atina-game-negative);
+}
+/* Movimento discreto, desligado para quem prefere movimento reduzido. */
+@media(prefers-reduced-motion:reduce){
+  #home .tile,.tile,.btn{transition:none!important}
+  #home .tile:hover,.tile:hover,.btn:hover{transform:none!important}
+}
+
+/* ATINA — layout de jogo: palco, HUD, área de pistas e controlos. */
+body.atina-screen-game #game>.card{
+  padding:clamp(16px,2.5vw,26px)!important;
+  border-radius:22px!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(98,212,208,.075),transparent 48%),
+    linear-gradient(160deg,#122b43,#0e2033 76%)!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.035)!important;
+}
+#game>.row:first-child{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px!important;margin:0 0 10px!important;
+}
+#game .atina-timer-stack{justify-content:center!important;margin:4px 0 16px!important}
+#game .atina-clock-face{
+  width:100%;max-width:560px;margin:0 auto;padding:15px 18px!important;
+  display:grid;grid-template-columns:1fr;justify-items:center;gap:9px;
+  border:1px solid var(--atina-game-border-strong)!important;
+  border-radius:19px!important;
+  background:linear-gradient(145deg,#102d45,#0b1b2c)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 10px 28px rgba(0,0,0,.22)!important;
+}
+#game .atina-live-stats{
+  width:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px!important;margin:2px 0 6px!important;
+}
+#game .atina-live-stats span{
+  min-width:0;padding:8px 6px!important;text-align:center;
+  border:1px solid var(--atina-game-border)!important;border-radius:10px!important;
+  background:#0a1b2b!important;color:#c8d8e5!important;
+  font-size:clamp(10px,1.5vw,12px)!important;font-weight:750;
+}
+#game .atina-live-stats b{color:var(--atina-game-accent);font-variant-numeric:tabular-nums}
+#game .atina-clock-face>strong{
+  color:var(--atina-game-muted)!important;font-size:11px!important;
+  letter-spacing:.16em;text-transform:uppercase;
+}
+#timerDisplay{
+  min-width:150px!important;min-height:72px!important;padding:8px 22px!important;
+  border:1px solid rgba(98,212,208,.38)!important;border-radius:15px!important;
+  background:linear-gradient(180deg,#173c50,#102b40)!important;
+  color:#eaffff!important;font-size:clamp(36px,7vw,48px)!important;
+  font-variant-numeric:tabular-nums;letter-spacing:.035em;
+  text-shadow:0 0 18px rgba(98,212,208,.20);
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 0 24px rgba(98,212,208,.07)!important;
+}
+#game>#category,#game>#level,#game .row:has(>#category){
+  gap:8px!important;justify-content:center;
+}
+#game #category,#game #level{
+  padding:6px 12px!important;border:1px solid var(--atina-game-border)!important;
+  border-radius:999px!important;background:#0b1d2e!important;
+  color:var(--atina-game-primary)!important;font-size:11px!important;
+  font-weight:850!important;letter-spacing:.06em;text-transform:uppercase;
+}
+#game #player{text-align:center;color:var(--atina-game-accent)!important;font-size:13px!important;font-weight:800!important}
+#game #question{
+  max-width:760px;margin:8px auto 18px!important;text-align:center;
+  font-size:clamp(22px,3.3vw,30px)!important;line-height:1.22!important;
+  letter-spacing:-.035em!important;
+}
+#game .visual{
+  overflow:hidden;border:1px solid var(--atina-game-border-strong)!important;
+  border-radius:17px!important;background:#081725!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.24)!important;
+}
+#game .clues{
+  display:grid!important;grid-template-columns:1fr;gap:8px!important;
+  margin:12px 0 16px!important;
+}
+#game .clue{
+  position:relative;padding:12px 14px 12px 17px!important;
+  border:1px solid var(--atina-game-border)!important;border-radius:12px!important;
+  background:linear-gradient(110deg,#17344c,#12283d)!important;
+  color:#e5edf5!important;line-height:1.5!important;
+}
+#game .clue:not(.hidden-clue):before{
+  content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;
+  border-radius:0 3px 3px 0;background:var(--atina-game-primary);
+}
+#game .clue.hidden-clue{
+  border-style:dashed!important;background:#0a1a2a!important;color:#8094a8!important;
+}
+#game #clueProgress{
+  padding:5px 9px;border:1px solid var(--atina-game-border);
+  border-radius:999px;background:#0a1b2b;color:var(--atina-game-accent)!important;
+  font-weight:800;font-variant-numeric:tabular-nums;
+}
+#game label[for="answer"]{
+  margin:18px 0 7px!important;color:var(--atina-game-primary)!important;
+  font-size:11px!important;letter-spacing:.14em!important;
+}
+#game #answer{
+  width:100%;min-height:58px!important;padding:14px 16px!important;
+  border:1px solid rgba(98,212,208,.35)!important;border-radius:13px!important;
+  background:#081a2a!important;color:#fff!important;
+  font-size:18px!important;font-weight:650!important;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.20)!important;
+}
+#game #answer:focus{
+  outline:none!important;border-color:var(--atina-game-primary)!important;
+  box-shadow:0 0 0 3px rgba(98,212,208,.13),inset 0 2px 8px rgba(0,0,0,.20)!important;
+}
+#game .game-control-row,#game .actions{
+  display:flex!important;align-items:stretch;gap:9px!important;
+  margin:10px 0 13px!important;
+}
+#game .game-control-row>.btn,#game .actions>.btn{
+  flex:1 1 0;min-width:0;min-height:48px!important;
+  display:inline-flex;align-items:center;justify-content:center;
+  text-align:center;white-space:normal;
+}
+#game .clue-controls{margin-top:8px!important}
+#game .answer-controls{margin-top:9px!important}
+#game #submit,#game #continue{
+  background:linear-gradient(135deg,#80e5dc,#4bc5bf)!important;
+  color:#06272b!important;border:1px solid rgba(180,255,248,.34)!important;
+  box-shadow:0 7px 20px rgba(48,190,182,.18),inset 0 1px rgba(255,255,255,.36)!important;
+}
+#game #nextClue,#game #listenCurrentClue,#game #voice{
+  background:linear-gradient(145deg,#1a3a54,#142c43)!important;
+  border:1px solid var(--atina-game-border-strong)!important;color:#dcecf5!important;
+}
+#game #pass{
+  background:linear-gradient(145deg,#4a3a25,#30291f)!important;
+  border:1px solid rgba(240,195,107,.38)!important;color:#ffe1a2!important;
+}
+#game #feedback{
+  min-height:42px;padding:10px 13px!important;border-radius:12px!important;
+  font-weight:800!important;line-height:1.45!important;
+}
+#game #solutionImage{
+  padding:clamp(15px,2.5vw,24px)!important;border:1px solid var(--atina-game-border-strong)!important;
+  border-radius:16px!important;background:linear-gradient(145deg,#142f47,#102238)!important;
+}
+#game #solutionImage h2,#game #solutionImage strong{
+  color:var(--atina-game-accent)!important;
+}
+#game #solutionImage p,#game #solutionImage li{
+  font-size:clamp(16px,2vw,19px)!important;line-height:1.55!important;
+}
+#result,#rankingPage,#networkLobby,#networkScoreboard,#mimicaGame>.card{
+  padding:clamp(15px,2.5vw,24px)!important;border-radius:20px!important;
+}
+#atinaPregamePanel{
+  border:1px solid var(--atina-game-border-strong)!important;border-radius:20px!important;
+  background:linear-gradient(155deg,#142f48,#0b1c2d)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.48)!important;
+}
+#atinaPregamePanel label{
+  display:block;margin:14px 0 6px;color:var(--atina-game-muted);
+  font-size:12px;font-weight:850;letter-spacing:.07em;text-transform:uppercase;
+}
+#atinaPregameModes button[aria-pressed="true"],
+#atinaPregameModes button.active{
+  background:#19475a!important;color:#eaffff!important;border-color:var(--atina-game-primary)!important;
+}
+#atinaPregameSummary{
+  padding:12px!important;border:1px solid var(--atina-game-border)!important;
+  border-radius:11px!important;background:#091b2b!important;
+  color:var(--atina-game-accent)!important;font-weight:850!important;text-align:center;
+}
+@media(max-width:600px){
+  body.atina-screen-game>.wrap{width:calc(100% - 14px)!important;padding-top:7px!important}
+  body.atina-screen-game #game>.card{padding:12px!important;border-radius:17px!important}
+  #game .atina-clock-face{padding:11px!important;gap:7px}
+  #game .atina-live-stats{gap:4px!important}
+  #game .atina-live-stats span{padding:7px 3px!important;font-size:10px!important}
+  #timerDisplay{min-width:132px!important;min-height:62px!important;font-size:36px!important}
+  #game #question{font-size:22px!important;margin:8px auto 13px!important}
+  #game .game-control-row,#game .actions{gap:6px!important}
+  #game .game-control-row>.btn,#game .actions>.btn{min-height:46px!important;padding:8px 7px!important;font-size:12px!important}
+  #game #answer{min-height:54px!important;font-size:17px!important}
+  #game .clue{padding:10px 11px 10px 14px!important;font-size:13px!important}
+}
+@media(max-width:380px){
+  #game .game-control-row{flex-wrap:wrap}
+  #game .game-control-row>.btn{flex:1 1 calc(50% - 4px)}
+  #game .actions>.btn{font-size:11px!important}
+}
