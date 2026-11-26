@@ -105,24 +105,41 @@ Garantir que cada desafio do ATINA oferece uma descoberta progressiva, justa, fa
 
 Aplicar a todos os desafios, independentemente da categoria ou classificação geográfica: **Portugal, Internacional e Universal**.
 
-Cada solução deve apresentar, nesta ordem, as secções seguintes, de acordo com a informação factual e cultural disponível:
+A descrição da solução deve apresentar, nesta ordem, os seguintes campos, de acordo com a informação factual e cultural disponível:
 
-1. **Resumo:** explicação clara do que é a resposta, com o contexto necessário e a informação essencial para o jogador compreender a solução.
-2. **Curiosidades:** factos interessantes, pormenores pouco conhecidos e informações surpreendentes relacionados diretamente com a solução.
-3. **Lenda:** quando existir uma lenda, mito, tradição popular ou narrativa cultural relevante e associada à solução, apresentar uma explicação breve e contextualizada.
+1. **Resumo:** campo obrigatório, com uma explicação clara do que é a resposta, o contexto necessário e a informação essencial para o jogador compreender a solução.
+2. **Curiosidades:** campo a apresentar quando existirem factos interessantes, pormenores pouco conhecidos ou informações surpreendentes, diretamente relacionados com a solução e devidamente verificáveis.
+3. **Lenda:** campo opcional, apresentado apenas quando existir uma lenda, mito, tradição popular ou narrativa cultural relevante e suficientemente documentada, associada à solução.
 
-Regras de apresentação e conteúdo:
+### Regras de apresentação dos campos
 
-- Apresentar o Resumo, as Curiosidades e a Lenda apenas depois de o jogador revelar ou acertar a resposta. Nunca os mostrar antes nem utilizar o seu conteúdo como pistas.
-- Redigir todas as secções por palavras próprias, em português de Portugal, com linguagem natural, clara e apelativa. Não copiar textos de fontes externas.
+- Apresentar o conteúdo complementar apenas depois de o jogador revelar ou acertar a resposta. Nunca o mostrar antes nem utilizar o seu conteúdo como pistas.
+- O campo **Resumo** é sempre apresentado.
+- O campo **Curiosidades** só é apresentado quando contém conteúdo válido. Se não houver curiosidades suficientemente fiáveis e relevantes, ocultar completamente o campo.
+- O campo **Lenda** só é apresentado quando contém uma lenda, mito, tradição popular ou narrativa cultural relevante e documentada.
+- Quando não se aplicar uma lenda, **ocultar completamente o campo Lenda**: não mostrar o título, etiqueta, separador, espaço vazio, mensagem substitutiva ou indicação de inexistência de lenda.
+- Não criar campos vazios nem apresentar cabeçalhos sem conteúdo.
+- A ausência de Lenda não deve prejudicar o layout, a ordem ou a apresentação dos restantes campos.
+- A ordem, quando os campos existirem, é sempre: **Resumo → Curiosidades → Lenda**.
+
+### Regras editoriais e factuais
+
+- Redigir todos os campos por palavras próprias, em português de Portugal, com linguagem natural, clara e apelativa. Não copiar textos de fontes externas.
 - O Resumo deve explicar a solução de forma factual e suficiente, sem se limitar a repetir a resposta ou o enunciado.
 - As Curiosidades devem acrescentar informação nova, interessante, relevante e verificável, sem repetir as pistas, a pergunta ou o Resumo.
 - A Lenda deve identificar claramente a narrativa como lenda, mito ou tradição popular. Nunca apresentar acontecimentos lendários como factos históricos comprovados.
 - Quando existirem versões diferentes de uma lenda, preservar as variantes relevantes e assinalar que existem versões distintas, sem escolher ou inventar uma versão como definitiva.
-- Não inventar factos, curiosidades ou lendas para preencher qualquer secção. Se não houver uma curiosidade suficientemente fiável e relevante, omitir essa parte. Se não existir uma lenda relevante ou documentada, omitir a secção Lenda.
+- Não inventar factos, curiosidades ou lendas para preencher qualquer campo. A existência dos campos Curiosidades e Lenda depende sempre da informação disponível e validada.
 - Distinguir sempre factos confirmados, tradições populares e interpretações. Não transformar uma tradição oral numa afirmação factual.
 - Confirmar a informação em fontes fiáveis antes de aprovar o conteúdo. Não usar Wikipédia como fonte editorial do conteúdo apresentado no jogo.
 - Não apresentar fontes, URLs, referências bibliográficas ou ligações externas ao jogador.
 - Esta apresentação é complementar à resposta e não pode alterar, substituir, reordenar ou acrescentar elementos às cinco pistas do desafio.
 - Não alterar a dificuldade original do desafio por causa do Resumo, das Curiosidades, da Lenda ou de qualquer conteúdo apresentado após a resposta.
 - A regra é transversal a todos os desafios existentes e novos, de Portugal, Internacionais e Universais.
+
+### Requisitos técnicos de apresentação
+
+- A interface deve verificar se cada campo tem conteúdo válido antes de o apresentar.
+- A ausência do campo Lenda deve ser representada como campo não aplicável/omitido, e não como texto explicativo.
+- A lógica de apresentação não pode criar títulos ou contentores vazios para campos omitidos.
+- Garantir que descrições antigas, sem estrutura explícita, continuam a ser apresentadas sem inventar ou inferir uma Lenda.
