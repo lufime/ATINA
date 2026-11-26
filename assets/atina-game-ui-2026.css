@@ -306,3 +306,176 @@ body.atina-screen-game #game .clue.hidden-clue{
 ){
   background:var(--atina-game-panel)!important;
 }
+
+/* ATINA — acabamento de videojogo: HUD, missões, escolhas e feedback visual.
+   Só apresentação; não altera fluxos, conteúdo, pontuação ou mecânicas. */
+:root{
+  --atina-game-glow:rgba(98,212,208,.16);
+  --atina-game-gold-glow:rgba(240,195,107,.13);
+}
+/* Identidade e HUD: leitura imediata de estado e progresso. */
+.brand{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 92% 0%,rgba(98,212,208,.13),transparent 42%),
+    linear-gradient(135deg,#122d46 0%,#102238 72%)!important;
+}
+.brand:after{
+  content:"";
+  position:absolute;
+  inset:auto 18px 0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--atina-game-primary),var(--atina-game-accent),transparent);
+  opacity:.75;
+  pointer-events:none;
+}
+.brand .stats>*{
+  box-shadow:inset 0 1px rgba(255,255,255,.04),0 4px 12px rgba(0,0,0,.16);
+  font-variant-numeric:tabular-nums;
+}
+/* Navegação com estado ativo semelhante a separador de jogo. */
+#atinaMainNav .home-nav-btn.active,
+.home-page-nav .home-nav-btn.active{
+  position:relative;
+  box-shadow:inset 0 0 0 1px rgba(98,212,208,.12),0 4px 14px rgba(0,0,0,.16)!important;
+}
+#atinaMainNav .home-nav-btn.active:after,
+.home-page-nav .home-nav-btn.active:after{
+  content:"";
+  position:absolute;
+  left:24%;right:24%;bottom:3px;height:2px;
+  border-radius:2px;background:var(--atina-game-primary);
+  box-shadow:0 0 9px var(--atina-game-glow);
+}
+/* Títulos de secção e cartões: hierarquia visual de níveis e missões. */
+#home .section,.section{
+  display:flex;align-items:center;gap:9px;
+  color:var(--atina-game-accent)!important;
+  text-transform:uppercase;
+  letter-spacing:.09em!important;
+  font-size:12px;
+}
+#home .section:before,.section:before{
+  content:"";
+  width:17px;height:3px;flex:0 0 17px;border-radius:3px;
+  background:var(--atina-game-primary);
+  box-shadow:0 0 10px var(--atina-game-glow);
+}
+#home .home-block,
+#home .home-page-panel:not(.hidden),
+.home-block,
+.home-page-panel:not(.hidden),
+.daily-mission,
+.quick-match-panel,
+.online-panel,
+.online-ranking,
+#result,#rankingPage,#networkLobby,#networkScoreboard,
+#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage{
+  position:relative;
+  overflow:hidden;
+}
+#home .home-block:before,
+#home .home-page-panel:not(.hidden):before,
+.home-block:before,
+.daily-mission:before,
+.quick-match-panel:before,
+.online-panel:before,
+.online-ranking:before{
+  content:"";
+  position:absolute;left:0;top:14px;bottom:14px;width:3px;
+  border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,var(--atina-game-primary),rgba(98,212,208,.08));
+  pointer-events:none;
+}
+/* Cartões de escolha com resposta tátil e destaque sem exagero. */
+#home .tile,.tile{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,#193650,#142b42)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 7px 18px rgba(0,0,0,.17)!important;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+#home .tile:after,.tile:after{
+  content:"";
+  position:absolute;right:-24px;top:-30px;width:74px;height:74px;
+  border:1px solid rgba(98,212,208,.12);border-radius:22px;
+  transform:rotate(35deg);pointer-events:none;
+}
+#home .tile:hover,.tile:hover{
+  transform:translateY(-2px);
+  border-color:var(--atina-game-border-strong)!important;
+  background:linear-gradient(145deg,#1c405a,#17334c)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 10px 22px rgba(0,0,0,.23),0 0 0 1px var(--atina-game-glow)!important;
+}
+#home .tile:active,.tile:active{transform:translateY(0) scale(.99)}
+/* Ecrã de boas-vindas e início rápido: entrada clara para a partida. */
+#home .home-welcome,.home-welcome{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(98,212,208,.16),transparent 45%),
+    linear-gradient(135deg,#15354e,#10263c)!important;
+}
+.home-welcome-kicker,.atina-fast-play-title{
+  color:var(--atina-game-primary)!important;
+  font-size:11px!important;font-weight:900!important;
+  letter-spacing:.14em!important;text-transform:uppercase;
+}
+.atina-fast-play{
+  border:1px solid var(--atina-game-border-strong)!important;
+  border-radius:var(--atina-game-radius)!important;
+  background:linear-gradient(145deg,#102b43,#0c1c2d)!important;
+  box-shadow:var(--atina-game-shadow)!important;
+}
+.atina-fast-play-title{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.atina-fast-play-title span{color:var(--atina-game-muted)!important;letter-spacing:0;text-transform:none;font-weight:650}
+/* Progresso, XP e estatísticas com aparência de HUD. */
+.daily-stat,.daily-stats>*,
+.atina-xp-panel,.atina-badges>*,
+.atina-count{
+  border-color:var(--atina-game-border)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 4px 12px rgba(0,0,0,.14);
+}
+.daily-stat{
+  background:linear-gradient(145deg,#193650,#10263b)!important;
+  border:1px solid var(--atina-game-border)!important;border-radius:12px!important;
+}
+.daily-stat b,.atina-xp-panel strong{color:var(--atina-game-accent)}
+.daily-progress{background:#071725!important;border:1px solid rgba(151,190,219,.12)}
+.daily-progress span{box-shadow:0 0 10px var(--atina-game-glow)}
+.atina-xp-panel{background:linear-gradient(145deg,#102b43,#0c1c2d)!important}
+/* Botões: controlos consistentes, com ação principal claramente identificável. */
+.btn:not(.secondary):not(.danger){
+  box-shadow:0 5px 14px rgba(0,0,0,.20),inset 0 1px rgba(255,255,255,.24)!important;
+  letter-spacing:.01em;
+}
+.btn:not(.secondary):not(.danger):hover{
+  box-shadow:0 7px 18px rgba(0,0,0,.24),0 0 0 2px var(--atina-game-glow),inset 0 1px rgba(255,255,255,.28)!important;
+  transform:translateY(-1px);
+}
+.btn.secondary,button.secondary,.btn.back,#back{
+  box-shadow:inset 0 1px rgba(255,255,255,.04)!important;
+}
+.btn.danger,button.danger,#pass{
+  box-shadow:inset 0 1px rgba(255,255,255,.06)!important;
+}
+/* Feedback do desafio: painel integrado no HUD, sem fundos vermelhos. */
+#game #feedback{
+  background:#0c1c2d!important;
+  border:1px solid var(--atina-game-border)!important;
+  box-shadow:inset 3px 0 var(--atina-game-accent);
+}
+#game #feedback.is-correct,[data-tone="positive"]{
+  box-shadow:inset 3px 0 var(--atina-game-positive);
+}
+#game #feedback.is-wrong,[data-tone="negative"]{
+  background:var(--atina-game-panel)!important;
+  box-shadow:inset 3px 0 var(--atina-game-negative);
+}
+/* Movimento discreto, desligado para quem prefere movimento reduzido. */
+@media(prefers-reduced-motion:reduce){
+  #home .tile,.tile,.btn{transition:none!important}
+  #home .tile:hover,.tile:hover,.btn:hover{transform:none!important}
+}
