@@ -2355,3 +2355,10 @@ body.atina-screen-game #game #feedback{
   body.atina-screen-game #game .clue p,
   body.atina-screen-game #game #clues>*{font-size:14.5px!important}
 }
+
+/* ATINA — fundo global uniforme em todos os ecrãs */
+html,body{
+  background-color:#071321!important;
+  background-image:none!important;
+  background:#071321!important;
+}
