@@ -2914,7 +2914,7 @@ function screen(id){
  });
  const nav=$('atinaMainNav');if(nav){nav.classList.toggle('hidden',id!=='home');nav.style.setProperty('display',id==='home'?'':'none','important');}if(id==='result')loadOnlineRanking();
  // O HUD flutuante só é ativado no ecrã dos desafios.
- const gameHud=document.querySelector('#game .atina-timer-stack');
+ const gameHud=document.querySelector('#game .atina-timer-stack')||document.querySelector('body>.atina-timer-stack');
  const gameSection=$('game');
  if(gameHud&&gameSection){
   if(id==='game'){
@@ -5545,7 +5545,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{font-size:9.5px!important;padding:4px 7px!important}
 }
 </style>
-<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-16">
+<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-17">
 <script src="./assets/atina-global-error-report.js?v=20261126-1"></script>
 
 
