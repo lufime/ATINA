@@ -1532,3 +1532,57 @@ body>.atina-timer-stack>.atina-clock-face>.atina-live-stats{
   body.atina-screen-game #game .clue-controls,
   body.atina-screen-game #game .answer-controls{grid-template-columns:1fr 1fr!important}
 }
+
+
+/* ATINA — o estado PREPARA-TE tem duas linhas; não pode ser cortado no HUD mobile. */
+@media(max-width:760px){
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:3px!important;
+    min-width:0!important;
+    width:100%!important;
+    min-height:58px!important;
+    height:auto!important;
+    padding:5px 4px!important;
+    font-size:clamp(19px,5vw,25px)!important;
+    line-height:1.05!important;
+    letter-spacing:0!important;
+    white-space:normal!important;
+    overflow:hidden!important;
+    overflow-wrap:normal!important;
+  }
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-label{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    font-size:clamp(8px,2.1vw,10px)!important;
+    line-height:1.1!important;
+    font-weight:850!important;
+    letter-spacing:.08em!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+  }
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-count{
+    display:block!important;
+    width:100%!important;
+    font-size:clamp(23px,6vw,29px)!important;
+    line-height:1!important;
+    font-weight:950!important;
+    letter-spacing:.025em!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+  }
+}
+@media(max-width:390px){
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay{
+    min-height:54px!important;
+    padding:4px 2px!important;
+    font-size:18px!important;
+  }
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-label{font-size:8px!important}
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-count{font-size:23px!important}
+}
