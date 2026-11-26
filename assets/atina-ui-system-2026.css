@@ -1,0 +1,273 @@
+/* ATINA — Sistema visual integral 2026
+   Camada de apresentação: preserva IDs, eventos, regras e integração existentes. */
+:root{
+  color-scheme:dark;
+  --atina-bg:#071321;
+  --atina-surface:#102238;
+  --atina-surface-2:#162d45;
+  --atina-surface-3:#1d3954;
+  --atina-line:rgba(154,190,220,.16);
+  --atina-line-strong:rgba(122,183,220,.34);
+  --atina-text:#f4f7fb;
+  --atina-muted:#a9bbcd;
+  --atina-cyan:#62d4d0;
+  --atina-cyan-deep:#1a8f91;
+  --atina-gold:#f0c36b;
+  --atina-coral:#f18d83;
+  --atina-shadow:0 18px 48px rgba(0,0,0,.28);
+}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
+body{
+  min-height:100vh;color:var(--atina-text);
+  background:
+    radial-gradient(ellipse at 12% -8%,rgba(40,116,142,.24),transparent 38%),
+    radial-gradient(ellipse at 92% 12%,rgba(176,132,67,.10),transparent 30%),
+    linear-gradient(160deg,#091827 0%,#071321 56%,#0a1928 100%);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+button,input,select,textarea{font:inherit}
+button{transition:transform .16s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(98,212,208,.75);outline-offset:3px
+}
+.wrap{width:min(100% - 36px,1180px);max-width:1180px;margin-inline:auto;padding:22px 0 56px}
+.brand{
+  position:relative;overflow:hidden;display:grid;justify-items:center;text-align:center;
+  padding:28px clamp(18px,4vw,42px);border:1px solid var(--atina-line-strong);
+  border-radius:28px;background:
+    radial-gradient(circle at 15% 0%,rgba(98,212,208,.14),transparent 42%),
+    linear-gradient(130deg,rgba(20,51,76,.98),rgba(13,35,55,.98) 62%,rgba(39,49,57,.96));
+  box-shadow:var(--atina-shadow)
+}
+.brand:after{content:"";position:absolute;inset:auto -8% -90px 42%;height:160px;border-radius:50%;background:rgba(98,212,208,.07);filter:blur(24px);pointer-events:none}
+.brand .eyebrow{font-size:10px;letter-spacing:.28em;font-weight:850;color:var(--atina-cyan)}
+.brand .logo-image{width:min(46%,300px);max-height:100px;object-fit:contain}
+.brand .logo{font-size:clamp(38px,7vw,64px);letter-spacing:.18em;color:#f4d18b;text-shadow:0 8px 28px rgba(240,195,107,.16)}
+.brand .tag{font-size:14px;letter-spacing:.12em;color:#c2d5e4}
+.brand .stats{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-top:18px;padding-top:16px;border-top:1px solid var(--atina-line);width:100%}
+.brand .stats>*{padding:8px 13px;border:1px solid var(--atina-line);border-radius:999px;background:rgba(5,20,34,.38);font-size:12px;font-weight:750}
+#accountIndicator,#atinaSignedInUser{border-color:rgba(98,212,208,.3)!important;background:rgba(9,40,54,.68)!important;color:#c9f3ee!important}
+.home-page-nav,#atinaMainNav{
+  position:sticky!important;top:8px!important;z-index:1000;
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  margin:16px 0 22px;padding:8px;border:1px solid var(--atina-line);
+  border-radius:18px;background:rgba(9,25,41,.88);backdrop-filter:blur(18px);
+  box-shadow:0 10px 30px rgba(0,0,0,.22)
+}
+.home-page-nav .home-nav-btn,.home-nav-more>summary{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:10px 16px;border:1px solid transparent;border-radius:12px;
+  background:transparent;color:#c3d3e2;font-size:13px;font-weight:800;cursor:pointer;list-style:none
+}
+.home-page-nav .home-nav-btn:hover,.home-nav-more>summary:hover{background:var(--atina-surface-2);color:white}
+.home-page-nav .home-nav-btn.active{border-color:rgba(98,212,208,.34);background:linear-gradient(135deg,rgba(35,117,122,.32),rgba(24,62,82,.72));color:#d9fffb;box-shadow:inset 0 0 0 1px rgba(98,212,208,.08)}
+.home-nav-more{margin-left:auto;position:relative}
+.home-nav-more-grid{
+  position:absolute;right:0;top:calc(100% + 9px);z-index:1100;
+  display:grid;grid-template-columns:repeat(2,minmax(150px,1fr));gap:5px;
+  min-width:min(360px,calc(100vw - 28px));padding:9px;
+  border:1px solid var(--atina-line-strong);border-radius:16px;
+  background:#0c2034;box-shadow:var(--atina-shadow)
+}
+.home-nav-more-grid .home-nav-btn{justify-content:flex-start;width:100%}
+#home{display:block;min-width:0}
+#home>.home-page-panel:not(.hidden),#home>.home-block.home-page-panel:not(.hidden){
+  display:block;animation:atina-enter .24s ease both
+}
+@keyframes atina-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.home-welcome{
+  position:relative;overflow:hidden;margin:0 0 18px;padding:24px clamp(18px,3vw,32px);
+  border:1px solid var(--atina-line-strong);border-radius:22px;
+  background:linear-gradient(120deg,rgba(21,57,78,.96),rgba(17,39,60,.96));
+  box-shadow:0 12px 32px rgba(0,0,0,.2)
+}
+.home-welcome-kicker{font-size:10px;font-weight:900;letter-spacing:.22em;color:var(--atina-cyan)}
+.home-welcome h2{margin:8px 0;font-size:clamp(24px,4vw,34px);line-height:1.12;letter-spacing:-.025em}
+.home-welcome p{max-width:760px;margin:8px 0 0;color:var(--atina-muted);line-height:1.55}
+.section{margin:24px 0 12px;color:#d6e5f1;font-size:15px;font-weight:900;letter-spacing:.02em}
+.card,.home-block,.online-panel,.online-ranking,.daily-mission,.home-welcome{
+  border-color:var(--atina-line)!important;box-shadow:0 12px 30px rgba(0,0,0,.16)
+}
+.card{
+  border-radius:20px!important;background:linear-gradient(145deg,rgba(19,43,65,.98),rgba(12,31,49,.98))!important;
+  color:var(--atina-text)
+}
+.card h2,.card h3{color:#f4f7fb;letter-spacing:-.015em}
+.muted,.small{color:var(--atina-muted)}
+.home-block{margin:16px 0;padding:clamp(16px,2.5vw,24px);border:1px solid var(--atina-line);border-radius:22px;background:rgba(14,34,53,.74)}
+.home-welcome+.card,.atina-howto-card{margin:12px 0;padding:clamp(16px,2.2vw,23px)!important}
+.atina-howto-card h3{margin:0 0 9px;font-size:17px}
+.atina-howto-card p,.atina-howto-card li{color:#c3d1de;line-height:1.65}
+.modes{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px}
+.tile{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  min-height:132px;padding:18px!important;text-align:left!important;
+  border:1px solid var(--atina-line-strong)!important;border-radius:18px!important;
+  background:linear-gradient(145deg,#17344e,#10263c)!important;color:var(--atina-text)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.14)
+}
+.tile:before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(120deg,rgba(98,212,208,.08),transparent 54%);pointer-events:none}
+.tile:hover{transform:translateY(-3px);border-color:rgba(98,212,208,.58)!important;box-shadow:0 14px 28px rgba(0,0,0,.24)}
+.tile>span{font-size:28px!important;line-height:1.15}
+.tile b{margin-top:12px!important;font-size:15px!important}
+.tile small{margin-top:5px!important;color:#a9bfd0!important;font-size:12px!important;line-height:1.4}
+.actions{gap:10px}
+.btn{
+  min-height:48px;padding:12px 18px;border:1px solid transparent;border-radius:13px;
+  background:linear-gradient(135deg,#f2cf83,#dcae57);color:#172333;
+  font-size:14px;font-weight:850;box-shadow:0 7px 18px rgba(0,0,0,.18)
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(0,0,0,.25);filter:brightness(1.06)}
+.btn:active{transform:translateY(0) scale(.985)}
+.btn.secondary{
+  border:1px solid rgba(128,177,205,.27);background:linear-gradient(135deg,#1b3a56,#142d45);
+  color:#e1edf6;box-shadow:none
+}
+.btn.secondary:hover{border-color:rgba(98,212,208,.52);background:linear-gradient(135deg,#20506a,#183a55)}
+.btn.danger{border-color:rgba(241,141,131,.32);background:linear-gradient(135deg,#713c43,#492a35);color:#ffe4e0}
+.pill{border-color:var(--atina-line-strong)!important;background:#102b43!important;color:#c8d9e7!important;border-radius:999px}
+#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkScoreboard{min-width:0}
+#game>.card{
+  position:relative;max-width:980px;margin:14px auto 0;padding:clamp(18px,3vw,34px)!important;
+  border:1px solid rgba(98,212,208,.24)!important;border-radius:26px!important;
+  background:linear-gradient(155deg,#122c45 0%,#0d2238 62%,#10283d 100%)!important;
+  box-shadow:0 24px 64px rgba(0,0,0,.3)
+}
+#game>.card>.row:first-child{gap:10px!important;flex-wrap:wrap}
+#game .atina-live-stats{
+  position:sticky;top:68px;z-index:30;display:grid!important;
+  width:calc(100% - 154px);grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 16px;
+  padding:8px;border:1px solid rgba(98,212,208,.24);border-radius:15px;
+  background:rgba(7,24,39,.94);backdrop-filter:blur(14px);box-shadow:0 8px 22px rgba(0,0,0,.2)
+}
+#game .atina-live-stats>span{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:8px 5px;border-radius:10px;background:rgba(26,59,79,.65);color:#c4d9e8;font-size:12px;font-weight:750;text-align:center}
+#game .atina-live-stats b{color:#f5d18a;font-size:17px;font-variant-numeric:tabular-nums}
+#game #player{margin:14px 0 5px!important;color:var(--atina-cyan);font-size:14px!important;font-weight:850;letter-spacing:.04em}
+#game #question{max-width:850px;margin:8px 0 20px!important;font-size:clamp(25px,4vw,40px)!important;line-height:1.13!important;letter-spacing:-.03em!important}
+#game .row:has(#timerDisplay){position:fixed;top:68px;right:max(12px,calc((100vw - 980px)/2 + 20px));z-index:31;width:136px;justify-content:flex-end!important;margin:0!important;padding:0!important}
+#game .row:has(#timerDisplay)>strong{display:none}
+#game #timerDisplay{
+  width:100%;min-width:0!important;min-height:58px!important;padding:9px 12px!important;
+  border:1px solid rgba(240,195,107,.62)!important;border-radius:15px!important;
+  background:linear-gradient(135deg,#142c42,#0a1c2e)!important;color:#f6d68f!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 0 18px rgba(240,195,107,.07)!important;
+  font-size:clamp(30px,5vw,40px)!important;line-height:1!important
+}
+#game #timerDisplay.urgent{color:#ff8279!important;border-color:#f18d83!important}
+#game .visual{height:clamp(210px,36vw,390px);margin:18px 0;border-radius:19px;border-color:var(--atina-line-strong);background:#0b1c2c}
+#game .clues{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:10px;margin:12px 0 18px}
+#game .clue{padding:15px 17px;border:1px solid rgba(98,212,208,.13);border-left:4px solid var(--atina-cyan);border-radius:12px;background:linear-gradient(110deg,#193b55,#142f47);font-size:14px;line-height:1.55}
+#game .clue.hidden-clue{border-left-color:#59748b;background:#132b40;color:#9fb4c7}
+#game .game-control-row{gap:10px}
+#game .game-control-row .btn{min-height:52px}
+#game .answer{
+  min-height:60px;padding:15px 17px;border:1px solid rgba(128,177,205,.38);
+  border-radius:14px;background:#091b2d;color:#f5f8fb;font-size:17px
+}
+#game .answer:focus{border-color:var(--atina-cyan);box-shadow:0 0 0 3px rgba(98,212,208,.13)}
+#game #submit{background:linear-gradient(135deg,#74e0d2,#39b8b5);color:#08242d}
+#game #nextClue{border-color:rgba(98,212,208,.35);background:linear-gradient(135deg,#176a76,#155267);color:#efffff}
+#game #pass{min-height:52px}
+#game .feedback{padding:10px 12px;border-radius:12px;line-height:1.5}
+#game #solutionImage{border-color:var(--atina-line-strong);background:#102b42!important}
+#game #continue{background:linear-gradient(135deg,#7be0c4,#4ab99c);color:#092b28}
+#networkLobby,#networkScoreboard,#mimicaGame>.card,#result,#rankingPage{
+  max-width:980px;margin:14px auto;padding:clamp(18px,3vw,30px)!important;
+  border:1px solid var(--atina-line-strong)!important;border-radius:24px!important;
+  background:linear-gradient(150deg,#122d46,#0c2136)!important;box-shadow:var(--atina-shadow)
+}
+#networkLobby h2,#result h2,#rankingPage h2{font-size:clamp(25px,4vw,34px);letter-spacing:-.03em}
+#networkLobby button,#mimicaGame button,#result button,#rankingPage button{min-height:46px}
+#mimicaGame #mimeTimer{width:min(100%,320px);margin:16px auto;padding:14px;border:1px solid rgba(240,195,107,.55);border-radius:18px;background:#091c2d;color:#f6d68f;font-size:clamp(42px,8vw,62px);font-weight:950}
+#mimicaGame #mimeWord{font-size:clamp(28px,5vw,46px)!important;color:#f5d18a!important}
+#mimicaGame #mimePictureClue{min-height:230px!important;border-color:var(--atina-line-strong)!important;border-radius:18px!important;background:#091c2d!important}
+#result #atinaResultProgressSummary,#result .online-ranking,#rankingPage .online-ranking{
+  margin:14px 0;padding:17px;border:1px solid var(--atina-line)!important;border-radius:16px;background:rgba(19,48,70,.72)
+}
+#result #resultHome{margin-top:16px}
+.daily-mission{
+  margin:18px 0;padding:clamp(16px,2.4vw,24px);border:1px solid rgba(240,195,107,.26);
+  border-radius:22px;background:linear-gradient(135deg,rgba(65,58,43,.35),rgba(16,42,61,.9))
+}
+.daily-mission-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.daily-kicker{font-size:10px;letter-spacing:.2em;font-weight:900;color:var(--atina-gold)}
+.daily-progress{height:9px;border-radius:999px;background:#091a2a;overflow:hidden}
+.daily-progress span{height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--atina-cyan),var(--atina-gold))}
+.atina-xp-panel{margin-top:15px;padding:15px;border:1px solid var(--atina-line);border-radius:15px;background:rgba(6,22,36,.42)}
+.atina-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.atina-badges>*{border:1px solid var(--atina-line-strong);border-radius:12px;background:#17334b;padding:8px 10px}
+#atinaPregameOverlay{z-index:15000!important;padding:20px!important;background:rgba(2,10,18,.82)!important;backdrop-filter:blur(12px)}
+#atinaPregamePanel{
+  width:min(100%,560px)!important;max-height:min(88dvh,820px);overflow:auto;
+  padding:clamp(20px,4vw,34px)!important;border:1px solid rgba(98,212,208,.34)!important;
+  border-radius:24px!important;background:linear-gradient(150deg,#16334d,#0c2034)!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.55)!important
+}
+#atinaPregameTitle{font-size:clamp(25px,4vw,32px)!important;text-align:center;color:#f4d18b}
+#atinaPregamePanel label{display:block;margin:17px 0 7px;color:#d4e3ef;font-size:13px;font-weight:850}
+#atinaPregamePanel input,#atinaPregamePanel select{
+  width:100%;min-height:48px;padding:11px 13px;border:1px solid var(--atina-line-strong);
+  border-radius:12px;background:#091c2e;color:var(--atina-text)
+}
+#atinaPregameSummary{border-color:rgba(98,212,208,.25)!important;background:rgba(6,25,40,.7)!important;border-radius:14px!important}
+#atinaPregameButtons{gap:10px}
+#atinaPregameButtons button{min-height:50px}
+#atinaPregameModes button{flex:1}
+#atinaPregameCountControl{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;gap:8px}
+#atinaPregameCountControl button{border:1px solid var(--atina-line-strong);border-radius:12px;background:#1b4059;color:white;font-size:22px}
+#networkTimeoutPanel,#teamVotePanel,#screenShareHelp,#atinaSocialShare{
+  border:1px solid var(--atina-line)!important;border-radius:18px!important;background:#112b43!important
+}
+#screenShareHelp .clue{border-radius:12px}
+#rankingPage ol,#networkScoreboard ol{padding-left:25px}
+#rankingPage li,#networkScoreboard li{padding:9px;border-bottom:1px solid var(--atina-line);color:#d8e5ef}
+#home input,#home select,#home textarea,#networkLobby input,#networkLobby select{
+  border:1px solid var(--atina-line-strong);border-radius:12px;background:#091c2e;color:var(--atina-text)
+}
+#home .home-login-badge{border:1px solid rgba(98,212,208,.25);border-radius:999px;background:#123a43;color:#c8fff4}
+#atinaUpdateNotice{border:1px solid rgba(240,195,107,.28)!important;border-radius:14px!important;background:rgba(58,48,30,.5)!important;color:#ffe3a6!important}
+.footer{margin-top:30px;color:#8098ad;letter-spacing:.04em}
+.hidden{display:none!important}
+@media(max-width:760px){
+  .wrap{width:min(100% - 22px,1180px);padding:12px 0 38px}
+  .brand{padding:18px 14px;border-radius:20px}
+  .brand .logo-image{width:min(70%,250px);max-height:76px}
+  .brand .stats{gap:6px;margin-top:12px;padding-top:10px}
+  .brand .stats>*{font-size:10px;padding:7px 9px}
+  .home-page-nav,#atinaMainNav{top:4px!important;gap:4px;margin:10px 0 14px;padding:6px;border-radius:15px}
+  .home-page-nav .home-nav-btn,.home-nav-more>summary{min-height:42px;padding:9px 11px;font-size:12px}
+  .home-nav-more{margin-left:auto}
+  .home-nav-more-grid{right:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .home-welcome{padding:18px;border-radius:17px}
+  .home-block{padding:14px;border-radius:17px}
+  .modes{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .tile{min-height:112px;padding:13px!important;border-radius:15px!important}
+  .tile b{font-size:13px!important;margin-top:8px!important}
+  .tile small{font-size:10px!important}
+  #game>.card{padding:14px 12px 18px!important;border-radius:19px!important}
+  #game .atina-live-stats{top:54px;width:calc(100% - 126px);gap:5px;padding:6px}
+  #game .atina-live-stats>span{flex-direction:column;gap:2px;padding:6px 3px;font-size:10px}
+  #game .atina-live-stats b{font-size:16px}
+  #game .row:has(#timerDisplay){top:54px;right:10px;width:112px}
+  #game #timerDisplay{min-width:112px!important;min-height:50px!important;font-size:29px!important}
+  #game #question{font-size:clamp(24px,7vw,32px)!important}
+  #game .clues{grid-template-columns:1fr}
+  #game .game-control-row{grid-template-columns:1fr 1fr}
+  #game .game-control-row .btn{min-height:48px;padding:9px 7px;font-size:12px}
+  #game .answer{min-height:56px;font-size:16px}
+  #networkLobby,#networkScoreboard,#mimicaGame>.card,#result,#rankingPage{padding:14px!important;border-radius:18px!important}
+}
+@media(max-width:420px){
+  .wrap{width:calc(100% - 16px)}
+  .home-page-nav .home-nav-btn{padding:8px 9px;font-size:11px}
+  .home-page-nav .home-nav-btn span{display:inline}
+  .modes{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tile{min-height:104px;padding:10px!important}
+  #game .game-control-row{grid-template-columns:1fr}
+  #game .atina-live-stats{top:50px;width:calc(100% - 120px)}
+  #game .row:has(#timerDisplay){top:50px;right:8px;width:108px}
+  #atinaPregameButtons{grid-template-columns:1fr!important}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
