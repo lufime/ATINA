@@ -1,0 +1,196 @@
+/* ATINA — experiência dos jogadores | refinamento visual global
+   Apenas apresentação: preserva IDs, navegação, eventos, regras e integrações. */
+:root{
+  --atina-ui-bg:#071522;
+  --atina-ui-panel:#10263d;
+  --atina-ui-panel-2:#17334e;
+  --atina-ui-line:rgba(128,177,211,.25);
+  --atina-ui-cyan:#70d6d0;
+  --atina-ui-gold:#f0c875;
+  --atina-ui-text:#f4f7fb;
+  --atina-ui-muted:#b2c3d4;
+}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  background:
+    radial-gradient(ellipse at 14% -10%,rgba(36,117,147,.22),transparent 36%),
+    radial-gradient(ellipse at 90% 0%,rgba(203,160,83,.10),transparent 28%),
+    linear-gradient(160deg,#091a2a 0%,#071522 62%,#091a2a 100%);
+  color:var(--atina-ui-text);
+}
+body:not(.atina-screen-game)>.wrap{
+  width:min(100% - 28px,1180px);
+  max-width:1180px;
+  padding:18px 0 48px;
+}
+.brand{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(108,171,206,.42);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 85% 12%,rgba(240,200,117,.12),transparent 28%),
+    linear-gradient(125deg,#102c48 0%,#173b5b 58%,#102b44 100%);
+  box-shadow:0 18px 42px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.06);
+}
+.brand:after{
+  content:"";position:absolute;inset:auto 0 0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(112,214,208,.45),transparent);
+  pointer-events:none;
+}
+.brand .logo-image{max-width:min(100%,360px);max-height:112px}
+.brand .tag{color:#c6d8e7;font-weight:600;letter-spacing:.045em}
+.brand .stats{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:8px 18px;
+  color:#f4e2b8;
+}
+#atinaMainNav.home-page-nav{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  padding:8px;
+  border:1px solid rgba(112,166,202,.34);
+  border-radius:18px;
+  background:rgba(7,21,35,.94);
+  box-shadow:0 12px 30px rgba(0,0,0,.24);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+#atinaMainNav>.home-nav-btn,
+#atinaMainNav .home-nav-more>summary{
+  min-width:0;min-height:48px;padding:9px 8px;
+  border:1px solid transparent;border-radius:12px;
+  color:#c8d7e5;font-weight:850;
+  transition:background .16s ease,border-color .16s ease,color .16s ease,transform .16s ease;
+}
+#atinaMainNav>.home-nav-btn:hover,
+#atinaMainNav .home-nav-more>summary:hover{
+  background:rgba(68,117,151,.2);border-color:rgba(112,166,202,.25);
+}
+#atinaMainNav>.home-nav-btn.active,
+#atinaMainNav .home-nav-more .home-nav-btn.active{
+  border-color:rgba(240,200,117,.58);
+  background:linear-gradient(135deg,rgba(45,83,112,.95),rgba(22,53,78,.98));
+  color:#ffe4a6;
+  box-shadow:inset 0 1px rgba(255,255,255,.08),0 5px 14px rgba(0,0,0,.16);
+}
+#atinaMainNav .home-nav-more-grid{
+  border:1px solid rgba(112,166,202,.35);
+  background:#0c2033;
+  box-shadow:0 20px 44px rgba(0,0,0,.4);
+}
+#home{gap:16px}
+#home .home-page-panel{min-width:0}
+#home .home-welcome{
+  border:1px solid rgba(112,166,202,.35);
+  background:
+    radial-gradient(circle at 88% 12%,rgba(240,200,117,.10),transparent 32%),
+    linear-gradient(140deg,#183e5d,#10283f 75%);
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+}
+#home .home-welcome h2{letter-spacing:-.025em}
+#home .home-welcome p{color:#c7d7e6}
+#home .home-block,
+#home .card,
+#home .categories-block,
+#home .settings-block,
+#home .play-block,
+#home .account-block,
+#home .network-block{
+  border-color:var(--atina-ui-line);
+  box-shadow:0 10px 26px rgba(0,0,0,.16);
+}
+#home .section{color:#f3d18c}
+#home .tile{
+  border-color:rgba(116,165,199,.30);
+  background:linear-gradient(145deg,#193650,#10273d);
+}
+#home .tile:hover{
+  border-color:rgba(112,214,208,.62);
+  background:linear-gradient(145deg,#1c4059,#14324b);
+}
+#home .btn{
+  min-height:48px;
+  box-shadow:0 5px 14px rgba(0,0,0,.16);
+}
+#home .btn.secondary{
+  border:1px solid rgba(125,167,198,.32);
+}
+#home .home-hint,#home .muted.small{color:var(--atina-ui-muted)}
+#home input,#home select,#home textarea,
+#game input,#game select,#game textarea{
+  border-color:#496984;
+  border-radius:12px;
+}
+#home input:focus-visible,#home select:focus-visible,#home textarea:focus-visible,
+#game input:focus-visible,#game select:focus-visible,#game textarea:focus-visible,
+#home button:focus-visible,#game button:focus-visible{
+  outline:3px solid rgba(112,214,208,.78);
+  outline-offset:3px;
+}
+body.atina-screen-game>.wrap{
+  width:min(100% - 24px,820px);
+  max-width:820px;
+  padding:12px 0 34px;
+}
+body.atina-screen-game #game{
+  max-width:780px;
+}
+body.atina-screen-game #game>.card{
+  border-color:rgba(112,166,202,.38);
+  box-shadow:0 18px 42px rgba(0,0,0,.24);
+}
+body.atina-screen-game #game .clue{
+  border-left-color:var(--atina-ui-cyan);
+  background:linear-gradient(100deg,#1a3851,#142c43);
+}
+body.atina-screen-game #game .actions .btn,
+body.atina-screen-game #game .game-control-row .btn{
+  min-height:46px;
+}
+body.atina-screen-game #game .answer{
+  border-color:#54738c;
+}
+#rankingPage,#atinaFaqPage,#atinaKnownIssuesPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage{
+  min-width:0;
+}
+@media(min-width:900px){
+  body:not(.atina-screen-game)>.wrap{padding-top:22px}
+  .brand{padding:22px 26px}
+  #atinaMainNav.home-page-nav{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #home .home-welcome{padding:26px 30px}
+  #home .home-block,#home .card{border-radius:20px}
+  #home .home-welcome p{max-width:68ch}
+}
+@media(max-width:760px){
+  body:not(.atina-screen-game)>.wrap{
+    width:calc(100% - 18px);padding:10px 0 30px;
+  }
+  .brand{padding:16px 15px;border-radius:19px}
+  .brand .logo-image{max-height:88px}
+  #atinaMainNav.home-page-nav{
+    top:4px;gap:4px;padding:6px;border-radius:15px;
+  }
+  #atinaMainNav>.home-nav-btn,
+  #atinaMainNav .home-nav-more>summary{
+    min-height:44px;padding:8px 4px;font-size:12px;
+  }
+  #home{gap:12px}
+  #home .home-welcome{padding:18px 16px}
+}
+@media(max-width:390px){
+  body:not(.atina-screen-game)>.wrap{width:calc(100% - 14px)}
+  .brand{padding:14px 12px}
+  .brand .stats{font-size:12px}
+  #atinaMainNav.home-page-nav{gap:3px;padding:4px}
+  #atinaMainNav>.home-nav-btn,
+  #atinaMainNav .home-nav-more>summary{
+    min-height:42px;padding:7px 2px;font-size:10px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
