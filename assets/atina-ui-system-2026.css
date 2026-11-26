@@ -1085,3 +1085,33 @@ body.atina-screen-game #game .actions{
   body.atina-screen-game #game>.card{padding:12px 10px 14px!important}
   body.atina-screen-game #game #clues{max-height:31vh!important}
 }
+
+
+/* Correção definitiva do rótulo de preparação no HUD estreito. */
+body>.atina-timer-stack>.atina-clock-face>#timerDisplay{
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;min-width:0!important;
+  width:100%!important;max-width:100%!important;
+  overflow:hidden!important;white-space:normal!important;
+}
+body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-label,
+body #timerDisplay .timer-prepare-label{
+  display:block!important;box-sizing:border-box!important;
+  width:100%!important;max-width:100%!important;
+  margin:0!important;padding:0!important;
+  font-size:10px!important;line-height:1.15!important;
+  font-weight:800!important;letter-spacing:.04em!important;
+  white-space:nowrap!important;word-break:normal!important;
+  overflow-wrap:normal!important;text-align:center!important;
+}
+body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-count,
+body #timerDisplay .timer-prepare-count{
+  display:block!important;box-sizing:border-box!important;
+  width:100%!important;max-width:100%!important;
+  margin:2px 0 0!important;padding:0!important;
+  font-size:21px!important;line-height:1!important;
+  font-weight:900!important;letter-spacing:0!important;
+  white-space:nowrap!important;word-break:normal!important;
+  overflow-wrap:normal!important;text-align:center!important;
+}
