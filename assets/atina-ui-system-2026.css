@@ -1228,3 +1228,62 @@ body.atina-screen-game #game .actions{
     white-space:normal!important;
   }
 }
+
+
+/* Garantir espaço para a barra inferior de utilitários sem tapar as ações do jogo. */
+body.atina-screen-game #game>.card{
+  padding-bottom:calc(124px + env(safe-area-inset-bottom))!important;
+}
+body.atina-screen-game #game .clue-controls,
+body.atina-screen-game #game .answer-controls,
+body.atina-screen-game #game .actions{
+  position:static!important;
+  inset:auto!important;
+  top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+  transform:none!important;
+  float:none!important;
+  clear:both!important;
+}
+body.atina-screen-game #game .clue-controls{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%!important;
+  margin:12px 0 18px!important;
+}
+body.atina-screen-game #game .answer-controls{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  width:100%!important;
+  margin:10px 0 16px!important;
+}
+body.atina-screen-game #game .actions{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:9px!important;
+  width:100%!important;
+  margin:14px 0 0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+}
+body.atina-screen-game #game .actions>.btn{
+  position:static!important;
+  min-width:0!important;
+  width:100%!important;
+  min-height:52px!important;
+  margin:0!important;
+  transform:none!important;
+}
+@media(max-width:420px){
+  body.atina-screen-game #game>.card{
+    padding-bottom:calc(132px + env(safe-area-inset-bottom))!important;
+  }
+  body.atina-screen-game #game .actions{gap:7px!important}
+  body.atina-screen-game #game .actions>.btn{
+    min-height:50px!important;
+    padding:10px 6px!important;
+    font-size:14px!important;
+  }
+}
