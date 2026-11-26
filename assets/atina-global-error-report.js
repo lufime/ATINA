@@ -23,7 +23,7 @@
  const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
  const root=document.createElement('div');root.id='atinaGlobalReportRoot';
  root.innerHTML=`
- <button id="atinaGlobalReportButton" type="button" aria-haspopup="dialog">🐞 Reportar erro</button>
+ <button id="atinaGlobalReportButton" type="button" aria-haspopup="dialog" aria-label="Reportar erro" title="Reportar erro">🐞 Reportar erro</button>
  <div id="atinaGlobalReportOverlay" role="presentation">
   <section id="atinaGlobalReportDialog" role="dialog" aria-modal="true" aria-labelledby="atinaGlobalReportTitle">
    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
