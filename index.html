@@ -1496,10 +1496,15 @@ label.section{line-height:1.35!important}
 }
 @media(prefers-reduced-motion:reduce){#atinaMainNav *{scroll-behavior:auto!important;transition:none!important}}
 </style>
+
+
 </head>
 <body><div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.313"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.313</strong></div><main class="wrap">
-<div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite" style="margin:12px 0;padding:13px 15px;border:1px solid #d3ad68;border-radius:14px;background:linear-gradient(110deg,#49391f,#302a22);color:#ffe2a0;font-weight:700;line-height:1.45">
- <div style="display:flex;gap:10px;align-items:flex-start"><span aria-hidden="true">🛠️</span><div><strong>AVISO AOS JOGADORES</strong><div id="atinaUpdateNoticeMessage" style="font-weight:500;margin-top:4px"></div></div></div>
+<div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
+ <details id="atinaUpdateNoticeDetails">
+  <summary><span aria-hidden="true">🛠️</span> <strong>AVISO AOS JOGADORES</strong><span class="atina-notice-hint">Ver aviso</span></summary>
+  <div id="atinaUpdateNoticeMessage"></div>
+ </details>
 </div>
 
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina." decoding="async" fetchpriority="high">
@@ -5434,7 +5439,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 #game :where(p,li,blockquote,article,section,aside,small,label) *{min-width:0;max-width:100%;overflow-wrap:anywhere}
 </style>
 
-<script src="./assets/atina-settings-cache.js"></script>
+<script src="./assets/atina-settings-cache.js?v=20261126-1"></script>
 <style id="atina-mobile-polish-20261123">
 /* Mobile refinement: safe viewport, readable inputs, comfortable touch, no horizontal overflow. Desktop unaffected. */
 @media (max-width:700px){
@@ -5462,7 +5467,71 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  html{scroll-behavior:auto!important}
 }
 </style>
-<script src="./assets/atina-global-error-report.js"></script>
+<style id="atina-mobile-home-compact-v1">
+/* Página inicial: menos altura sem esconder informação ou funcionalidades */
+@media(max-width:600px){
+ #home{gap:9px!important}
+ #home .brand{
+  padding:10px 11px!important;margin:0!important;border-radius:16px!important;
+  gap:4px!important;
+ }
+ #home .brand .eyebrow{font-size:9px!important;letter-spacing:.16em!important;line-height:1.15!important}
+ #home .brand .logo-image{width:min(68%,250px)!important;max-height:62px!important;object-fit:contain!important;margin:1px auto!important}
+ #home .brand .tag{font-size:12px!important;line-height:1.2!important;margin:0!important}
+ #home #accountIndicator,#home #atinaSignedInUser{
+  min-height:0!important;margin:2px auto 0!important;padding:5px 9px!important;
+  font-size:11px!important;line-height:1.2!important;
+ }
+ #home .brand .stats{
+  display:flex!important;flex-wrap:wrap!important;justify-content:center!important;
+  align-items:center!important;gap:5px!important;margin:3px 0 0!important;
+  padding:7px 0 0!important;
+ }
+ #home .brand .stats>*{
+  flex:0 1 auto!important;width:auto!important;max-width:100%!important;
+  min-height:29px!important;padding:5px 8px!important;font-size:10.5px!important;
+  line-height:1.2!important;white-space:normal!important;
+ }
+ #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 1 auto!important;width:auto!important;max-width:100%!important;
+  min-height:28px!important;margin:0!important;padding:5px 8px!important;
+  border-radius:999px!important;font-size:10px!important;line-height:1.15!important;
+ }
+ #home #atinaOnlineFriendsBadge{margin-left:0!important}
+ #home .home-page-nav{margin:0 0 2px!important}
+ #home .home-welcome{margin-top:0!important}
+ #atinaUpdateNotice{
+  margin:6px 0 8px!important;padding:0!important;border-radius:13px!important;
+  font-size:11px!important;line-height:1.25!important;
+ }
+ #atinaUpdateNotice #atinaUpdateNoticeDetails{padding:0!important}
+ #atinaUpdateNotice summary{
+  display:flex!important;align-items:center!important;gap:7px!important;
+  min-height:38px!important;padding:8px 10px!important;cursor:pointer!important;
+  list-style:none!important;white-space:normal!important;
+ }
+ #atinaUpdateNotice summary::-webkit-details-marker{display:none}
+ #atinaUpdateNotice summary strong{font-size:10.5px!important;letter-spacing:.035em}
+ #atinaUpdateNotice .atina-notice-hint{
+  margin-left:auto!important;color:#e6c77e!important;font-size:10px!important;
+  font-weight:700!important;white-space:nowrap!important;
+ }
+ #atinaUpdateNotice details[open] summary{border-bottom:1px solid #d7a91d55}
+ #atinaUpdateNotice #atinaUpdateNoticeMessage{
+  padding:8px 10px 10px!important;font-size:12px!important;line-height:1.4!important;
+  font-weight:650!important;
+ }
+}
+@media(max-width:380px){
+ #home .brand .logo-image{max-height:54px!important;width:min(64%,220px)!important}
+ #home .brand .stats{gap:4px!important}
+ #home .brand .stats>*{font-size:10px!important;padding:4px 7px!important}
+ #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{font-size:9.5px!important;padding:4px 7px!important}
+}
+</style>
+<script src="./assets/atina-global-error-report.js?v=20261126-1"></script>
+
 
 
 

@@ -3,7 +3,7 @@
  'use strict';
  if(document.getElementById('atinaGlobalReportRoot'))return;
  const css=`
- #atinaGlobalReportButton{position:fixed;z-index:12000;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));border:2px solid #d3ad68;border-radius:999px;background:#182c43;color:#fff;padding:12px 16px;font:800 14px system-ui;box-shadow:0 8px 26px #0007}
+ #atinaGlobalReportButton{position:fixed;z-index:12000;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));border:1px solid #d3ad68;border-radius:999px;background:rgba(24,44,67,.94);color:#fff;padding:9px 11px;font:800 12px system-ui;line-height:1.1;max-width:calc(50vw - 18px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 5px 16px #0005;backdrop-filter:blur(10px)}
  #atinaGlobalReportOverlay{position:fixed;z-index:12001;inset:0;background:#06101bd9;display:none;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));}
  #atinaGlobalReportOverlay.open{display:flex}
  #atinaGlobalReportDialog{width:min(100%,600px);max-height:calc(100dvh - 24px);overflow:auto;border:2px solid #d3ad68;border-radius:18px;background:#152b42;color:#f3f0e8;padding:16px;box-shadow:0 18px 48px #0009}
@@ -18,12 +18,12 @@
  #atinaGlobalReportPreview:not([hidden]){display:block;width:100%;max-height:240px;object-fit:contain;margin-top:8px;border-radius:10px}
  #atinaGlobalReportStatus{min-height:24px;margin:8px 0;font-size:13px;font-weight:750}
  #atinaSoloReportOpen,#atinaSoloReportPanel{display:none!important}
- @media(max-width:420px){#atinaGlobalReportDialog{padding:12px;border-radius:14px}#atinaGlobalReportDialog h2{font-size:19px}#atinaGlobalReportButton{padding:10px 13px;font-size:13px}}
+ @media(max-width:600px){#atinaGlobalReportButton{right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));min-height:38px;padding:8px 10px;font-size:11px;max-width:calc(50vw - 18px)}}@media(max-width:420px){#atinaGlobalReportDialog{padding:12px;border-radius:14px}#atinaGlobalReportDialog h2{font-size:19px}}
  `;
  const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
  const root=document.createElement('div');root.id='atinaGlobalReportRoot';
  root.innerHTML=`
- <button id="atinaGlobalReportButton" type="button" aria-haspopup="dialog">🐞 Reportar erro</button>
+ <button id="atinaGlobalReportButton" type="button" aria-haspopup="dialog" aria-label="Reportar erro" title="Reportar erro">🐞 Reportar erro</button>
  <div id="atinaGlobalReportOverlay" role="presentation">
   <section id="atinaGlobalReportDialog" role="dialog" aria-modal="true" aria-labelledby="atinaGlobalReportTitle">
    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
