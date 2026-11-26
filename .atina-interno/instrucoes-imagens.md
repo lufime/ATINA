@@ -651,3 +651,40 @@ Construir uma biblioteca exclusiva do ATINA, com imagens originais geradas aqui,
 - Registar os testes e verificações efetivamente executados, os resultados, as falhas e as áreas que ficaram por validar.
 - Não declarar uma revisão global concluída se apenas tiver sido analisada uma amostra. Indicar claramente o âmbito e a cobertura real.
 - Regra essencial: **todas as melhorias devem preservar o que já funciona, evitar duplicações e manter critérios coerentes em todo o ATINA.**
+
+## 50. Seleção de desafios reais e rotação obrigatória de modalidades visuais
+Estas regras aplicam-se a todas as sessões de geração de imagens, incluindo pedidos curtos como «gera imagens» ou «sim».
+
+### 50.1. Trabalhar sempre sobre desafios reais
+- Antes de cada geração, consultar o Supabase de produção e selecionar um desafio real, ativo e ainda sem imagem adequada, confirmando o respetivo ID, categoria, resposta oficial, pistas e contexto.
+- Não gerar imagens apenas a partir de temas genéricos, ideias soltas ou categorias sem correspondência a um desafio existente, salvo pedido explícito para criar conceitos de demonstração.
+- Dar prioridade aos desafios que ainda não tenham imagem principal válida. Verificar também os registos de imagens e os ficheiros existentes para evitar gerar trabalho já concluído.
+- A imagem deve ser concebida para a solução exata do desafio selecionado. Não atribuir uma imagem a outro desafio apenas porque partilha um tema amplo.
+- Se não for possível identificar um desafio real adequado ou consultar o estado atual, não apresentar a imagem como trabalho de um desafio; comunicar a limitação.
+- A geração de uma imagem na conversa não significa que tenha sido carregada, associada, aprovada ou publicada no Supabase. Comunicar separadamente cada estado e nunca afirmar uma associação que não foi confirmada.
+
+### 50.2. Rotação de modalidades
+- Alternar deliberadamente entre modalidades/categorias visuais em gerações consecutivas, escolhendo a próxima a partir dos desafios reais disponíveis e ainda sem imagem.
+- A rotação deve abranger, quando existirem desafios adequados: património e monumentos; gastronomia; natureza e paisagens; personalidades (respeitando integralmente as regras de direitos); tradições e folclore; música e instrumentos; história e arqueologia; objetos, símbolos e artesanato; cidades e lugares; ciência, desporto e vida quotidiana.
+- Não escolher a próxima modalidade apenas por conveniência ou repetir automaticamente o mesmo tipo de tema. Consultar o histórico recente de imagens da sessão e evitar a mesma modalidade em gerações consecutivas sempre que exista alternativa adequada.
+- Se a categoria seguinte não tiver desafios elegíveis, avançar para outra modalidade disponível sem inventar desafios nem alterar a ordem dos dados.
+- A rotação é uma regra de diversidade visual, não uma autorização para desrespeitar a correspondência entre imagem e solução.
+
+### 50.3. Prevenção de imagens parecidas
+- Antes de gerar, comparar a proposta com as imagens geradas recentemente na sessão e, quando acessível, com as imagens já registadas no catálogo.
+- Evitar repetir em imagens consecutivas o mesmo motivo principal, cenário, enquadramento, perspetiva, disposição dos elementos, iluminação, paleta dominante ou linguagem visual.
+- Variar de forma intencional o tipo de composição: retrato contextual, natureza-morta, paisagem ampla, grande plano de objeto, vista arquitetónica, cena documental, detalhe arqueológico, composição gráfica/ilustrada ou outra abordagem adequada.
+- Variar também distância de câmara, ângulo, profundidade, hora do dia, ambiente, distribuição de cores e número/posição dos elementos.
+- A mudança de modalidade deve traduzir-se numa diferença visual real; não basta mudar pequenos adereços mantendo a mesma composição.
+- Não gerar várias tentativas quase iguais para o mesmo desafio. Se a primeira tentativa falhar ou ficar demasiado próxima de uma imagem anterior, reformular substancialmente a modalidade visual e a composição antes de tentar novamente.
+- Nunca aceitar uma imagem repetida ou visualmente demasiado semelhante apenas para avançar mais depressa ou completar um lote.
+
+### 50.4. Revisão após cada geração e continuidade
+- Após gerar, verificar se a imagem representa inequivocamente a solução do desafio, se respeita as regras de direitos e se é visualmente distinta das imagens recentes.
+- Se não corresponder ao desafio, não a associar nem a marcar como concluída. Avaliar reaproveitamento apenas segundo as regras de correspondência clara e consultar novamente o estado do desafio de destino.
+- Manter um registo de trabalho com ID do desafio, modalidade, descrição curta da composição, estado da geração, resultado da revisão e eventual reaproveitamento.
+- Na geração seguinte, consultar esse registo para escolher uma modalidade diferente e evitar repetir imagens ou trabalho já concluído.
+- A rotação não substitui as restantes etapas obrigatórias de conversão WebP, validação técnica, nomeação, criação de ZIP e controlo de duplicados.
+- Não afirmar que uma imagem está pronta para o jogo até concluir as verificações e etapas técnicas aplicáveis; distinguir sempre «gerada», «revista», «convertida», «validada», «entregue» e «associada/publicada».
+- Regra essencial: **cada imagem deve corresponder a um desafio real e elegível, e cada geração consecutiva deve procurar uma modalidade e uma composição visual claramente diferentes, sem sacrificar a fidelidade à solução.**
+
