@@ -100,3 +100,16 @@ Antes de inserir ou alterar um desafio:
 ## Objetivo
 
 Garantir que cada desafio do ATINA oferece uma descoberta progressiva, justa, factual e adequada ao seu nível de dificuldade, sem pistas redundantes, genéricas, contraditórias ou que revelem prematuramente a resposta.
+
+## 10. Curiosidades após a revelação da resposta
+Aplicar a todos os desafios, independentemente da categoria ou classificação geográfica: **Portugal, Internacional e Universal**.
+
+- Depois de o jogador revelar ou acertar a resposta, apresentar conteúdo complementar com curiosidades relacionadas diretamente com a solução.
+- As curiosidades devem privilegiar factos interessantes, pormenores pouco conhecidos e informações surpreendentes, mas sempre verdadeiros, relevantes e verificáveis.
+- Redigir o conteúdo por palavras próprias, em português de Portugal, com linguagem natural, clara e apelativa. Não copiar textos de fontes externas.
+- Apresentar as curiosidades apenas depois da revelação da resposta; não as mostrar antes nem utilizá-las como pistas.
+- Esta apresentação é complementar à resposta e não pode alterar, substituir, reordenar ou acrescentar elementos às cinco pistas do desafio.
+- Não alterar a dificuldade original do desafio por causa das curiosidades ou do conteúdo apresentado após a resposta.
+- As curiosidades devem acrescentar informação nova, sem repetir as pistas, a pergunta ou a explicação principal da solução.
+- Não inventar curiosidades para preencher espaço. Se não houver factos interessantes suficientemente confirmados, apresentar apenas o conteúdo factual disponível.
+- A regra é transversal a todos os desafios existentes e novos, de Portugal, Internacionais e Universais.
