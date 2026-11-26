@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.9  
+**Versão das instruções:** 3.0  
 **Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
@@ -614,3 +614,40 @@ Antes de entregar cada lote:
 
 ## Objetivo
 Construir uma biblioteca exclusiva do ATINA, com imagens originais geradas aqui, corretamente associadas aos desafios, reconhecíveis, coerentes com os temas e contextos, tecnicamente uniformes e prontas para carregar na plataforma.
+
+
+## 47. Validação cruzada obrigatória dos desafios
+- Antes de considerar qualquer desafio concluído, verificar em conjunto a pergunta, todas as pistas, a resposta oficial, a solução explicativa e a imagem associada.
+- Confirmar que todos estes elementos se referem exatamente ao mesmo tema, pessoa, local, acontecimento, objeto ou conceito.
+- Confirmar que as pistas conduzem à resposta oficial sem a contradizer, revelar prematuramente ou permitir várias respostas igualmente válidas.
+- Confirmar que a imagem representa corretamente a solução e não sugere outro desafio, local, personalidade, época ou objeto.
+- Verificar coerência factual, cronológica, geográfica, linguística e visual entre os elementos.
+- Se existir uma contradição, ambiguidade relevante ou associação incerta, não marcar o desafio como concluído. Registar o problema e propor a correção mínima necessária.
+- Não alterar a resposta oficial apenas para fazer coincidir uma imagem ou pista inadequada; corrigir o elemento que estiver errado, respeitando a autorização necessária.
+- Regra essencial: **um desafio só está validado quando pergunta, pistas, resposta, explicação e imagem são coerentes entre si e apontam inequivocamente para a mesma solução.**
+
+## 48. Fontes, factos e rastreabilidade editorial
+- Para cada solução que contenha informação factual, histórica, científica, geográfica ou cultural, consultar fontes credíveis e adequadas ao tema.
+- Sempre que possível, confirmar os factos importantes em pelo menos duas fontes independentes e fiáveis; privilegiar fontes primárias, instituições oficiais, arquivos, museus, universidades e publicações especializadas.
+- Registar as fontes consultadas junto do material de trabalho ou no campo/documento de referência previsto pelo projeto, sem inventar campos nem alterar o schema sem autorização.
+- Guardar informação suficiente para permitir verificar a origem de datas, nomes, afirmações, citações, atribuições e interpretações.
+- Distinguir explicitamente factos documentados, hipóteses, interpretações, tradições populares e lendas. Nunca apresentar uma lenda como facto histórico comprovado.
+- Não inventar fontes, títulos, autores, URLs, citações, datas de publicação ou conteúdos que não tenham sido efetivamente consultados.
+- Se fontes credíveis divergirem, assinalar a divergência e evitar apresentar como definitiva uma afirmação controversa.
+- Se não for possível confirmar um dado essencial, omiti-lo ou identificá-lo claramente como não confirmado; não preencher lacunas com suposições.
+- Respeitar direitos de autor ao resumir ou citar fontes. Não copiar extensamente textos protegidos nem reproduzir imagens de terceiros.
+- Regra essencial: **toda a afirmação factual relevante deve ser rastreável a uma fonte efetivamente consultada, e toda a incerteza deve ser comunicada com transparência.**
+
+## 49. Consistência editorial, controlo de duplicados e regressão
+- Aplicar critérios editoriais, de dificuldade, qualidade, linguagem, validação e apresentação consistentes a todas as categorias, países e tipos de desafio, respeitando as particularidades de cada tema.
+- Utilizar português de Portugal por defeito em textos destinados aos jogadores, salvo quando o conteúdo exija outra língua ou designação original.
+- Antes de criar ou alterar conteúdos, comparar com o catálogo completo relevante, incluindo desafios ativos, inativos, arquivados e conteúdos de outras categorias, para detetar duplicações exatas e semânticas.
+- Não considerar dois desafios diferentes apenas por terem perguntas, redações, categorias ou imagens distintas quando avaliam essencialmente a mesma resposta ou conhecimento.
+- Não fundir, apagar, desativar ou reclassificar desafios automaticamente para resolver duplicações; apresentar os casos e aguardar autorização quando a alteração afetar dados existentes.
+- Em qualquer alteração de código, conteúdo, documentação ou configuração, identificar as funcionalidades e os fluxos que podem ser afetados e executar verificações de regressão proporcionais ao risco.
+- Confirmar que a melhoria não remove, degrada ou altera involuntariamente funcionalidades, conteúdos, acessibilidade, apresentação responsiva, desempenho ou comportamento já existente.
+- Atualizar a documentação afetada no mesmo trabalho, sempre que aplicável, mantendo-a alinhada com a versão real do jogo.
+- Distinguir erros confirmados de hipóteses e de oportunidades de melhoria; não introduzir alterações preventivas fora do âmbito autorizado.
+- Registar os testes e verificações efetivamente executados, os resultados, as falhas e as áreas que ficaram por validar.
+- Não declarar uma revisão global concluída se apenas tiver sido analisada uma amostra. Indicar claramente o âmbito e a cobertura real.
+- Regra essencial: **todas as melhorias devem preservar o que já funciona, evitar duplicações e manter critérios coerentes em todo o ATINA.**
