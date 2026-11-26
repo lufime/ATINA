@@ -145,6 +145,8 @@ try {
   assert.deepEqual(Object.keys(claims[0].args).sort(),['p_device_token','p_position','p_session_id','p_session_token'].sort());
   assert.equal(claims[0].args.p_device_token,'c'.repeat(64));
 
+  // A navegação secundária está recolhida por defeito no novo cabeçalho compacto.
+  await page.locator('#atinaNavMore').evaluate(menu => { menu.open = true; });
   await page.locator('button.home-nav-btn[data-home-target="ranking"]').click();
   // O ranking de XP ativo é o painel do menu, não a tabela histórica vazia do dashboard.
   await page.evaluate(() => loadXpRanking());
