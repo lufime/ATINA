@@ -89,21 +89,35 @@ BEGIN
 END;
 $function$;
 
--- Regression checks against the exact challenge and against false positives.
+-- Test the exact legacy comparison function independently of challenge
+-- catalog rows, which are loaded separately from the clean migration replay.
 DO $tests$
 BEGIN
-  IF NOT private.atina_challenge_answer_matches(1505, 'Leitão a Bairrada') THEN
-    RAISE EXCEPTION 'Expected harmless preposition variation to be accepted.';
+  IF NOT private.atina_answer_matches('Leitão da Bairrada', 'Leitão a Bairrada') THEN
+    RAISE EXCEPTION 'Expected harmless Portuguese preposition variation to be accepted.';
   END IF;
 
-  IF private.atina_challenge_answer_matches(1505, 'Leitão')
-     OR private.atina_challenge_answer_matches(1505, 'Leitão de Lisboa') THEN
-    RAISE EXCEPTION 'False-positive guard regression for challenge 1505.';
+  IF private.atina_answer_matches('Leitão da Bairrada', 'Leitão')
+     OR private.atina_answer_matches('Leitão da Bairrada', 'Leitão de Lisboa') THEN
+    RAISE EXCEPTION 'Meaningful content words must not be omitted or replaced.';
   END IF;
 
   IF NOT private.atina_answer_matches('A letra o', 'letra o')
      OR private.atina_answer_matches('A letra o', 'letra a') THEN
     RAISE EXCEPTION 'Single-letter answer guard regression.';
+  END IF;
+
+  -- If the private challenge catalog is present, retain the end-to-end
+  -- challenge-specific regression checks as an additional safeguard.
+  IF EXISTS (
+    SELECT 1 FROM private.atina_challenges
+    WHERE challenge_id = 1505 AND active
+  ) THEN
+    IF NOT private.atina_challenge_answer_matches(1505, 'Leitão a Bairrada')
+       OR private.atina_challenge_answer_matches(1505, 'Leitão')
+       OR private.atina_challenge_answer_matches(1505, 'Leitão de Lisboa') THEN
+      RAISE EXCEPTION 'Challenge 1505 preposition tolerance or false-positive guard regression.';
+    END IF;
   END IF;
 END
 $tests$;
