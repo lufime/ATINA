@@ -1454,7 +1454,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
   }
   $("addChallengeAliases").addEventListener("click",async()=>{
     const challengeId=Number($("challengeId").value);
-    const aliases=$("challengeAliasInput").value.split(/\\r?\\n/).map(value=>value.trim()).filter(Boolean);
+    const aliases=$("challengeAliasInput").value.split(/\r?\n/).map(value=>value.trim()).filter(Boolean);
     if(!Number.isInteger(challengeId)||challengeId<0){alert("Guarda primeiro o desafio para poderes propor variantes.");return;}
     if(!aliases.length){alert("Escreve pelo menos uma variante, uma por linha.");return;}
     const button=$("addChallengeAliases");button.disabled=true;
@@ -1470,7 +1470,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
       $("challengeAliasInput").value="";
       await loadChallengeAliases(challengeId);
       if(added)recordAdminAction("Propôs variantes de resposta","#"+challengeId+" · "+added+" proposta(s)");
-      alert(added+" variante(s) proposta(s)."+(failures.length?"\\nFalhas:\\n"+failures.join("\\n"):""));
+      alert(added+" variante(s) proposta(s)."+(failures.length?"\nFalhas:\n"+failures.join("\n"):""));
     }catch(error){alert(error.message||"Não foi possível propor as variantes.");}
     finally{button.disabled=false;}
   });
