@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.3  
+**Versão das instruções:** 2.4  
 **Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
@@ -558,4 +558,16 @@ Aplicar a todos os desafios, textos, pistas, soluções, imagens, ilustrações 
 - Não utilizar personagens ou personalidades protegidas apenas porque são famosas, históricas, falecidas, antigas, ou porque existem imagens disponíveis na Internet.
 - Se a situação jurídica for incerta, controversa ou não puder ser confirmada, não utilizar a personagem ou personalidade. Escolher outro tema de domínio público ou uma representação conceptual sem elementos identificáveis.
 - Esta regra prevalece sobre exemplos, pedidos de estilo ou referências a obras incluídos noutras secções: **personagens e personalidades só de domínio público, com estatuto verificado**.
+
+## 43. Representação visual de personagens e personalidades sem violar direitos
+Complementa a secção 42 e aplica-se a todos os desafios, imagens, ilustrações e conteúdos do ATINA.
+- Quando uma personagem ou personalidade não estiver comprovadamente em domínio público, é proibido criar um retrato, sósia, versão aproximada ou representação visual identificável dessa pessoa/personagem.
+- É permitido criar uma **representação conceptual e indireta** que remeta claramente para o tema do desafio, sem reproduzir a aparência, fisionomia, silhueta distintiva, penteado, vestuário característico, pose, adereços pessoais ou outros elementos que identifiquem a pessoa/personagem.
+- Usar cenários originais, objetos comuns, ambientes, épocas, profissões, atividades, símbolos genéricos não protegidos e elementos contextuais que não sejam exclusivos nem distintivos de terceiros.
+- Exemplos: para um escritor contemporâneo, representar um espaço de escrita com secretária, manuscritos, livros e máquina de escrever, sem retrato ou sósia; para um músico contemporâneo, representar um palco, microfone e instrumentos genéricos, sem imitar aparência, figurino, pose ou identidade visual; para uma figura pública ligada a uma atividade, representar essa atividade de forma neutra e original.
+- Não usar a expressão «aproximado» como forma de contornar direitos: uma representação aproximada que permita reconhecer a pessoa ou personagem continua proibida quando os direitos não estejam em domínio público ou a utilização não esteja legalmente autorizada.
+- A associação ao desafio deve resultar do contexto visual e dos elementos genéricos, não de uma imitação da identidade visual da pessoa/personagem.
+- Verificar cada imagem para garantir que não permite identificar visualmente a pessoa/personagem protegida. Se houver dúvida, simplificar e neutralizar a representação.
+- Esta abordagem permite manter desafios sobre personalidades e personagens no catálogo sem exigir que a imagem seja um retrato. Não alterar a solução oficial do desafio apenas por causa da imagem.
+- A secção 42 continua a prevalecer para retratos ou representações identificáveis: só utilizar personagens e personalidades comprovadamente em domínio público, com verificação dos direitos da versão concreta.
 
