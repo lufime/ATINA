@@ -2147,3 +2147,42 @@ body.atina-screen-game> .atina-timer-stack{
   }
 }
 
+
+
+/* ATINA — semântica visual uniforme das mensagens e avisos */
+:root{
+  --atina-positive-bg:#123d32;
+  --atina-positive-border:#39a879;
+  --atina-positive-text:#c8f5df;
+  --atina-negative-bg:#48252d;
+  --atina-negative-border:#e05b62;
+  --atina-negative-text:#ffe0e1;
+  --atina-neutral-bg:#493b20;
+  --atina-neutral-border:#d6a83f;
+  --atina-neutral-text:#ffedbd;
+}
+/* Mensagens sem classificação explícita são neutras: informação não é erro. */
+#game .feedback,[role="status"],.atina-message,.atina-notice{
+  border:1px solid var(--atina-neutral-border);
+  background:var(--atina-neutral-bg);
+  color:var(--atina-neutral-text);
+}
+/* Classes semânticas para qualquer página, painel ou notificação. */
+:is(.success,.positive,.is-success,[data-tone="positive"],[data-status="success"],.atina-message--positive,.atina-notice--positive){
+  border-color:var(--atina-positive-border)!important;
+  background:var(--atina-positive-bg)!important;
+  color:var(--atina-positive-text)!important;
+}
+:is(.error,.danger,.negative,.is-error,[data-tone="negative"],[data-status="error"],.atina-message--negative,.atina-notice--negative,[role="alert"]){
+  border-color:var(--atina-negative-border)!important;
+  background:var(--atina-negative-bg)!important;
+  color:var(--atina-negative-text)!important;
+}
+:is(.warning,.neutral,.info,.is-warning,[data-tone="neutral"],[data-status="info"],.atina-message--neutral,.atina-notice--neutral){
+  border-color:var(--atina-neutral-border)!important;
+  background:var(--atina-neutral-bg)!important;
+  color:var(--atina-neutral-text)!important;
+}
+:is(.success,.positive,.is-success,.error,.danger,.negative,.is-error,.warning,.neutral,.info,.is-warning,.atina-message,.atina-notice){
+  border-radius:12px;
+}
