@@ -1,7 +1,7 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.0  
-**Última atualização:** 25/11/2026
+**Versão das instruções:** 2.1  
+**Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
 - GitHub: https://github.com/lufime/ATINA.git
@@ -48,6 +48,15 @@ Aplicar a filmes, séries, livros, animação, banda desenhada, jogos, marcas e 
 - Não usar imagens retiradas da Internet, bancos de imagens, outros criadores ou fontes externas, mesmo que aparentem estar licenciadas. Não reutilizar material de terceiros.
 - Não assumir que uma imagem gerada por IA é automaticamente livre de direitos, exclusiva ou legalmente irrestrita; evitar elementos que possam infringir direitos de autor, marcas, direitos de imagem ou outros direitos de propriedade intelectual.
 - Representar o tema de forma indireta e original, recorrendo a ambientes, paisagens, arquitetura, época, atmosfera, paleta de cores, conceitos e objetos genéricos não protegidos.
+- **Regra obrigatória de cenário original:** quando a solução estiver associada a filmes, séries, livros, jogos, animação, banda desenhada, marcas ou outras propriedades protegidas, criar um cenário inteiramente novo, concebido de raiz, que comunique apenas o tema, o contexto, a época ou a ideia geral do desafio.
+- O cenário deve usar arquitetura, paisagens, interiores, ambientes, iluminação, objetos comuns e elementos cenográficos genéricos, sem reproduzir ou imitar cenários reconhecíveis de obras existentes.
+- Não incluir personagens protegidas, figuras semelhantes, mascotes, atores reconhecíveis, figurinos distintivos, veículos ou adereços icónicos, armas ou objetos exclusivos, logótipos, emblemas, símbolos de franquias, marcas registadas, nomes comerciais, lettering ou embalagens identificáveis.
+- Não criar versões alternativas, paródias visuais ou combinações de elementos que, em conjunto, permitam reconhecer uma personagem, marca, franquia, produto ou obra protegida.
+- Não usar prompts que peçam «ao estilo de», «igual a», «inspirado diretamente em» ou «recriar» um artista, estúdio, franquia, personagem, filme, jogo, marca ou imagem específica. Descrever antes características visuais genéricas e independentes.
+- Se o desafio mencionar uma marca ou obra como resposta, manter essa referência apenas no contexto editorial do desafio; a imagem deve representar o conceito através de um cenário original e neutro, sem logótipos, marcas ou elementos distintivos.
+- Para temas como prémios, cinema ou televisão, representar ambientes genéricos (por exemplo, uma sala de cerimónia cinematográfica original, um estúdio de gravação genérico ou uma sala de projeção), sem estatuetas, símbolos, cenários ou adereços que imitem prémios, marcas ou produções reais.
+- Antes de aceitar a imagem, fazer uma verificação visual específica: confirmar que não contém marcas, logótipos, personagens, designs, objetos icónicos ou composições reconhecíveis de terceiros. Se houver dúvida, corrigir ou gerar novamente com um cenário mais neutro e original.
+- A prioridade é a associação clara à solução através de uma representação visual original, não a reprodução literal da propriedade intelectual referida no desafio.
 - Quando um desafio estiver associado a uma obra protegida, usar referências verificáveis apenas como contexto informativo; nunca copiar personagens, objetos, cenas, ilustrações ou designs da obra.
 - Confirmar títulos, autores e relação entre obras quando essa informação for necessária; não inventar referências.
 - Preservar a associação clara ao desafio, tema, época ou atmosfera, sem reproduzir a expressão visual distintiva de terceiros.
