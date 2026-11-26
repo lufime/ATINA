@@ -44,17 +44,16 @@ SELECT is(
   'Identical nicknames do not merge different human identities'
 );
 
-SELECT is(
-  (SELECT (stats->'counts'->>'bots')::integer FROM atina_online_test_snapshot),
-  (SELECT jsonb_array_length(stats->'bots') FROM atina_online_test_snapshot),
-  'The bot count matches the unique bot directory'
+SELECT ok(
+  NOT (SELECT stats ? 'bots' FROM atina_online_test_snapshot)
+  AND NOT (SELECT (stats->'counts') ? 'bots' FROM atina_online_test_snapshot),
+  'The public presence snapshot does not expose simulated-player entries or counts'
 );
 
 SELECT is(
   (SELECT (stats->'counts'->>'total')::integer FROM atina_online_test_snapshot),
-  (SELECT (stats->'counts'->>'humans')::integer + (stats->'counts'->>'bots')::integer
-     FROM atina_online_test_snapshot),
-  'Total online is exactly humans plus bots'
+  (SELECT (stats->'counts'->>'humans')::integer FROM atina_online_test_snapshot),
+  'Total online includes only unique human identities'
 );
 
 SELECT is(
