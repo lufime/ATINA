@@ -773,3 +773,51 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     font-size:clamp(26px,8vw,34px)!important;
   }
 }
+
+
+/* HUD ancorado diretamente ao viewport: o elemento é movido para body por JS. */
+#game>.card::before{content:none!important;display:none!important;height:0!important}
+body>.atina-timer-stack{
+  position:fixed!important;
+  inset:calc(env(safe-area-inset-top,0px) + 5px) auto auto 50%!important;
+  transform:translateX(-50%)!important;
+  width:min(calc(100vw - 14px),960px)!important;
+  max-width:960px!important;
+  margin:0!important;
+  z-index:2147483000!important;
+  isolation:isolate!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  padding:6px 7px 8px!important;
+  box-sizing:border-box!important;
+  border:1px solid rgba(79,211,222,.58)!important;
+  border-radius:15px!important;
+  background:rgba(8,22,38,.98)!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.5)!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+}
+body>.atina-timer-stack>.atina-live-stats{
+  position:static!important;top:auto!important;z-index:auto!important;
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;width:100%!important;margin:0!important;padding:0!important;
+}
+body>.atina-timer-stack>.atina-live-stats>span{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:2px!important;min-width:0!important;
+  padding:5px 2px!important;font-size:10px!important;line-height:1.2!important;text-align:center!important;
+}
+body>.atina-timer-stack>.atina-live-stats b{font-size:14px!important}
+body>.atina-timer-stack>strong{display:none!important}
+body>.atina-timer-stack>#timerDisplay{
+  position:static!important;top:auto!important;z-index:auto!important;
+  align-self:center!important;width:min(100%,230px)!important;max-width:100%!important;
+  min-width:0!important;min-height:44px!important;margin:0 auto!important;padding:6px 12px!important;
+  font-size:clamp(26px,8vw,35px)!important;line-height:1.05!important;
+}
+@media(min-width:761px){
+  body>.atina-timer-stack{width:min(calc(100vw - 24px),960px)!important;padding:7px 10px 9px!important}
+  body>.atina-timer-stack>.atina-live-stats>span{flex-direction:row!important;font-size:13px!important;gap:5px!important}
+}
