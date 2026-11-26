@@ -2146,3 +2146,67 @@ body.atina-screen-game> .atina-timer-stack{
     font-size:11.5px!important;
   }
 }
+
+
+/* ATINA — tipografia mobile uniforme.
+   Um único tamanho para todo o texto da interface; hierarquia apenas por peso. */
+@media(max-width:760px){
+  body,
+  body p,body span,body label,body small,body li,body a,
+  body button,body .btn,body summary,
+  body input,body textarea,body select,
+  body h1,body h2,body h3,body h4,
+  body strong,body b,body em,
+  body .muted,body .hint,body .meta,body .subtle,
+  body .clue,body .clue p,
+  body .home-page-nav .home-nav-btn,
+  body .home-nav-more>summary,
+  body .home-nav-more-grid .home-nav-btn{
+    font-family:inherit!important;
+    font-size:14px!important;
+    line-height:1.35!important;
+  }
+  /* Mesma escala tipográfica, com hierarquia apenas no peso. */
+  body h1,body h2,body h3,body h4,
+  body strong,body b,
+  body button,body .btn,body summary{
+    font-weight:750!important;
+  }
+  body p,body span,body label,body small,body li,
+  body input,body textarea,body select,
+  body .clue,body .clue p{
+    font-weight:500!important;
+  }
+  /* Elementos de marca e mostrador mantêm proporções próprias. */
+  body .brand .logo-image{font-size:initial!important}
+  body>.atina-timer-stack #timerDisplay,
+  body>.atina-timer-stack #timerDisplay *{
+    font-family:inherit!important;
+  }
+  body>.atina-timer-stack #timerDisplay{
+    font-size:clamp(18px,5vw,23px)!important;
+    line-height:1.05!important;
+    font-weight:900!important;
+  }
+  body>.atina-timer-stack #timerDisplay .timer-prepare-label{font-size:9px!important}
+  body>.atina-timer-stack #timerDisplay .timer-prepare-count{font-size:23px!important}
+  /* Mantém os botões compactos; só uniformiza o tamanho das letras. */
+  button,.btn,input[type="button"],input[type="submit"],input[type="reset"],
+  .home-page-nav .home-nav-btn,.home-nav-more>summary,
+  .home-nav-more-grid .home-nav-btn{
+    min-height:36px!important;
+    padding:6px 9px!important;
+    font-size:14px!important;
+    line-height:1.2!important;
+    font-weight:750!important;
+  }
+  body.atina-screen-game #game .clue-controls .btn,
+  body.atina-screen-game #game .answer-controls .btn,
+  body.atina-screen-game #game .game-control-row .btn,
+  body.atina-screen-game #game .actions>*{
+    min-height:38px!important;
+    padding:6px 7px!important;
+    font-size:14px!important;
+    line-height:1.2!important;
+  }
+}
