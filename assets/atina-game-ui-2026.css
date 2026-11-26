@@ -214,3 +214,95 @@ body.atina-screen-game #game #feedback,
   border-color:var(--atina-game-negative)!important;
   color:#ffc0b8!important;
 }
+
+/* ATINA — paleta coerente para fundos, cartões e painéis.
+   Cores semânticas ficam reservadas aos avisos; superfícies normais usam azuis. */
+:root{
+  --atina-game-bg:#071321;
+  --atina-game-panel:#102238;
+  --atina-game-panel-raised:#162d45;
+  --atina-game-panel-soft:#0c1c2d;
+  --atina-game-border:rgba(151,190,219,.20);
+  --atina-game-border-strong:rgba(98,212,208,.38);
+}
+/* Superfície base: mesma cor em todas as áreas de conteúdo. */
+#home .home-block,
+#home .home-page-panel:not(.hidden),
+.home-block,
+.home-page-panel:not(.hidden),
+.card,
+.online-panel,
+.online-ranking,
+.daily-mission,
+.quick-match-panel,
+#result,
+#rankingPage,
+#networkLobby,
+#networkScoreboard,
+#atinaFaqPage,
+#atinaFriendsPage,
+#atinaAccessPage,
+#atinaHowToPage,
+#surprisePanel,
+#networkTimeoutPanel,
+#atinaSoloReportPanel,
+#teamVotePanel,
+#solutionImage,
+.solution-panel,
+.result-panel{
+  background:var(--atina-game-panel)!important;
+  border-color:var(--atina-game-border)!important;
+  color:var(--atina-game-text)!important;
+}
+/* Cartões interiores e elementos de escolha: um nível acima do painel. */
+#home .tile,
+.tile,
+.atina-badges>*,
+.pill{
+  background:var(--atina-game-panel-raised)!important;
+  border-color:var(--atina-game-border)!important;
+  color:var(--atina-game-text)!important;
+}
+/* Áreas de navegação, formulários e informação secundária: nível mais escuro. */
+#atinaMainNav,
+.home-page-nav,
+.home-nav-more-grid,
+#home input:not([type=checkbox]):not([type=radio]),
+#home select,
+#home textarea,
+#game input:not([type=checkbox]):not([type=radio]),
+#game select,
+#game textarea,
+#home .answer,
+#game .answer{
+  background:var(--atina-game-panel-soft)!important;
+}
+/* Acolhimento com destaque azul, sem cores de estado. */
+#home .home-welcome,
+.home-welcome{
+  background:linear-gradient(135deg,#15354e,#10263c)!important;
+  border-color:var(--atina-game-border-strong)!important;
+}
+/* Superfície do desafio e pistas mantêm contraste sem blocos cromáticos fortes. */
+body.atina-screen-game #game>.card{
+  background:var(--atina-game-panel)!important;
+}
+body.atina-screen-game #game .clue{
+  background:var(--atina-game-panel-raised)!important;
+}
+body.atina-screen-game #game .clue.hidden-clue{
+  background:var(--atina-game-panel-soft)!important;
+}
+/* Estados negativos sem fundo vermelho em qualquer página. */
+:is(
+  #feedback.is-wrong,
+  #feedback[data-tone="negative"],
+  [role="alert"][data-tone="negative"],
+  .atina-message--negative,
+  .atina-notice--negative,
+  .error:not(button):not(input):not(.btn),
+  .negative:not(button):not(input):not(.btn),
+  .is-error:not(button):not(input):not(.btn)
+){
+  background:var(--atina-game-panel)!important;
+}
