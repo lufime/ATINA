@@ -462,8 +462,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <h2 id="challengeFormTitle">Novo desafio</h2>
       <input id="challengeId" type="hidden">
       <div class="form-grid">
-        <div><label for="challengeCategory">Categoria</label><input id="challengeCategory" required></div>
-        <div><label for="challengeEmoji">Emoji</label><input id="challengeEmoji" required maxlength="12"></div>
+        <div><label for="challengeCategory">Categoria</label><select id="challengeCategory" required><option value="">Selecionar categoria…</option></select></div>
+        <div><label for="challengeEmoji">Emoji</label><select id="challengeEmoji" required>
+          <option value="">Selecionar emoji…</option><option value="🌍">🌍 Mundo</option><option value="🇵🇹">🇵🇹 Portugal</option><option value="🐾">🐾 Animais</option><option value="🌿">🌿 Natureza</option><option value="🔬">🔬 Ciência</option><option value="🎬">🎬 Cinema</option><option value="📺">📺 Televisão</option><option value="🏛️">🏛️ História</option><option value="⚽">⚽ Desporto</option><option value="🍽️">🍽️ Gastronomia</option><option value="🎵">🎵 Música</option><option value="📚">📚 Literatura</option><option value="💡">💡 Invenções</option><option value="🧠">🧠 Lógica</option><option value="🧩">🧩 Mistério</option><option value="🎭">🎭 Cultura</option><option value="🚀">🚀 Tecnologia</option><option value="🧬">🧬 Corpo humano</option><option value="🎉">🎉 Festas</option><option value="❓">❓ Surpresa</option>
+        </select></div>
         <div><label for="challengeAnswer">Solução / resposta</label><input id="challengeAnswer" required></div>
         <div><label for="challengeDifficulty">Dificuldade</label><select id="challengeDifficulty"><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div>
       </div>
@@ -474,6 +476,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <label for="challengeImageFile">Selecionar imagem do dispositivo (JPEG, PNG ou WebP, máximo 10 MB)</label><input id="challengeImageFile" type="file" accept="image/jpeg,image/png,image/webp"><p class="note">A imagem será enviada para o Storage ATINA e o respetivo link será guardado automaticamente. O registo da imagem fica pendente de revisão.</p>
       <label for="challengeImageUrl">Ou inserir link da imagem (URL)</label><input id="challengeImageUrl" type="url" placeholder="https://…"><div id="challengeImagePreview" class="image-preview"><span class="note">Sem imagem associada.</span></div>
       <label><input id="challengeActive" type="checkbox" checked style="width:auto"> Desafio ativo</label>
+      <div id="deactivationReasonWrap" class="hidden"><label for="challengeDeactivationReason">Motivo de desactivação <span aria-hidden="true">*</span></label><textarea id="challengeDeactivationReason" maxlength="1000" placeholder="Indique obrigatoriamente o motivo da desactivação…"></textarea><p class="note">Obrigatório ao desactivar um desafio. O motivo e a data ficam guardados no histórico.</p></div>
+      <div id="challengeDeactivationHistory" class="image-preview"><strong>Histórico de estado</strong><p class="note">Ainda sem desactivações ou reativações registadas.</p></div>
       <p id="formDirtyNotice" class="note hidden">Existem alterações por guardar.</p><div class="challenge-actions"><button type="submit" id="saveChallenge">Guardar desafio</button><button type="button" class="secondary" id="cancelChallenge">Cancelar</button></div>
     </form>
   </section>
@@ -1481,6 +1485,26 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
     const categories=[...new Set(challengeCache.map(x=>String(x.category||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-PT"));
     select.innerHTML='<option value="">Todas as categorias</option>'+categories.map(value=>'<option value="'+esc(value)+'">'+esc(value)+'</option>').join("");
     if(categories.includes(current))select.value=current;
+    const editor=$("challengeCategory"),editorCurrent=editor.value;
+    editor.innerHTML='<option value="">Selecionar categoria…</option>'+categories.map(value=>'<option value="'+esc(value)+'">'+esc(value)+'</option>').join("");
+    if(editorCurrent&&!categories.includes(editorCurrent))editor.add(new Option(editorCurrent,editorCurrent));
+    editor.value=editorCurrent;
+  }
+  function renderChallengeDeactivationHistory(rows){
+    const box=$("challengeDeactivationHistory");if(!box)return;
+    const history=Array.isArray(rows)?rows:[];
+    box.innerHTML='<strong>Histórico de estado</strong>'+(history.length?history.map(item=>{
+      const action=item.action==="deactivated"?"Desactivado":"Reactivado";
+      const date=item.created_at?new Date(item.created_at).toLocaleString("pt-PT"):"Data não disponível";
+      return '<p class="note"><strong>'+esc(action)+'</strong> · '+esc(date)+(item.reason?'<br>Motivo: '+esc(item.reason):"")+'</p>';
+    }).join(""):'<p class="note">Ainda sem desactivações ou reativações registadas.</p>');
+  }
+  function syncDeactivationReason(){
+    const id=$("challengeId").value;
+    const existing=challengeCache.find(x=>String(x.challenge_id)===String(id));
+    const isTransitionToInactive=!$("challengeActive").checked&&(!existing||challengeIsActive(existing));
+    $("deactivationReasonWrap").classList.toggle("hidden",!isTransitionToInactive);
+    $("challengeDeactivationReason").required=isTransitionToInactive;
   }
   function filteredChallengeRows(){
     const term=$("challengeSearch").value.trim().toLocaleLowerCase("pt-PT");
@@ -1545,7 +1569,8 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
   $("challengeImageUrl").addEventListener("input",updateChallengeImagePreview);
   $("challengeImageFile").addEventListener("change",()=>{const file=$("challengeImageFile").files?.[0];if(!file){updateChallengeImagePreview();return;}if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>10*1024*1024){$("challengeImageFile").value="";alert("Seleciona JPEG, PNG ou WebP até 10 MB.");return;}const url=URL.createObjectURL(file);$("challengeImagePreview").innerHTML='<img src="'+url+'" alt="Pré-visualização da imagem selecionada"><span class="note">'+esc(file.name)+' · '+Math.round(file.size/1024)+' KB · será enviada ao guardar</span>';});
   function resetChallengeForm() {
-    $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview();
+    $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; $("challengeDeactivationReason").value=""; renderClueFields([""]); updateChallengeImagePreview();
+    renderChallengeDeactivationHistory([]);syncDeactivationReason();
     $("challengeFormTitle").textContent="Novo desafio"; setFormDirty(false); $("challengeForm").classList.add("hidden"); $("challengePagination").classList.toggle("hidden",challengeCache.length<=CHALLENGES_PER_PAGE); $("challengeList").nextElementSibling?.classList.remove("hidden");
   }
   function editChallenge(id) {
@@ -1554,7 +1579,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
     $("challengeAnswer").value=x.answer||""; $("challengeDifficulty").value=x.difficulty||"medium";
     renderClueFields(x.clues||[]); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
     $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||x._imageAsset?.game_image_url||x._imageAsset?.image_url||x.image_url||""; updateChallengeImagePreview();
-    $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id; setFormDirty(false);
+    $("challengeActive").checked=!!x.active; $("challengeDeactivationReason").value="";renderChallengeDeactivationHistory(x.deactivation_history||[]);syncDeactivationReason(); $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id; setFormDirty(false);
     $("challengeForm").classList.remove("hidden"); $("challengePagination").classList.add("hidden"); $("challengeList").nextElementSibling?.classList.add("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
   }
   $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeList").nextElementSibling?.classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
@@ -1576,10 +1601,11 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
   $("clearChallengeSelection").addEventListener("click",()=>{selectedChallengeIds.clear();renderChallenges();});
   $("challengeList").addEventListener("change",event=>{const input=event.target.closest("[data-select-challenge]");if(!input)return;if(input.checked)selectedChallengeIds.add(input.dataset.selectChallenge);else selectedChallengeIds.delete(input.dataset.selectChallenge);updateBulkSelection();});
   async function bulkSetChallengeState(active){
-    const ids=Array.from(selectedChallengeIds);if(!ids.length)return;const label=active?"ativar":"desativar";
+    const ids=Array.from(selectedChallengeIds);if(!ids.length)return;const label=active?"ativar":"desactivar";
+    let reason="";if(!active){reason=prompt("Indica o motivo obrigatório para desactivar os "+ids.length+" desafios selecionados:")?.trim()||"";if(!reason){alert("É obrigatório indicar o motivo da desactivação.");return;}}
     if(!confirm("Queres "+label+" "+ids.length+" desafios selecionados? Os registos e históricos serão preservados."))return;
     $("bulkActivateChallenges").disabled=true;$("bulkDeactivateChallenges").disabled=true;let succeeded=0,failed=[];
-    for(const id of ids){try{const item=challengeCache.find(x=>String(x.challenge_id)===id);if(!item)continue;const current=item.active===true||item.active===1||["true","1","active","ativado","ativada"].includes(String(item.active??"").trim().toLocaleLowerCase("pt-PT"));if(current===active){succeeded++;selectedChallengeIds.delete(id);continue;}await challengeRequest({action:"challenge_toggle",challenge_id:Number(id),active});succeeded++;selectedChallengeIds.delete(id);}catch(error){failed.push("#"+id+": "+error.message);}}
+    for(const id of ids){try{const item=challengeCache.find(x=>String(x.challenge_id)===id);if(!item)continue;const current=item.active===true||item.active===1||["true","1","active","ativado","ativada"].includes(String(item.active??"").trim().toLocaleLowerCase("pt-PT"));if(current===active){succeeded++;selectedChallengeIds.delete(id);continue;}await challengeRequest({action:"challenge_toggle",challenge_id:Number(id),active,reason});succeeded++;selectedChallengeIds.delete(id);}catch(error){failed.push("#"+id+": "+error.message);}}
     recordAdminAction(active?"Ativou desafios em massa":"Desativou desafios em massa",succeeded+" concluídos"+(failed.length?", "+failed.length+" falharam":""));await loadChallenges();if(failed.length)alert(succeeded+" desafios atualizados. Falhas: "+failed.join("\n"));else alert(succeeded+" desafios "+(active?"ativados":"desativados")+".");updateBulkSelection();
   }
   $("bulkActivateChallenges").addEventListener("click",()=>bulkSetChallengeState(true));
@@ -1623,18 +1649,23 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
     const id=Number(toggle.dataset.toggleChallenge), active=toggle.dataset.active==="true";
     const x=challengeCache.find(v=>v.challenge_id===id);
     const action=active?"desativar":"reativar";
+    const reason=active?"":(prompt("Indica o motivo obrigatório para desactivar o desafio #"+id+":")?.trim()||"");
+    if(!active&&!reason){alert("É obrigatório indicar o motivo da desactivação.");return;}
     if(!confirm("Queres "+action+" o desafio #"+id+" — "+(x?.answer||"")+"? "+(active?"O registo e o histórico serão preservados.":"O desafio voltará a ficar ativo.")))return;
     toggle.disabled=true;
-    try { await challengeRequest({action:"challenge_toggle",challenge_id:id,active}); recordAdminAction(active?"Desativou desafio":"Reativou desafio","#"+id+" · "+(x?.answer||"")); await loadChallenges(); }
+    try { await challengeRequest({action:"challenge_toggle",challenge_id:id,active,reason}); recordAdminAction(active?"Desativou desafio":"Reativou desafio","#"+id+" · "+(x?.answer||"")); await loadChallenges(); }
     catch(error){alert(error.message);} finally{toggle.disabled=false;}
   });
+  $("challengeActive").addEventListener("change",syncDeactivationReason);
   $("challengeForm").addEventListener("submit",async event=>{
-    event.preventDefault(); const button=$("saveChallenge"); button.disabled=true;
+    event.preventDefault();syncDeactivationReason();
+    if($("challengeDeactivationReason").required&&!$("challengeDeactivationReason").value.trim()){event.preventDefault();$("challengeDeactivationReason").focus();alert("É obrigatório indicar o motivo da desactivação.");return;}
+    const button=$("saveChallenge"); button.disabled=true;
     const split=(id)=>$(id).value.split(/[,\n]/).map(v=>v.trim()).filter(Boolean);
     try {
       const id=$("challengeId").value;
       const imageFile=$("challengeImageFile").files?.[0]||null;
-      const result=await challengeRequest({action:"challenge_save",challenge_id:id===""?null:Number(id),category:$("challengeCategory").value,emoji:$("challengeEmoji").value,answer:$("challengeAnswer").value,difficulty:$("challengeDifficulty").value,clues:Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value.trim()).filter(Boolean),solution_image_url:imageFile?($("challengeId").value?($("challengeImageUrl").value.trim()||null):null):($("challengeImageUrl").value.trim()||null),accepted_answers:split("challengeAccepted"),image_tags:split("challengeTags"),image_description:$("challengeDescription").value,active:$("challengeActive").checked});
+      const result=await challengeRequest({action:"challenge_save",challenge_id:id===""?null:Number(id),category:$("challengeCategory").value,emoji:$("challengeEmoji").value,answer:$("challengeAnswer").value,difficulty:$("challengeDifficulty").value,clues:Array.from(document.querySelectorAll(".challenge-clue")).map(input=>input.value.trim()).filter(Boolean),solution_image_url:imageFile?($("challengeId").value?($("challengeImageUrl").value.trim()||null):null):($("challengeImageUrl").value.trim()||null),accepted_answers:split("challengeAccepted"),image_tags:split("challengeTags"),image_description:$("challengeDescription").value,active:$("challengeActive").checked,deactivation_reason:$("challengeDeactivationReason").value.trim()});
       if(imageFile){
         const {data:{session}}=await client.auth.getSession();if(!session)throw new Error("A sessão expirou. Entra novamente.");
         const body=new FormData();body.append("challenge_id",String(result.challenge_id));body.append("file",imageFile);body.append("source","Imagem original gerada por IA — ChatGPT");body.append("source_url","gerada-por-ia://chatgpt");body.append("author",$("author").value.trim()||"ATINA");body.append("license",$("license").value.trim());body.append("attribution",$("attribution").value.trim()||"ATINA");
