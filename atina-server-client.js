@@ -788,7 +788,7 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
     stopButton.textContent = '■ Parar';
     stopButton.setAttribute('aria-label', 'Parar a leitura');
     stopButton.hidden = true;
-    stopButton.style.cssText = 'display:inline-flex;align-items:center;padding:6px 9px;min-height:30px;border:1px solid #526a80;border-radius:999px;background:transparent;color:#aebfd0;font-size:12px;font-weight:500;box-shadow:none;cursor:pointer;';
+    stopButton.style.cssText = 'align-items:center;padding:6px 9px;min-height:30px;border:1px solid #526a80;border-radius:999px;background:transparent;color:#aebfd0;font-size:12px;font-weight:500;box-shadow:none;cursor:pointer;';
     playButton.addEventListener('click', () => {
       const speech = window.speechSynthesis;
       if (speech.speaking && !speech.paused && atinaSolutionSpeechPanel === panel) {
