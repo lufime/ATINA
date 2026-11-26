@@ -113,6 +113,9 @@ await page.route('https://commons.wikimedia.org/**', route => route.fulfill({
   status: 200, contentType: 'application/json', body: '{"query":{"pages":{}}}'
 }));
 await page.route('https://images.unsplash.com/**', route => route.abort());
+await page.route('**/rest/v1/rpc/atina_public_challenge_selection_count', route => route.fulfill({
+  status: 200, contentType: 'application/json', body: '1823'
+}));
 
 try {
   async function confirmPregame(){
