@@ -737,10 +737,16 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
   // A história só pode aparecer depois de o servidor confirmar que a ronda foi revelada.
   if (!isLocked || !challenge || !Number.isFinite(Number(challenge.id)) ||
       Number(activeChallengeId) !== Number(challenge.id)) return;
-  const description = String(challenge.solution_description || '').trim();
-  const sourceUrl = String(challenge.solution_wikipedia_url || '').trim();
-  const safeSourceUrl = /^https:\/\//i.test(sourceUrl) ? sourceUrl : '';
-  if (!description && !safeSourceUrl) return;
+  // As referências bibliográficas permanecem nos registos internos; nunca são apresentadas aos jogadores.
+  const rawDescription = String(challenge.solution_description || '').trim();
+  const paragraphs = rawDescription.split(/\n\s*\n/).map(text => text.trim()).filter(Boolean);
+  const playerParagraphs = paragraphs.filter(text =>
+    !/^\*\*?(?:fontes?|refer[eê]ncias?|bibliografia)\b/i.test(text) &&
+    !/^(?:fontes?|refer[eê]ncias?|bibliografia)\s*:/i.test(text) &&
+    !/https?:\/\//i.test(text)
+  );
+  const description = playerParagraphs.join('\n\n').trim();
+  if (!description) return;
 
   const panel = document.createElement('section');
   panel.dataset.solutionWikipedia = 'true';
@@ -749,22 +755,11 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
   heading.textContent = '📚 História da solução';
   panel.appendChild(heading);
 
-  if (description) {
-    const paragraphs = description.split(/\n\s*\n/).map(text => text.trim()).filter(Boolean);
-    (paragraphs.length ? paragraphs : [description]).forEach(text => {
-      const paragraph = document.createElement('p');
-      paragraph.textContent = text;
-      panel.appendChild(paragraph);
-    });
-  }
-  if (safeSourceUrl) {
-    const link = document.createElement('a');
-    link.href = safeSourceUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = 'Consultar fonte e saber mais';
-    panel.appendChild(link);
-  }
+  playerParagraphs.forEach(text => {
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    panel.appendChild(paragraph);
+  });
   target.appendChild(panel);
   target.classList.remove('hidden');
 }
