@@ -36,20 +36,27 @@ BEGIN
   v_words_expected := string_to_array(v_expected, ' ');
   v_words_actual := string_to_array(v_actual, ' ');
 
-  -- Articles and prepositions are optional only in multi-word answers.
-  -- A one-word answer such as "A" or "O" remains meaningful.
+  -- Articles and prepositions are optional in multi-word answers. Preserve
+  -- a final one-letter token: in "A letra o", the final "o" is the answer,
+  -- not an article. Internal one-letter prepositions such as "a" are ignored.
   IF cardinality(v_words_expected) > 1 THEN
     SELECT coalesce(array_agg(t.word ORDER BY t.ordinality), ARRAY[]::text[])
       INTO v_words_expected
     FROM unnest(v_words_expected) WITH ORDINALITY AS t(word, ordinality)
-    WHERE NOT (t.word = ANY(v_fillers));
+    WHERE NOT (
+      t.word = ANY(v_fillers)
+      AND (char_length(t.word) > 1 OR t.ordinality < cardinality(v_words_expected))
+    );
   END IF;
 
   IF cardinality(v_words_actual) > 1 THEN
     SELECT coalesce(array_agg(t.word ORDER BY t.ordinality), ARRAY[]::text[])
       INTO v_words_actual
     FROM unnest(v_words_actual) WITH ORDINALITY AS t(word, ordinality)
-    WHERE NOT (t.word = ANY(v_fillers));
+    WHERE NOT (
+      t.word = ANY(v_fillers)
+      AND (char_length(t.word) > 1 OR t.ordinality < cardinality(v_words_actual))
+    );
   END IF;
 
   IF cardinality(v_words_expected) = 0 OR cardinality(v_words_actual) = 0 THEN
