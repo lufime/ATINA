@@ -1395,6 +1395,107 @@ label.section{line-height:1.35!important}
 #timerDisplay .timer-prepare-label{display:block!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;max-width:100%!important;text-align:center!important}
 #timerDisplay .timer-prepare-count{display:block!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;max-width:100%!important;text-align:center!important}
 </style>
+
+<style id="atina-player-navigation-redesign-v1">
+/* ATINA — cabeçalho do jogador e navegação compacta */
+#home .brand{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  gap:7px!important;padding:clamp(13px,2.5vw,21px)!important;
+  margin:0 0 9px!important;border-radius:20px!important;
+  text-align:center!important;
+}
+#home .brand .eyebrow{font-size:10px!important;letter-spacing:.2em!important;margin:0!important}
+#home .brand .logo-image{max-width:min(48%,230px)!important;max-height:66px!important;margin:0 auto!important}
+#home .brand .tag{font-size:clamp(13px,2.6vw,17px)!important;line-height:1.3!important;margin:0!important}
+#home #accountIndicator,#home #atinaSignedInUser{
+  width:auto!important;max-width:100%!important;min-height:0!important;
+  margin:2px auto 0!important;padding:6px 11px!important;
+  border-radius:999px!important;font-size:12px!important;line-height:1.25!important;
+  box-shadow:none!important;
+}
+#home .brand .stats{
+  width:100%!important;display:flex!important;flex-wrap:wrap!important;
+  justify-content:center!important;align-items:center!important;gap:7px!important;
+  margin:5px 0 0!important;padding:9px 0 0!important;
+  border-top:1px solid #ffffff18!important;
+}
+#home .brand .stats>*{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 1 auto!important;width:auto!important;min-width:0!important;max-width:100%!important;
+  min-height:34px!important;margin:0!important;padding:6px 11px!important;
+  border:1px solid #38536d!important;border-radius:999px!important;
+  background:#0c2034!important;color:#e5edf5!important;
+  font-size:12px!important;font-weight:750!important;line-height:1.25!important;
+  text-align:center!important;white-space:normal!important;
+}
+#home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{
+  flex:0 1 auto!important;width:auto!important;min-height:34px!important;
+  margin:0!important;padding:6px 10px!important;border-radius:999px!important;
+  font-size:11px!important;line-height:1.25!important;
+}
+#home #atinaOnlinePlayerCount{background:#10352f!important;border:1px solid #367b66!important;color:#b8efd7!important}
+#home #atinaOnlineFriendsBadge{background:#10352f!important;border:1px solid #367b66!important;color:#b8efd7!important}
+#atinaMainNav.home-page-nav{
+  position:sticky!important;top:5px!important;z-index:35!important;
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:stretch!important;gap:6px!important;width:100%!important;
+  max-width:760px!important;margin:8px auto 13px!important;padding:6px!important;
+  border:1px solid #304c65!important;border-radius:16px!important;
+  background:rgba(7,20,34,.96)!important;box-shadow:0 10px 26px #0005!important;
+  backdrop-filter:blur(16px)!important;
+}
+#atinaMainNav>.home-nav-btn,#atinaMainNav .home-nav-more>summary{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:5px!important;min-width:0!important;min-height:43px!important;
+  padding:7px 4px!important;border:1px solid transparent!important;
+  border-radius:11px!important;background:transparent!important;
+  color:#c5d2df!important;font-size:clamp(11px,2.4vw,14px)!important;
+  font-weight:800!important;line-height:1.15!important;text-align:center!important;
+  white-space:nowrap!important;cursor:pointer!important;list-style:none!important;
+}
+#atinaMainNav .home-nav-btn span{overflow:hidden;text-overflow:ellipsis}
+#atinaMainNav .home-nav-more>summary::-webkit-details-marker{display:none}
+#atinaMainNav>.home-nav-btn.active,#atinaMainNav .home-nav-more .home-nav-btn.active{
+  border-color:#d9b46d!important;background:linear-gradient(135deg,#294964,#1b344b)!important;
+  color:#ffe2a4!important;box-shadow:inset 0 0 0 1px #e2bd7825!important;
+}
+#atinaMainNav .home-nav-more{position:relative;min-width:0}
+#atinaMainNav .home-nav-more[open]>summary{
+  border-color:#9b7d4b!important;background:#2b3541!important;color:#ffe2a4!important;
+}
+#atinaMainNav .home-nav-more-grid{
+  position:absolute;top:calc(100% + 9px);right:0;z-index:50;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
+  width:min(310px,calc(100vw - 42px));padding:9px;
+  border:1px solid #3b5872;border-radius:15px;
+  background:#0c1d30;box-shadow:0 18px 38px #0009;
+}
+#atinaMainNav .home-nav-more-grid .home-nav-btn{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:7px!important;min-height:42px!important;padding:8px 9px!important;
+  border:1px solid #29445e!important;border-radius:10px!important;
+  background:#142b40!important;color:#dce6ef!important;
+  font-size:12px!important;text-align:left!important;white-space:normal!important;
+}
+#atinaMainNav .home-nav-more-grid .home-nav-btn.active{
+  border-color:#d9b46d!important;background:#29445b!important;color:#ffe2a4!important;
+}
+#atinaMainNav .home-nav-btn:focus-visible,#atinaMainNav .home-nav-more>summary:focus-visible{
+  outline:3px solid #f3d18a!important;outline-offset:2px!important;
+}
+@media(max-width:390px){
+  #home .brand{padding:11px!important;gap:5px!important;border-radius:16px!important}
+  #home .brand .logo-image{max-height:48px!important;max-width:42%!important}
+  #home .brand .tag{font-size:12px!important}
+  #home #accountIndicator,#home #atinaSignedInUser{font-size:11px!important;padding:5px 9px!important}
+  #home .brand .stats{gap:5px!important;margin-top:3px!important;padding-top:7px!important}
+  #home .brand .stats>*{min-height:30px!important;padding:5px 8px!important;font-size:11px!important}
+  #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{min-height:30px!important;padding:5px 8px!important;font-size:10px!important}
+  #atinaMainNav.home-page-nav{gap:4px!important;padding:4px!important;margin:6px 0 10px!important}
+  #atinaMainNav>.home-nav-btn,#atinaMainNav .home-nav-more>summary{min-height:40px!important;gap:3px!important;padding:6px 2px!important;font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){#atinaMainNav *{scroll-behavior:auto!important;transition:none!important}}
+</style>
 </head>
 <body><div id="atinaBetaVersion" class="atina-beta-version" aria-label="Versão beta de testes 0.1.312"><span class="atina-beta-label">BETA · TESTES</span><strong>v0.1.312</strong></div><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite" style="margin:12px 0;padding:13px 15px;border:1px solid #d3ad68;border-radius:14px;background:linear-gradient(110deg,#49391f,#302a22);color:#ffe2a0;font-weight:700;line-height:1.45">
@@ -1405,16 +1506,22 @@ label.section{line-height:1.35!important}
 <div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
 </header>
 <nav class="home-page-nav" id="atinaMainNav" aria-label="Navegação principal">
-<button type="button" class="home-nav-btn active" data-home-target="dashboard">🏠 Início</button>
-<button type="button" class="home-nav-btn" data-home-target="play">🎮 Jogar</button>
-<button type="button" class="home-nav-btn" data-home-target="howto">📖 Como jogar</button>
-<button type="button" class="home-nav-btn" data-home-target="categories">🧩 Modalidades</button>
-<button type="button" class="home-nav-btn" data-home-target="online">🌐 Online</button>
-<button type="button" class="home-nav-btn" data-home-target="profile">👤 Perfil</button><button type="button" class="home-nav-btn" data-home-target="ranking">🏆 Classificação</button>
-<button type="button" class="home-nav-btn" data-home-target="settings">⚙️ Definições</button>
-<button type="button" class="home-nav-btn" data-home-target="friends">👥 Amigos</button>
-<button type="button" class="home-nav-btn" data-home-target="faq">❓ FAQ</button>
-<button type="button" class="home-nav-btn" data-home-target="knownissues">🐞 Bugs conhecidos</button>
+  <button type="button" class="home-nav-btn active" data-home-target="dashboard">⌂ <span>Início</span></button>
+  <button type="button" class="home-nav-btn" data-home-target="play">▶ <span>Jogar</span></button>
+  <button type="button" class="home-nav-btn" data-home-target="categories">✦ <span>Modos</span></button>
+  <details class="home-nav-more" id="atinaNavMore">
+    <summary aria-label="Abrir mais opções de navegação"><span aria-hidden="true">☰</span> <span>Mais</span></summary>
+    <div class="home-nav-more-grid">
+      <button type="button" class="home-nav-btn" data-home-target="online">🌐 <span>Online</span></button>
+      <button type="button" class="home-nav-btn" data-home-target="howto">📖 <span>Como jogar</span></button>
+      <button type="button" class="home-nav-btn" data-home-target="profile">👤 <span>Perfil</span></button>
+      <button type="button" class="home-nav-btn" data-home-target="ranking">🏆 <span>Classificação</span></button>
+      <button type="button" class="home-nav-btn" data-home-target="settings">⚙️ <span>Definições</span></button>
+      <button type="button" class="home-nav-btn" data-home-target="friends">👥 <span>Amigos</span></button>
+      <button type="button" class="home-nav-btn" data-home-target="faq">❔ <span>FAQ</span></button>
+      <button type="button" class="home-nav-btn" data-home-target="knownissues">🐞 <span>Bugs conhecidos</span></button>
+    </div>
+  </details>
 </nav>
 
 <section id="home"><section class="home-page-panel hidden" data-home-page="faq" id="atinaFaqPage">
@@ -2537,6 +2644,8 @@ function showHomePage(page,restore=false){
   el.classList.toggle('active',active);
   el.setAttribute('aria-current',active?'page':'false');
  });
+ const moreMenu=document.getElementById('atinaNavMore');
+ if(moreMenu)moreMenu.open=['online','howto','profile','ranking','settings','friends','faq','knownissues'].includes(page);
  try{localStorage.setItem('atinaHomePage',page);}catch(e){}
  try{sessionStorage.setItem('atinaHomePage',page);}catch(e){}
  if(location.hash!=='#'+page){
