@@ -113,6 +113,12 @@ await page.route('https://commons.wikimedia.org/**', route => route.fulfill({
   status: 200, contentType: 'application/json', body: '{"query":{"pages":{}}}'
 }));
 await page.route('https://images.unsplash.com/**', route => route.abort());
+await page.route('**/rest/v1/rpc/atina_public_challenge_selection_count', async route => {
+  let args = {};
+  try { args = route.request().postDataJSON() || {}; } catch {}
+  const count = args.p_difficulty === 'easy' ? 0 : 1823;
+  await route.fulfill({status: 200, contentType: 'application/json', body: String(count)});
+});
 
 try {
   async function confirmPregame(){
