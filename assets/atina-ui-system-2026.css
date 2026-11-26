@@ -994,3 +994,30 @@ body>.atina-timer-stack>.atina-clock-face>#timerDisplay{
 @media(min-width:761px){
   #game.atina-hud-active{padding-top:100px!important}
 }
+
+
+/* Contagem de preparação: texto compacto, sem quebrar em várias linhas no HUD móvel. */
+body>.atina-timer-stack>.atina-clock-face>#timerDisplay{
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  white-space:nowrap!important;overflow:visible!important;
+  min-height:0!important;height:auto!important;
+  padding:4px 8px!important;
+}
+body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-label{
+  display:block!important;width:max-content!important;max-width:none!important;
+  white-space:nowrap!important;overflow:visible!important;
+  font-size:12px!important;line-height:1.05!important;
+  letter-spacing:.04em!important;
+}
+body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-count{
+  display:block!important;width:max-content!important;max-width:none!important;
+  white-space:nowrap!important;overflow:visible!important;
+  font-size:clamp(25px,6.5vw,31px)!important;line-height:1.05!important;
+}
+#game.atina-hud-active{padding-top:104px!important}
+@media(max-width:390px){
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-label{font-size:10px!important}
+  body>.atina-timer-stack>.atina-clock-face>#timerDisplay .timer-prepare-count{font-size:25px!important}
+  #game.atina-hud-active{padding-top:100px!important}
+}
