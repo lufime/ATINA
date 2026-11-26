@@ -735,6 +735,7 @@ let atinaSolutionSpeechRun = 0;
 function atinaStopSolutionSpeech() {
   atinaSolutionSpeechRun++;
   if (typeof atinaSpeechGeneration !== 'undefined') atinaSpeechGeneration++;
+  if (typeof atinaSpeechPausedByUser !== 'undefined') atinaSpeechPausedByUser = false;
   if (typeof atinaSpeechQueue !== 'undefined') atinaSpeechQueue.length = 0;
   if (typeof atinaSpeechBusy !== 'undefined') atinaSpeechBusy = false;
   if (typeof atinaSpeechUtterance !== 'undefined') atinaSpeechUtterance = null;
@@ -807,14 +808,17 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
 
     playButton.addEventListener('click', () => {
       const speech = window.speechSynthesis;
-      if (atinaSolutionSpeechPanel === panel && speech.speaking && !speech.paused) {
-        speech.pause();
-        playButton.textContent = '▶ Continuar';
-        return;
-      }
-      if (atinaSolutionSpeechPanel === panel && speech.paused) {
-        speech.resume();
-        playButton.textContent = 'Ⅱ Pausar';
+      if (atinaSolutionSpeechPanel === panel) {
+        if (typeof atinaSpeechPausedByUser !== 'undefined' && atinaSpeechPausedByUser) {
+          atinaSpeechPausedByUser = false;
+          speech.resume();
+          if (typeof atinaSpeechPump === 'function') atinaSpeechPump();
+          playButton.textContent = 'Ⅱ Pausar';
+        } else {
+          if (typeof atinaSpeechPausedByUser !== 'undefined') atinaSpeechPausedByUser = true;
+          speech.pause();
+          playButton.textContent = '▶ Continuar';
+        }
         return;
       }
 
