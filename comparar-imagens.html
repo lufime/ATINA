@@ -11,7 +11,7 @@
 .gallery-pagination button{min-width:82px;min-height:38px;padding:8px 12px}
 .gallery-pagination button:disabled{opacity:.4;cursor:not-allowed}
 .gallery-pagination span{min-width:90px;text-align:center;color:var(--atina-muted);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
-@media(max-width:600px){.gallery-pagination{position:sticky;bottom:6px;z-index:15;box-shadow:0 8px 24px #0008}.gallery-pagination button{min-height:42px;flex:1}.gallery-pagination span{min-width:82px}}
+@media(max-width:600px){#paginationTop{position:sticky;bottom:6px;z-index:15;box-shadow:0 8px 24px #0008}.gallery-pagination button{min-height:42px;flex:1}.gallery-pagination span{min-width:82px}}
 </style>
 <link rel="stylesheet" href="assets/atina-ui-system.css?v=1"> </head><body><main>
 <div class="top"><div><h1>ATINA · Administração</h1><p>Gestão e comparação de imagens dos desafios.</p></div><button id="logoutTop" class="secondary" type="button">Terminar sessão</button></div>
@@ -33,7 +33,7 @@
 </details>
 </section>
 <section class="panel" id="bulkTools" style="margin:14px 0">
-<label style="display:flex;gap:8px;align-items:center"><input id="selectVisible" type="checkbox"> Selecionar todas as imagens visíveis</label>
+<label style="display:flex;gap:8px;align-items:center"><input id="selectVisible" type="checkbox"> Selecionar todas nesta página</label>
 <button id="downloadSelected" type="button">⬇ Descarregar selecionadas</button>
 <button id="downloadVisible" class="secondary" type="button">⬇ Descarregar visíveis</button>
 <button id="approveAll" type="button">✓ Aprovar todas as pendentes/geradas</button>
@@ -114,7 +114,7 @@ $("approveAll").addEventListener("click",()=>bulkStatus("approve",assets.filter(
 $("publishAll").addEventListener("click",()=>bulkStatus("publish",assets.filter(a=>a.status==="approved"),"Publicação","Publicar todas as imagens já aprovadas no jogo?"));
 $("downloadSelected").addEventListener("click",()=>downloadMany(assets.filter(a=>selectedChallenges.has(String(a.challenge_id)))));$("downloadVisible").addEventListener("click",()=>downloadMany(currentPageItems));
 $("deleteSelected").addEventListener("click",async()=>{const ids=[...selectedChallenges];if(!ids.length){say("Seleciona primeiro uma ou mais imagens.");return}if(!confirm("Apagar "+ids.length+" imagem(ns) selecionada(s), incluindo os respetivos ficheiros? Esta ação não pode ser anulada."))return;try{for(const id of ids)await invoke({action:"delete",challenge_id:Number(id)});selectedChallenges.clear();say(ids.length+" imagem(ns) apagada(s).");await refresh()}catch(e){say("A operação parou: "+(e.message||"erro ao apagar"));await refresh()}});
-$("deleteVisible").addEventListener("click",async()=>{const ids=[...new Set(currentPageItems.map(a=>String(a.challenge_id)))];if(!ids.length){say("Não há imagens visíveis para apagar.");return}if(!confirm("ATENÇÃO: apagar TODAS as "+ids.length+" imagens atualmente visíveis (respeitando os filtros), incluindo ficheiros? Esta ação não pode ser anulada."))return;try{for(const id of ids)await invoke({action:"delete",challenge_id:Number(id)});ids.forEach(id=>selectedChallenges.delete(id));say(ids.length+" imagem(ns) visível(is) apagada(s).");await refresh()}catch(e){say("A operação parou: "+(e.message||"erro ao apagar"));await refresh()}});
+$("deleteVisible").addEventListener("click",async()=>{const ids=[...new Set(currentPageItems.map(a=>String(a.challenge_id)))];if(!ids.length){say("Não há imagens visíveis para apagar.");return}if(!confirm("ATENÇÃO: apagar as "+ids.length+" imagens desta página, incluindo os respetivos ficheiros? Esta ação não pode ser anulada."))return;try{for(const id of ids)await invoke({action:"delete",challenge_id:Number(id)});ids.forEach(id=>selectedChallenges.delete(id));say(ids.length+" imagem(ns) visível(is) apagada(s).");await refresh()}catch(e){say("A operação parou: "+(e.message||"erro ao apagar"));await refresh()}});
 $("clearFilters").addEventListener("click",()=>{$("searchImages").value="";$("filterAuthor").value="";$("filterRights").value="";$("filterOrigin").value="";$("filterStatus").value="";$("filterType").value="";$("filterQuality").value="";$("sortImages").value="id";render()});
 sb.auth.getSession().then(({data})=>{if(data.session){$("login").style.display="none";refresh()}});
 })();
