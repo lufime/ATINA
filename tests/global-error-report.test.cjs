@@ -49,5 +49,5 @@ test('submission preserves text on failure and uses the existing report endpoint
 
 test('component script parses and HTML closes the style/body/html tags', () => {
   assert.doesNotThrow(() => new vm.Script(source, {filename:'atina-global-error-report.js'}));
-  assert.match(html, /<\/style>[\s\S]*<script src="\.\/assets\/atina-global-error-report\.js"><\/script>\s*<\/body>\s*<\/html>/);
+  assert.match(html, /<\/style>[\s\S]*<script src="\.\/assets\/atina-global-error-report\.js(?:\?[^"]*)?"><\/script>\s*<\/body>\s*<\/html>/);
 });
