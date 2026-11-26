@@ -330,3 +330,67 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
   #game{scroll-margin-bottom:calc(100px + env(safe-area-inset-bottom))}
 }
+
+
+/* ATINA — cabeçalho simplificado: sem métricas nem estado de sessão */
+.brand .stats,
+.brand #atinaSignedInUser,
+.brand #accountIndicator{display:none!important}
+.brand{
+  min-height:176px;
+  padding:34px 220px 28px 24px!important;
+  grid-template-columns:minmax(0,1fr);
+  align-content:center;
+}
+.brand .eyebrow{
+  width:100%;
+  justify-self:center;
+  text-align:center;
+  margin:0 0 18px;
+}
+.brand .logo-image{
+  position:absolute;
+  top:50%;
+  right:28px;
+  width:clamp(118px,16vw,190px)!important;
+  max-width:190px;
+  max-height:92px!important;
+  height:auto;
+  transform:translateY(-50%);
+  object-fit:contain;
+}
+.brand .tag{
+  width:100%;
+  max-width:100%;
+  justify-self:center;
+  text-align:center;
+  margin:0;
+}
+@media(max-width:760px){
+  .brand{
+    min-height:142px;
+    padding:27px 132px 22px 14px!important;
+    border-radius:20px;
+  }
+  .brand .eyebrow{
+    font-size:9px;
+    letter-spacing:.16em;
+    margin-bottom:14px;
+  }
+  .brand .logo-image{
+    right:12px;
+    width:112px!important;
+    max-width:112px;
+    max-height:66px!important;
+  }
+  .brand .tag{
+    font-size:13px;
+    letter-spacing:.04em;
+  }
+}
+@media(max-width:380px){
+  .brand{min-height:132px;padding-right:112px!important}
+  .brand .logo-image{right:9px;width:96px!important;max-width:96px;max-height:58px!important}
+  .brand .eyebrow{font-size:8px;letter-spacing:.12em}
+  .brand .tag{font-size:12px}
+}
