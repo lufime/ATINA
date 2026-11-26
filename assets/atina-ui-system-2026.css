@@ -2186,3 +2186,15 @@ body.atina-screen-game> .atina-timer-stack{
 :is(.success,.positive,.is-success,.error,.danger,.negative,.is-error,.warning,.neutral,.info,.is-warning,.atina-message,.atina-notice){
   border-radius:12px;
 }
+
+/* Harmonização das classes já usadas pelo motor dos desafios. */
+#feedback.is-correct,[data-tone="positive"]{
+ border-color:var(--atina-positive-border)!important;background:var(--atina-positive-bg)!important;color:var(--atina-positive-text)!important;
+}
+#feedback.is-wrong,[data-tone="negative"]{
+ border-color:var(--atina-negative-border)!important;background:var(--atina-negative-bg)!important;color:var(--atina-negative-text)!important;
+}
+#feedback.is-info,[data-tone="neutral"],#saveStatus[data-tone="neutral"]{
+ border-color:var(--atina-neutral-border)!important;background:var(--atina-neutral-bg)!important;color:var(--atina-neutral-text)!important;
+}
+#feedback.is-correct *,#feedback.is-wrong *,#feedback.is-info *{color:inherit!important}
