@@ -68,7 +68,15 @@ REVOKE ALL ON FUNCTION public.atina_v2_bot_points_leaderboard(integer) FROM PUBL
 REVOKE ALL ON FUNCTION private.atina_v2_simulate_bot_games() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_bot_refresh_presence() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_bot_is_available(private.atina_v2_bot_profiles) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.atina_v2_confirm_simulated_room_players() FROM PUBLIC, anon, authenticated;
+DO $migration$
+BEGIN
+  -- Esta rotina pode existir em instalações históricas, mas não é criada
+  -- por nenhuma migration versionada. Revogar apenas quando estiver presente.
+  IF to_regprocedure('private.atina_v2_confirm_simulated_room_players()') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON FUNCTION private.atina_v2_confirm_simulated_room_players() FROM PUBLIC, anon, authenticated';
+  END IF;
+END;
+$migration$;
 REVOKE ALL ON FUNCTION private.atina_v2_award_bot_competition_progress() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_remove_bot_when_human_leaves() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_cleanup_abandoned_bot_rooms() FROM PUBLIC, anon, authenticated;
