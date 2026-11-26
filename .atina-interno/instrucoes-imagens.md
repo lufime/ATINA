@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.1  
+**Versão das instruções:** 2.2  
 **Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
@@ -544,4 +544,14 @@ Estas regras aplicam-se a todos os trabalhos, funcionalidades, conteúdos, image
 - **Sem referências a bots no jogo:** não introduzir referências, menções, rótulos, personagens, mensagens ou elementos relacionados com bots em qualquer parte da experiência do jogo. Esta regra abrange interface, textos, desafios, imagens, notificações, ajuda e documentação apresentada aos jogadores. Se existir uma necessidade técnica interna de mencionar esse conceito fora da experiência do jogador, mantê-la estritamente interna e evitar que chegue ao jogo.
 - **Proteção da produção:** consultas de leitura não autorizam escritas. Não executar alterações em dados, schema, permissões, configurações, publicações ou operações em massa sem autorização explícita para a ação concreta.
 - **Validação antes de concluir:** confirmar o resultado no sistema de destino e distinguir claramente o que foi preparado, alterado, integrado e publicado. Nunca declarar sucesso sem confirmação verificável.
+
+## 42. Personagens e personalidades — domínio público
+Aplicar a todos os desafios, textos, pistas, soluções, imagens, ilustrações e restantes conteúdos do ATINA.
+- **Só podem ser utilizados personagens e personalidades que estejam comprovadamente no domínio público.** Não incluir personagens ou figuras cuja proteção legal ainda esteja em vigor.
+- Antes de utilizar uma personagem, confirmar a situação dos direitos da obra de origem e da versão concreta representada. A antiguidade do nome ou da personagem, por si só, não comprova que todos os seus desenhos, adaptações, interpretações ou elementos visuais estejam em domínio público.
+- Para personalidades reais, confirmar que a representação pretendida pode ser utilizada legalmente em Portugal e nos territórios relevantes. A entrada de fotografias, retratos, obras ou outros materiais no domínio público deve ser verificada separadamente; direitos de imagem, privacidade e outros direitos aplicáveis também devem ser considerados.
+- Preferir representações originais, criadas de raiz, de figuras históricas cujo estatuto de domínio público esteja confirmado. Não copiar retratos, fotografias, ilustrações, esculturas ou interpretações visuais protegidas.
+- Não utilizar personagens ou personalidades protegidas apenas porque são famosas, históricas, falecidas, antigas, ou porque existem imagens disponíveis na Internet.
+- Se a situação jurídica for incerta, controversa ou não puder ser confirmada, não utilizar a personagem ou personalidade. Escolher outro tema de domínio público ou uma representação conceptual sem elementos identificáveis.
+- Esta regra prevalece sobre exemplos, pedidos de estilo ou referências a obras incluídos noutras secções: **personagens e personalidades só de domínio público, com estatuto verificado**.
 
