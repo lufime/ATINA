@@ -764,11 +764,15 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
   const target = $('solutionImage');
   if (!target) return;
   const previous = target.querySelector('[data-solution-wikipedia]');
-  if (previous && atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
-  previous?.remove();
   // A história só pode aparecer depois de o servidor confirmar que a ronda foi revelada.
   if (!isLocked || !challenge || !Number.isFinite(Number(challenge.id)) ||
-      Number(activeChallengeId) !== Number(challenge.id)) return;
+      Number(activeChallengeId) !== Number(challenge.id)) {
+    if (previous) {
+      if (atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
+      previous.remove();
+    }
+    return;
+  }
   // As referências bibliográficas permanecem nos registos internos; nunca são apresentadas aos jogadores.
   const rawDescription = String(challenge.solution_description || '').trim();
   const paragraphs = rawDescription.split(/\n\s*\n/).map(text => text.trim()).filter(Boolean);
@@ -778,10 +782,28 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
     !/https?:\/\//i.test(text)
   );
   const description = playerParagraphs.join('\n\n').trim();
-  if (!description) return;
+  if (!description) {
+    if (previous) {
+      if (atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
+      previous.remove();
+    }
+    return;
+  }
+  // atinaServerApplyState é chamado a cada 2,5 segundos. Não recriar o painel
+  // do mesmo desafio: isso cancelaria a leitura que ainda está em curso.
+  if (previous &&
+      previous.dataset.solutionChallengeId === String(challenge.id) &&
+      Array.from(previous.querySelectorAll('p')).map(node => node.textContent || '').join('\n\n') === description) {
+    return;
+  }
+  if (previous) {
+    if (atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
+    previous.remove();
+  }
 
   const panel = document.createElement('section');
   panel.dataset.solutionWikipedia = 'true';
+  panel.dataset.solutionChallengeId = String(challenge.id);
   panel.setAttribute('aria-label', 'História da solução');
   const heading = document.createElement('h3');
   heading.textContent = '📚 História da solução';
