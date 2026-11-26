@@ -179,6 +179,7 @@ begin
             select 1 from jsonb_array_elements_text(coalesce(c.accepted_answers,'[]'::jsonb)) x(value)
             where private.atina_v2_normalize_answer(x.value) = v_alias.normalized_alias
           )
+          or private.atina_v2_challenge_answer_matches(c.challenge_id, v_alias.alias)
         )
     ) into v_collision;
 
