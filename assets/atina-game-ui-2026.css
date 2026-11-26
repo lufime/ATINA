@@ -103,7 +103,7 @@ button,.btn,input[type=button],input[type=submit],input[type=reset]{
   border:1px solid transparent!important;border-radius:11px!important;
   box-shadow:0 5px 14px rgba(0,0,0,.16)!important;
 }
-.btn:not(.secondary):not(.danger),button:not(.secondary):not(.danger):not(.home-nav-btn):not(#back){
+.btn:not(.secondary):not(.danger){
   background:linear-gradient(135deg,#70ded5,#43bcb8)!important;color:var(--atina-game-primary-ink)!important;
 }
 .btn.secondary,button.secondary,.btn.back,#back{
@@ -114,7 +114,7 @@ button,.btn,input[type=button],input[type=submit],input[type=reset]{
   border:1px solid rgba(241,141,131,.42)!important;
   background:#63343d!important;color:#ffe8e4!important;
 }
-button:hover,.btn:hover{filter:brightness(1.06)}
+.btn:hover{filter:brightness(1.06)}
 button:disabled,.btn:disabled{opacity:.48!important;filter:none!important;cursor:not-allowed}
 :where(button,a,input,select,textarea,[tabindex]):focus-visible{
   outline:3px solid rgba(98,212,208,.78)!important;outline-offset:2px!important;
