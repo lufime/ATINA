@@ -394,3 +394,76 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .brand .eyebrow{font-size:8px;letter-spacing:.12em}
   .brand .tag{font-size:12px}
 }
+
+
+/* ATINA — correção efetiva do temporizador e da zona inferior em telemóveis */
+@media(max-width:760px){
+  /* O contentor do relógio fica no fluxo normal; nunca flutua sobre a pergunta. */
+  #game .card>.row:has(#timerDisplay){
+    position:relative!important;
+    inset:auto!important;
+    z-index:2!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    justify-content:center!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:12px 0 16px!important;
+    padding:0!important;
+    transform:none!important;
+  }
+  #game .card>.row:has(#timerDisplay)>strong{
+    display:block!important;
+    width:100%!important;
+    margin:0 0 6px!important;
+    text-align:center!important;
+    font-size:16px!important;
+    line-height:1.2!important;
+  }
+  #game #timerDisplay{
+    align-self:center!important;
+    width:min(100%,300px)!important;
+    max-width:300px!important;
+    min-width:0!important;
+    min-height:74px!important;
+    height:auto!important;
+    box-sizing:border-box!important;
+    padding:10px 12px!important;
+    font-size:clamp(24px,6.5vw,34px)!important;
+    line-height:1.08!important;
+    white-space:normal!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+    text-align:center!important;
+  }
+  #game #timerDisplay .timer-prepare-label{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    font-size:clamp(21px,5.8vw,29px)!important;
+    line-height:1.08!important;
+  }
+  #game #timerDisplay .timer-prepare-count{
+    display:block!important;
+    white-space:nowrap!important;
+    font-size:clamp(26px,7vw,36px)!important;
+    line-height:1.08!important;
+  }
+  /* Espaço real no fim do conteúdo para os dois controlos flutuantes inferiores. */
+  #game>.card{
+    padding-bottom:calc(190px + env(safe-area-inset-bottom))!important;
+  }
+  body:has(#game:not(.hidden)){
+    padding-bottom:calc(110px + env(safe-area-inset-bottom))!important;
+  }
+}
+@media(max-width:420px){
+  #game .card>.row:has(#timerDisplay){margin:10px 0 13px!important}
+  #game #timerDisplay{width:min(100%,270px)!important;min-height:68px!important}
+  #game #timerDisplay .timer-prepare-label{font-size:clamp(20px,5.6vw,25px)!important}
+  #game #timerDisplay .timer-prepare-count{font-size:clamp(25px,7vw,31px)!important}
+  #game>.card{padding-bottom:calc(200px + env(safe-area-inset-bottom))!important}
+}
