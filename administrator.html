@@ -447,6 +447,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <div><label for="challengeOriginFilter">Origem</label><select id="challengeOriginFilter"><option value="">Todas as origens</option><option value="ai">Gerada por IA</option><option value="own">Imagem própria</option><option value="other">Outra origem identificada</option><option value="unknown">Origem não indicada</option></select></div>
         <div><label for="challengeTypeFilter">Formato</label><select id="challengeTypeFilter"><option value="">Todos os formatos</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option><option value="none">Sem ficheiro associado</option></select></div>
         <div><label for="challengeQualityFilter">Qualidade</label><select id="challengeQualityFilter"><option value="">Todas as qualidades</option><option value="Muito alta">Muito alta</option><option value="Alta">Alta</option><option value="Boa">Boa</option><option value="Média">Média</option><option value="Baixa">Baixa</option><option value="unknown">Não determinada</option></select></div>
+        <div><label for="challengeGeographicScopeFilter">Âmbito geográfico</label><select id="challengeGeographicScopeFilter"><option value="">Todos os âmbitos</option><option value="Portugal">Portugal</option><option value="Internacional">Internacional</option><option value="Universal">Universal</option></select></div>
       </div>
       <div class="challenge-advanced-footer"><button type="button" class="secondary" id="clearChallengeFilters">Limpar todos os filtros</button></div>
     </details>
@@ -1516,6 +1517,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
     const activeFilter=$("challengeActiveFilter").value,difficultyFilter=$("challengeDifficultyFilter").value,categoryFilter=$("challengeCategoryFilter").value;
     const imageStatus=$("challengeImageStatusFilter").value,author=$("challengeAuthorFilter").value.trim().toLocaleLowerCase("pt-PT");
     const rights=$("challengeRightsFilter").value,origin=$("challengeOriginFilter").value,type=$("challengeTypeFilter").value,quality=$("challengeQualityFilter").value;
+    const geographicScope=$("challengeGeographicScopeFilter").value;
     return challengeCache.filter(x=>{
       const asset=x._imageAsset,active=challengeIsActive(x),mime=asset?.mime_type||"";
       return [x.challenge_id,x.answer,x.category].join(" ").toLocaleLowerCase("pt-PT").includes(term)
@@ -1527,7 +1529,8 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
         &&(!rights||imageRightsClass(asset)===rights)
         &&(!origin||imageOriginClass(asset)===origin)
         &&(!type||(type==="none"?!asset: mime===type))
-        &&(!quality||(quality==="unknown"?!asset||x._imageQuality==="unknown":x._imageQuality===quality));
+        &&(!quality||(quality==="unknown"?!asset||x._imageQuality==="unknown":x._imageQuality===quality))
+        &&(!geographicScope||String(x.geographic_scope||"").trim()===geographicScope);
     });
   }
   function renderChallenges() {
@@ -1597,8 +1600,8 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
   $("challengeScrollBottom").addEventListener("click",()=>{if(location.hash==="#images"){const frame=$("imageManagerFrame");window.scrollTo({top:frame.getBoundingClientRect().bottom+window.scrollY-window.innerHeight+8,behavior:"smooth"});return;}const list=$("challengeList");window.scrollTo({top:list.getBoundingClientRect().bottom+window.scrollY,behavior:"smooth"});});
   $("reloadChallenges").addEventListener("click",loadChallenges);
   $("challengeSearch").addEventListener("input",()=>{challengePage=0;renderChallenges();});
-  ["challengeActiveFilter","challengeCategoryFilter","challengeImageStatusFilter","challengeAuthorFilter","challengeRightsFilter","challengeOriginFilter","challengeTypeFilter","challengeQualityFilter","challengeDifficultyFilter","challengeSort"].forEach(id=>$(id).addEventListener(id==="challengeAuthorFilter"?"input":"change",()=>{challengePage=0;renderChallenges();}));
-  $("clearChallengeFilters").addEventListener("click",()=>{["challengeSearch","challengeAuthorFilter"].forEach(id=>$(id).value="");["challengeActiveFilter","challengeCategoryFilter","challengeImageStatusFilter","challengeRightsFilter","challengeOriginFilter","challengeTypeFilter","challengeQualityFilter","challengeDifficultyFilter"].forEach(id=>$(id).value="");$("challengeSort").value="id";challengePage=0;renderChallenges();});
+  ["challengeActiveFilter","challengeCategoryFilter","challengeImageStatusFilter","challengeAuthorFilter","challengeRightsFilter","challengeOriginFilter","challengeTypeFilter","challengeQualityFilter","challengeGeographicScopeFilter","challengeDifficultyFilter","challengeSort"].forEach(id=>$(id).addEventListener(id==="challengeAuthorFilter"?"input":"change",()=>{challengePage=0;renderChallenges();}));
+  $("clearChallengeFilters").addEventListener("click",()=>{["challengeSearch","challengeAuthorFilter"].forEach(id=>$(id).value="");["challengeActiveFilter","challengeCategoryFilter","challengeImageStatusFilter","challengeRightsFilter","challengeOriginFilter","challengeTypeFilter","challengeQualityFilter","challengeGeographicScopeFilter","challengeDifficultyFilter"].forEach(id=>$(id).value="");$("challengeSort").value="id";challengePage=0;renderChallenges();});
   $("challengePrev").addEventListener("click",()=>{challengePage=Math.max(0,challengePage-1);renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
   $("challengeNext").addEventListener("click",()=>{challengePage++;renderChallenges();$("challengeList").scrollIntoView({behavior:"smooth",block:"start"});});
   $("selectVisibleChallenges").addEventListener("click",()=>{document.querySelectorAll("[data-select-challenge]").forEach(input=>selectedChallengeIds.add(input.dataset.selectChallenge));renderChallenges();});
