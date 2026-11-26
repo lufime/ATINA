@@ -196,3 +196,21 @@ body.atina-screen-game #game #feedback,
   html{scroll-behavior:auto}
   *,*::before,*::after{transition:none!important;animation:none!important}
 }
+
+
+/* ATINA — avisos negativos sem bloco de fundo vermelho.
+   Mantém o contorno e o texto vermelhos para preservar a leitura do estado. */
+:is(
+  #feedback.is-wrong,
+  #feedback[data-tone="negative"],
+  [role="alert"][data-tone="negative"],
+  .atina-message--negative,
+  .atina-notice--negative,
+  .error:not(button):not(input):not(.btn),
+  .negative:not(button):not(input):not(.btn),
+  .is-error:not(button):not(input):not(.btn)
+){
+  background:var(--atina-game-panel)!important;
+  border-color:var(--atina-game-negative)!important;
+  color:#ffc0b8!important;
+}
