@@ -21,7 +21,7 @@ Deno.serve(async req=>{
  const meta=data.user.app_metadata??{};
  if(!(meta.atina_admin===true||meta.role==="admin")) return reply({error:"Administrator access required."},403);
  try {
-  const body=await req.json(); const action=String(body.action??"");
+  const body=await req.json() as Record<string, any>; const action=String(body.action??"");
   const deleteChallengeRecord=async(id:number)=>{
    const result=await sql.begin(async tx=>{
     const assets=await tx`select storage_path,original_storage_path from private.atina_image_assets where challenge_id=${id}`;
@@ -93,7 +93,7 @@ Deno.serve(async req=>{
    return reply({success:true,deleted:true,...result});
   }
   if(action==="challenge_delete_many"){
-   const ids=Array.isArray(body.challenge_ids)?[...new Set(body.challenge_ids.map((x:any)=>Number(x)))]:[];
+   const ids:number[]=Array.isArray(body.challenge_ids)?[...new Set<number>((body.challenge_ids as unknown[]).map((x:unknown)=>Number(x)))]:[];
    if(!ids.length||ids.length>2000||ids.some((id:number)=>!Number.isSafeInteger(id)||id<0)) return reply({error:"Indica entre 1 e 2000 IDs válidos."},400);
    const deleted:any[]=[],failed:any[]=[];
    for(const id of ids){try{deleted.push(await deleteChallengeRecord(id));}catch(e){failed.push({challenge_id:id,error:e instanceof Error?e.message:"Falha ao apagar."});}}
@@ -139,8 +139,8 @@ Deno.serve(async req=>{
    return reply({assets:rows});
   }
   if(action==="download_zip"){
-   const requested=Array.isArray(body.items)?body.items:[];
-   const unique=[...new Map(requested.map((x:any)=>[String(x?.id),x])).values()];
+   const requested:Record<string, unknown>[]=Array.isArray(body.items)?body.items.filter((x:unknown):x is Record<string, unknown>=>!!x&&typeof x==="object"&&!Array.isArray(x)):[];
+   const unique:Record<string, unknown>[]=[...new Map<string,Record<string, unknown>>(requested.map((x)=>[String(x.id),x])).values()];
    if(!unique.length||unique.length>100) return reply({error:"Indica entre 1 e 100 imagens."},400);
    const zip=new JSZip(); let count=0; const errors:string[]=[];
    for(const item of unique){
@@ -157,7 +157,7 @@ Deno.serve(async req=>{
    }
    if(!count) return reply({error:"Não foi possível obter nenhum original.",details:errors},502);
    const archive=await zip.generateAsync({type:"uint8array",compression:"STORE"});
-   return new Response(archive,{status:200,headers:{...cors,"Content-Type":"application/zip","Content-Length":String(archive.byteLength),"Content-Disposition":'attachment; filename="ATINA_IMAGENS_ORIGINAIS.zip"',"X-Images-Included":String(count),"X-Images-Failed":String(errors.length),"Cache-Control":"no-store"}});
+   return new Response(archive.buffer.slice(archive.byteOffset,archive.byteOffset+archive.byteLength) as ArrayBuffer,{status:200,headers:{...cors,"Content-Type":"application/zip","Content-Length":String(archive.byteLength),"Content-Disposition":'attachment; filename="ATINA_IMAGENS_ORIGINAIS.zip"',"X-Images-Included":String(count),"X-Images-Failed":String(errors.length),"Cache-Control":"no-store"}});
   }
   const id=Number(body.challenge_id);
   if(!Number.isSafeInteger(id)||id<0) return reply({error:"Invalid challenge_id."},400);
