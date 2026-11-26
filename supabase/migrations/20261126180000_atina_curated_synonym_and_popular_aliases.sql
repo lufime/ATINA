@@ -116,13 +116,11 @@ begin
     set alias = excluded.alias,
         alias_type = excluded.alias_type,
         locale = excluded.locale,
-        status = 'pending',
+        status = case when private.atina_challenge_answer_aliases.status = 'rejected' then 'pending' else private.atina_challenge_answer_aliases.status end,
         review_notes = excluded.review_notes,
-        created_by = auth.uid(),
-        created_at = now(),
-        reviewed_by = null,
-        reviewed_at = null,
-        added_to_accepted_answers = false
+        reviewed_by = case when private.atina_challenge_answer_aliases.status = 'rejected' then null else private.atina_challenge_answer_aliases.reviewed_by end,
+        reviewed_at = case when private.atina_challenge_answer_aliases.status = 'rejected' then null else private.atina_challenge_answer_aliases.reviewed_at end,
+        added_to_accepted_answers = private.atina_challenge_answer_aliases.added_to_accepted_answers
   returning id into v_id;
 
   return v_id;
