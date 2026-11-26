@@ -511,6 +511,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* Resposta certa revelada: separar e destacar a solução */
 #game .feedback.solution-revealed{font-size:16px!important;font-weight:500!important;line-height:1.5!important}
 #game .feedback .solution-answer{display:inline-block;margin-top:5px;font-size:clamp(25px,7vw,32px)!important;font-weight:950!important;line-height:1.2!important;letter-spacing:.015em;color:#ffe09a;text-shadow:0 2px 14px #eac05d55}
+/* Reforço final: resposta revelada maior, com prioridade sobre estilos anteriores. */
+#game .feedback.solution-revealed{font-size:24px!important;font-weight:750!important;line-height:1.65!important;padding:clamp(14px,3.5vw,22px)!important}
+#game .feedback.solution-revealed .solution-answer{font-size:clamp(36px,10vw,46px)!important;line-height:1.2!important;font-weight:950!important}
+@media(max-width:600px){#game .feedback.solution-revealed{font-size:25px!important}#game .feedback.solution-revealed .solution-answer{font-size:clamp(38px,10.5vw,48px)!important}}
 
 
 /* ATINA UI system — hierarquia, consistência e adaptação */
