@@ -439,8 +439,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="challenge-category-filter"><label for="challengeCategoryFilter">Categoria</label><select id="challengeCategoryFilter"><option value="">Todas as categorias</option></select></div>
     </div>
     <details class="challenge-advanced-filters" id="challengeAdvancedFilters">
-      <summary><span>Filtros avançados</span><span class="challenge-advanced-hint">Imagem, autor, direitos, origem, formato e qualidade</span></summary>
+      <summary><span>Filtros avançados</span><span class="challenge-advanced-hint">Âmbito geográfico, emoji, imagem, autor e qualidade</span></summary>
       <div class="form-grid challenge-filter-grid challenge-advanced-grid">
+        <div><label for="challengeGeographicScopeFilter">Âmbito geográfico</label><select id="challengeGeographicScopeFilter"><option value="">Todos</option><option value="Portugal">Portugal</option><option value="Internacional">Internacional</option><option value="Universal">Universal</option></select></div>
+        <div><label for="challengeEmojiFilter">Emoji</label><select id="challengeEmojiFilter"><option value="">Todos os emojis</option></select></div>
         <div><label for="challengeImageStatusFilter">Estado da imagem</label><select id="challengeImageStatusFilter"><option value="">Todos os estados</option><option value="pending">Pendente</option><option value="approved">Aprovada</option><option value="rejected">Rejeitada</option><option value="broken">Com erro</option><option value="generated">Gerada</option><option value="published">Publicada</option><option value="none">Sem imagem registada</option></select></div>
         <div><label for="challengeAuthorFilter">Autor</label><input id="challengeAuthorFilter" type="search" placeholder="Pesquisar autor"></div>
         <div><label for="challengeRightsFilter">Direitos de utilização</label><select id="challengeRightsFilter"><option value="">Todos os estados dos direitos</option><option value="atina">Direitos ATINA identificados</option><option value="open">Licença aberta indicada</option><option value="pending">Direitos por confirmar</option><option value="restricted">Restrita / não autorizada</option></select></div>
@@ -462,8 +464,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <h2 id="challengeFormTitle">Novo desafio</h2>
       <input id="challengeId" type="hidden">
       <div class="form-grid">
-        <div><label for="challengeCategory">Categoria</label><input id="challengeCategory" required></div>
-        <div><label for="challengeEmoji">Emoji</label><input id="challengeEmoji" required maxlength="12"></div>
+        <div><label for="challengeCategory">Categoria</label><select id="challengeCategory" required><option value="">Seleciona uma categoria</option><option value="__custom__">＋ Nova categoria…</option></select><input id="challengeCategoryCustom" class="hidden" placeholder="Nome da nova categoria" maxlength="80"></div>
+        <div><label for="challengeEmoji">Emoji</label><select id="challengeEmoji" required><option value="">Seleciona um emoji</option><option value="__custom__">＋ Outro emoji…</option></select><input id="challengeEmojiCustom" class="hidden" placeholder="Introduz um emoji" maxlength="12"></div>
+        <div><label for="challengeGeographicScope">Âmbito geográfico</label><select id="challengeGeographicScope" required><option value="">Seleciona o âmbito</option><option value="Portugal">Portugal</option><option value="Internacional">Internacional</option><option value="Universal">Universal</option></select></div>
         <div><label for="challengeAnswer">Solução / resposta</label><input id="challengeAnswer" required></div>
         <div><label for="challengeDifficulty">Dificuldade</label><select id="challengeDifficulty"><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div>
       </div>
@@ -486,6 +489,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <label for="challengeImageFile">Selecionar imagem do dispositivo (JPEG, PNG ou WebP, máximo 10 MB)</label><input id="challengeImageFile" type="file" accept="image/jpeg,image/png,image/webp"><p class="note">A imagem será enviada para o Storage ATINA e o respetivo link será guardado automaticamente. O registo da imagem fica pendente de revisão.</p>
       <label for="challengeImageUrl">Ou inserir link da imagem (URL)</label><input id="challengeImageUrl" type="url" placeholder="https://…"><div id="challengeImagePreview" class="image-preview"><span class="note">Sem imagem associada.</span></div>
       <label><input id="challengeActive" type="checkbox" checked style="width:auto"> Desafio ativo</label>
+      <div id="deactivationReasonField" class="hidden"><label for="challengeDeactivationReason">Motivo de desativação</label><textarea id="challengeDeactivationReason" maxlength="500" placeholder="Indica por que razão este desafio deixa de estar ativo"></textarea></div>
       <p id="formDirtyNotice" class="note hidden">Existem alterações por guardar.</p><div class="challenge-actions"><button type="submit" id="saveChallenge">Guardar desafio</button><button type="button" class="secondary" id="cancelChallenge">Cancelar</button></div>
     </form>
   </section>
