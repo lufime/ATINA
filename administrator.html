@@ -1499,6 +1499,11 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
       return '<p class="note"><strong>'+esc(action)+'</strong> · '+esc(date)+(item.reason?'<br>Motivo: '+esc(item.reason):"")+'</p>';
     }).join(""):'<p class="note">Ainda sem desactivações ou reativações registadas.</p>');
   }
+  function setChallengeEmoji(value){
+    const select=$("challengeEmoji"),emoji=String(value||"");
+    if(emoji&&!Array.from(select.options).some(option=>option.value===emoji))select.add(new Option(emoji,emoji));
+    select.value=emoji;
+  }
   function syncDeactivationReason(){
     const id=$("challengeId").value;
     const existing=challengeCache.find(x=>String(x.challenge_id)===String(id));
@@ -1575,7 +1580,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
   }
   function editChallenge(id) {
     const x=challengeCache.find(v=>String(v.challenge_id)===String(id)); if(!x)return;
-    $("challengeId").value=x.challenge_id; $("challengeCategory").value=x.category||""; $("challengeEmoji").value=x.emoji||"";
+    $("challengeId").value=x.challenge_id; $("challengeCategory").value=x.category||""; setChallengeEmoji(x.emoji||"");
     $("challengeAnswer").value=x.answer||""; $("challengeDifficulty").value=x.difficulty||"medium";
     renderClueFields(x.clues||[]); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
     $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||x._imageAsset?.game_image_url||x._imageAsset?.image_url||x.image_url||""; updateChallengeImagePreview();
