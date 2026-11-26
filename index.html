@@ -1508,6 +1508,27 @@ label.section{line-height:1.35!important}
 </style>
 
 
+<style id="atina-solution-and-message-tones-v2">
+/* Solução: leitura confortável em telemóveis e ecrãs maiores. */
+#solutionImage [data-solution-wikipedia] h3{font-size:28px!important;line-height:1.3!important}
+#solutionImage [data-solution-wikipedia] p{font-size:23px!important;line-height:1.8!important}
+#solutionImage [data-solution-wikipedia] a{font-size:20px!important;line-height:1.6!important}
+@media(max-width:600px){
+ #solutionImage [data-solution-wikipedia]{padding:20px!important}
+ #solutionImage [data-solution-wikipedia] h3{font-size:29px!important}
+ #solutionImage [data-solution-wikipedia] p{font-size:24px!important;line-height:1.8!important}
+ #solutionImage [data-solution-wikipedia] a{font-size:21px!important}
+}
+/* Código de cores uniforme para mensagens e avisos: positivo, negativo e neutro. */
+.atina-tone-positive{color:#b9f5d0!important;background:linear-gradient(145deg,#123e2d,#174b36)!important;border:1px solid #4da979!important}
+.atina-tone-negative{color:#ffd0d0!important;background:linear-gradient(145deg,#4b2028,#5b2931)!important;border:1px solid #c45b65!important}
+.atina-tone-neutral{color:#ffedb0!important;background:linear-gradient(145deg,#493b18,#5a481d)!important;border:1px solid #c6a448!important}
+#game #feedback.is-correct,#game .feedback.atina-tone-positive{color:#c9ffdc!important;background:linear-gradient(145deg,#123e2d,#174b36)!important;border-color:#4da979!important}
+#game #feedback.is-wrong,#game .feedback.atina-tone-negative{color:#ffd0d0!important;background:linear-gradient(145deg,#4b2028,#5b2931)!important;border-color:#c45b65!important}
+#game #feedback.is-info,#game .feedback.atina-tone-neutral{color:#ffedb0!important;background:linear-gradient(145deg,#493b18,#5a481d)!important;border-color:#c6a448!important}
+#atinaUpdateNotice.atina-tone-positive,#atinaUpdateNotice.atina-tone-negative,#atinaUpdateNotice.atina-tone-neutral{border-radius:14px}
+#networkTurnNotice.atina-tone-positive,#networkTurnNotice.atina-tone-negative,#networkTurnNotice.atina-tone-neutral{border:2px solid currentColor}
+</style>
 </head>
 <body><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
@@ -1730,7 +1751,36 @@ if(atinaLegalModalElement&&atinaLegalModalElement.parentElement!==document.body)
 // Mostrar o formulário de conta logo no ecrã inicial de acesso.
 document.getElementById('atinaAccessAccountMount')?.appendChild(document.getElementById('atinaCloudProgressPanel'));
 // A chave da sessão é partilhada com atina-server-client.js.
-function atinaAccountMessage(message){const el=$('atinaCloudStatus');if(el){const text=String(message||'');el.textContent=text;const isError=/erro|incorret|falh|não foi possível|nao foi possivel|indispon|inválid|invalid|rejeitad|permission|timeout|expir|bloque/i.test(text);const isPositive=/sucesso|criada|criado|recuperad|sincronizad|guardad|iniciada|iniciado|confirmad|conclu/i.test(text);el.classList.toggle('atina-error-message',isError);el.classList.toggle('atina-message-positive',!isError&&isPositive);el.classList.toggle('atina-message-neutral',!isError&&!isPositive);}}
+function atinaSetMessageTone(el,message){
+ if(!el)return;
+ const text=String(message??el.textContent??'').trim();
+ const normalized=text.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLocaleLowerCase('pt-PT');
+ if(!normalized){el.classList.remove('atina-tone-positive','atina-tone-negative','atina-tone-neutral');return;}
+ const negative=/(erro|incorret|falh|nao foi possivel|indispon|inval|rejeitad|permission|timeout|expir|bloque|sem ligacao|sem internet|cancelad|perdid|recusad|esgotad|tempo terminado|tempo acabou)/i.test(normalized);
+ const positive=/(sucesso|criada|criado|recuperad|sincronizad|guardad|iniciada|iniciado|confirmad|conclu|correta|certo!|acert|validada|atribuida|desbloquead|disponivel|registad|aceite|ganhaste|parabens)/i.test(normalized);
+ el.classList.toggle('atina-tone-positive',!negative&&positive);
+ el.classList.toggle('atina-tone-negative',negative);
+ el.classList.toggle('atina-tone-neutral',!negative&&!positive);
+}
+function atinaObserveGameMessages(){
+ if(!document.body||window.atinaMessageToneObserver)return;
+ const selector='.feedback,[role="status"],[role="alert"],#atinaUpdateNoticeMessage,#dateNotice,#networkTurnNoticeText,#mimeFeedback';
+ const scan=node=>{
+  if(!(node instanceof Element))return;
+  if(node.matches(selector))atinaSetMessageTone(node);
+  node.querySelectorAll?.(selector).forEach(el=>atinaSetMessageTone(el));
+ };
+ const observer=new MutationObserver(records=>records.forEach(record=>{
+  if(record.type==='characterData')scan(record.target.parentElement);
+  else record.addedNodes.forEach(scan);
+  if(record.type==='childList'&&record.target instanceof Element&&record.target.matches(selector))atinaSetMessageTone(record.target);
+ }));
+ observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+ window.atinaMessageToneObserver=observer;
+ document.querySelectorAll(selector).forEach(el=>atinaSetMessageTone(el));
+}
+atinaObserveGameMessages();
+function atinaAccountMessage(message){const el=$('atinaCloudStatus');if(el){el.textContent=String(message||'');atinaSetMessageTone(el,message);el.classList.toggle('atina-error-message',el.classList.contains('atina-tone-negative'));el.classList.toggle('atina-message-positive',el.classList.contains('atina-tone-positive'));el.classList.toggle('atina-message-neutral',el.classList.contains('atina-tone-neutral'));}}
 function atinaAccountSetSession(data){
  if(data?.session_token)localStorage.setItem(ATINA_ACCOUNT_SESSION_KEY,data.session_token);
  if(data?.profile){window.atinaCloudProfile=data.profile;if(typeof atinaProgressRender==='function')atinaProgressRender(data.profile);}
@@ -2473,7 +2523,7 @@ function renderNetworkTimeoutPanel(){
  add('Pausa individual · 15 min','player',personal);
  if(networkLobbyData.team)add('Pausa da equipa · 15 min','team',team);
 }
-function networkMessage(id,msg){const el=$(id);if(el){atinaRenderRevealedAnswer(id,msg);const isError=/erro|incorret|falh|não foi possível|nao foi possivel|indispon|inválid|invalid|rejeitad|permission|timeout|expir|bloque/i.test(String(msg));el.classList.toggle('atina-error-message',isError);}}
+function networkMessage(id,msg){const el=$(id);if(el){atinaRenderRevealedAnswer(id,msg);atinaSetMessageTone(el,msg);el.classList.toggle('atina-error-message',el.classList.contains('atina-tone-negative'));}}
 let quickMatchTicket=null,quickMatchPoll=null,quickMatchBusy=false;
 function atinaFillNetworkNickname(value){const input=$('networkNickname');if(!input)return;let nickname=String(window.atinaCloudProfile?.nickname||value||'').trim();if(!nickname){try{nickname=String(localStorage.getItem('atinaProgressNicknameV1')||'').trim();}catch(e){}}input.value=nickname.slice(0,20);}
 function quickMatchStopPolling(){if(quickMatchPoll!==null)clearInterval(quickMatchPoll);quickMatchPoll=null;}
