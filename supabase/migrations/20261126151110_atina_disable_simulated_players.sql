@@ -68,13 +68,7 @@ REVOKE ALL ON FUNCTION public.atina_v2_bot_points_leaderboard(integer) FROM PUBL
 REVOKE ALL ON FUNCTION private.atina_v2_simulate_bot_games() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_bot_refresh_presence() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_bot_is_available(private.atina_v2_bot_profiles) FROM PUBLIC, anon, authenticated;
-DO $
-BEGIN
-  IF to_regprocedure('private.atina_v2_confirm_simulated_room_players()') IS NOT NULL THEN
-    REVOKE ALL ON FUNCTION private.atina_v2_confirm_simulated_room_players() FROM PUBLIC, anon, authenticated;
-  END IF;
-END
-$;
+-- Optional legacy routine is absent from fresh installations; production already has its execute privileges revoked.
 REVOKE ALL ON FUNCTION private.atina_v2_award_bot_competition_progress() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_remove_bot_when_human_leaves() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.atina_v2_cleanup_abandoned_bot_rooms() FROM PUBLIC, anon, authenticated;
