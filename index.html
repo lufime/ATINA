@@ -5531,32 +5531,14 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{font-size:9.5px!important;padding:4px 7px!important}
 }
 </style>
-<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-8">
+<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-9">
 <script src="./assets/atina-global-error-report.js?v=20261126-1"></script>
 
 
 
 
 
-<script>
-/* HUD global: retira o painel dos contentores com scroll/transform e ancora-o ao viewport. */
-(function(){
-  function mountAtinaGameHud(){
-    const game=document.getElementById('game');
-    const hud=document.querySelector('#game .atina-timer-stack');
-    if(!game||!hud||!document.body)return;
-    if(hud.parentElement!==document.body)document.body.appendChild(hud);
-    const sync=()=>{hud.style.display=game.classList.contains('hidden')?'none':'flex';};
-    sync();
-    if(!game.__atinaHudObserver){
-      game.__atinaHudObserver=new MutationObserver(sync);
-      game.__atinaHudObserver.observe(game,{attributes:true,attributeFilter:['class']});
-    }
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountAtinaGameHud,{once:true});
-  else mountAtinaGameHud();
-})();
-</script>
+
 
 </body>
 </html>
