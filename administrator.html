@@ -1736,14 +1736,14 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
       return;
     }
     const toggle=event.target.closest("[data-toggle-challenge]"); if(!toggle)return;
-    const id=Number(toggle.dataset.toggleChallenge), active=toggle.dataset.active==="true";
+    const id=Number(toggle.dataset.toggleChallenge), shouldActivate=toggle.dataset.active==="true";
     const x=challengeCache.find(v=>v.challenge_id===id);
-    const action=active?"desativar":"reativar";
+    const action=shouldActivate?"reativar":"desativar";
     let deactivationReason=null;
-    if(active){deactivationReason=window.prompt("Indica o motivo de desativação do desafio #"+id+":",x?.deactivation_reason||"");if(!deactivationReason||!deactivationReason.trim())return;deactivationReason=deactivationReason.trim();if(deactivationReason.length>500){alert("O motivo não pode ultrapassar 500 caracteres.");return;}}
-    if(!confirm("Queres "+action+" o desafio #"+id+" — "+(x?.answer||"")+"? "+(active?"O registo e o histórico serão preservados.":"O desafio voltará a ficar ativo.")))return;
+    if(!shouldActivate){deactivationReason=window.prompt("Indica o motivo de desativação do desafio #"+id+":");if(!deactivationReason||!deactivationReason.trim())return;deactivationReason=deactivationReason.trim();if(deactivationReason.length>500){alert("O motivo não pode ultrapassar 500 caracteres.");return;}}
+    if(!confirm("Queres "+action+" o desafio #"+id+" — "+(x?.answer||"")+"? "+(!shouldActivate?"O registo e o histórico serão preservados.":"O desafio voltará a ficar ativo.")))return;
     toggle.disabled=true;
-    try { await challengeRequest({action:"challenge_toggle",challenge_id:id,active,deactivation_reason:deactivationReason}); recordAdminAction(active?"Desativou desafio":"Reativou desafio","#"+id+" · "+(x?.answer||"")); await loadChallenges(); }
+    try { await challengeRequest({action:"challenge_toggle",challenge_id:id,active:shouldActivate,deactivation_reason:deactivationReason}); recordAdminAction(shouldActivate?"Reativou desafio":"Desativou desafio","#"+id+" · "+(x?.answer||"")); await loadChallenges(); }
     catch(error){alert(error.message);} finally{toggle.disabled=false;}
   });
   $("challengeForm").addEventListener("submit",async event=>{
