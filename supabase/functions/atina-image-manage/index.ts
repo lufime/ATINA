@@ -39,7 +39,7 @@ Deno.serve(async req=>{
    return {challenge_id:id,storage_objects_removed:storageWarning?0:result.length,storage_warning:storageWarning};
   };
   if(action==="challenge_list"){
-   const rows=await sql`select c.challenge_id,c.category,c.emoji,c.clues,c.answer,c.accepted_answers,c.active,c.difficulty,c.image_tags,c.image_description,c.solution_image_url,c.created_at,coalesce((select json_agg(json_build_object('action',h.action,'reason',h.reason,'created_at',h.created_at) order by h.created_at desc) from private.atina_challenge_deactivation_history h where h.challenge_id=c.challenge_id),'[]'::json) as deactivation_history from private.atina_challenges c order by c.challenge_id`;
+   const rows=await sql`select c.challenge_id,c.category,c.emoji,c.clues,c.answer,c.accepted_answers,c.active,c.difficulty,c.image_tags,c.image_description,c.solution_image_url,c.geographic_scope,c.created_at,coalesce((select json_agg(json_build_object('action',h.action,'reason',h.reason,'created_at',h.created_at) order by h.created_at desc) from private.atina_challenge_deactivation_history h where h.challenge_id=c.challenge_id),'[]'::json) as deactivation_history from private.atina_challenges c order by c.challenge_id`;
    return reply({challenges:rows});
   }
   if(action==="challenge_save"){
@@ -102,11 +102,11 @@ Deno.serve(async req=>{
   if(action==="challenge_toggle"){
    const id=Number(body.challenge_id),active=body.active===true,reason=String(body.reason??"").trim();
    if(!Number.isSafeInteger(id)||id<0) return reply({error:"ID inválido."},400);
-   if(!active&&!reason) return reply({error:"Indica o motivo obrigatório da desactivação."},400);
    const row=await sql.begin(async tx=>{
     const current=await tx`select active from private.atina_challenges where challenge_id=${id} for update`;
     if(!current.length) return null;
     const wasActive=current[0].active===true;
+    if(wasActive&&!active&&!reason) throw new Error("Indica o motivo obrigatório da desactivação.");
     await tx`update private.atina_challenges set active=${active} where challenge_id=${id}`;
     if(wasActive&&!active) await tx`insert into private.atina_challenge_deactivation_history(challenge_id,action,reason,admin_user_id) values(${id},'deactivated',${reason},${data.user.id})`;
     if(!wasActive&&active) await tx`insert into private.atina_challenge_deactivation_history(challenge_id,action,reason,admin_user_id) values(${id},'reactivated',null,${data.user.id})`;
