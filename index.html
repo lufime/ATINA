@@ -2149,6 +2149,7 @@ async function networkHostPass(){
  }
 }
 async function networkHostNext(){
+ atinaStopSpeechForChallengeChange();
  if(!networkRoom||!networkCanControlTurn()||!networkGameActive||!networkGameState||networkGameState.mode!=='challenges'||!networkGameState.locked)return;
  const button=$('continue');if(button)button.disabled=true;
  try{
@@ -2997,7 +2998,7 @@ function atinaBuildSolutionVisualDescription(game){
   'SEARCH RULE: show the exact answer itself; clues may refine the scene but must never replace the answer with a related object, person or place'
  ].filter(Boolean).join('. ').slice(0,700);
 }
-async function next(){atinaStopSpeechForChallengeChange();if(raceFinished)return;if(atinaGuestLimitReached()){atinaShowGuestRegistration();return;}raceStop();if(!atinaRoundHasNext(pos,queue)){finishRace(null);return;}const previousIndex=queue[pos];pos++;const nextIndex=queue[pos];const nextGame=games[nextIndex];if(nextGame){const visualDescription=atinaBuildSolutionVisualDescription(nextGame);atinaPrepareSolutionImage(nextGame[3],nextGame[0],nextGame[4]||[],visualDescription);}const sameCategory=games[previousIndex]?.[0]===games[nextIndex]?.[0];if(mode==='duel'||mode==='party')player=1-player;else player=0;if(sameCategory)await challengePause(difficultyLabel(atinaChallengeDifficulty(nextIndex)),games[nextIndex]?.[1]||'');else await challengePause();await mixDraw();load();saveLocalProgress();}
+async function next(){atinaStopSpeechForChallengeChange();if(raceFinished)return;if(atinaGuestLimitReached()){atinaShowGuestRegistration();return;}raceStop();if(!atinaRoundHasNext(pos,queue)){finishRace(null);return;}const previousIndex=queue[pos];pos++;const nextIndex=queue[pos];const nextGame=games[nextIndex];if(nextGame){const visualDescription=atinaBuildSolutionVisualDescription(nextGame);atinaPrepareSolutionImage(nextGame[3],nextGame[0],nextGame[4]||[],visualDescription);}const sameCategory=games[previousIndex]?.[0]===games[nextIndex]?.[0];if(mode==='duel'||mode==='party')player=1-player;else player=0;if(sameCategory)await challengePause(difficultyLabel(atinaChallengeDifficulty(nextIndex)),games[nextIndex]?.[1]||'');else await challengePause();atinaStopSpeechForChallengeChange();await mixDraw();load();saveLocalProgress();}
 async function activateLandscapePresentation(){if(!document.fullscreenElement)await document.documentElement.requestFullscreen();if(screen.orientation?.lock)await screen.orientation.lock('landscape');}
 async function openScreenShareHelp(){const panel=$('screenShareHelp');panel.classList.remove('hidden');try{await activateLandscapePresentation();$('screenShareTitle').textContent='📺 ATINA pronto para partilhar na TV';}catch(e){$('screenShareTitle').textContent='📺 Para mostrar na TV';}panel.scrollIntoView({behavior:'smooth',block:'center'});$('closeScreenShare').focus();}
 function closeScreenShareHelp(){$('screenShareHelp').classList.add('hidden');}
