@@ -896,3 +896,41 @@ body>.atina-timer-stack>#timerDisplay{
   body>.atina-timer-stack{width:min(calc(100vw - 24px),960px)!important;padding:7px 10px 9px!important}
   body>.atina-timer-stack>.atina-live-stats>span{flex-direction:row!important;font-size:13px!important;gap:5px!important}
 }
+
+
+/* Relógio único: indicadores integrados na mesma face do mostrador. */
+body>.atina-timer-stack{
+  padding:5px!important;
+  border-radius:18px!important;
+  background:rgba(8,22,38,.98)!important;
+}
+body>.atina-timer-stack>.atina-clock-face{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:5px!important;width:100%!important;min-width:0!important;
+  padding:7px 8px 8px!important;box-sizing:border-box!important;
+  border:1px solid rgba(79,211,222,.48)!important;border-radius:14px!important;
+  background:linear-gradient(180deg,rgba(18,43,65,.98),rgba(8,22,38,.99))!important;
+}
+body>.atina-timer-stack>.atina-clock-face>.atina-live-stats{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  align-items:center!important;gap:4px!important;width:100%!important;
+  margin:0!important;padding:0 0 5px!important;
+  border-bottom:1px solid rgba(130,174,201,.24)!important;
+}
+body>.atina-timer-stack>.atina-clock-face>.atina-live-stats>span{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:2px!important;min-width:0!important;
+  padding:2px 1px!important;font-size:10px!important;line-height:1.15!important;
+  text-align:center!important;white-space:normal!important;
+}
+body>.atina-timer-stack>.atina-clock-face>.atina-live-stats b{
+  font-size:15px!important;font-weight:900!important;
+}
+body>.atina-timer-stack>.atina-clock-face>strong{display:none!important}
+body>.atina-timer-stack>.atina-clock-face>#timerDisplay{
+  position:static!important;align-self:center!important;
+  width:100%!important;max-width:none!important;min-width:0!important;
+  min-height:43px!important;margin:0!important;padding:4px 8px!important;
+  border:0!important;border-radius:8px!important;background:transparent!important;
+  box-shadow:none!important;font-size:clamp(27px,8vw,35px)!important;line-height:1.05!important;
+}
