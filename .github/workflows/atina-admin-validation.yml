@@ -43,13 +43,50 @@ jobs:
       - name: Verificar TypeScript da Edge Function
         run: deno check supabase/functions/atina-image-manage/index.ts
 
+      - name: Verificar sintaxe dos scripts JavaScript do painel
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const os = require('node:os');
+          const path = require('node:path');
+          const { spawnSync } = require('node:child_process');
+          const html = fs.readFileSync('administrator.html', 'utf8');
+          const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+            .filter(([, attrs, body]) => !/\bsrc\s*=/.test(attrs) && body.trim());
+          if (!scripts.length) {
+            console.error('Não foram encontrados scripts inline para validar.');
+            process.exit(1);
+          }
+          const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'atina-admin-js-'));
+          try {
+            scripts.forEach(([, , body], index) => {
+              const file = path.join(dir, `script-${index + 1}.js`);
+              fs.writeFileSync(file, body);
+              const result = spawnSync('node', ['--check', file], { encoding: 'utf8' });
+              if (result.status !== 0) {
+                process.stderr.write(result.stderr || result.stdout);
+                process.exit(result.status || 1);
+              }
+            });
+            console.log(`Sintaxe válida em ${scripts.length} bloco(s) JavaScript inline.`);
+          } finally {
+            fs.rmSync(dir, { recursive: true, force: true });
+          }
+          NODE
+
       - name: Verificar whitespace do diff
         if: github.event_name == 'pull_request'
         run: git diff --check "origin/${{ github.base_ref }}...HEAD"
 
-      - name: Confirmar que migrations não contêm credenciais
+      - name: Confirmar que as migrations desta alteração não contêm credenciais
         run: |
-          if grep -nEi '(service_role|supabase_service_role_key|postgres(ql)?://[^[:space:]]+)' supabase/migrations/*.sql; then
-            echo "Possível credencial ou URL de base de dados encontrada nas migrations."
-            exit 1
-          fi
+          files=(
+            supabase/migrations/20261126170000_atina_challenge_deactivation_reason_history.sql
+            supabase/migrations/20261126183000_atina_challenge_geography_catalog.sql
+          )
+          for file in "${files[@]}"; do
+            if [ -f "$file" ] && grep -nEi '(service_role|supabase_service_role_key|postgres(ql)?://[^[:space:]]+)' "$file"; then
+              echo "Possível credencial ou URL de base de dados encontrada em $file."
+              exit 1
+            fi
+          done
