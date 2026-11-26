@@ -599,3 +599,83 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   }
 }
 /* A página do desafio mantém espaço para o HUD e para os controlos inferiores. */
+
+
+/* HUD do desafio: começa no topo do cartão e permanece visível durante todo o scroll. */
+#game>.card{overflow:visible!important}
+#game>.card>.atina-timer-stack{
+  position:sticky!important;
+  top:calc(env(safe-area-inset-top, 0px) + 6px)!important;
+  z-index:500!important;
+  isolation:isolate!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:6px!important;
+  width:100%!important;
+  margin:0 0 18px!important;
+  padding:7px 9px 9px!important;
+  box-sizing:border-box!important;
+  border:1px solid rgba(79,211,222,.42)!important;
+  border-radius:16px!important;
+  background:rgba(8,22,38,.98)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.42)!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+}
+#game>.card>.atina-timer-stack>.atina-live-stats{
+  position:static!important;
+  top:auto!important;
+  z-index:auto!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+}
+#game>.card>.atina-timer-stack>.atina-live-stats>span{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  min-width:0!important;
+  padding:7px 4px!important;
+  font-size:clamp(10px,2.8vw,13px)!important;
+  line-height:1.2!important;
+  text-align:center!important;
+}
+#game>.card>.atina-timer-stack>strong{display:none!important}
+#game>.card>.atina-timer-stack>#timerDisplay{
+  position:static!important;
+  top:auto!important;
+  z-index:auto!important;
+  align-self:center!important;
+  width:min(100%,250px)!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:50px!important;
+  margin:0 auto!important;
+  padding:7px 12px!important;
+  font-size:clamp(28px,7vw,38px)!important;
+  line-height:1.05!important;
+}
+@media(max-width:760px){
+  #game>.card>.atina-timer-stack{
+    top:calc(env(safe-area-inset-top, 0px) + 4px)!important;
+    padding:6px 6px 7px!important;
+    margin-bottom:14px!important;
+  }
+  #game>.card>.atina-timer-stack>.atina-live-stats>span{
+    flex-direction:column!important;
+    gap:2px!important;
+    padding:6px 2px!important;
+    font-size:10px!important;
+  }
+  #game>.card>.atina-timer-stack>.atina-live-stats b{font-size:14px!important}
+  #game>.card>.atina-timer-stack>#timerDisplay{
+    min-height:48px!important;
+    font-size:clamp(27px,8vw,35px)!important;
+  }
+}
