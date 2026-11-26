@@ -1115,3 +1115,26 @@ body #timerDisplay .timer-prepare-count{
   white-space:nowrap!important;word-break:normal!important;
   overflow-wrap:normal!important;text-align:center!important;
 }
+
+
+/* Logótipo compacto visível no topo apenas durante os desafios. */
+body>.atina-timer-stack>.atina-clock-face{
+  position:relative!important;
+  padding-top:27px!important;
+}
+body>.atina-timer-stack>.atina-clock-face>.atina-game-logo{
+  position:absolute!important;top:5px!important;left:50%!important;
+  transform:translateX(-50%)!important;
+  display:block!important;width:74px!important;height:19px!important;
+  max-width:32%!important;object-fit:contain!important;
+  margin:0!important;padding:0!important;opacity:.96!important;
+}
+body>.atina-timer-stack>.atina-clock-face>.atina-live-stats{
+  align-self:center!important;
+}
+@media(max-width:390px){
+ body>.atina-timer-stack>.atina-clock-face{padding-top:24px!important}
+ body>.atina-timer-stack>.atina-clock-face>.atina-game-logo{
+  top:4px!important;width:66px!important;height:17px!important
+ }
+}
