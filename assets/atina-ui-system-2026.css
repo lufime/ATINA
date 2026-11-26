@@ -467,3 +467,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   #game #timerDisplay .timer-prepare-count{font-size:clamp(25px,7vw,31px)!important}
   #game>.card{padding-bottom:calc(200px + env(safe-area-inset-bottom))!important}
 }
+
+
+/* ATINA — cabeçalho inicial sem indicadores de presença */
+#home #atinaOnlinePlayerCount,
+#home #atinaOnlineFriendsBadge{
+  display:none!important;
+}
+#home .brand .stats:has(#atinaOnlinePlayerCount):has(#atinaOnlineFriendsBadge){
+  display:none!important;
+}
