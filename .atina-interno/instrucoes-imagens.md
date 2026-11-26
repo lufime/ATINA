@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.6  
+**Versão das instruções:** 2.7  
 **Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
@@ -586,3 +586,21 @@ Aplicar antes de rejeitar um tema ou abandonar a geração de uma imagem.
 - Antes de aceitar, verificar que a imagem comunica corretamente o tema, não induz o jogador em erro e não contém elementos protegidos reconhecíveis.
 - Regra prática: **na dúvida, não incluir a figura; criar um cenário original dentro do contexto do desafio e preservar a história e a associação visual através do ambiente e de elementos genéricos.**
 
+
+
+## 45. Comparação obrigatória com todas as imagens já geradas na conversa
+Aplicar antes de cada nova geração de imagem, sem exceções.
+- Antes de gerar, rever todas as imagens já produzidas na conversa atual, incluindo imagens aprovadas, rejeitadas, tentativas falhadas, imagens de demonstração e imagens que não chegaram a ser convertidas ou integradas.
+- Não considerar apenas a última imagem. Manter uma visão cumulativa das imagens anteriores e das suas características visuais.
+- Comparar a nova proposta com as imagens anteriores quanto ao tema, elemento principal, personagens ou figuras, objetos, cenário, época, composição, perspetiva, enquadramento, iluminação, paleta de cores e disposição dos elementos.
+- Não gerar uma imagem que repita ou seja demasiado semelhante a qualquer imagem anterior, mesmo que tenha outro ID, outra descrição ou pequenas alterações de cor, ângulo ou detalhe.
+- A comparação deve identificar semelhanças de conceito e composição, não apenas duplicados pixel a pixel.
+- Consultar também as imagens já registadas na produção do ATINA para o desafio e para desafios relacionados, de modo a evitar repetições na biblioteca inteira.
+- Antes de chamar a ferramenta de geração, definir uma composição nova e distinta, adequada à solução real do desafio e claramente diferenciada das imagens anteriores.
+- Variar deliberadamente o elemento principal, o ambiente, a perspetiva, a distância da câmara, a iluminação e a organização visual. Não repetir automaticamente a mesma fórmula de retrato em primeiro plano com castelo ao fundo, nem qualquer outra composição recorrente.
+- Se a geração produzir uma imagem repetida, demasiado semelhante, ou incompatível com a solução, rejeitá-la e não a contabilizar como concluída nem a associar a outro desafio sem correspondência inequívoca.
+- As imagens rejeitadas continuam a fazer parte do histórico de comparação e não podem ser esquecidas nas gerações seguintes.
+- Se não for possível rever o histórico visual ou consultar as imagens relevantes, não afirmar que a comparação foi feita; informar a limitação e não avançar como se a verificação estivesse concluída.
+- Registar, para cada imagem, o ID do desafio, a descrição da composição e o resultado da comparação, incluindo as tentativas rejeitadas, para reduzir repetições ao longo dos lotes.
+- A validação final deve confirmar simultaneamente: correspondência com a solução, originalidade, ausência de duplicação com imagens anteriores da conversa e ausência de duplicação com imagens já existentes no ATINA.
+- Regra essencial: **considerar todas as imagens geradas anteriormente nesta conversa antes de criar a próxima; nenhuma tentativa anterior pode ser ignorada na comparação.**
