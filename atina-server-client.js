@@ -729,14 +729,50 @@ function atinaServerStartTimers() {
   atinaServerTimer = setInterval(atinaServerRenderTimer, 250);
   atinaServerPolling = setInterval(() => atinaServerRefresh().catch(() => {}), 2500);
 }
+let atinaSolutionSpeechPanel = null;
+let atinaSolutionSpeechRun = 0;
+
+function atinaStopSolutionSpeech() {
+  atinaSolutionSpeechRun++;
+  if (typeof atinaSpeechGeneration !== 'undefined') atinaSpeechGeneration++;
+  if (typeof atinaSpeechPausedByUser !== 'undefined') atinaSpeechPausedByUser = false;
+  if (typeof atinaSpeechQueue !== 'undefined') atinaSpeechQueue.length = 0;
+  if (typeof atinaSpeechBusy !== 'undefined') atinaSpeechBusy = false;
+  if (typeof atinaSpeechUtterance !== 'undefined') atinaSpeechUtterance = null;
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  if (atinaSolutionSpeechPanel) {
+    const playButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-play]');
+    const stopButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-stop]');
+    if (playButton) playButton.textContent = '▶ Ouvir';
+    if (stopButton) stopButton.hidden = true;
+  }
+  atinaSolutionSpeechPanel = null;
+}
+
+function atinaFinishSolutionSpeech(run) {
+  if (run !== atinaSolutionSpeechRun) return;
+  if (atinaSolutionSpeechPanel) {
+    const playButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-play]');
+    const stopButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-stop]');
+    if (playButton) playButton.textContent = '▶ Ouvir';
+    if (stopButton) stopButton.hidden = true;
+  }
+  atinaSolutionSpeechPanel = null;
+}
+
 function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallengeId = null) {
   const target = $('solutionImage');
   if (!target) return;
   const previous = target.querySelector('[data-solution-wikipedia]');
-  previous?.remove();
   // A história só pode aparecer depois de o servidor confirmar que a ronda foi revelada.
   if (!isLocked || !challenge || !Number.isFinite(Number(challenge.id)) ||
-      Number(activeChallengeId) !== Number(challenge.id)) return;
+      Number(activeChallengeId) !== Number(challenge.id)) {
+    if (previous) {
+      if (atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
+      previous.remove();
+    }
+    return;
+  }
   // As referências bibliográficas permanecem nos registos internos; nunca são apresentadas aos jogadores.
   const rawDescription = String(challenge.solution_description || '').trim();
   const paragraphs = rawDescription.split(/\n\s*\n/).map(text => text.trim()).filter(Boolean);
@@ -746,14 +782,92 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
     !/https?:\/\//i.test(text)
   );
   const description = playerParagraphs.join('\n\n').trim();
-  if (!description) return;
+  if (!description) {
+    if (previous) {
+      if (atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
+      previous.remove();
+    }
+    return;
+  }
+  // atinaServerApplyState é chamado a cada 2,5 segundos. Não recriar o painel
+  // do mesmo desafio: isso cancelaria a leitura que ainda está em curso.
+  if (previous &&
+      previous.dataset.solutionChallengeId === String(challenge.id) &&
+      Array.from(previous.querySelectorAll('p')).map(node => node.textContent || '').join('\n\n') === description) {
+    return;
+  }
+  if (previous) {
+    if (atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
+    previous.remove();
+  }
 
   const panel = document.createElement('section');
   panel.dataset.solutionWikipedia = 'true';
+  panel.dataset.solutionChallengeId = String(challenge.id);
   panel.setAttribute('aria-label', 'História da solução');
   const heading = document.createElement('h3');
   heading.textContent = '📚 História da solução';
   panel.appendChild(heading);
+
+  if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+    const controls = document.createElement('div');
+    controls.style.cssText = 'display:flex;align-items:center;gap:7px;margin:0 0 12px;';
+    const playButton = document.createElement('button');
+    playButton.type = 'button';
+    playButton.className = 'sound-toggle';
+    playButton.dataset.solutionSpeechPlay = 'true';
+    playButton.textContent = '▶ Ouvir';
+    playButton.setAttribute('aria-label', 'Ouvir a História da solução');
+    playButton.style.cssText = 'display:inline-flex;align-items:center;gap:5px;padding:6px 10px;min-height:30px;border:1px solid #526a80;border-radius:999px;background:#132a40;color:#dce7f1;font-size:12px;font-weight:600;box-shadow:none;cursor:pointer;';
+    const stopButton = document.createElement('button');
+    stopButton.type = 'button';
+    stopButton.className = 'sound-toggle';
+    stopButton.dataset.solutionSpeechStop = 'true';
+    stopButton.textContent = '■ Parar';
+    stopButton.setAttribute('aria-label', 'Parar a leitura');
+    stopButton.hidden = true;
+    stopButton.style.cssText = 'align-items:center;padding:6px 9px;min-height:30px;border:1px solid #526a80;border-radius:999px;background:transparent;color:#aebfd0;font-size:12px;font-weight:500;box-shadow:none;cursor:pointer;';
+
+    playButton.addEventListener('click', () => {
+      const speech = window.speechSynthesis;
+      if (atinaSolutionSpeechPanel === panel) {
+        if (typeof atinaSpeechPausedByUser !== 'undefined' && atinaSpeechPausedByUser) {
+          atinaSpeechPausedByUser = false;
+          speech.resume();
+          if (typeof atinaSpeechPump === 'function') atinaSpeechPump();
+          playButton.textContent = 'Ⅱ Pausar';
+        } else {
+          if (typeof atinaSpeechPausedByUser !== 'undefined') atinaSpeechPausedByUser = true;
+          speech.pause();
+          playButton.textContent = '▶ Continuar';
+        }
+        return;
+      }
+
+      atinaStopSolutionSpeech();
+      const run = atinaSolutionSpeechRun;
+      atinaSolutionSpeechPanel = panel;
+      stopButton.hidden = false;
+      playButton.textContent = 'Ⅱ Pausar';
+      const started = typeof atinaSpeakClue === 'function' && atinaSpeakClue(
+        playerParagraphs.join('. '),
+        true,
+        {
+          onStart: () => {
+            if (run === atinaSolutionSpeechRun && atinaSolutionSpeechPanel === panel) {
+              playButton.textContent = 'Ⅱ Pausar';
+            }
+          },
+          onEnd: () => atinaFinishSolutionSpeech(run),
+          onError: () => atinaFinishSolutionSpeech(run)
+        }
+      );
+      if (!started) atinaFinishSolutionSpeech(run);
+    });
+    stopButton.addEventListener('click', atinaStopSolutionSpeech);
+    controls.append(playButton, stopButton);
+    panel.appendChild(controls);
+  }
 
   playerParagraphs.forEach(text => {
     const paragraph = document.createElement('p');
