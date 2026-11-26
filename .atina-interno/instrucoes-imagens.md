@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.7  
+**Versão das instruções:** 2.8  
 **Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
@@ -604,3 +604,22 @@ Aplicar antes de cada nova geração de imagem, sem exceções.
 - Registar, para cada imagem, o ID do desafio, a descrição da composição e o resultado da comparação, incluindo as tentativas rejeitadas, para reduzir repetições ao longo dos lotes.
 - A validação final deve confirmar simultaneamente: correspondência com a solução, originalidade, ausência de duplicação com imagens anteriores da conversa e ausência de duplicação com imagens já existentes no ATINA.
 - Regra essencial: **considerar todas as imagens geradas anteriormente nesta conversa antes de criar a próxima; nenhuma tentativa anterior pode ser ignorada na comparação.**
+
+
+## 46. Auditoria e reaproveitamento de imagens repetidas, falhadas ou inadequadas
+Aplicar a todas as imagens geradas no projeto, incluindo tentativas rejeitadas, imagens duplicadas, imagens com erros visuais e imagens que não correspondam ao desafio inicialmente previsto.
+- Sempre que uma imagem for repetida, gerada com erro, ficar associada ao tema errado ou não servir ao desafio original, não a descartar automaticamente: avaliar se representa de forma clara e correta outro desafio real do ATINA.
+- Consultar a base de dados de produção antes de propor qualquer reaproveitamento. Confirmar o ID e a solução reais, se o desafio está ativo, se ainda precisa de imagem e se não existe já uma imagem associada ou registada.
+- A avaliação deve abranger desafios ativos de todas as categorias geográficas e temáticas, não apenas Portugal, e considerar os desafios elegíveis ainda sem imagem. Desafios inativos, arquivados ou já preenchidos não são destinos elegíveis para novas associações.
+- Comparar a imagem com a solução e o contexto do possível desafio de destino. Exigir correspondência visual e temática inequívoca; uma semelhança vaga, um elemento incidental ou a mera pertença à mesma época/categoria não são suficientes.
+- Não atribuir uma imagem de uma personalidade a outra personalidade, nem de um monumento a outro monumento, apenas por terem aparência ou contexto semelhantes. A imagem tem de representar especificamente a solução do destino.
+- Verificar direitos de autor, direitos de imagem, domínio público, marcas e restantes regras de propriedade intelectual antes de aceitar o reaproveitamento. Uma imagem gerada com elementos proibidos ou identificáveis não se torna válida por mudar de desafio.
+- Verificar qualidade técnica e visual: anatomia, objetos, arquitetura, contexto histórico, coerência, artefactos, texto/números incorretos, deformações e outros erros. Corrigir ou rejeitar imagens que induzam em erro.
+- Uma imagem duplicada ou demasiado semelhante a outra imagem já usada não pode ser associada a um segundo desafio para contornar a regra de não duplicação. O reaproveitamento entre desafios só é permitido quando a imagem é única e ainda não foi utilizada, e a correspondência ao destino é inequívoca.
+- Se a imagem for uma duplicação de uma tentativa anterior, mantê-la apenas no histórico de tentativas e não a incluir no ZIP final. Se uma das versões for claramente superior, escolher no máximo uma para o desafio correto e manter as restantes rejeitadas.
+- Se existir um destino elegível com correspondência inequívoca, registar a imagem como candidata a reaproveitamento, indicar o ID original pretendido e o novo ID proposto, e voltar a consultar a produção imediatamente antes de qualquer associação.
+- Não alterar a associação na base de dados, carregar, aprovar, publicar, apagar ou substituir ficheiros sem autorização explícita para a operação concreta. A identificação de uma correspondência é uma proposta, não autorização para escrever.
+- Se não existir correspondência inequívoca, rejeitar a imagem e gerar uma nova composição adequada ao desafio original, respeitando a comparação obrigatória com todas as imagens anteriores da conversa.
+- Manter um registo de auditoria com: identificador/ficheiro da tentativa, desafio originalmente pretendido, motivo da falha ou duplicação, possíveis desafios de destino, resultado da comparação, decisão final e estado (candidata, reaproveitada, rejeitada ou pendente).
+- Antes de entregar um lote, confirmar que nenhuma imagem rejeitada ou duplicada foi incluída, que cada imagem tem um único desafio de destino e que todas as associações foram verificadas contra a produção.
+- Regra essencial: **toda a imagem repetida, falhada ou inadequada deve ser avaliada para possível correspondência com outro desafio ativo ainda sem imagem; só pode ser reaproveitada com correspondência inequívoca, sem duplicação e após validação da produção.**
