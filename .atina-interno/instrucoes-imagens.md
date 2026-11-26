@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.2  
+**Versão das instruções:** 2.3  
 **Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
@@ -76,6 +76,10 @@ Aplicar a filmes, séries, livros, animação, banda desenhada, jogos, marcas e 
 - Sem identidade artística específica, preferir estilo realista e cinematográfico, muito detalhado, cores naturais, iluminação adequada e ambiente coerente.
 - Usar um elemento principal identificável.
 - Não incluir texto, números, títulos, legendas, rodapés, molduras ou logótipos, salvo quando exigidos.
+- **Exceção para elementos que fazem parte do próprio objeto ou tema:** podem surgir palavras, letras, números, datas, escalas, mostradores ou inscrições quando forem indispensáveis para representar corretamente a solução (por exemplo, dias e datas num calendário, números num relógio ou marcações de um instrumento). Não os tratar como decoração nem os acrescentar sem necessidade.
+- Todo o texto e todos os números visíveis devem estar corretos, legíveis e coerentes com o objeto representado. Nunca usar sequências aleatórias, caracteres deformados, datas impossíveis ou informação inventada.
+- Em calendários, apresentar os dias da semana e as datas numa grelha real e coerente: escolher um mês e ano concretos, confirmar o dia da semana em que o mês começa, o número de dias desse mês e a posição correta de cada data. Usar os nomes ou abreviaturas dos dias em português de Portugal. Não criar uma grelha genérica com números distribuídos sem correspondência a um calendário real.
+- Se não for possível garantir a exatidão do texto ou dos números gerados, não os incluir de forma enganadora; reformular a composição para preservar a identificação visual sem informação falsa.
 - Variar composição, perspetiva, iluminação e ambientes, mantendo qualidade consistente.
 - Garantir leitura à distância em televisões/ecrãs grandes; evitar detalhes essenciais pequenos e manter elementos importantes afastados das margens.
 
