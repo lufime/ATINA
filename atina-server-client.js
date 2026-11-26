@@ -744,36 +744,18 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
     .replace(/^\s*(?:Fonte(?: de referência)?|Referências?)\s*:.*$/gim, '')
     .replace(/^\s*\[?(?:Fonte|Referência)\]?\s*:\s*https?:\/\/\S+\s*$/gim, '')
     .trim();
-  const curiosityHeading = /^\s*\*\*(?:Curiosidades|Sabias que\??)\*\*\s*:?\s*/im;
-  let summary = '';
-  let curiosities = '';
+  const curiosityHeading = /^\s*\*\*(?:Curiosidades|Sabias que(?:\s*[.!…]{1,3})?\??)\*\*\s*:?\s*/im;
   const match = curiosityHeading.exec(clean);
-  if (match) {
-    summary = clean.slice(0, match.index).trim();
-    curiosities = clean.slice(match.index + match[0].length).trim();
-  } else {
-    const paragraphs = clean.split(/\n\s*\n/).map(part => part.trim()).filter(Boolean);
-    if (paragraphs.length > 1) {
-      summary = paragraphs.shift();
-      curiosities = paragraphs.join('\n\n');
-    } else {
-      const sentences = (paragraphs[0] || clean).match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g) || [];
-      if (sentences.length > 2) {
-        summary = sentences.slice(0, 2).join(' ').trim();
-        curiosities = sentences.slice(2).join(' ').trim();
-      } else {
-        summary = clean;
-      }
-    }
-  }
+  const summary = (match ? clean.slice(0, match.index) : clean).trim();
+  const curiosities = match ? clean.slice(match.index + match[0].length).trim() : '';
   const stripFormatting = value => String(value || '')
     .replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/g, '$1')
     .replace(/\*\*/g, '')
     .replace(/^\s*[-•]\s*/gm, '• ')
     .trim();
-  summary = stripFormatting(summary);
-  curiosities = stripFormatting(curiosities);
-  if (!summary && !curiosities) return;
+  const cleanSummary = stripFormatting(summary);
+  const cleanCuriosities = stripFormatting(curiosities);
+  if (!cleanSummary && !cleanCuriosities) return;
 
   const panel = document.createElement('section');
   panel.dataset.solutionWikipedia = 'true';
@@ -789,8 +771,8 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
       panel.appendChild(paragraph);
     });
   };
-  addSection('📘 Resumo', summary);
-  addSection('✨ Curiosidades', curiosities);
+  addSection('📘 Resumo', cleanSummary);
+  addSection('✨ Curiosidades', cleanCuriosities);
   target.appendChild(panel);
   target.classList.remove('hidden');
 }
