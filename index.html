@@ -2664,6 +2664,33 @@ function atinaNormalizeSpeechText(value){
  });
  text=text.replace(/\bD\.?\s*ª\s*/gi,'Dona ')
       .replace(/\bD\.?\s*[º°]\s*/gi,'Dom ')
+ ;
+ const abbreviations=[
+  [/\bp\s*\.\s*ex\s*\.?/gi,'por exemplo'],
+  [/\bi\s*\.\s*e\s*\.?/gi,'isto é'],
+  [/\bSr\s*\.?/gi,'Senhor'],
+  [/\bSra\s*\.?/gi,'Senhora'],
+  [/\bSrta\s*\.?/gi,'Senhorita'],
+  [/\bDr\s*\.?/gi,'Doutor'],
+  [/\bDra\s*\.?/gi,'Doutora'],
+  [/\bProf\s*\.?/gi,'Professor'],
+  [/\bProfa\s*\.?/gi,'Professora'],
+  [/\bEng\s*\.?/gi,'Engenheiro'],
+  [/\bArq\s*\.?/gi,'Arquiteto'],
+  [/\bPe\s*\.?/gi,'Padre'],
+  [/\bSto\s*\.?/gi,'Santo'],
+  [/\bSta\s*\.?/gi,'Santa'],
+  [/\betc\s*\.?/gi,'etcétera'],
+  [/\bpág\s*\.?/gi,'página'],
+  [/\bpp\s*\.?/gi,'páginas'],
+  [/\bart\s*\.?/gi,'artigo'],
+  [/\bséc\s*\.?/gi,'século'],
+  [/\bn\s*\.\s*[º°]\s*([0-9]+)/gi,'número $1'],
+  [/\bn\s*\.\s*[º°]/gi,'número'],
+  [/\ba\s*\.\s*C\s*\.?/gi,'antes de Cristo'],
+  [/\bd\s*\.\s*C\s*\.?/gi,'depois de Cristo']
+ ];
+ for(const [pattern,spoken] of abbreviations)text=text.replace(pattern,spoken);
       .replace(/\s+([,.;:!?])/g,'$1')
       .replace(/([,.;:!?])(?=\S)/g,'$1 ')
       .replace(/\s+/g,' ').trim();
