@@ -101,20 +101,28 @@ Antes de inserir ou alterar um desafio:
 
 Garantir que cada desafio do ATINA oferece uma descoberta progressiva, justa, factual e adequada ao seu nível de dificuldade, sem pistas redundantes, genéricas, contraditórias ou que revelem prematuramente a resposta.
 
-## 10. Resumo e curiosidades após a revelação da resposta
+## 10. Resumo, curiosidades e lenda após a revelação da resposta
+
 Aplicar a todos os desafios, independentemente da categoria ou classificação geográfica: **Portugal, Internacional e Universal**.
 
-Cada solução deve apresentar duas secções complementares, nesta ordem:
+Cada solução deve apresentar, nesta ordem, as secções seguintes, de acordo com a informação factual e cultural disponível:
 
 1. **Resumo:** explicação clara do que é a resposta, com o contexto necessário e a informação essencial para o jogador compreender a solução.
 2. **Curiosidades:** factos interessantes, pormenores pouco conhecidos e informações surpreendentes relacionados diretamente com a solução.
+3. **Lenda:** quando existir uma lenda, mito, tradição popular ou narrativa cultural relevante e associada à solução, apresentar uma explicação breve e contextualizada.
 
 Regras de apresentação e conteúdo:
-- Apresentar o Resumo e as Curiosidades apenas depois de o jogador revelar ou acertar a resposta. Nunca os mostrar antes nem utilizar o seu conteúdo como pistas.
-- Redigir ambos por palavras próprias, em português de Portugal, com linguagem natural, clara e apelativa. Não copiar textos de fontes externas.
+
+- Apresentar o Resumo, as Curiosidades e a Lenda apenas depois de o jogador revelar ou acertar a resposta. Nunca os mostrar antes nem utilizar o seu conteúdo como pistas.
+- Redigir todas as secções por palavras próprias, em português de Portugal, com linguagem natural, clara e apelativa. Não copiar textos de fontes externas.
 - O Resumo deve explicar a solução de forma factual e suficiente, sem se limitar a repetir a resposta ou o enunciado.
 - As Curiosidades devem acrescentar informação nova, interessante, relevante e verificável, sem repetir as pistas, a pergunta ou o Resumo.
-- Não inventar factos para preencher qualquer uma das secções. Se não houver uma curiosidade suficientemente fiável e relevante, omitir essa parte ou indicar apenas o conteúdo factual disponível, sem fabricar informação.
+- A Lenda deve identificar claramente a narrativa como lenda, mito ou tradição popular. Nunca apresentar acontecimentos lendários como factos históricos comprovados.
+- Quando existirem versões diferentes de uma lenda, preservar as variantes relevantes e assinalar que existem versões distintas, sem escolher ou inventar uma versão como definitiva.
+- Não inventar factos, curiosidades ou lendas para preencher qualquer secção. Se não houver uma curiosidade suficientemente fiável e relevante, omitir essa parte. Se não existir uma lenda relevante ou documentada, omitir a secção Lenda.
+- Distinguir sempre factos confirmados, tradições populares e interpretações. Não transformar uma tradição oral numa afirmação factual.
+- Confirmar a informação em fontes fiáveis antes de aprovar o conteúdo. Não usar Wikipédia como fonte editorial do conteúdo apresentado no jogo.
+- Não apresentar fontes, URLs, referências bibliográficas ou ligações externas ao jogador.
 - Esta apresentação é complementar à resposta e não pode alterar, substituir, reordenar ou acrescentar elementos às cinco pistas do desafio.
-- Não alterar a dificuldade original do desafio por causa do Resumo, das Curiosidades ou do conteúdo apresentado após a resposta.
+- Não alterar a dificuldade original do desafio por causa do Resumo, das Curiosidades, da Lenda ou de qualquer conteúdo apresentado após a resposta.
 - A regra é transversal a todos os desafios existentes e novos, de Portugal, Internacionais e Universais.
