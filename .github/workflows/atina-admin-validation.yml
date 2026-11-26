@@ -1,0 +1,55 @@
+name: ATINA — validação administrativa
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "administrator.html"
+      - "supabase/functions/atina-image-manage/**"
+      - "supabase/migrations/**"
+      - ".github/workflows/atina-admin-validation.yml"
+  push:
+    branches:
+      - feat/admin-challenge-selectors-deactivation-reasons
+    paths:
+      - "administrator.html"
+      - "supabase/functions/atina-image-manage/**"
+      - "supabase/migrations/**"
+      - ".github/workflows/atina-admin-validation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atina-admin-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Verificações estáticas
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Instalar Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Verificar TypeScript da Edge Function
+        run: deno check supabase/functions/atina-image-manage/index.ts
+
+      - name: Verificar whitespace do diff
+        if: github.event_name == 'pull_request'
+        run: git diff --check "origin/${{ github.base_ref }}...HEAD"
+
+      - name: Confirmar que migrations não contêm credenciais
+        run: |
+          if grep -nEi '(service_role|supabase_service_role_key|postgres(ql)?://[^[:space:]]+)' supabase/migrations/*.sql; then
+            echo "Possível credencial ou URL de base de dados encontrada nas migrations."
+            exit 1
+          fi
