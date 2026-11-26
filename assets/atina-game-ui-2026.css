@@ -1,0 +1,198 @@
+/* ATINA — linguagem visual única para toda a experiência de jogo
+   Camada de apresentação. Preserva IDs, eventos, navegação, regras e integrações. */
+:root{
+  --atina-game-bg:#071321;
+  --atina-game-panel:#102238;
+  --atina-game-panel-raised:#162d45;
+  --atina-game-panel-soft:#0c1c2d;
+  --atina-game-border:rgba(151,190,219,.20);
+  --atina-game-border-strong:rgba(98,212,208,.38);
+  --atina-game-text:#f4f7fb;
+  --atina-game-muted:#b3c3d2;
+  --atina-game-primary:#62d4d0;
+  --atina-game-primary-ink:#08272b;
+  --atina-game-accent:#f0c36b;
+  --atina-game-positive:#70d6a2;
+  --atina-game-negative:#f18d83;
+  --atina-game-radius:16px;
+  --atina-game-shadow:0 12px 30px rgba(0,0,0,.20);
+}
+html{scroll-padding-top:96px}
+body{background:#071321!important;color:var(--atina-game-text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+body>.wrap{width:min(calc(100% - 28px),1120px);max-width:1120px;margin-inline:auto;padding:16px 0 42px}
+body.atina-screen-game>.wrap{width:min(calc(100% - 24px),900px);max-width:900px;padding-top:12px}
+:where(h1,h2,h3,h4){color:var(--atina-game-text);letter-spacing:-.02em}
+:where(p,li,label,small){overflow-wrap:anywhere}
+:where(.muted,.small,.home-hint){color:var(--atina-game-muted)}
+/* Cabeçalho e identidade */
+.brand{
+  border:1px solid var(--atina-game-border-strong)!important;border-radius:20px!important;
+  background:linear-gradient(135deg,#122d46,#102238 72%)!important;
+  box-shadow:var(--atina-game-shadow)!important;
+}
+.brand .eyebrow{color:var(--atina-game-primary);font-weight:850;letter-spacing:.18em}
+.brand .tag{color:#c4d4e2;letter-spacing:.035em}
+.brand .stats{gap:8px!important}
+.brand .stats>*{
+  padding:7px 11px!important;border:1px solid var(--atina-game-border)!important;
+  border-radius:999px!important;background:var(--atina-game-panel-soft)!important;
+  color:#e2edf5!important;font-size:12px!important;font-weight:750!important;
+}
+/* Navegação: mesma linguagem e estados claros */
+#atinaMainNav,.home-page-nav{
+  gap:6px!important;padding:7px!important;border:1px solid var(--atina-game-border)!important;
+  border-radius:15px!important;background:#0b1c2d!important;box-shadow:var(--atina-game-shadow)!important;
+}
+#atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn,
+#atinaMainNav .home-nav-more>summary,.home-nav-more>summary{
+  min-width:0;min-height:44px!important;padding:9px 12px!important;
+  border:1px solid transparent!important;border-radius:11px!important;
+  background:transparent!important;color:#c5d4e1!important;
+  font-size:13px!important;font-weight:800!important;line-height:1.2!important;
+}
+#atinaMainNav .home-nav-btn:hover,.home-page-nav .home-nav-btn:hover,
+#atinaMainNav .home-nav-more>summary:hover,.home-nav-more>summary:hover{
+  background:var(--atina-game-panel-raised)!important;color:#fff!important;
+}
+#atinaMainNav .home-nav-btn.active,.home-page-nav .home-nav-btn.active,
+#atinaMainNav .home-nav-more .home-nav-btn.active{
+  border-color:var(--atina-game-border-strong)!important;
+  background:#173b4d!important;color:#dffffa!important;
+  box-shadow:inset 0 0 0 1px rgba(98,212,208,.08)!important;
+}
+.home-nav-more-grid{padding:8px!important;border:1px solid var(--atina-game-border-strong)!important;border-radius:14px!important;background:#0c2034!important;box-shadow:var(--atina-game-shadow)!important}
+/* Todas as áreas e painéis */
+#home,.home-page-panel,#game,#mimicaGame,#result,#rankingPage,
+#networkLobby,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel{min-width:0}
+#home .home-welcome,.home-welcome{
+  border:1px solid var(--atina-game-border-strong)!important;border-radius:18px!important;
+  background:linear-gradient(135deg,#15354e,#10263c)!important;box-shadow:var(--atina-game-shadow)!important;
+}
+#home .home-welcome h1,#home .home-welcome h2{line-height:1.15}
+#home .home-welcome p{color:#c3d3e1}
+#home .home-block,#home .card,.home-block,.card,.online-panel,.online-ranking,
+.daily-mission,.quick-match-panel,#result,#rankingPage,#networkLobby,#networkScoreboard,
+#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,
+#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel{
+  min-width:0;border:1px solid var(--atina-game-border)!important;
+  border-radius:var(--atina-game-radius)!important;
+  background:var(--atina-game-panel)!important;color:var(--atina-game-text);
+  box-shadow:var(--atina-game-shadow)!important;
+}
+#home .section,.section{color:var(--atina-game-accent);font-weight:850;letter-spacing:.025em}
+#home .tile,.tile{
+  min-width:0;border:1px solid var(--atina-game-border)!important;border-radius:14px!important;
+  background:var(--atina-game-panel-raised)!important;color:var(--atina-game-text)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.14)!important;
+}
+#home .tile:hover,.tile:hover{border-color:var(--atina-game-border-strong)!important;background:#1a3a52!important}
+#home .tile b,.tile b{color:#f4f7fb}
+#home .tile small,.tile small{color:var(--atina-game-muted)!important}
+/* Hierarquia de botões: ação principal, secundária e destrutiva */
+button,.btn,input[type=button],input[type=submit],input[type=reset],.home-nav-btn{
+  font-family:inherit;line-height:1.25;font-weight:800;
+}
+button,.btn,input[type=button],input[type=submit],input[type=reset]{
+  min-height:44px;border-radius:11px!important;
+}
+#home .btn,#game .btn,#result .btn,#rankingPage .btn,
+#networkLobby .btn,#networkScoreboard .btn,#mimicaGame .btn{
+  min-height:46px;padding:10px 14px!important;font-size:14px!important;
+  border:1px solid transparent!important;border-radius:11px!important;
+  box-shadow:0 5px 14px rgba(0,0,0,.16)!important;
+}
+.btn:not(.secondary):not(.danger){
+  background:linear-gradient(135deg,#70ded5,#43bcb8)!important;color:var(--atina-game-primary-ink)!important;
+}
+.btn.secondary,button.secondary,.btn.back,#back{
+  border:1px solid var(--atina-game-border-strong)!important;
+  background:#17344c!important;color:#e3edf5!important;box-shadow:none!important;
+}
+.btn.danger,button.danger,#pass{
+  border:1px solid rgba(241,141,131,.42)!important;
+  background:#63343d!important;color:#ffe8e4!important;
+}
+.btn:hover{filter:brightness(1.06)}
+button:disabled,.btn:disabled{opacity:.48!important;filter:none!important;cursor:not-allowed}
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid rgba(98,212,208,.78)!important;outline-offset:2px!important;
+}
+/* Formulários e escolhas */
+#home input:not([type=checkbox]):not([type=radio]),#home select,#home textarea,
+#game input:not([type=checkbox]):not([type=radio]),#game select,#game textarea,
+#home .answer,#game .answer{
+  min-width:0;border:1px solid #496982!important;border-radius:11px!important;
+  background:#091b2c!important;color:var(--atina-game-text)!important;
+}
+#home label,#game label{color:#dce7f0;font-weight:750}
+#home input:focus,#home select:focus,#home textarea:focus,
+#game input:focus,#game select:focus,#game textarea:focus{border-color:var(--atina-game-primary)!important}
+/* Desafio: manter cronómetro/HUD e fluxo; uniformizar apenas superfície e controlos */
+body.atina-screen-game #game>.card{
+  border:1px solid var(--atina-game-border-strong)!important;border-radius:20px!important;
+  background:var(--atina-game-panel)!important;box-shadow:0 18px 44px rgba(0,0,0,.25)!important;
+}
+body.atina-screen-game #game #question{color:#fff;line-height:1.22!important}
+body.atina-screen-game #game .clue{
+  border:1px solid rgba(98,212,208,.18)!important;border-left:4px solid var(--atina-game-primary)!important;
+  border-radius:11px!important;background:#17364e!important;color:#eaf2f8!important;
+}
+body.atina-screen-game #game .clue.hidden-clue{border-left-color:#637d92!important;background:#122a40!important;color:#afc0cf!important}
+body.atina-screen-game #game .answer{min-height:52px!important;font-size:16px!important}
+body.atina-screen-game #game #feedback,
+#feedback,[role=status],[role=alert],.atina-message,.atina-notice,.atina-alert{
+  border-radius:11px;line-height:1.5;
+}
+#feedback[data-tone=positive],[role=status][data-tone=positive]{border-color:rgba(112,214,162,.45)!important;color:#a9f0c8!important}
+#feedback[data-tone=negative],[role=alert][data-tone=negative]{border-color:rgba(241,141,131,.48)!important;color:#ffc0b8!important}
+#feedback[data-tone=neutral],[role=status][data-tone=neutral]{border-color:rgba(240,195,107,.4)!important;color:#f5d995!important}
+/* Solução, resultados, classificação e listas */
+#solutionImage,.solution-panel,.result-panel{
+  border:1px solid var(--atina-game-border)!important;border-radius:15px!important;
+  background:#0d2135!important;color:var(--atina-game-text)!important;
+}
+#solutionImage p,#solutionImage li{line-height:1.65}
+#result h2,#rankingPage h2,#networkLobby h2{color:#f2d28f}
+#rankingPage table,#rankingPage .ranking-list{width:100%;border-collapse:collapse}
+#rankingPage th,#rankingPage td{padding:10px;border-bottom:1px solid var(--atina-game-border);text-align:left}
+.pill{border:1px solid var(--atina-game-border)!important;border-radius:999px!important;background:#102b43!important;color:#d0deea!important}
+/* Consistência de espaçamento e tipografia */
+#home :where(h2,h3),#result :where(h2,h3),#rankingPage :where(h2,h3),
+#networkLobby :where(h2,h3),#networkScoreboard :where(h2,h3){line-height:1.2}
+#home p,#result p,#rankingPage p,#networkLobby p,#networkScoreboard p{line-height:1.55}
+@media(max-width:760px){
+  body>.wrap{width:calc(100% - 18px);padding:10px 0 28px}
+  body.atina-screen-game>.wrap{width:calc(100% - 16px);padding:9px 0 26px}
+  .brand{padding:14px!important;border-radius:16px!important}
+  .brand .logo-image{max-width:min(72%,230px)!important;max-height:64px!important}
+  .brand .stats{justify-content:center!important;gap:6px!important}
+  #atinaMainNav,.home-page-nav{top:4px!important;gap:4px!important;padding:5px!important}
+  #atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn,
+  #atinaMainNav .home-nav-more>summary,.home-nav-more>summary{
+    min-height:42px!important;padding:8px 7px!important;font-size:12px!important;
+  }
+  #home .home-welcome,.home-welcome{padding:16px!important}
+  #home .home-block,#home .card,.home-block,.card,#result,#rankingPage,
+  #networkLobby,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+  #atinaAccessPage,#atinaHowToPage{padding:14px!important}
+  #home .tile,.tile{padding:12px!important}
+  #home .btn,#game .btn,#result .btn,#rankingPage .btn,
+  #networkLobby .btn,#networkScoreboard .btn,#mimicaGame .btn{
+    min-height:44px!important;padding:9px 10px!important;font-size:13px!important;
+  }
+  #solutionImage p,#solutionImage li{font-size:15px!important}
+}
+@media(max-width:390px){
+  body>.wrap{width:calc(100% - 14px)}
+  #atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn,
+  #atinaMainNav .home-nav-more>summary,.home-nav-more>summary{
+    min-height:40px!important;padding:7px 4px!important;font-size:11px!important;
+  }
+  #home .btn,#game .btn{font-size:12.5px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
