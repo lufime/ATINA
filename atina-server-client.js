@@ -732,39 +732,65 @@ function atinaServerStartTimers() {
 function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallengeId = null) {
   const target = $('solutionImage');
   if (!target) return;
-  const previous = target.querySelector('[data-solution-wikipedia]');
-  previous?.remove();
-  // A história só pode aparecer depois de o servidor confirmar que a ronda foi revelada.
+  target.querySelector('[data-solution-wikipedia]')?.remove();
+  // O conteúdo complementar só aparece depois de o servidor confirmar a revelação.
   if (!isLocked || !challenge || !Number.isFinite(Number(challenge.id)) ||
       Number(activeChallengeId) !== Number(challenge.id)) return;
+
   const description = String(challenge.solution_description || '').trim();
-  const sourceUrl = String(challenge.solution_wikipedia_url || '').trim();
-  const safeSourceUrl = /^https:\/\//i.test(sourceUrl) ? sourceUrl : '';
-  if (!description && !safeSourceUrl) return;
+  if (!description) return;
+  const clean = description
+    .replace(/^\s*\*\*(?:Fonte(?: de referência)?|Referências?)\*\*\s*:.*$/gim, '')
+    .replace(/^\s*(?:Fonte(?: de referência)?|Referências?)\s*:.*$/gim, '')
+    .replace(/^\s*\[?(?:Fonte|Referência)\]?\s*:\s*https?:\/\/\S+\s*$/gim, '')
+    .trim();
+  const curiosityHeading = /^\s*\*\*(?:Curiosidades|Sabias que\??)\*\*\s*:?\s*/im;
+  let summary = '';
+  let curiosities = '';
+  const match = curiosityHeading.exec(clean);
+  if (match) {
+    summary = clean.slice(0, match.index).trim();
+    curiosities = clean.slice(match.index + match[0].length).trim();
+  } else {
+    const paragraphs = clean.split(/\n\s*\n/).map(part => part.trim()).filter(Boolean);
+    if (paragraphs.length > 1) {
+      summary = paragraphs.shift();
+      curiosities = paragraphs.join('\n\n');
+    } else {
+      const sentences = (paragraphs[0] || clean).match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g) || [];
+      if (sentences.length > 2) {
+        summary = sentences.slice(0, 2).join(' ').trim();
+        curiosities = sentences.slice(2).join(' ').trim();
+      } else {
+        summary = clean;
+      }
+    }
+  }
+  const stripFormatting = value => String(value || '')
+    .replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/g, '$1')
+    .replace(/\*\*/g, '')
+    .replace(/^\s*[-•]\s*/gm, '• ')
+    .trim();
+  summary = stripFormatting(summary);
+  curiosities = stripFormatting(curiosities);
+  if (!summary && !curiosities) return;
 
   const panel = document.createElement('section');
   panel.dataset.solutionWikipedia = 'true';
-  panel.setAttribute('aria-label', 'História da solução');
-  const heading = document.createElement('h3');
-  heading.textContent = '📚 História da solução';
-  panel.appendChild(heading);
-
-  if (description) {
-    const paragraphs = description.split(/\n\s*\n/).map(text => text.trim()).filter(Boolean);
-    (paragraphs.length ? paragraphs : [description]).forEach(text => {
+  panel.setAttribute('aria-label', 'Resumo e curiosidades da solução');
+  const addSection = (title, body) => {
+    if (!body) return;
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+    panel.appendChild(heading);
+    body.split(/\n\s*\n/).map(part => part.trim()).filter(Boolean).forEach(part => {
       const paragraph = document.createElement('p');
-      paragraph.textContent = text;
+      paragraph.textContent = part;
       panel.appendChild(paragraph);
     });
-  }
-  if (safeSourceUrl) {
-    const link = document.createElement('a');
-    link.href = safeSourceUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = 'Consultar fonte e saber mais';
-    panel.appendChild(link);
-  }
+  };
+  addSection('📘 Resumo', summary);
+  addSection('✨ Curiosidades', curiosities);
   target.appendChild(panel);
   target.classList.remove('hidden');
 }
