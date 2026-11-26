@@ -527,3 +527,12 @@ Aplicar a todos os desafios novos e existentes, ativos ou inativos, sem confundi
 - Se a dificuldade não puder ser determinada com segurança, assinalar para validação editorial em vez de escolher um nível arbitrariamente.
 - O filtro de dificuldade deve usar o nível registado para cada desafio e manter o mesmo significado em todos os modos que disponibilizem essa opção.
 
+## 41. Regras gerais obrigatórias do projeto ATINA
+Estas regras aplicam-se a todos os trabalhos, funcionalidades, conteúdos, imagens, documentação e operações relacionadas com o ATINA.
+
+- **Supabase de produção:** o projeto Supabase `atina-development`, ref `qvvlqrgbtjujsejvenld`, é o ambiente de produção. Tratar todos os dados e operações nesse projeto como produção real.
+- **Não utilizar Render:** não aceder, configurar, consultar, implementar, publicar ou executar operações no Render para este projeto.
+- **Sem referências a bots no jogo:** não introduzir referências, menções, rótulos, personagens, mensagens ou elementos relacionados com bots em qualquer parte da experiência do jogo. Esta regra abrange interface, textos, desafios, imagens, notificações, ajuda e documentação apresentada aos jogadores. Se existir uma necessidade técnica interna de mencionar esse conceito fora da experiência do jogador, mantê-la estritamente interna e evitar que chegue ao jogo.
+- **Proteção da produção:** consultas de leitura não autorizam escritas. Não executar alterações em dados, schema, permissões, configurações, publicações ou operações em massa sem autorização explícita para a ação concreta.
+- **Validação antes de concluir:** confirmar o resultado no sistema de destino e distinguir claramente o que foi preparado, alterado, integrado e publicado. Nunca declarar sucesso sem confirmação verificável.
+
