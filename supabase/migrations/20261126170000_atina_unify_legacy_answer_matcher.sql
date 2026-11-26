@@ -37,20 +37,29 @@ begin
     raise exception 'Canonical-answer regression: % active challenges failed.', v_failures;
   end if;
 
-  -- Regression for the reported Portuguese preposition/article variant.
-  if not private.atina_challenge_answer_matches(1505, 'Leitão a Bairrada') then
-    raise exception 'Expected harmless preposition variation to be accepted.';
+  -- Exercise article/preposition tolerance independently of production-only
+  -- challenge IDs, which are not guaranteed to exist in a clean migration replay.
+  if not private.atina_v2_answer_matches('Leitão da Bairrada', 'Leitão a Bairrada') then
+    raise exception 'Expected harmless Portuguese preposition variation to be accepted.';
   end if;
 
-  -- Keep meaningful content words and letter riddles protected.
-  if private.atina_challenge_answer_matches(1505, 'Leitão')
-     or private.atina_challenge_answer_matches(1505, 'Leitão de Lisboa') then
-    raise exception 'False-positive guard regression for challenge 1505.';
+  -- Keep challenge-specific false-positive and letter guards covered whenever
+  -- their production challenge records are present in the replay dataset.
+  if exists (select 1 from private.atina_challenges where challenge_id = 1505 and active) then
+    if not private.atina_challenge_answer_matches(1505, 'Leitão a Bairrada') then
+      raise exception 'Expected harmless preposition variation for challenge 1505.';
+    end if;
+    if private.atina_challenge_answer_matches(1505, 'Leitão')
+       or private.atina_challenge_answer_matches(1505, 'Leitão de Lisboa') then
+      raise exception 'False-positive guard regression for challenge 1505.';
+    end if;
   end if;
 
-  if not private.atina_challenge_answer_matches(765, 'A letra «o»')
-     or private.atina_challenge_answer_matches(765, 'A letra «a»') then
-    raise exception 'Single-letter answer guard regression.';
+  if exists (select 1 from private.atina_challenges where challenge_id = 765 and active) then
+    if not private.atina_challenge_answer_matches(765, 'A letra «o»')
+       or private.atina_challenge_answer_matches(765, 'A letra «a»') then
+      raise exception 'Single-letter answer guard regression.';
+    end if;
   end if;
 end
 $tests$;
