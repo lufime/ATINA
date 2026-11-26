@@ -1138,3 +1138,39 @@ body>.atina-timer-stack>.atina-clock-face>.atina-live-stats{
   top:4px!important;width:66px!important;height:17px!important
  }
 }
+
+
+/* O HUD só pode existir visualmente no ecrã de desafios. */
+body:not(.atina-screen-game)> .atina-timer-stack{display:none!important}
+body.atina-screen-game> .atina-timer-stack{display:flex!important}
+
+/* Durante PREPARA-TE, os indicadores passam para cima do tempo
+   para o texto nunca disputar a largura da coluna lateral. */
+body.atina-screen-game>.atina-timer-stack>.atina-clock-face:has(#timerDisplay .timer-prepare-label){
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"logo" "stats" "timer"!important;
+  row-gap:3px!important;padding:25px 7px 6px!important;
+}
+body.atina-screen-game>.atina-timer-stack>.atina-clock-face:has(#timerDisplay .timer-prepare-label)>.atina-game-logo{
+  grid-area:logo!important;top:4px!important;
+}
+body.atina-screen-game>.atina-timer-stack>.atina-clock-face:has(#timerDisplay .timer-prepare-label)>.atina-live-stats{
+  grid-area:stats!important;display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  width:100%!important;min-width:0!important;
+}
+body.atina-screen-game>.atina-timer-stack>.atina-clock-face:has(#timerDisplay .timer-prepare-label)>#timerDisplay{
+  grid-area:timer!important;justify-self:center!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  min-height:0!important;height:auto!important;padding:5px 8px!important;
+  font-size:26px!important;line-height:1.05!important;
+}
+body.atina-screen-game>.atina-timer-stack>.atina-clock-face:has(#timerDisplay .timer-prepare-label)>#timerDisplay .timer-prepare-label{
+  display:block!important;width:100%!important;max-width:100%!important;
+  font-size:12px!important;line-height:1.1!important;letter-spacing:.04em!important;
+  white-space:nowrap!important;overflow:hidden!important;text-align:center!important;
+}
+body.atina-screen-game>.atina-timer-stack>.atina-clock-face:has(#timerDisplay .timer-prepare-label)>#timerDisplay .timer-prepare-count{
+  display:block!important;font-size:27px!important;line-height:1!important;
+  white-space:nowrap!important;text-align:center!important;
+}
