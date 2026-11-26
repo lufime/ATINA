@@ -215,6 +215,9 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   });
   await page.locator('#categories [data-category]').filter({hasText:categories[0]}).click();
   await page.locator('#atinaPregameOverlay.open').waitFor({state:'visible',timeout:5000});
+  // A disponibilidade é confirmada por uma chamada assíncrona ao servidor.
+  // Esperar pelo resultado evita ler o valor provisório antes da resposta RPC.
+  await page.waitForFunction(() => document.querySelector('#atinaPregameCount')?.value === '0', null, {timeout:5000});
   assert.equal(await page.locator('#atinaPregameCount').inputValue(), '0',
     'Sem desafios da dificuldade selecionada, a quantidade deve ser zero (sem fallback para outra dificuldade).');
   assert.equal(await page.locator('#atinaPregameStart').isDisabled(), true,
