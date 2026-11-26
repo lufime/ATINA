@@ -37,6 +37,7 @@ jobs:
           # 54323 here: that is Supabase Studio's default port.
           sed -i '/^\[db\]/,/^\[/ s/^port = 54322$/port = 55322/' supabase/config.toml
           sed -i '/^\[studio\]/,/^\[/ s/^port = 54323$/port = 55323/' supabase/config.toml
+          sed -i '/^\[inbucket\]/,/^\[/ s/^port = 54324$/port = 55324/' supabase/config.toml
 
       - name: Normalize duplicate migration IDs in the disposable runner copy
         run: node scripts/prepare-migration-replay.mjs
