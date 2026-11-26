@@ -468,7 +468,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <div><label for="challengeDifficulty">Dificuldade</label><select id="challengeDifficulty"><option value="easy">Fácil</option><option value="medium">Média</option><option value="hard">Difícil</option></select></div>
       </div>
       <div class="clue-heading"><label>Pistas (cada pista no seu próprio campo)</label><button type="button" class="secondary" id="addClue" style="width:auto;margin:4px 0">＋ Adicionar pista</button></div><div id="challengeClues" class="clue-fields"></div>
-      <label for="challengeAccepted">Respostas aceites (separadas por vírgulas)</label><textarea id="challengeAccepted" required></textarea>
+      <label for="challengeAccepted">Respostas alternativas já aceites (separadas por vírgulas)</label><textarea id="challengeAccepted" required></textarea>
+      <section id="challengeAliasPanel" class="panel hidden" style="margin:12px 0;padding:12px">
+        <h3>Sinónimos e linguagem popular</h3>
+        <p class="note">Adiciona uma variante por linha. Fica pendente até ser revista; só depois de aprovada passa a ser aceite no jogo. Usa apenas expressões equivalentes à solução neste desafio.</p>
+        <label for="challengeAliasInput">Novas variantes propostas</label><textarea id="challengeAliasInput" rows="3" placeholder="Ex.: carro&#10;automóvel&#10;expressão popular equivalente"></textarea>
+        <div class="form-grid">
+          <div><label for="challengeAliasType">Tipo de variante</label><select id="challengeAliasType"><option value="synonym">Sinónimo</option><option value="popular">Linguagem popular</option><option value="regionalism">Regionalismo</option><option value="variant">Variante linguística</option><option value="abbreviation">Abreviatura</option></select></div>
+          <div><label for="challengeAliasLocale">Variante linguística</label><select id="challengeAliasLocale"><option value="pt-PT">Português de Portugal</option><option value="pt-BR">Português do Brasil</option><option value="pt">Português geral</option><option value="en">Inglês</option><option value="other">Outra</option></select></div>
+        </div>
+        <label for="challengeAliasNotes">Nota de contexto (opcional)</label><input id="challengeAliasNotes" maxlength="500" placeholder="Porque é equivalente neste desafio">
+        <div class="challenge-actions"><button type="button" id="addChallengeAliases">Propor variantes</button></div>
+        <div id="challengeAliasList" class="hint">A carregar variantes…</div>
+      </section>
       <label for="challengeTags">Etiquetas da imagem (separadas por vírgulas)</label><input id="challengeTags">
       <label for="challengeDescription">Descrição da imagem (opcional)</label><textarea id="challengeDescription"></textarea>
       <label for="challengeImageFile">Selecionar imagem do dispositivo (JPEG, PNG ou WebP, máximo 10 MB)</label><input id="challengeImageFile" type="file" accept="image/jpeg,image/png,image/webp"><p class="note">A imagem será enviada para o Storage ATINA e o respetivo link será guardado automaticamente. O registo da imagem fica pendente de revisão.</p>
@@ -1418,6 +1430,64 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
     if(!response.ok) throw new Error(data.error||"Não foi possível concluir a operação.");
     return data;
   }
+  let challengeAliasRows=[];
+  function renderChallengeAliases(){
+    const box=$("challengeAliasList"); if(!box)return;
+    if(!challengeAliasRows.length){box.textContent="Ainda não existem variantes propostas para este desafio.";return;}
+    box.innerHTML=challengeAliasRows.map(row=>{
+      const statusLabel=({pending:"Pendente de revisão",approved:"Aprovada e aceite no jogo",rejected:"Rejeitada"})[row.status]||row.status;
+      const controls=row.status==="pending"
+        ? '<div class="challenge-actions"><button type="button" data-review-alias="approved" data-alias-id="'+esc(row.alias_id)+'">Aprovar</button><button type="button" class="secondary" data-review-alias="rejected" data-alias-id="'+esc(row.alias_id)+'">Rejeitar</button></div>'
+        : '';
+      return '<div class="history-item"><strong>'+esc(row.alias)+'</strong> · '+esc(({synonym:"Sinónimo",popular:"Linguagem popular",regionalism:"Regionalismo",variant:"Variante linguística",abbreviation:"Abreviatura"})[row.alias_type]||row.alias_type)+' · '+esc(row.locale)+'<br><span class="challenge-meta">'+esc(statusLabel)+(row.review_notes?" · "+esc(row.review_notes):"")+'</span>'+controls+'</div>';
+    }).join("");
+  }
+  async function loadChallengeAliases(challengeId){
+    const panel=$("challengeAliasPanel"); if(!panel)return;
+    if(!challengeId){panel.classList.add("hidden");challengeAliasRows=[];renderChallengeAliases();return;}
+    panel.classList.remove("hidden");
+    $("challengeAliasList").textContent="A carregar variantes…";
+    const {data,error}=await client.rpc("atina_admin_list_challenge_answer_aliases",{p_challenge_id:Number(challengeId),p_status:null});
+    if(error)throw error;
+    challengeAliasRows=Array.isArray(data)?data:[];
+    renderChallengeAliases();
+  }
+  $("addChallengeAliases").addEventListener("click",async()=>{
+    const challengeId=Number($("challengeId").value);
+    const aliases=$("challengeAliasInput").value.split(/\r?\n/).map(value=>value.trim()).filter(Boolean);
+    if(!Number.isInteger(challengeId)||challengeId<0){alert("Guarda primeiro o desafio para poderes propor variantes.");return;}
+    if(!aliases.length){alert("Escreve pelo menos uma variante, uma por linha.");return;}
+    const button=$("addChallengeAliases");button.disabled=true;
+    const failures=[];let added=0;
+    try{
+      for(const alias of [...new Set(aliases)]){
+        const {error}=await client.rpc("atina_admin_add_challenge_answer_alias",{
+          p_challenge_id:challengeId,p_alias:alias,p_alias_type:$("challengeAliasType").value,
+          p_locale:$("challengeAliasLocale").value,p_notes:$("challengeAliasNotes").value.trim()||null
+        });
+        if(error)failures.push(alias+": "+error.message);else added++;
+      }
+      $("challengeAliasInput").value="";
+      await loadChallengeAliases(challengeId);
+      if(added)recordAdminAction("Propôs variantes de resposta","#"+challengeId+" · "+added+" proposta(s)");
+      alert(added+" variante(s) proposta(s)."+(failures.length?"\nFalhas:\n"+failures.join("\n"):""));
+    }catch(error){alert(error.message||"Não foi possível propor as variantes.");}
+    finally{button.disabled=false;}
+  });
+  $("challengeAliasList").addEventListener("click",async event=>{
+    const button=event.target.closest("[data-review-alias]");if(!button)return;
+    const status=button.dataset.reviewAlias,aliasId=Number(button.dataset.aliasId);
+    const row=challengeAliasRows.find(item=>Number(item.alias_id)===aliasId);if(!row)return;
+    const action=status==="approved"?"aprovar":"rejeitar";
+    if(!confirm("Queres "+action+" a variante «"+row.alias+"» para o desafio #"+row.challenge_id+"?"))return;
+    button.disabled=true;
+    try{
+      const {error}=await client.rpc("atina_admin_review_challenge_answer_alias",{p_alias_id:aliasId,p_status:status,p_notes:null});
+      if(error)throw error;
+      recordAdminAction(status==="approved"?"Aprovou variante de resposta":"Rejeitou variante de resposta","#"+row.challenge_id+" · "+row.alias);
+      await loadChallengeAliases(row.challenge_id);
+    }catch(error){alert(error.message||"Não foi possível rever a variante.");button.disabled=false;}
+  });
   async function loadChallenges() {
     $("challengeCount").textContent="A carregar desafios e metadados das imagens…";
     try {
@@ -1545,7 +1615,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
   $("challengeImageUrl").addEventListener("input",updateChallengeImagePreview);
   $("challengeImageFile").addEventListener("change",()=>{const file=$("challengeImageFile").files?.[0];if(!file){updateChallengeImagePreview();return;}if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>10*1024*1024){$("challengeImageFile").value="";alert("Seleciona JPEG, PNG ou WebP até 10 MB.");return;}const url=URL.createObjectURL(file);$("challengeImagePreview").innerHTML='<img src="'+url+'" alt="Pré-visualização da imagem selecionada"><span class="note">'+esc(file.name)+' · '+Math.round(file.size/1024)+' KB · será enviada ao guardar</span>';});
   function resetChallengeForm() {
-    $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview();
+    $("challengeForm").reset(); $("challengeId").value=""; $("challengeActive").checked=true; renderClueFields([""]); updateChallengeImagePreview(); loadChallengeAliases(null);
     $("challengeFormTitle").textContent="Novo desafio"; setFormDirty(false); $("challengeForm").classList.add("hidden"); $("challengePagination").classList.toggle("hidden",challengeCache.length<=CHALLENGES_PER_PAGE); $("challengeList").nextElementSibling?.classList.remove("hidden");
   }
   function editChallenge(id) {
@@ -1554,7 +1624,7 @@ const statusLabel=document.createElement("label");statusLabel.textContent="Estad
     $("challengeAnswer").value=x.answer||""; $("challengeDifficulty").value=x.difficulty||"medium";
     renderClueFields(x.clues||[]); $("challengeAccepted").value=(x.accepted_answers||[]).join(", ");
     $("challengeTags").value=(x.image_tags||[]).join(", "); $("challengeDescription").value=x.image_description||""; $("challengeImageUrl").value=x.solution_image_url||x._imageAsset?.game_image_url||x._imageAsset?.image_url||x.image_url||""; updateChallengeImagePreview();
-    $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id; setFormDirty(false);
+    $("challengeActive").checked=!!x.active; $("challengeFormTitle").textContent="Editar desafio #"+x.challenge_id; setFormDirty(false); loadChallengeAliases(x.challenge_id).catch(error=>{$("challengeAliasList").textContent="Erro ao carregar variantes: "+error.message;});
     $("challengeForm").classList.remove("hidden"); $("challengePagination").classList.add("hidden"); $("challengeList").nextElementSibling?.classList.add("hidden"); $("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});
   }
   $("newChallenge").addEventListener("click",()=>{resetChallengeForm();$("challengeForm").classList.remove("hidden");$("challengePagination").classList.add("hidden");$("challengeList").nextElementSibling?.classList.add("hidden");$("challengeForm").scrollIntoView({behavior:"smooth",block:"start"});});
