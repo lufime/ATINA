@@ -5539,8 +5539,44 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{font-size:9.5px!important;padding:4px 7px!important}
 }
 </style>
-<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-20">
+<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-21">
 <script src="./assets/atina-global-error-report.js?v=20261126-1"></script>
+<script id="atina-semantic-message-colors">
+(()=> {
+  const selector = '#feedback,#saveStatus,[role="status"],[role="alert"],.atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice';
+  const positive = /\b(correta|correto|acertaste|acertou|parab[eé]ns|ganhaste|ganhou|conclu[ií]do com sucesso|guardad[oa] com sucesso|sucesso|vit[oó]ria|pontos ganhos|desbloquead[oa])\b/i;
+  const negative = /\b(incorreta|incorreto|errad[oa]|erro|falh[ao]|inv[aá]lid[oa]|penaliza[cç][aã]o|perdeste|tempo terminou|expirou|sem liga[cç][aã]o|n[aã]o foi poss[ií]vel|rejeitad[oa]|bloquead[oa])\b/i;
+  function classify(el){
+    if(!(el instanceof Element)) return;
+    const text=(el.textContent||'').trim();
+    if(!text){el.removeAttribute('data-tone');return;}
+    const classes=el.classList;
+    let tone='neutral';
+    if(classes.contains('is-correct')||classes.contains('success')||classes.contains('positive')||classes.contains('is-success')) tone='positive';
+    else if(classes.contains('is-wrong')||classes.contains('error')||classes.contains('negative')||classes.contains('is-error')||classes.contains('danger')) tone='negative';
+    else if(classes.contains('is-info')||classes.contains('warning')||classes.contains('neutral')||classes.contains('info')||classes.contains('is-warning')) tone='neutral';
+    else if(negative.test(text)) tone='negative';
+    else if(positive.test(text)) tone='positive';
+    el.setAttribute('data-tone',tone);
+  }
+  function scan(root){
+    if(root instanceof Element && root.matches(selector)) classify(root);
+    if(root.querySelectorAll) root.querySelectorAll(selector).forEach(classify);
+  }
+  function start(){scan(document);const observer=new MutationObserver(records=>{
+    for(const record of records){
+      if(record.type==='attributes'){classify(record.target);continue;}
+      if(record.type==='characterData'){scan(record.target.parentElement);continue;}
+      record.addedNodes.forEach(node=>{if(node.nodeType===1)scan(node);});
+      if(record.target instanceof Element && record.target.matches(selector)) classify(record.target);
+    }
+  });
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+
 
 
 
