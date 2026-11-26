@@ -731,9 +731,53 @@ function atinaServerStartTimers() {
 }
 let atinaSolutionSpeechPanel = null;
 let atinaSolutionSpeechUtterance = null;
+let atinaSolutionSpeechRun = 0;
 
 function atinaStopSolutionSpeech() {
+  atinaSolutionSpeechRun++;
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  if (atinaSolutionSpeechPanel) {
+    const playButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-play]');
+    const stopButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-stop]');
+    if (playButton) playButton.textContent = '▶ Ouvir';
+    if (stopButton) stopButton.hidden = true;
+  }
+  atinaSolutionSpeechPanel = null;
+  atinaSolutionSpeechUtterance = null;
+}
+
+function atinaSolutionSpeechChunks(text, maxLength = 170) {
+  const sentences = String(text || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim()
+    .match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+  const chunks = [];
+  let current = '';
+  sentences.forEach(sentence => {
+    const clean = sentence.trim();
+    if (!clean) return;
+    if ((current + ' ' + clean).trim().length <= maxLength) {
+      current = (current + ' ' + clean).trim();
+      return;
+    }
+    if (current) chunks.push(current);
+    if (clean.length <= maxLength) {
+      current = clean;
+      return;
+    }
+    const words = clean.split(/\s+/);
+    current = '';
+    words.forEach(word => {
+      if ((current + ' ' + word).trim().length > maxLength && current) {
+        chunks.push(current);
+        current = word;
+      } else current = (current + ' ' + word).trim();
+    });
+  });
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+function atinaFinishSolutionSpeech(run) {
+  if (run !== atinaSolutionSpeechRun) return;
   if (atinaSolutionSpeechPanel) {
     const playButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-play]');
     const stopButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-stop]');
@@ -789,6 +833,7 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
     stopButton.setAttribute('aria-label', 'Parar a leitura');
     stopButton.hidden = true;
     stopButton.style.cssText = 'align-items:center;padding:6px 9px;min-height:30px;border:1px solid #526a80;border-radius:999px;background:transparent;color:#aebfd0;font-size:12px;font-weight:500;box-shadow:none;cursor:pointer;';
+
     playButton.addEventListener('click', () => {
       const speech = window.speechSynthesis;
       if (speech.speaking && !speech.paused && atinaSolutionSpeechPanel === panel) {
@@ -801,24 +846,44 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
         playButton.textContent = 'Ⅱ Pausar';
         return;
       }
+
       atinaStopSolutionSpeech();
-      const speechText = playerParagraphs.join('. ').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
-      const utterance = new SpeechSynthesisUtterance(speechText);
-      utterance.lang = 'pt-PT';
-      utterance.rate = 0.96;
+      const run = atinaSolutionSpeechRun;
+      const chunks = atinaSolutionSpeechChunks(playerParagraphs.join('. '));
+      let index = 0;
       const voices = speech.getVoices();
       const portugueseVoice = voices.find(voice => /^pt-PT$/i.test(voice.lang)) ||
         voices.find(voice => /^pt(?:-|$)/i.test(voice.lang));
-      if (portugueseVoice) utterance.voice = portugueseVoice;
       atinaSolutionSpeechPanel = panel;
-      atinaSolutionSpeechUtterance = utterance;
       stopButton.hidden = false;
       playButton.textContent = 'Ⅱ Pausar';
-      utterance.onend = utterance.onerror = () => {
-        if (atinaSolutionSpeechUtterance !== utterance) return;
-        atinaStopSolutionSpeech();
+
+      const speakNext = () => {
+        if (run !== atinaSolutionSpeechRun || atinaSolutionSpeechPanel !== panel) return;
+        if (index >= chunks.length) {
+          atinaFinishSolutionSpeech(run);
+          return;
+        }
+        const utterance = new SpeechSynthesisUtterance(chunks[index++]);
+        utterance.lang = 'pt-PT';
+        utterance.rate = 0.96;
+        if (portugueseVoice) utterance.voice = portugueseVoice;
+        atinaSolutionSpeechUtterance = utterance;
+        let advanced = false;
+        const advance = () => {
+          if (advanced || run !== atinaSolutionSpeechRun) return;
+          advanced = true;
+          atinaSolutionSpeechUtterance = null;
+          window.setTimeout(speakNext, 120);
+        };
+        utterance.onend = advance;
+        utterance.onerror = event => {
+          if (event.error === 'canceled' || event.error === 'interrupted') return;
+          advance();
+        };
+        speech.speak(utterance);
       };
-      speech.speak(utterance);
+      speakNext();
     });
     stopButton.addEventListener('click', atinaStopSolutionSpeech);
     controls.append(playButton, stopButton);
