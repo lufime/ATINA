@@ -1,6 +1,6 @@
 # ATINA — Instruções permanentes para imagens
 
-**Versão das instruções:** 2.5  
+**Versão das instruções:** 2.6  
 **Última atualização:** 26/11/2026
 
 ## 1. Projeto e acessos
@@ -576,11 +576,13 @@ Aplicar antes de rejeitar um tema ou abandonar a geração de uma imagem.
 - Quando houver dúvidas sobre direitos de autor, direitos de imagem, marca, estatuto de domínio público ou possibilidade de representar uma personagem/personalidade, **não parar automaticamente nem substituir de imediato o tema por uma imagem genérica sem contexto**.
 - Primeiro, identificar o contexto essencial do desafio: época, local, atividade, profissão, acontecimento, ambiente, objetos comuns e elementos narrativos que ajudem o jogador a reconhecer o tema.
 - Gerar um **cenário original, concebido de raiz e integrado no contexto do desafio**, usando esses elementos contextuais e cenográficos genéricos.
-- Sempre que seja juridicamente seguro, a personagem ou personalidade pode estar presente como figura não identificável, vista de costas, em plano distante, em silhueta genérica ou sem traços distintivos. Não criar sósias, retratos aproximados ou combinações de roupa, rosto, pose e adereços que permitam reconhecer uma pessoa/personagem protegida.
+- **Na dúvida, não adicionar qualquer figura humana que represente ou possa ser interpretada como a personagem ou personalidade em causa.** Não usar figuras de costas, silhuetas, planos distantes ou versões genéricas como forma de sugerir a sua presença quando isso possa gerar dúvida de identificação.
+- Nesses casos, representar exclusivamente o contexto através de cenários, arquitetura, paisagens, ambientes, objetos comuns e elementos narrativos genéricos e originais, sem incluir a personagem ou personalidade.
+- Só incluir uma figura quando estiver confirmado que a representação é permitida e que não copia uma interpretação visual protegida. Não criar sósias, retratos aproximados ou combinações de roupa, rosto, pose e adereços que permitam reconhecer uma pessoa/personagem protegida.
 - Não reproduzir retratos, fotografias, ilustrações, interpretações visuais, figurinos, penteados, adereços exclusivos, logótipos, marcas ou elementos distintivos de terceiros.
 - O cenário deve manter uma ligação visual clara à solução e ao contexto histórico/cultural do desafio; não deve ser uma imagem abstrata ou genérica que perca essa associação.
 - Se a figura identificável estiver comprovadamente em domínio público, confirmar também os direitos da versão visual concreta antes de a representar. Preferir uma interpretação original e não copiar retratos ou obras protegidas.
 - Se, mesmo com o cenário contextual, persistirem dúvidas sobre a figura, retirar apenas os elementos identificáveis e preservar o ambiente, a ação e a narrativa do desafio.
 - Antes de aceitar, verificar que a imagem comunica corretamente o tema, não induz o jogador em erro e não contém elementos protegidos reconhecíveis.
-- Regra prática: **na dúvida, criar um cenário original dentro do contexto do desafio; preservar a história e a associação visual, neutralizando apenas o que possa infringir direitos.**
+- Regra prática: **na dúvida, não incluir a figura; criar um cenário original dentro do contexto do desafio e preservar a história e a associação visual através do ambiente e de elementos genéricos.**
 
