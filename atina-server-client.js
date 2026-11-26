@@ -730,11 +730,14 @@ function atinaServerStartTimers() {
   atinaServerPolling = setInterval(() => atinaServerRefresh().catch(() => {}), 2500);
 }
 let atinaSolutionSpeechPanel = null;
-let atinaSolutionSpeechUtterance = null;
 let atinaSolutionSpeechRun = 0;
 
 function atinaStopSolutionSpeech() {
   atinaSolutionSpeechRun++;
+  if (typeof atinaSpeechGeneration !== 'undefined') atinaSpeechGeneration++;
+  if (typeof atinaSpeechQueue !== 'undefined') atinaSpeechQueue.length = 0;
+  if (typeof atinaSpeechBusy !== 'undefined') atinaSpeechBusy = false;
+  if (typeof atinaSpeechUtterance !== 'undefined') atinaSpeechUtterance = null;
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   if (atinaSolutionSpeechPanel) {
     const playButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-play]');
@@ -743,37 +746,6 @@ function atinaStopSolutionSpeech() {
     if (stopButton) stopButton.hidden = true;
   }
   atinaSolutionSpeechPanel = null;
-  atinaSolutionSpeechUtterance = null;
-}
-
-function atinaSolutionSpeechChunks(text, maxLength = 170) {
-  const sentences = String(text || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim()
-    .match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
-  const chunks = [];
-  let current = '';
-  sentences.forEach(sentence => {
-    const clean = sentence.trim();
-    if (!clean) return;
-    if ((current + ' ' + clean).trim().length <= maxLength) {
-      current = (current + ' ' + clean).trim();
-      return;
-    }
-    if (current) chunks.push(current);
-    if (clean.length <= maxLength) {
-      current = clean;
-      return;
-    }
-    const words = clean.split(/\s+/);
-    current = '';
-    words.forEach(word => {
-      if ((current + ' ' + word).trim().length > maxLength && current) {
-        chunks.push(current);
-        current = word;
-      } else current = (current + ' ' + word).trim();
-    });
-  });
-  if (current) chunks.push(current);
-  return chunks;
 }
 
 function atinaFinishSolutionSpeech(run) {
@@ -785,7 +757,6 @@ function atinaFinishSolutionSpeech(run) {
     if (stopButton) stopButton.hidden = true;
   }
   atinaSolutionSpeechPanel = null;
-  atinaSolutionSpeechUtterance = null;
 }
 
 function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallengeId = null) {
@@ -836,12 +807,12 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
 
     playButton.addEventListener('click', () => {
       const speech = window.speechSynthesis;
-      if (speech.speaking && !speech.paused && atinaSolutionSpeechPanel === panel) {
+      if (atinaSolutionSpeechPanel === panel && speech.speaking && !speech.paused) {
         speech.pause();
         playButton.textContent = '▶ Continuar';
         return;
       }
-      if (speech.paused && atinaSolutionSpeechPanel === panel) {
+      if (atinaSolutionSpeechPanel === panel && speech.paused) {
         speech.resume();
         playButton.textContent = 'Ⅱ Pausar';
         return;
@@ -849,41 +820,23 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
 
       atinaStopSolutionSpeech();
       const run = atinaSolutionSpeechRun;
-      const chunks = atinaSolutionSpeechChunks(playerParagraphs.join('. '));
-      let index = 0;
-      const voices = speech.getVoices();
-      const portugueseVoice = voices.find(voice => /^pt-PT$/i.test(voice.lang)) ||
-        voices.find(voice => /^pt(?:-|$)/i.test(voice.lang));
       atinaSolutionSpeechPanel = panel;
       stopButton.hidden = false;
       playButton.textContent = 'Ⅱ Pausar';
-
-      const speakNext = () => {
-        if (run !== atinaSolutionSpeechRun || atinaSolutionSpeechPanel !== panel) return;
-        if (index >= chunks.length) {
-          atinaFinishSolutionSpeech(run);
-          return;
+      const started = typeof atinaSpeakClue === 'function' && atinaSpeakClue(
+        playerParagraphs.join('. '),
+        true,
+        {
+          onStart: () => {
+            if (run === atinaSolutionSpeechRun && atinaSolutionSpeechPanel === panel) {
+              playButton.textContent = 'Ⅱ Pausar';
+            }
+          },
+          onEnd: () => atinaFinishSolutionSpeech(run),
+          onError: () => atinaFinishSolutionSpeech(run)
         }
-        const utterance = new SpeechSynthesisUtterance(chunks[index++]);
-        utterance.lang = 'pt-PT';
-        utterance.rate = 0.96;
-        if (portugueseVoice) utterance.voice = portugueseVoice;
-        atinaSolutionSpeechUtterance = utterance;
-        let advanced = false;
-        const advance = () => {
-          if (advanced || run !== atinaSolutionSpeechRun) return;
-          advanced = true;
-          atinaSolutionSpeechUtterance = null;
-          window.setTimeout(speakNext, 120);
-        };
-        utterance.onend = advance;
-        utterance.onerror = event => {
-          if (event.error === 'canceled' || event.error === 'interrupted') return;
-          advance();
-        };
-        speech.speak(utterance);
-      };
-      speakNext();
+      );
+      if (!started) atinaFinishSolutionSpeech(run);
     });
     stopButton.addEventListener('click', atinaStopSolutionSpeech);
     controls.append(playButton, stopButton);
