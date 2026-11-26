@@ -184,7 +184,7 @@ begin
     ) into v_collision;
 
     if v_collision then
-      raise exception 'A variante coincide com uma resposta de outro desafio ativo. Não pode ser aprovada.';
+      raise exception 'A variante coincide com uma resposta de outro desafio. Não pode ser aprovada.';
     end if;
 
     update private.atina_challenges c
@@ -228,7 +228,7 @@ begin
 
     update private.atina_challenge_answer_aliases
     set status = 'rejected',
-        review_notes = nullif(btrim(p_notes),''),
+        review_notes = coalesce(nullif(btrim(p_notes),''), v_alias.review_notes),
         reviewed_by = auth.uid(),
         reviewed_at = now(),
         added_to_accepted_answers = false
