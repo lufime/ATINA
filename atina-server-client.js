@@ -729,10 +729,26 @@ function atinaServerStartTimers() {
   atinaServerTimer = setInterval(atinaServerRenderTimer, 250);
   atinaServerPolling = setInterval(() => atinaServerRefresh().catch(() => {}), 2500);
 }
+let atinaSolutionSpeechPanel = null;
+let atinaSolutionSpeechUtterance = null;
+
+function atinaStopSolutionSpeech() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  if (atinaSolutionSpeechPanel) {
+    const playButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-play]');
+    const stopButton = atinaSolutionSpeechPanel.querySelector('[data-solution-speech-stop]');
+    if (playButton) playButton.textContent = '▶ Ouvir';
+    if (stopButton) stopButton.hidden = true;
+  }
+  atinaSolutionSpeechPanel = null;
+  atinaSolutionSpeechUtterance = null;
+}
+
 function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallengeId = null) {
   const target = $('solutionImage');
   if (!target) return;
   const previous = target.querySelector('[data-solution-wikipedia]');
+  if (previous && atinaSolutionSpeechPanel === previous) atinaStopSolutionSpeech();
   previous?.remove();
   // A história só pode aparecer depois de o servidor confirmar que a ronda foi revelada.
   if (!isLocked || !challenge || !Number.isFinite(Number(challenge.id)) ||
@@ -754,6 +770,60 @@ function atinaRenderSolutionWikipedia(challenge, isLocked = false, activeChallen
   const heading = document.createElement('h3');
   heading.textContent = '📚 História da solução';
   panel.appendChild(heading);
+
+  if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+    const controls = document.createElement('div');
+    controls.style.cssText = 'display:flex;align-items:center;gap:7px;margin:0 0 12px;';
+    const playButton = document.createElement('button');
+    playButton.type = 'button';
+    playButton.className = 'sound-toggle';
+    playButton.dataset.solutionSpeechPlay = 'true';
+    playButton.textContent = '▶ Ouvir';
+    playButton.setAttribute('aria-label', 'Ouvir a História da solução');
+    playButton.style.cssText = 'display:inline-flex;align-items:center;gap:5px;padding:6px 10px;min-height:30px;border:1px solid #526a80;border-radius:999px;background:#132a40;color:#dce7f1;font-size:12px;font-weight:600;box-shadow:none;cursor:pointer;';
+    const stopButton = document.createElement('button');
+    stopButton.type = 'button';
+    stopButton.className = 'sound-toggle';
+    stopButton.dataset.solutionSpeechStop = 'true';
+    stopButton.textContent = '■ Parar';
+    stopButton.setAttribute('aria-label', 'Parar a leitura');
+    stopButton.hidden = true;
+    stopButton.style.cssText = 'display:inline-flex;align-items:center;padding:6px 9px;min-height:30px;border:1px solid #526a80;border-radius:999px;background:transparent;color:#aebfd0;font-size:12px;font-weight:500;box-shadow:none;cursor:pointer;';
+    playButton.addEventListener('click', () => {
+      const speech = window.speechSynthesis;
+      if (speech.speaking && !speech.paused && atinaSolutionSpeechPanel === panel) {
+        speech.pause();
+        playButton.textContent = '▶ Continuar';
+        return;
+      }
+      if (speech.paused && atinaSolutionSpeechPanel === panel) {
+        speech.resume();
+        playButton.textContent = 'Ⅱ Pausar';
+        return;
+      }
+      atinaStopSolutionSpeech();
+      const speechText = playerParagraphs.join('. ').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+      const utterance = new SpeechSynthesisUtterance(speechText);
+      utterance.lang = 'pt-PT';
+      utterance.rate = 0.96;
+      const voices = speech.getVoices();
+      const portugueseVoice = voices.find(voice => /^pt-PT$/i.test(voice.lang)) ||
+        voices.find(voice => /^pt(?:-|$)/i.test(voice.lang));
+      if (portugueseVoice) utterance.voice = portugueseVoice;
+      atinaSolutionSpeechPanel = panel;
+      atinaSolutionSpeechUtterance = utterance;
+      stopButton.hidden = false;
+      playButton.textContent = 'Ⅱ Pausar';
+      utterance.onend = utterance.onerror = () => {
+        if (atinaSolutionSpeechUtterance !== utterance) return;
+        atinaStopSolutionSpeech();
+      };
+      speech.speak(utterance);
+    });
+    stopButton.addEventListener('click', atinaStopSolutionSpeech);
+    controls.append(playButton, stopButton);
+    panel.appendChild(controls);
+  }
 
   playerParagraphs.forEach(text => {
     const paragraph = document.createElement('p');
