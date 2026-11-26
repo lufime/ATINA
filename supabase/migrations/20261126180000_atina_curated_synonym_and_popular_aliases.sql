@@ -95,10 +95,10 @@ begin
   if char_length(v_alias) < 2 or char_length(v_alias) > 120 then
     raise exception 'A variante deve ter entre 2 e 120 caracteres.';
   end if;
-  if p_alias_type not in ('synonym','popular','regionalism','variant','abbreviation') then
+  if p_alias_type is null or p_alias_type not in ('synonym','popular','regionalism','variant','abbreviation') then
     raise exception 'Tipo de variante inválido.';
   end if;
-  if p_locale not in ('pt-PT','pt-BR','pt','en','other') then
+  if p_locale is null or p_locale not in ('pt-PT','pt-BR','pt','en','other') then
     raise exception 'Variante linguística inválida.';
   end if;
   if not exists (select 1 from private.atina_challenges c where c.challenge_id = p_challenge_id) then
@@ -107,6 +107,15 @@ begin
 
   v_normalized := private.atina_v2_normalize_answer(v_alias);
   if v_normalized = '' then raise exception 'Variante vazia após normalização.'; end if;
+  if exists (
+    select 1 from private.atina_challenges c
+    where c.challenge_id = p_challenge_id
+      and (private.atina_v2_normalize_answer(c.answer) = v_normalized
+        or exists (select 1 from jsonb_array_elements_text(coalesce(c.accepted_answers,'[]'::jsonb)) x(value)
+                   where private.atina_v2_normalize_answer(x.value) = v_normalized))
+  ) then
+    raise exception 'Esta variante já está incluída nas respostas aceites do desafio.';
+  end if;
 
   insert into private.atina_challenge_answer_aliases
     (challenge_id, alias, normalized_alias, alias_type, locale, status, review_notes, created_by, reviewed_by, reviewed_at, added_to_accepted_answers)
@@ -148,7 +157,7 @@ begin
     raise exception 'Acesso reservado à administração.' using errcode = '42501';
   end if;
 
-  if p_status not in ('approved','rejected') then
+  if p_status is null or p_status not in ('approved','rejected') then
     raise exception 'A decisão tem de ser aprovar ou rejeitar.';
   end if;
 
@@ -163,8 +172,7 @@ begin
     select exists (
       select 1
       from private.atina_challenges c
-      where c.active
-        and c.challenge_id <> v_alias.challenge_id
+      where c.challenge_id <> v_alias.challenge_id
         and (
           private.atina_v2_normalize_answer(c.answer) = v_alias.normalized_alias
           or exists (
@@ -200,7 +208,7 @@ begin
 
     update private.atina_challenge_answer_aliases
     set status = 'approved',
-        review_notes = nullif(btrim(p_notes),''),
+        review_notes = coalesce(nullif(btrim(p_notes),''), v_alias.review_notes),
         reviewed_by = auth.uid(),
         reviewed_at = now(),
         added_to_accepted_answers = v_alias.added_to_accepted_answers or v_added
