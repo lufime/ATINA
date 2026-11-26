@@ -101,15 +101,20 @@ Antes de inserir ou alterar um desafio:
 
 Garantir que cada desafio do ATINA oferece uma descoberta progressiva, justa, factual e adequada ao seu nível de dificuldade, sem pistas redundantes, genéricas, contraditórias ou que revelem prematuramente a resposta.
 
-## 10. Curiosidades após a revelação da resposta
+## 10. Resumo e curiosidades após a revelação da resposta
 Aplicar a todos os desafios, independentemente da categoria ou classificação geográfica: **Portugal, Internacional e Universal**.
 
-- Depois de o jogador revelar ou acertar a resposta, apresentar conteúdo complementar com curiosidades relacionadas diretamente com a solução.
-- As curiosidades devem privilegiar factos interessantes, pormenores pouco conhecidos e informações surpreendentes, mas sempre verdadeiros, relevantes e verificáveis.
-- Redigir o conteúdo por palavras próprias, em português de Portugal, com linguagem natural, clara e apelativa. Não copiar textos de fontes externas.
-- Apresentar as curiosidades apenas depois da revelação da resposta; não as mostrar antes nem utilizá-las como pistas.
+Cada solução deve apresentar duas secções complementares, nesta ordem:
+
+1. **Resumo:** explicação clara do que é a resposta, com o contexto necessário e a informação essencial para o jogador compreender a solução.
+2. **Curiosidades:** factos interessantes, pormenores pouco conhecidos e informações surpreendentes relacionados diretamente com a solução.
+
+Regras de apresentação e conteúdo:
+- Apresentar o Resumo e as Curiosidades apenas depois de o jogador revelar ou acertar a resposta. Nunca os mostrar antes nem utilizar o seu conteúdo como pistas.
+- Redigir ambos por palavras próprias, em português de Portugal, com linguagem natural, clara e apelativa. Não copiar textos de fontes externas.
+- O Resumo deve explicar a solução de forma factual e suficiente, sem se limitar a repetir a resposta ou o enunciado.
+- As Curiosidades devem acrescentar informação nova, interessante, relevante e verificável, sem repetir as pistas, a pergunta ou o Resumo.
+- Não inventar factos para preencher qualquer uma das secções. Se não houver uma curiosidade suficientemente fiável e relevante, omitir essa parte ou indicar apenas o conteúdo factual disponível, sem fabricar informação.
 - Esta apresentação é complementar à resposta e não pode alterar, substituir, reordenar ou acrescentar elementos às cinco pistas do desafio.
-- Não alterar a dificuldade original do desafio por causa das curiosidades ou do conteúdo apresentado após a resposta.
-- As curiosidades devem acrescentar informação nova, sem repetir as pistas, a pergunta ou a explicação principal da solução.
-- Não inventar curiosidades para preencher espaço. Se não houver factos interessantes suficientemente confirmados, apresentar apenas o conteúdo factual disponível.
+- Não alterar a dificuldade original do desafio por causa do Resumo, das Curiosidades ou do conteúdo apresentado após a resposta.
 - A regra é transversal a todos os desafios existentes e novos, de Portugal, Internacionais e Universais.
