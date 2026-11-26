@@ -514,3 +514,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     padding:10px 12px!important;
   }
 }
+
+
+/* Relógio flutuante durante o scroll, limitado ao cartão do desafio */
+#game #timerDisplay{
+  position:sticky!important;
+  top:calc(env(safe-area-inset-top, 0px) + 8px)!important;
+  z-index:60!important;
+  scroll-margin-top:12px!important;
+  box-shadow:0 8px 24px #02081299,0 0 0 4px #f6c96d18!important;
+}
+@media(max-width:760px){
+  #game #timerDisplay{
+    top:calc(env(safe-area-inset-top, 0px) + 6px)!important;
+    min-height:64px!important;
+  }
+}
