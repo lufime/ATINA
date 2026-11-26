@@ -2902,6 +2902,7 @@ function saveLocalProgress(){if(networkRoom||!queue.length||!['solo','duel'].inc
 function restoreLocalProgress(){if(networkRoom)return;let p;try{p=JSON.parse(localStorage.getItem(ATINA_PROGRESS_KEY)||'null');}catch(e){localStorage.removeItem(ATINA_PROGRESS_KEY);return;}if(!p||!Array.isArray(p.queue)||!p.queue.length||!['solo','duel','mix'].includes(p.mode)||!Number.isInteger(p.pos)||p.pos<0||p.pos>=p.queue.length||p.queue.some(n=>!Number.isInteger(n)||!games[n]))return false;mode=p.mode;scores=Array.isArray(p.scores)?p.scores:[0,0];player=p.player||0;raceElapsed=Array.isArray(p.raceElapsed)?p.raceElapsed:[0,0];raceStartedAt=0;raceFinished=false;queue=p.queue;pos=p.pos;difficultyMode=p.difficultyMode||'medium';atinaMixedDifficultyCache=p.atinaMixedDifficultyCache&&typeof p.atinaMixedDifficultyCache==='object'?Object.fromEntries(Object.entries(p.atinaMixedDifficultyCache).filter(([k,v])=>Number.isInteger(Number(k))&&['easy','medium','hard'].includes(v))):{};correctStreak=p.correctStreak||0;answeredCount=p.answeredCount||0;timedMode=p.timedMode||0;const total=isImageChallenge(queue[pos])?6:5;const savedRevealed=Math.max(0,Math.min(Number.isInteger(p.revealed)?p.revealed:0,total));timeLeft=Math.max(0,Number(p.timeLeft)||0);revealed=0;locked=false;screen('game');load();for(let n=0;n<savedRevealed;n++)reveal();$('answer').value=p.answer||'';if(p.locked)end(p.feedback||'Desafio concluído.',true);else{$('feedback').textContent=p.feedback||'';if(savedRevealed>0){stopTimer();timeLeft=Math.max(0,(p.timeLeft||0)-Math.floor((Date.now()-(p.updatedAt||Date.now()))/1000));if(timedMode&&timeLeft===0){scores[player]-=10;answeredCount++;end('⏰ O tempo terminou enquanto a página estava fechada. A resposta correta era: '+games[queue[pos]][3]+'.');}else startTimer(true);}else{stopTimer();timeLeft=timedMode;drawTimer();atinaScheduleAutoReveal();}}update();board();return true;}
 const ATINA_SCREEN_KEY='atinaLastScreen';
 function screen(id){
+ document.body.classList.toggle('atina-screen-game',id==='game');
  const screens=['home','game','mimicaGame','result','rankingPage','networkLobby'];
  screens.forEach(x=>{
   const el=$(x);if(!el)return;
@@ -5544,7 +5545,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{font-size:9.5px!important;padding:4px 7px!important}
 }
 </style>
-<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-13">
+<link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-14">
 <script src="./assets/atina-global-error-report.js?v=20261126-1"></script>
 
 
