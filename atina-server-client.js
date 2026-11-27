@@ -1728,6 +1728,9 @@ async function atinaNoticeRefresh() {
 
   message.textContent = active ? noticeMessage : '';
   banner.classList.toggle('hidden', !active);
+  // Durante uma operação, o conteúdo fica aberto sem exigir um toque do jogador.
+  const details = document.getElementById('atinaUpdateNoticeDetails');
+  if (details) details.open = !!active;
 }
 async function atinaNoticeSave() {
   const status = document.getElementById('atinaNoticeStatus');
