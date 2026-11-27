@@ -6131,5 +6131,33 @@ html::before,html::after,body::before,body::after{
 #game>.card{border-left:0!important;border-left-color:transparent!important;box-shadow:0 8px 22px #020b14aa,inset 0 1px #ffffff08!important}
 </style>
 
+
+<style id="atina-remove-all-lateral-effects-20261127">
+/* Remover efeitos verticais nas laterais da página e de todos os elementos do jogo.
+   Preserva fundos, texto, dimensões e separadores horizontais. */
+html,body,.wrap,#home,#game,#result,
+#home>.card,#game>.card,#result>.card,
+#home .card,#game .card,#result .card{
+  border-left:0!important;
+  border-right:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+html::before,html::after,body::before,body::after,
+.wrap::before,.wrap::after,#home::before,#home::after,
+#game::before,#game::after,#result::before,#result::after{
+  content:none!important;
+  display:none!important;
+}
+#game *,#game *::before,#game *::after{
+  border-left-width:0!important;
+  border-right-width:0!important;
+  box-shadow:none!important;
+}
+#game *::before,#game *::after{
+  background-image:none!important;
+}
+</style>
+
 </body>
 </html>
