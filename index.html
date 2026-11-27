@@ -909,11 +909,11 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 .atina-level-gallery-card{padding:10px 5px!important}
 .atina-level-gallery-card strong{font-size:11px!important}
 @media(min-width:620px){.atina-level-gallery-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+</style>
 <style id="atina-delete-button-profile-only">
 /* Segurança visual: o botão de apagar conta nunca aparece no contentor de acesso/início. */
 #atinaAccessAccountMount #atinaAccountDelete{display:none!important}
 #atinaProfileAccountMount #atinaAccountDelete.hidden{display:none!important}
-</style>
 </style>
 
 <style id="atina-layout-consistency-20261116">
@@ -1300,7 +1300,7 @@ label.section{line-height:1.35!important}
 #game #clues.atina-clues-collapsed{display:none!important}
 #game #clues.atina-clues-expanded{display:block!important}
 </style>
-<script id="atina-clues-collapse-v1">
+<script id="atina-clues-collapse-v1-js">
 (function(){
  function setupClueToggle(){
   const header=document.querySelector('#game .card>.row:has(#clueProgress)');
@@ -5347,7 +5347,7 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   </div>
  </section>
 </div>
-<script id="atina-pregame-configuration-v1">
+<script id="atina-pregame-configuration-v1-js">
 (function(){
  const overlay=document.getElementById('atinaPregameOverlay'),count=document.getElementById('atinaPregameCount'),difficulty=document.getElementById('atinaPregameDifficulty'),summary=document.getElementById('atinaPregameSummary'),error=document.getElementById('atinaPregameError'),startBtn=document.getElementById('atinaPregameStart'),scopeSelect=document.getElementById('atinaGeographicScope'),scopeWrap=document.getElementById('atinaGeographicScopePicker');
  let mode='solo',category=null;const categoryWrap=document.getElementById('atinaSoloCategoryPicker'),categorySelect=document.getElementById('atinaSoloCategory');
