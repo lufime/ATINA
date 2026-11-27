@@ -29,7 +29,7 @@ html body :is(
 /* As opções de jogo são botões, não cartões decorativos.
    Mantêm a área de toque, tipografia, conteúdo e eventos. */
 html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,main.wrap)
-:is(button.tile,.tile[role="button"]{
+:is(button.tile,.tile[role="button"]){
   background:transparent!important;
   background-image:none!important;
   border:0!important;
@@ -50,4 +50,20 @@ html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,main.wr
 :is(button,.btn,[role="button"],summary,input,select,textarea):focus-visible{
   outline:2px solid currentColor!important;
   outline-offset:3px!important;
+}
+
+/* Remoção global de efeitos visuais em todas as páginas:
+   sem animações, transições, movimentos, filtros, brilhos ou sombras.
+   Cores, dimensões, espaçamentos, estados e funcionamento mantêm-se. */
+html,html * ,html *::before,html *::after{
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  scroll-behavior:auto!important;
 }
