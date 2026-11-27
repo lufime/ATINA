@@ -1,0 +1,147 @@
+/* ATINA — otimização transversal para telemóvel, computador e televisão.
+   Camada responsiva de apresentação; preserva lógica, IDs, eventos, dados e integrações. */
+:root{
+  --atina-control-height:48px;
+  --atina-content-gutter:clamp(12px,2.2vw,28px);
+  --atina-readable-line:72ch;
+}
+html{min-width:320px;scroll-padding-top:clamp(72px,8vh,112px)}
+body{min-width:320px;overflow-x:hidden}
+body :where(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,
+#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,
+.wrap,.card,.panel,.home-block,.home-page-panel){min-width:0;max-width:100%}
+body :where(img,video,canvas,svg){max-width:100%}
+body :where(p,li,label,.muted,.small,.notice,.feedback){overflow-wrap:anywhere}
+body :where(button,input[type=button],input[type=submit],input[type=reset],
+.btn,[role=button],summary,.home-nav-btn,.choice,.answer-option,[role=radio],[role=checkbox]){
+  box-sizing:border-box!important;
+  min-height:var(--atina-control-height)!important;
+  height:var(--atina-control-height)!important;
+  padding-block:0!important;
+  display:inline-flex;
+  align-items:center!important;
+  justify-content:center!important;
+  line-height:1.2!important;
+  vertical-align:middle;
+  border-radius:12px!important;
+  border-bottom-width:1px!important;
+  box-shadow:0 1px 3px #0003,inset 0 1px 0 #ffffff20!important;
+  text-shadow:none!important;
+  white-space:normal;
+}
+body :where(button,input[type=button],input[type=submit],input[type=reset],
+.btn,[role=button],summary,.home-nav-btn,.choice,.answer-option){
+  max-width:100%;
+}
+body :where(input:not([type=checkbox]):not([type=radio]):not([type=range]),
+select,textarea){box-sizing:border-box;max-width:100%;min-width:0}
+body :where(.actions,.button-row,.controls,.toolbar){min-width:0;flex-wrap:wrap}
+body :where(.card,.panel,.home-block,.home-welcome,.tile,.online-panel,
+.online-ranking,.daily-mission,.quick-match-panel,.clue){
+  box-shadow:0 1px 4px #0002,inset 0 1px 0 #ffffff0d!important;
+}
+body :where(.home-page-nav,#atinaMainNav){
+  min-width:0;max-width:100%;overscroll-behavior-x:contain;
+}
+body :where(table){display:block;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+body :where(pre,code){max-width:100%;overflow-wrap:anywhere;white-space:pre-wrap}
+
+/* Telemóveis: uma coluna quando necessário, áreas tácteis confortáveis e sem cortes. */
+@media(max-width:600px){
+  :root{--atina-control-height:48px;--atina-content-gutter:12px}
+  body>.wrap,body .wrap{
+    width:calc(100% - 24px)!important;max-width:100%!important;
+    padding:12px 0 calc(112px + env(safe-area-inset-bottom,0px))!important;
+  }
+  body .brand{padding:18px 14px!important;gap:8px!important;border-radius:18px!important}
+  body .brand .logo-image{max-width:min(72vw,260px);max-height:76px}
+  body :where(.home-page-nav,#atinaMainNav){
+    position:relative!important;top:auto!important;display:flex!important;
+    flex-wrap:nowrap!important;overflow-x:auto!important;scrollbar-width:thin;
+    gap:5px!important;padding:6px!important;margin:10px 0 14px!important;
+  }
+  body :where(.home-page-nav .home-nav-btn,#atinaMainNav .home-nav-btn,
+  .home-nav-more>summary){flex:0 0 auto;min-width:max-content;padding-inline:12px!important}
+  body .home-nav-more{flex:0 0 auto;margin-left:auto}
+  body .home-nav-more-grid{position:fixed!important;left:12px!important;right:12px!important;
+    top:auto!important;bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
+    width:auto!important;min-width:0!important;max-height:65dvh;overflow:auto;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;z-index:12020!important}
+  body :where(#home .actions,.actions,.modes,.grid,.tiles,.mode-grid){
+    grid-template-columns:minmax(0,1fr)!important;gap:9px!important
+  }
+  body :where(#home .actions>.btn,#home .actions>button,.actions>.btn,.actions>button,
+  .modes>.tile,.grid>.tile){width:100%!important;min-width:0!important}
+  body :where(.home-welcome,.home-block,.card,.panel,.home-page-panel){
+    padding:clamp(13px,4vw,18px)!important;border-radius:16px!important
+  }
+  body :where(#game #question){font-size:clamp(21px,6vw,26px)!important}
+  body :where(#game #answer){width:100%;min-width:0}
+  body :where(.stats,.atina-live-stats,.status-row){flex-wrap:wrap;gap:6px}
+  body :where(#atinaSettingsCacheButton,#atinaGlobalReportButton){
+    position:fixed!important;bottom:max(8px,env(safe-area-inset-bottom,0px))!important;
+    min-height:44px!important;height:44px!important;width:auto!important;
+    max-width:calc(50vw - 18px)!important;padding-inline:9px!important;
+    font-size:clamp(10px,2.7vw,12px)!important;z-index:12010!important;
+  }
+  body #atinaSettingsCacheButton{left:max(8px,env(safe-area-inset-left,0px))!important}
+  body #atinaGlobalReportButton{right:max(8px,env(safe-area-inset-right,0px))!important}
+}
+
+/* Tablets, portáteis pequenos e ecrãs divididos. */
+@media(min-width:601px) and (max-width:1024px){
+  body>.wrap,body .wrap{width:calc(100% - 36px)!important;max-width:960px!important}
+  body :where(.modes,.grid,.tiles,.mode-grid){
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))
+  }
+  body :where(.home-page-nav,#atinaMainNav){flex-wrap:wrap}
+  body :where(.home-welcome,.home-block,.card,.panel){padding:clamp(16px,2.4vw,24px)}
+}
+
+/* Computadores: limitar linhas de leitura, aproveitar largura sem esticar controlos. */
+@media(min-width:1025px) and (max-width:1599px){
+  body>.wrap,body .wrap{width:min(calc(100% - 56px),1320px)!important;max-width:1320px!important}
+  body :where(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkScoreboard){
+    margin-inline:auto
+  }
+  body :where(p,.description,.instructions,.home-welcome p){max-width:var(--atina-readable-line)}
+  body :where(.actions,.button-row,.controls){gap:10px}
+}
+
+/* Televisões e ecrãs grandes: interface legível à distância e controlos maiores. */
+@media(min-width:1600px){
+  :root{--atina-control-height:60px;--atina-content-gutter:clamp(32px,3vw,64px)}
+  body{font-size:clamp(17px,1.05vw,21px)}
+  body>.wrap,body .wrap{width:min(calc(100% - 8vw),1680px)!important;max-width:1680px!important;padding-block:clamp(28px,3vh,52px)!important}
+  body :where(h1){font-size:clamp(38px,2.7vw,56px)!important}
+  body :where(h2){font-size:clamp(30px,2vw,42px)!important}
+  body :where(h3){font-size:clamp(24px,1.5vw,32px)!important}
+  body :where(p,li,label,.description,.instructions){font-size:clamp(17px,1.05vw,21px)!important;line-height:1.55}
+  body :where(button,input[type=button],input[type=submit],.btn,[role=button],
+  summary,.home-nav-btn,.choice,.answer-option){font-size:clamp(16px,1vw,20px)!important;padding-inline:clamp(18px,1.5vw,30px)!important}
+  body :where(.card,.panel,.home-block,.home-welcome,.tile,.online-panel,
+  .online-ranking,.daily-mission,.quick-match-panel){padding:clamp(24px,2vw,40px)!important}
+  body :where(.home-page-nav,#atinaMainNav){gap:12px!important;padding:12px!important}
+  body :where(.modes,.grid,.tiles,.mode-grid){gap:clamp(16px,1.4vw,26px)!important}
+  body :where(#game #question){font-size:clamp(34px,2.5vw,48px)!important}
+  body :where(#game .clue){font-size:clamp(19px,1.25vw,24px)!important}
+}
+
+/* Ecrãs de televisão controlados por comando: sem hover que desloque a interface. */
+@media(min-width:1200px) and (hover:none) and (pointer:coarse){
+  body :where(button,.btn,[role=button],.tile,.home-nav-btn):hover{transform:none!important;filter:none!important}
+  body :where(button,.btn,[role=button],.tile,.home-nav-btn):focus-visible{
+    outline:4px solid #ffe5a0!important;outline-offset:4px!important
+  }
+}
+
+/* Movimento reduzido e contraste elevado continuam respeitados. */
+@media(prefers-reduced-motion:reduce){
+  body :where(*,::before,::after){scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+@media(prefers-contrast:more){
+  body :where(button,.btn,.card,.panel,.home-block,.tile,input,select,textarea){
+    border-color:currentColor!important
+  }
+}
