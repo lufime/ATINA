@@ -78,35 +78,3 @@
   font-weight:750!important;
   text-shadow:none!important;
 }
-
-
-/* Correção de cascata: prevalecer sobre estilos antigos específicos da página. */
-html body [data-tone="positive"],
-html body .success,html body .positive,html body .is-success,
-html body .is-correct,html body .atina-message-positive,
-html body #atinaUpdateNotice[data-tone="positive"]{
-  color:#b9ffd1!important;
-  background:linear-gradient(145deg,#123d2a,#0d2d20)!important;
-  border:2px solid #28c76f!important;
-}
-html body [data-tone="negative"],
-html body .error,html body .is-error,html body .negative,
-html body .danger,html body .is-wrong,html body .atina-message-negative,
-html body #atinaUpdateNotice[data-tone="negative"]{
-  color:#ffc1c5!important;
-  background:linear-gradient(145deg,#4a1c25,#32131b)!important;
-  border:2px solid #ef4b58!important;
-}
-html body [data-tone="neutral"],
-html body .info,html body .is-info,html body .warning,
-html body .is-warning,html body .neutral,html body .atina-message-neutral,
-html body #atinaUpdateNotice[data-tone="neutral"]{
-  color:#ffe8a3!important;
-  background:linear-gradient(145deg,#493916,#30270f)!important;
-  border:2px solid #d5a92f!important;
-}
-html body [data-tone="positive"] *,
-html body [data-tone="negative"] *,
-html body [data-tone="neutral"] *{
-  color:inherit!important;
-}
