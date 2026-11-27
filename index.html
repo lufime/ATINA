@@ -6159,5 +6159,42 @@ html::before,html::after,body::before,body::after,
 }
 </style>
 
+
+<style id="atina-remove-all-lateral-lines-20261127">
+/* Neutralizar linhas e efeitos laterais em toda a experiência, sem esconder conteúdo. */
+body,body *{
+  border-left-width:0!important;
+  border-right-width:0!important;
+  border-left-color:transparent!important;
+  border-right-color:transparent!important;
+  box-shadow:none!important;
+}
+/* Remover acentos decorativos laterais e pequenos traços junto aos títulos. */
+#home .section::before,.section::before,
+#home .home-block::before,
+#home .home-page-panel:not(.hidden)::before,
+.home-block::before,
+.home-page-panel:not(.hidden)::before,
+.daily-mission::before,
+.quick-match-panel::before,
+.online-panel::before,
+.online-ranking::before,
+.tile::before,
+#game .clue::before,
+#game .clue.hidden-clue::before{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+/* Preservar a legibilidade das mensagens sem barras coloridas laterais. */
+#feedback,[role="alert"],[role="status"],.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,.success,.positive,.error,.negative,.danger,.info,.neutral{
+  box-shadow:none!important;
+}
+</style>
+
 </body>
 </html>
