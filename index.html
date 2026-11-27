@@ -6,6 +6,7 @@
 <meta name="description" content="Joga ATINA: desafios de adivinhas, enigmas e perguntas com pistas. Pensa, descobre a resposta, soma pontos e desafia os teus amigos.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="ATINA">
+<meta name="atina-game-version" content="0.1.0">
 <link rel="canonical" href="https://lufime.github.io/ATINA/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_PT">
@@ -1650,7 +1651,8 @@ button.btn:not(.full),.btn:not(.full){
 </div>
 
 <header class="brand"><div class="eyebrow">PENSA · DESCOBRE · ATINA</div><img class="logo-image" src="assets/atina-logo-alentejo.svg" alt="ATINA — Pensa, descobre, atina." decoding="async" fetchpriority="high">
-<div class="tag">O desafio é descobrir.</div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
+<div class="tag">O desafio é descobrir.</div>
+<div class="atina-home-version" aria-label="Versão do jogo 0.1.0">Versão do jogo: <strong>0.1.0</strong></div><div id="accountIndicator" class="account-indicator hidden" aria-live="polite"><span class="account-dot">✓</span><span id="accountIndicatorText">Sessão iniciada</span></div><div id="atinaSignedInUser" aria-live="polite" style="display:inline-flex;align-items:center;gap:7px;margin:10px auto 0;padding:7px 13px;border:1px solid #8baecb;border-radius:999px;background:#17334e;color:#ffe6a3;font-size:13px;font-weight:800"><span aria-hidden="true">👤</span><span id="atinaSignedInUserName">A jogar como convidado</span></div><div class="stats"><span id="totalScore">⭐ 0 pontos</span><span id="progress">Pronto para jogar</span></div>
 </header>
 <nav class="home-page-nav" id="atinaMainNav" aria-label="Navegação principal">
   <button type="button" class="home-nav-btn active" data-home-target="dashboard">⌂ <span>Início</span></button>
@@ -5693,6 +5695,9 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #home .brand .stats>*{font-size:10px!important;padding:4px 7px!important}
  #home #atinaOnlinePlayerCount,#home #atinaOnlineFriendsBadge{font-size:9.5px!important;padding:4px 7px!important}
 }
+.atina-home-version{display:inline-flex;align-items:center;gap:5px;margin:8px auto 0;padding:5px 10px;border:1px solid #d3ad68;border-radius:999px;background:#0b1b2dcc;color:#d9e4ef;font-size:11px;font-weight:650;letter-spacing:.02em}
+.atina-home-version strong{color:#f3cf83;font-variant-numeric:tabular-nums}
+@media(max-width:420px){.atina-home-version{margin-top:6px;padding:4px 8px;font-size:10px}}
 </style>
 <link rel="stylesheet" href="./assets/atina-ui-system-2026.css?v=20261126-23">
 <link rel="stylesheet" href="./assets/atina-game-ui-2026.css?v=20261126-1">
