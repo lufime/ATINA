@@ -1,40 +1,123 @@
 name: Deploy ATINA to GitHub Pages
+
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'atina-update-status.json'
   workflow_dispatch:
+
 permissions:
   contents: read
-  pages: write
-  id-token: write
+
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
+
 jobs:
-  build:
+  notice-start:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout
+      - name: Checkout branch principal
         uses: actions/checkout@v4
-      - name: Configure Pages
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Ativar aviso aos jogadores
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          path = Path("atina-update-status.json")
+          data = {
+              "active": True,
+              "message": "🛠️ Estamos a publicar uma atualização do ATINA. Poderão ocorrer interrupções temporárias. Obrigado pela paciência!",
+              "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+          }
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+          git config user.name "ATINA"
+          git config user.email "146278962+lufime@users.noreply.github.com"
+          git add atina-update-status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Ativa aviso durante publicação [skip ci]"
+            git push origin HEAD:main
+          fi
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: notice-start
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout do commit que iniciou a publicação
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Build static site
+      - name: Construir site estático
         uses: actions/jekyll-build-pages@v1
         with:
           source: .
           destination: ./_site
-      - name: Upload artifact
+      - name: Carregar artefacto
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./_site
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy
+      - name: Publicar site
         id: deployment
         uses: actions/deploy-pages@v4
+
+  notice-finish:
+    if: always() && github.ref == 'refs/heads/main'
+    needs:
+      - notice-start
+      - deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout branch principal
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Desativar aviso após conclusão ou falha
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          path = Path("atina-update-status.json")
+          data = {
+              "active": False,
+              "message": "",
+              "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+          }
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+          git config user.name "ATINA"
+          git config user.email "146278962+lufime@users.noreply.github.com"
+          git add atina-update-status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Desativa aviso após publicação [skip ci]"
+            git push origin HEAD:main
+          fi
