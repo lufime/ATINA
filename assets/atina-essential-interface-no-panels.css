@@ -135,11 +135,3 @@ body :where(
 ):focus-within{
   box-shadow:none!important;
 }
-
-/* O espaço interno continua a ser controlado pelo layout original. */
-body :where(
-  .brand,.home-page-nav,#atinaMainNav,.home-welcome,.sound-control,
-  .atina-fast-play,.daily-mission,#atinaSocialShare,.card,.panel
-){
-  padding:revert-layer;
-}
