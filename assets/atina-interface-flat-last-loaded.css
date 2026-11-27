@@ -132,3 +132,62 @@ html body :is(button,.btn,[role="button"],summary,input,select,textarea):focus-v
   outline:2px solid #ffe5a0!important;
   outline-offset:3px!important;
 }
+
+
+/* ANDROID CACHE-BUST FIX — override final, after every legacy style. */
+html body{
+  background:#0b1421!important;
+  background-image:none!important;
+}
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,main.wrap) :is(
+  .brand,.card,.panel,.home-welcome,.home-block,.home-page-panel,
+  .daily-mission,.quick-match-panel,.online-panel,.online-ranking,
+  .categories-block,.account-block,.settings-block,.solution-panel,
+  .result-panel,.menu-panel,.lobby-panel,.clue,.tile,
+  [class*="panel"],[class*="Panel"],[id$="Panel"]
+){
+  background-color:#14243a!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  transform:none!important;
+}
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,main.wrap) :is(
+  button,input[type="button"],input[type="submit"],.btn,[role="button"],
+  summary,.home-nav-btn,.tile,.choice,.answer-option
+){
+  background-color:#d3ad68!important;
+  background-image:none!important;
+  color:#17202b!important;
+  border:1px solid #b58d49!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,main.wrap) :is(
+  button,input[type="button"],input[type="submit"],.btn,[role="button"],
+  summary,.home-nav-btn,.tile,.choice,.answer-option
+):is(.secondary,.sound-toggle,.tile,.home-nav-btn:not(.active),[data-action="secondary"]){
+  background-color:#1b4265!important;
+  background-image:none!important;
+  color:#f2f7fc!important;
+  border:1px solid #426987!important;
+  box-shadow:none!important;
+}
+html body :is(button,.btn,[role="button"],summary,.home-nav-btn,.tile){
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
