@@ -5736,5 +5736,36 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 }
 </style>
 
+
+<style id="atina-nav-more-fixed-row-height">
+/* Evitar que as linhas do menu Mais se estiquem para preencher a altura do painel. */
+#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{
+  height:auto!important;min-height:0!important;max-height:min(32vh,230px)!important;
+  grid-auto-rows:minmax(36px,auto)!important;align-content:start!important;
+  justify-content:stretch!important;row-gap:5px!important;
+  padding:6px!important;
+}
+#atinaMainNav .home-nav-more-grid .home-nav-btn{
+  display:flex!important;flex-direction:row!important;align-items:center!important;
+  justify-content:flex-start!important;gap:7px!important;
+  height:auto!important;min-height:36px!important;max-height:42px!important;
+  padding:5px 8px!important;font-size:11px!important;line-height:1.15!important;
+  text-align:left!important;white-space:nowrap!important;
+}
+#atinaMainNav .home-nav-more-grid .home-nav-btn span{
+  overflow:hidden!important;text-overflow:ellipsis!important;
+}
+@media(max-width:420px){
+  #atinaMainNav .home-nav-more[open]>.home-nav-more-grid{
+    max-height:min(30vh,210px)!important;grid-auto-rows:minmax(34px,auto)!important;
+    row-gap:4px!important;padding:5px!important;
+  }
+  #atinaMainNav .home-nav-more-grid .home-nav-btn{
+    min-height:34px!important;max-height:38px!important;padding:4px 6px!important;
+    gap:5px!important;font-size:10px!important;
+  }
+}
+</style>
+
 </body>
 </html>
