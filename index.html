@@ -6196,5 +6196,80 @@ body,body *{
 }
 </style>
 
+
+
+<style id="atina-global-game-feel-20261127">
+/* Game Feel global: resposta tátil, feedback imediato e movimento discreto. */
+:root{
+  --atina-motion-fast:120ms;
+  --atina-motion-normal:190ms;
+  --atina-motion-ease:cubic-bezier(.2,.75,.25,1);
+}
+:where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
+[role="radio"],[role="checkbox],summary){
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+:where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
+[role="radio"],[role="checkbox],summary){
+  transition:transform var(--atina-motion-fast) var(--atina-motion-ease),
+    filter var(--atina-motion-normal) var(--atina-motion-ease),
+    background-color var(--atina-motion-normal) var(--atina-motion-ease),
+    border-color var(--atina-motion-normal) var(--atina-motion-ease),
+    color var(--atina-motion-normal) var(--atina-motion-ease);
+}
+@media(hover:hover) and (pointer:fine){
+  :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
+  [role="radio"],[role="checkbox],summary):not(:disabled):not([aria-disabled="true"]):hover{
+    filter:brightness(1.07);
+  }
+}
+:where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
+[role="radio"],[role="checkbox],summary):not(:disabled):not([aria-disabled="true"]):active{
+  transform:scale(.975);
+  filter:brightness(.96);
+}
+:where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
+[role="radio"],[role="checkbox],summary):focus-visible{
+  outline:2px solid var(--atina-accent,#45c9c1)!important;
+  outline-offset:3px!important;
+}
+:where(input,select,textarea,.answer){
+  transition:border-color var(--atina-motion-normal) var(--atina-motion-ease),
+    background-color var(--atina-motion-normal) var(--atina-motion-ease);
+}
+:where(input,select,textarea,.answer):focus-visible{
+  outline:2px solid var(--atina-accent,#45c9c1)!important;
+  outline-offset:2px!important;
+}
+:where(.card,.home-welcome,.home-block,.home-page-panel,.daily-mission,
+.quick-match-panel,.online-panel,.online-ranking){
+  transition:background-color var(--atina-motion-normal) var(--atina-motion-ease),
+    border-color var(--atina-motion-normal) var(--atina-motion-ease);
+}
+:where(#feedback,.feedback,.message,.game-message,.atina-message,.atina-alert,
+.alert,.notice,[role="status"],[role="alert"]){
+  animation:atina-feedback-enter 220ms var(--atina-motion-ease) both;
+}
+@keyframes atina-feedback-enter{
+  from{opacity:.72;transform:translateY(4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
+  [role="radio"],[role="checkbox],summary,input,select,textarea,.answer,
+  .card,.home-welcome,.home-block,.home-page-panel,.daily-mission,
+  .quick-match-panel,.online-panel,.online-ranking,
+  #feedback,.feedback,.message,.game-message,.atina-message,.atina-alert,
+  .alert,.notice,[role="status"],[role="alert]){
+    animation:none!important;
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
+  :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
+  [role="radio"],[role="checkbox],summary):active{transform:none!important}
+}
+</style>
+
 </body>
 </html>
