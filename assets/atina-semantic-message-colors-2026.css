@@ -1,0 +1,80 @@
+/* ATINA — semântica global das mensagens: vermelho negativo, verde positivo, amarelo neutro.
+   Aplicado a avisos, feedback, estados, notificações e mensagens sociais em todo o jogo. */
+:where(
+  #feedback,#saveStatus,#atinaCloudStatus,#atinaUpdateNotice,
+  [role="status"],[role="alert"],
+  .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
+  .atina-notification-notice,.atina-social-notice,.status-message,.game-message
+)[data-tone="positive"],
+:where(.atina-notification-notice,.atina-social-notice).positive,
+:where(.success,.is-success,.positive,.atina-message-positive){
+  color:#b9ffd1!important;
+  background:linear-gradient(145deg,#123d2a,#0d2d20)!important;
+  border:1px solid #28c76f!important;
+  box-shadow:inset 0 0 0 1px rgba(40,199,111,.12),0 4px 14px rgba(0,0,0,.2)!important;
+}
+:where(
+  #feedback,#saveStatus,#atinaCloudStatus,
+  [role="status"],[role="alert],
+  .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
+  .atina-notification-notice,.atina-social-notice,.status-message,.game-message
+)[data-tone="positive"] *,
+:where(.atina-notification-notice,.atina-social-notice).positive *,
+:where(.success,.is-success,.positive,.atina-message-positive) *{
+  color:#b9ffd1!important;
+}
+:where(
+  #feedback,#saveStatus,#atinaCloudStatus,#atinaUpdateNotice,
+  [role="status"],[role="alert"],
+  .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
+  .atina-notification-notice,.atina-social-notice,.status-message,.game-message
+)[data-tone="negative"],
+:where(.atina-notification-notice,.atina-social-notice).negative,
+:where(.error,.is-error,.is-wrong,.negative,.danger,.atina-error-message,.atina-message-negative){
+  color:#ffc1c5!important;
+  background:linear-gradient(145deg,#4a1c25,#32131b)!important;
+  border:1px solid #ef4b58!important;
+  box-shadow:inset 0 0 0 1px rgba(239,75,88,.12),0 4px 14px rgba(0,0,0,.2)!important;
+}
+:where(
+  #feedback,#saveStatus,#atinaCloudStatus,
+  [role="status"],[role="alert"],
+  .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
+  .atina-notification-notice,.atina-social-notice,.status-message,.game-message
+)[data-tone="negative"] *,
+:where(.atina-notification-notice,.atina-social-notice).negative *,
+:where(.error,.is-error,.is-wrong,.negative,.danger,.atina-error-message,.atina-message-negative) *{
+  color:#ffc1c5!important;
+}
+:where(
+  #feedback,#saveStatus,#atinaCloudStatus,#atinaUpdateNotice,
+  [role="status"],[role="alert"],
+  .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
+  .atina-notification-notice,.atina-social-notice,.status-message,.game-message
+)[data-tone="neutral"],
+:where(.atina-notification-notice,.atina-social-notice).neutral,
+:where(.info,.is-info,.warning,.is-warning,.atina-message-neutral){
+  color:#ffe8a3!important;
+  background:linear-gradient(145deg,#493916,#30270f)!important;
+  border:1px solid #d5a92f!important;
+  box-shadow:inset 0 0 0 1px rgba(213,169,47,.12),0 4px 14px rgba(0,0,0,.2)!important;
+}
+:where(
+  #feedback,#saveStatus,#atinaCloudStatus,
+  [role="status"],[role="alert],
+  .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
+  .atina-notification-notice,.atina-social-notice,.status-message,.game-message
+)[data-tone="neutral"] *,
+:where(.atina-notification-notice,.atina-social-notice).neutral *,
+:where(.info,.is-info,.warning,.is-warning,.atina-message-neutral) *{
+  color:#ffe8a3!important;
+}
+/* A classificação semântica tem prioridade sobre estilos antigos e mantém legibilidade. */
+:where(#feedback,#saveStatus,#atinaCloudStatus,[role="status"],[role="alert],
+.atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
+.atina-notification-notice,.atina-social-notice,.status-message,.game-message)[data-tone]{
+  box-sizing:border-box!important;
+  border-radius:12px!important;
+  font-weight:750!important;
+  text-shadow:none!important;
+}
