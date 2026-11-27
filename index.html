@@ -2745,7 +2745,7 @@ function showHomePage(page,restore=false){
   el.setAttribute('aria-current',active?'page':'false');
  });
  const moreMenu=document.getElementById('atinaNavMore');
- if(moreMenu)moreMenu.open=['online','howto','profile','ranking','settings','friends','faq','knownissues'].includes(page);
+ if(moreMenu)moreMenu.open=false; // Recolher sempre após selecionar uma opção.
  try{localStorage.setItem('atinaHomePage',page);}catch(e){}
  try{sessionStorage.setItem('atinaHomePage',page);}catch(e){}
  if(location.hash!=='#'+page){
@@ -5763,6 +5763,42 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
   #atinaMainNav .home-nav-more-grid .home-nav-btn{
     min-height:34px!important;max-height:38px!important;padding:4px 6px!important;
     gap:5px!important;font-size:10px!important;
+  }
+}
+</style>
+
+
+<style id="atina-nav-more-three-column-mobile">
+/* Menu Mais em três colunas: reduz a altura ocupada no telemóvel. */
+#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-auto-rows:minmax(48px,auto)!important;
+  align-content:start!important;justify-content:stretch!important;
+  gap:5px!important;padding:6px!important;
+  max-height:min(29vh,205px)!important;
+}
+#atinaMainNav .home-nav-more-grid .home-nav-btn{
+  flex-direction:column!important;justify-content:center!important;
+  align-items:center!important;gap:3px!important;
+  min-width:0!important;min-height:48px!important;max-height:58px!important;
+  padding:5px 3px!important;font-size:10px!important;line-height:1.1!important;
+  text-align:center!important;white-space:normal!important;
+}
+#atinaMainNav .home-nav-more-grid .home-nav-btn span{
+  display:block!important;max-width:100%!important;
+  overflow:visible!important;text-overflow:clip!important;
+  white-space:normal!important;text-align:center!important;
+  overflow-wrap:anywhere!important;
+}
+@media(max-width:420px){
+  #atinaMainNav .home-nav-more[open]>.home-nav-more-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-auto-rows:minmax(44px,auto)!important;
+    max-height:min(27vh,185px)!important;gap:4px!important;padding:5px!important;
+  }
+  #atinaMainNav .home-nav-more-grid .home-nav-btn{
+    min-height:44px!important;max-height:52px!important;
+    padding:4px 2px!important;font-size:9px!important;
   }
 }
 </style>
