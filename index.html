@@ -2161,13 +2161,15 @@ function networkRenderGameState(){
   const card=$('game').querySelector('.card');
   card?.classList.remove('round-success','round-failure','round-neutral');
   card?.classList.add(isCorrect?'round-success':isWrong?'round-failure':'round-neutral');
-  atinaShowSolutionImage(correctAnswer,g[0],'solutionImage',clueSource,st.solution_image_url||null,String(st.solution_description||'').trim()||atinaBuildSolutionVisualDescription(g),{source:'ATINA',challenge_id:st.challenge_id})
-   .then(()=>atinaRenderSolutionWikipedia({
-    id:st.challenge_id,
-    solution_description:st.solution_description||'',
-    solution_wikipedia_url:st.solution_wikipedia_url||''
-   },!!networkGameState?.locked,networkGameState?.challenge_id))
-   .catch(()=>{});
+  // A história da solução não deve depender do carregamento da imagem:
+  // apresenta-a assim que a ronda fica bloqueada e permite ouvi-la de imediato.
+  $('listenAnswer').classList.toggle('hidden',!correctAnswer);
+  atinaRenderSolutionWikipedia({
+   id:st.challenge_id,
+   solution_description:st.solution_description||'',
+   solution_wikipedia_url:st.solution_wikipedia_url||''
+  },!!st.locked,st.challenge_id);
+  atinaShowSolutionImage(correctAnswer,g[0],'solutionImage',clueSource,st.solution_image_url||null,String(st.solution_description||'').trim()||atinaBuildSolutionVisualDescription(g),{source:'ATINA',challenge_id:st.challenge_id}).catch(()=>{});
  }else{
   $('solutionImage').classList.add('hidden');
   $('listenAnswer').classList.add('hidden');
