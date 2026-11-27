@@ -612,3 +612,66 @@ html body #atinaChallengeProgressFill{
   box-shadow:none!important;
   filter:none!important;
 }
+
+
+/* ATINA — VISUAL BASE MÍNIMO GLOBAL
+   Última camada da aplicação. Remove decoração visual sem alterar DOM,
+   eventos, estados, dimensões, grelhas, espaçamentos ou posicionamento.
+   Mantém cores sólidas, conteúdo, imagens, controlos e acessibilidade. */
+html body,
+html body * ,
+html body *::before,
+html body *::after{
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  background-image:none!important;
+}
+html body :is(
+  button,input[type="button"],input[type="submit"],input[type="reset"],
+  .btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+  [role="radio"],[role="checkbox"],.tile
+):is(:hover,:active,:focus){
+  box-shadow:none!important;
+  filter:none!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+  background-image:none!important;
+}
+html body :is(
+  button,input[type="button"],input[type="submit"],input[type="reset"],
+  .btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+  [role="radio"],[role="checkbox"],.tile
+)::before,
+html body :is(
+  button,input[type="button"],input[type="submit"],input[type="reset"],
+  .btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+  [role="radio"],[role="checkbox"],.tile
+)::after{
+  box-shadow:none!important;
+  filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  background-image:none!important;
+}
+/* Botões principais mantêm a identidade cromática ATINA, mas em cor lisa. */
+html body :is(.btn:not(.secondary):not(.danger),#submit,#continue){
+  background-color:#d3ad68!important;
+  background-image:none!important;
+  color:#17202b!important;
+}
+html body :is(.btn.secondary,.home-nav-btn:not(.active),#nextClue,#voice){
+  background-color:#1b4265!important;
+  background-image:none!important;
+}
+html body :is(.home-nav-btn.active){
+  background-color:#d3ad68!important;
+  background-image:none!important;
+  color:#17202b!important;
+}
