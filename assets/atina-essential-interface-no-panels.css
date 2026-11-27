@@ -1,0 +1,97 @@
+/* ATINA — interface essencial sem cartões, painéis ou caixas decorativas.
+   Preserva DOM, IDs, eventos, navegação, grelhas, espaçamentos funcionais,
+   conteúdos, imagens, estados, controlos e regras do jogo. */
+:root{
+  --atina-flat-surface:transparent;
+  --atina-flat-border:transparent;
+}
+
+/* Contentores de apresentação: deixam de desenhar caixas à volta do conteúdo. */
+body :where(
+  .brand,.home-welcome,.home-block,.home-page-panel,
+  .card,.panel,.daily-mission,.quick-match-panel,
+  .online-panel,.online-ranking,.home-page-nav,#atinaMainNav,
+  .home-nav-more-grid,.section,.tile,.clue,.pill,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,
+  #result,#rankingPage,#networkLobby,#networkScoreboard,
+  #atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,
+  #surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,
+  #onlineSave,.visual,.timer-display
+){
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  outline-color:transparent;
+  border-radius:0!important;
+}
+
+/* Retirar o aspeto de cartão sem alterar a organização nem a ordem do layout. */
+body :where(
+  .brand,.home-welcome,.home-block,.home-page-panel,
+  .card,.panel,.daily-mission,.quick-match-panel,
+  .online-panel,.online-ranking,.home-page-nav,#atinaMainNav,
+  .home-nav-more-grid,.tile,.clue,.pill,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,
+  #result,#rankingPage,#networkLobby,#networkScoreboard,
+  #atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,
+  #surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,
+  #onlineSave,.visual,.timer-display
+){
+  padding:0!important;
+}
+
+/* Elementos que funcionam como opções continuam clicáveis e legíveis,
+   mas deixam de parecer cartões. */
+body :where(.tile,.home-nav-btn,.home-nav-more>summary){
+  color:inherit!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none;
+}
+body :where(.home-nav-btn.active,[aria-current="page"]){
+  text-decoration:underline!important;
+  text-decoration-color:currentColor!important;
+  text-underline-offset:5px!important;
+}
+
+/* Pistas e feedback passam a texto direto, mantendo os estados semânticos. */
+body :where(.clue,.clue.hidden-clue,#feedback,[role="status"],[role="alert"],.atina-message,.atina-notice,.atina-alert){
+  border:0!important;
+  border-left:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding-inline:0!important;
+}
+
+/* Preservar controlos de formulário como controlos reconhecíveis e utilizáveis. */
+body :where(input,select,textarea){
+  background:#0b1b2c!important;
+  border:1px solid currentColor!important;
+  border-radius:3px!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+body :where(button,.btn,[role="button"],input[type="button"],input[type="submit"],input[type="reset"]){
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+
+/* A imagem do desafio mantém a imagem e a mecânica de revelação;
+   remove apenas a moldura decorativa do contentor. */
+body .visual img,
+body .visual .veil,
+body .visual .tile-mask,
+body .visual .tile-mask span{
+  border:0!important;
+  box-shadow:none!important;
+}
+body .visual .visual-label{
+  border:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+}
