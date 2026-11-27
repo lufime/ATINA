@@ -95,3 +95,51 @@ body .visual .visual-label{
   box-shadow:none!important;
   border-radius:0!important;
 }
+
+
+/* Correção da Home: remover superfícies decorativas que não estavam abrangidas
+   pela primeira versão. Mantém padding, margens, grelhas, conteúdo e interação. */
+body :where(
+  .brand,.home-page-nav,#atinaMainNav,.home-nav-more,
+  .home-welcome,.sound-control,.atina-fast-play,.daily-mission,
+  .atina-xp-panel,.atina-level-gallery-panel,.atina-howto-card,
+  #atinaSocialShare,.home-page-panel,.home-block,
+  .card,.panel,.section,.quick-match-panel,.online-panel,.online-ranking,
+  .play-block,.categories-block,.account-block,.settings-block,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,
+  #result,#rankingPage,#networkLobby,#networkScoreboard,
+  #atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,
+  #surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,
+  #atinaOnlinePlayersPanel,#screenShareHelp
+){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  outline-color:transparent!important;
+}
+
+/* Elimina também os relevos decorativos globais que eram reaplicados
+   por regras antigas no fim do documento. */
+body :where(
+  .brand,.home-page-nav,#atinaMainNav,.home-welcome,.sound-control,
+  .atina-fast-play,.daily-mission,.atina-xp-panel,.atina-level-gallery-panel,
+  .atina-howto-card,#atinaSocialShare,.home-page-panel,.home-block,
+  .card,.panel,.section,.quick-match-panel,.online-panel,.online-ranking,
+  .play-block,.categories-block,.account-block,.settings-block,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,
+  #result,#rankingPage,#networkLobby,#networkScoreboard,
+  #atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,
+  #atinaOnlinePlayersPanel,#screenShareHelp
+):focus-within{
+  box-shadow:none!important;
+}
+
+/* O espaço interno continua a ser controlado pelo layout original. */
+body :where(
+  .brand,.home-page-nav,#atinaMainNav,.home-welcome,.sound-control,
+  .atina-fast-play,.daily-mission,#atinaSocialShare,.card,.panel
+){
+  padding:revert-layer;
+}
