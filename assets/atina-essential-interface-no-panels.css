@@ -27,21 +27,6 @@ body :where(
   border-radius:0!important;
 }
 
-/* Retirar o aspeto de cartão sem alterar a organização nem a ordem do layout. */
-body :where(
-  .brand,.home-welcome,.home-block,.home-page-panel,
-  .card,.panel,.daily-mission,.quick-match-panel,
-  .online-panel,.online-ranking,.home-page-nav,#atinaMainNav,
-  .home-nav-more-grid,.tile,.clue,.pill,
-  .solution-panel,.result-panel,.menu-panel,.lobby-panel,
-  #result,#rankingPage,#networkLobby,#networkScoreboard,
-  #atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,
-  #surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,
-  #onlineSave,.visual,.timer-display
-){
-  padding:0!important;
-}
-
 /* Elementos que funcionam como opções continuam clicáveis e legíveis,
    mas deixam de parecer cartões. */
 body :where(.tile,.home-nav-btn,.home-nav-more>summary){
@@ -134,4 +119,28 @@ body :where(
   #atinaOnlinePlayersPanel,#screenShareHelp
 ):focus-within{
   box-shadow:none!important;
+}
+
+
+/* Correção de cascata: as folhas antigas usam seletores com IDs (#home)
+   e por isso venciam body :where(...). Esta camada usa a mesma prioridade
+   e vem depois das folhas anteriores. Não altera padding nem geometria. */
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,
+#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,
+#teamVotePanel) :where(
+  .brand,.home-welcome,.home-block,.home-page-panel,.card,.panel,.section,
+  .daily-mission,.quick-match-panel,.online-panel,.online-ranking,
+  .home-page-nav,#atinaMainNav,.home-nav-more,.atina-fast-play,
+  .sound-control,.atina-xp-panel,.atina-level-gallery-panel,.atina-howto-card,
+  .play-block,.categories-block,.account-block,.settings-block,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,.tile,.clue,.pill,
+  #atinaSocialShare,#atinaOnlinePlayersPanel,#screenShareHelp
+){
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  border-radius:0!important;
 }
