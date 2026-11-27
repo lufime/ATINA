@@ -1747,8 +1747,8 @@ button.btn:not(.full),.btn:not(.full){
  <button type="button" class="btn secondary full hidden" id="quickMatchCancel">Cancelar procura</button>
  <p class="feedback" id="quickMatchStatus" aria-live="polite"></p>
  <div class="divider"></div>
- <p class="muted small">Queres jogar já? Enfrenta um adversário automático com personalidade, ritmo e conhecimento próprios.</p>
- <button type="button" class="btn secondary full" id="quickBotMatch">Jogar contra adversário automático</button>
+ <p class="muted small">Queres jogar já? Entra numa partida de treino com um participante de perfil próprio.</p>
+ <button type="button" class="btn secondary full" id="quickBotMatch">Jogar partida de treino</button>
  <p class="feedback" id="quickBotMatchStatus" aria-live="polite"></p>
 </div>
 <details class="network-room-options"><summary>🏠 Criar uma sala ou entrar com código</summary><label class="section" for="networkMaxPlayers">Limite de jogadores</label>
@@ -1764,7 +1764,7 @@ button.btn:not(.full),.btn:not(.full){
 <h2>🏠 Sala <span id="networkLobbyCode"></span></h2>
 <p class="muted small" id="networkLobbyInfo">À espera dos jogadores…</p>
 <section id="networkOpponentProfile" class="card hidden" style="margin:12px 0;padding:12px;border:1px solid #45627e;background:#102943">
- <div class="muted small">O TEU ADVERSÁRIO</div>
+ <div class="muted small">PARTICIPANTE</div>
  <strong id="networkOpponentName" style="display:block;font-size:18px;margin:4px 0"></strong>
  <p id="networkOpponentStyle" class="muted small" style="margin:3px 0"></p>
  <p id="networkOpponentLevel" style="margin:5px 0 0;font-weight:700;color:#f3c65e"></p>
@@ -1786,7 +1786,7 @@ button.btn:not(.full),.btn:not(.full){
 <section id="result" class="card hidden"><h2>Resultado</h2><p id="resultText"></p><div id="atinaResultProgressSummary" class="online-ranking" style="margin:12px 0;padding:12px;border:1px solid #38556d;border-radius:12px;background:#132e46"></div>
 <div id="onlineSave" class="online-panel"><h3>🏆 Ranking online</h3><p class="muted small">Os pontos e o XP desta partida são adicionados ao teu progresso.</p><div id="saveSolo" class="hidden"></div><div id="saveDuel" class="hidden"></div><p id="saveStatus" class="feedback hidden" aria-live="polite"></p><div class="online-ranking"><p class="muted small">O ranking global reúne os três indicadores da progressão: Pontos acumulados, XP total e QI*. Consulta as classificações completas no Ranking ATINA.</p><button type="button" class="btn secondary full" id="loadRanking">Ver Ranking Global — Pontos · XP · QI</button></div></div>
 <button type="button" class="btn full" id="resultHome">Voltar ao menu</button></section><section id="rankingPage" class="card hidden"><h2>🏆 Ranking ATINA</h2>
- <div class="online-ranking"><h3>⭐ Ranking de pontos</h3><p class="muted small">Consulta as melhores pontuações por modalidade.</p><div class="row"><strong>Modalidade</strong><select id="menuRankingMode" class="answer" style="width:auto;margin:0;padding:8px"><option value="solo">Individual</option><option value="duel">Duelo</option></select></div><ol id="menuPointsRankingList"></ol></div>
+  <div class="online-ranking"><h3>⭐ Classificação global de pontos</h3><p class="muted small">Pontos acumulados de todos os participantes.</p><ol id="menuPointsRankingList"></ol></div>
  <div class="online-ranking"><h3>✨ Ranking de XP</h3><p class="muted small">Progressão acumulada dos jogadores.</p><ol id="menuXpRankingList"></ol></div>
  <button type="button" class="btn full" id="rankingBack" style="margin-top:12px">Voltar ao menu</button></section>
 <section class="card" id="atinaSocialShare" style="margin:18px 0;padding:16px;text-align:center"><h3 style="margin:0 0 8px">📣 Partilha o ATINA</h3><p class="muted small" style="margin:0 0 12px">Convida amigos para jogar e descobrir o ATINA.</p><div class="actions" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><button type="button" class="btn secondary" id="shareFacebook">Facebook</button><button type="button" class="btn secondary" id="shareWhatsApp">WhatsApp</button><button type="button" class="btn secondary" id="shareInstagram">Instagram</button></div><p class="feedback" id="socialShareStatus" aria-live="polite"></p></section>
@@ -2568,8 +2568,8 @@ let networkBotMatchActive=false,networkBotTickHandle=null,networkBotTickInFlight
 function networkBotStopTick(){if(networkBotTickHandle!==null)clearInterval(networkBotTickHandle);networkBotTickHandle=null;networkBotTickInFlight=false;}
 function networkBotStartTick(){networkBotStopTick();if(!networkBotMatchActive)return;networkBotTickHandle=setInterval(networkBotTick,1800);networkBotTick();}
 async function networkBotTick(){if(!networkBotMatchActive||!networkRoom||!supabaseClient||networkBotTickInFlight)return;if(networkLobbyData?.status==='completed'||networkLobbyData?.status==='finished'){networkBotStopTick();return;}networkBotTickInFlight=true;try{const {data,error}=await supabaseClient.rpc('atina_v2_bot_tick',{p_room_id:networkRoom.room_id,p_token:networkRoom.token});if(error)throw error;if(['answered','clue_revealed','advanced'].includes(data?.status))await networkRefreshRoom();}catch(e){const message=String(e?.message||'');if(/sessão da sala inválida|sala não encontrada/i.test(message)){networkBotStopTick();networkBotMatchActive=false;}}finally{networkBotTickInFlight=false;}}
-function networkRenderOpponentProfile(){const panel=$('networkOpponentProfile');if(!panel)return;if(!networkBotMatchActive||!networkBotProfile){panel.classList.add('hidden');return;}const p=networkBotProfile;const knowledge=Number(p.knowledge_level)||0;const level=knowledge>=.78?'Especialista':knowledge>=.55?'Experiente':'Em aprendizagem';$('networkOpponentName').textContent=String(p.nickname||'Adversário').replace(/^🤖\s*/,'');$('networkOpponentStyle').textContent=[p.profession,p.personality].filter(Boolean).join(' · ');$('networkOpponentLevel').textContent='Nível: '+level;panel.classList.remove('hidden');}
-async function quickBotMatchStart(){const button=$('quickBotMatch'),status=$('quickBotMatchStatus');const token=typeof atinaAccountSessionToken==='function'?atinaAccountSessionToken():null;if(!supabaseClient){status.textContent='O serviço online não está disponível. Atualiza a página e tenta novamente.';return;}if(!token){status.textContent='Inicia sessão na tua conta ATINA para jogar contra um adversário automático.';return;}if(button)button.disabled=true;status.textContent='A preparar o teu adversário…';try{const {data,error}=await supabaseClient.rpc('atina_v2_create_bot_match',{p_session_token:token});if(error)throw error;if(!data?.room_id||!data?.token)throw new Error('O servidor não devolveu os dados completos da partida.');networkBotMatchActive=true;networkBotProfile=data.bot||null;networkRoom={room_id:data.room_id,token:data.token,bot_match:true,bot_profile:networkBotProfile};networkLobbyPlayersSignature='';localStorage.setItem('atinaNetworkRoom',JSON.stringify(networkRoom));screen('networkLobby');await networkRefreshRoom();networkStartPolling();networkBotStartTick();networkRenderOpponentProfile();status.textContent='Partida preparada. Boa sorte!';}catch(e){status.textContent=e?.message||'Não foi possível iniciar a partida.';}finally{if(button)button.disabled=false;}}
+function networkRenderOpponentProfile(){const panel=$('networkOpponentProfile');if(!panel)return;if(!networkBotMatchActive||!networkBotProfile){panel.classList.add('hidden');return;}const p=networkBotProfile;const knowledge=Number(p.knowledge_level)||0;const level=knowledge>=.78?'Especialista':knowledge>=.55?'Experiente':'Em aprendizagem';$('networkOpponentName').textContent=String(p.nickname||'Participante').replace(/^🤖\s*/,'');$('networkOpponentStyle').textContent=[p.profession,p.personality].filter(Boolean).join(' · ');$('networkOpponentLevel').textContent='Nível: '+level;panel.classList.remove('hidden');}
+async function quickBotMatchStart(){const button=$('quickBotMatch'),status=$('quickBotMatchStatus');const token=typeof atinaAccountSessionToken==='function'?atinaAccountSessionToken():null;if(!supabaseClient){status.textContent='O serviço online não está disponível. Atualiza a página e tenta novamente.';return;}if(!token){status.textContent='Inicia sessão na tua conta ATINA para iniciar uma partida de treino.';return;}if(button)button.disabled=true;status.textContent='A preparar a partida…';try{const {data,error}=await supabaseClient.rpc('atina_v2_create_bot_match',{p_session_token:token});if(error)throw error;if(!data?.room_id||!data?.token)throw new Error('O servidor não devolveu os dados completos da partida.');networkBotMatchActive=true;networkBotProfile=data.bot||null;networkRoom={room_id:data.room_id,token:data.token,bot_match:true,bot_profile:networkBotProfile};networkLobbyPlayersSignature='';localStorage.setItem('atinaNetworkRoom',JSON.stringify(networkRoom));screen('networkLobby');await networkRefreshRoom();networkStartPolling();networkBotStartTick();networkRenderOpponentProfile();status.textContent='Partida preparada. Boa sorte!';}catch(e){status.textContent=e?.message||'Não foi possível iniciar a partida.';}finally{if(button)button.disabled=false;}}
 function atinaFillNetworkNickname(value){const input=$('networkNickname');if(!input)return;let nickname=String(window.atinaCloudProfile?.nickname||value||'').trim();if(!nickname){try{nickname=String(localStorage.getItem('atinaProgressNicknameV1')||'').trim();}catch(e){}}input.value=nickname.slice(0,20);}
 function quickMatchStopPolling(){if(quickMatchPoll!==null)clearInterval(quickMatchPoll);quickMatchPoll=null;}
 function quickMatchSetBusy(busy,message){quickMatchBusy=busy;const start=$('quickMatchStart'),cancel=$('quickMatchCancel');if(start){start.disabled=false;start.textContent=busy?'Cancelar e procurar novamente':'Encontrar adversário';}if(cancel)cancel.classList.toggle('hidden',!busy);if(message)$('quickMatchStatus').textContent=message;}
@@ -2684,7 +2684,7 @@ async function atinaLoadOnlinePlayers(){
   const {data,error}=await supabaseClient.rpc('atina_online_player_stats');
   if(error)throw error;
   const stats=data&&typeof data==='object'?data:{};
-  const humans=Array.isArray(stats.humans)?stats.humans:[];
+  const humans=Array.isArray(stats.players)?stats.players:(Array.isArray(stats.humans)?stats.humans:[]);
   const counts=stats.counts||{};
   const total=Math.max(0,Number(counts.total)||humans.length);
   if(list){
@@ -3137,8 +3137,8 @@ async function saveOnlineScore(nickname,score,gameMode,buttonId){
  }catch(e){report('Não foi possível guardar a pontuação. Tenta novamente.');return false;}
  finally{if(button){button.dataset.saving='0';button.disabled=false;}}
 }
-async function atinaFetchPointsRanking(mode){
-  const {data,error}=await supabaseClient.from('atina_points_ranking').select('id,nickname,score,created_at').eq('mode',mode).order('score',{ascending:false}).order('created_at',{ascending:true}).limit(20);
+async function atinaFetchPointsRanking(){
+  const {data,error}=await supabaseClient.rpc('atina_points_leaderboard',{p_limit:20});
   if(error)throw error;
   return Array.isArray(data)?data:[];
 }
