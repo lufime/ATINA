@@ -15,7 +15,7 @@
 }
 :where(
   #feedback,#saveStatus,#atinaCloudStatus,
-  [role="status"],[role="alert],
+  [role="status"],[role="alert"],
   .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
   .atina-notification-notice,.atina-social-notice,.status-message,.game-message
 )[data-tone="positive"] *,
@@ -61,7 +61,7 @@
 }
 :where(
   #feedback,#saveStatus,#atinaCloudStatus,
-  [role="status"],[role="alert],
+  [role="status"],[role="alert"],
   .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
   .atina-notification-notice,.atina-social-notice,.status-message,.game-message
 )[data-tone="neutral"] *,
@@ -70,7 +70,7 @@
   color:#ffe8a3!important;
 }
 /* A classificação semântica tem prioridade sobre estilos antigos e mantém legibilidade. */
-:where(#feedback,#saveStatus,#atinaCloudStatus,[role="status"],[role="alert],
+:where(#feedback,#saveStatus,#atinaCloudStatus,[role="status"],[role="alert"],
 .atina-message,.atina-notice,.atina-alert,.atina-warning,.alert,.warning,.notice,
 .atina-notification-notice,.atina-social-notice,.status-message,.game-message)[data-tone]{
   box-sizing:border-box!important;
