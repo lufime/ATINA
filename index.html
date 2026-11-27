@@ -6271,5 +6271,109 @@ body,body *{
 }
 </style>
 
+
+<style id="atina-game-experience-global-20261127">
+/* Game Experience: progressão legível, marcos positivos e resposta visual consistente. */
+.daily-mission{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,#1b405c 0%,#142d46 58%,#10243a 100%)!important;
+  transition:background-color .22s ease,transform .22s ease;
+}
+.daily-mission-top{align-items:flex-start}
+.daily-kicker{color:#f2d58e}
+#dailyMissionStatus{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:26px;
+  padding:4px 9px;
+  border-radius:999px;
+  background:#ffffff12;
+  color:#dce9f5;
+  font-weight:750;
+  text-align:center;
+}
+#dailyMissionStatus:where(:not(:empty)){
+  transition:background-color .2s ease,color .2s ease;
+}
+#dailyMissionFill,#atinaXpFill{
+  background:linear-gradient(90deg,#45c9c1 0%,#9ce8d9 52%,#f2d58e 100%)!important;
+  transition:width .42s cubic-bezier(.2,.75,.25,1)!important;
+}
+#dailyMissionBar[aria-valuenow="3"] #dailyMissionFill{
+  background:linear-gradient(90deg,#42cf8b,#a5f2bd)!important;
+}
+.atina-badge{
+  transition:background-color .2s ease,color .2s ease,transform .2s ease;
+}
+.atina-badge.earned{
+  background:linear-gradient(135deg,#514323,#342e20)!important;
+  color:#ffe7a5!important;
+  transform:translateY(-1px);
+}
+.atina-live-stats{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:7px;
+  width:100%;
+  margin:8px 0 12px;
+}
+.atina-live-stats>span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-height:32px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#071a2b;
+  color:#d7e6f3;
+  font-size:12px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.atina-live-stats b{color:#ffe09a;font-size:14px}
+#atinaGameProgressFill{
+  transition:width .38s cubic-bezier(.2,.75,.25,1)!important;
+}
+#game .card.round-success{
+  animation:atina-round-success 440ms ease-out both;
+}
+#game .card.round-failure{
+  animation:atina-round-neutral 300ms ease-out both;
+}
+#grandFinalPanel{
+  animation:atina-result-arrive 420ms cubic-bezier(.2,.75,.25,1) both;
+}
+#resultHome{margin-top:10px;min-height:52px}
+@keyframes atina-round-success{
+  0%{transform:scale(1)}
+  45%{transform:scale(1.008)}
+  100%{transform:scale(1)}
+}
+@keyframes atina-round-neutral{
+  0%{opacity:.88}
+  100%{opacity:1}
+}
+@keyframes atina-result-arrive{
+  from{opacity:0;transform:translateY(10px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@media(max-width:420px){
+  .atina-live-stats{gap:5px;margin:6px 0 9px}
+  .atina-live-stats>span{min-height:30px;padding:5px 8px;font-size:11px}
+  .atina-live-stats b{font-size:13px}
+  #dailyMissionStatus{font-size:10px;min-height:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  .daily-mission,.atina-badge,#dailyMissionFill,#atinaXpFill,#atinaGameProgressFill,
+  #game .card.round-success,#game .card.round-failure,#grandFinalPanel{
+    animation:none!important;transition:none!important;transform:none!important;
+  }
+}
+</style>
+
 </body>
 </html>
