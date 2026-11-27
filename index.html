@@ -6081,5 +6081,24 @@ input::placeholder,textarea::placeholder{color:#91a7ba!important}
 <link rel="stylesheet" href="./assets/atina-mobile-overlap-fixes-2026.css?v=20261127-1">
 <link rel="stylesheet" href="./assets/atina-player-notice-contrast-2026.css?v=20261127-1">
 <link rel="stylesheet" href="./assets/atina-semantic-message-colors-2026.css?v=20261127-1">
+
+<style id="atina-remove-game-side-stripes-20261127">
+/* Remover os dois traços verticais laterais no ecrã de jogo, sem alterar cartões ou conteúdo. */
+html,body,.wrap,#game{
+  border-left:0!important;
+  border-right:0!important;
+}
+body::before,body::after,.wrap::before,.wrap::after,#game::before,#game::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+#game>.card{
+  border-left-color:var(--atina-border,#304d68)!important;
+  border-right-color:var(--atina-border,#304d68)!important;
+}
+</style>
+
 </body>
 </html>
