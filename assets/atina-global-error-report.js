@@ -3,7 +3,7 @@
  'use strict';
  if(document.getElementById('atinaGlobalReportRoot'))return;
  const css=`
- #atinaGlobalReportButton{position:fixed;z-index:12000;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));border:1px solid #d3ad68;border-radius:999px;background:rgba(24,44,67,.94);color:#fff;padding:9px 11px;font:800 12px system-ui;line-height:1.1;max-width:calc(50vw - 18px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 5px 16px #0005;backdrop-filter:blur(10px)}
+ #atinaGlobalReportButton{position:fixed;z-index:12000;right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));border:1px solid #b58d49;border-radius:6px;background:#d3ad68!important;background-image:none!important;color:#17202b;padding:9px 11px;font:800 12px system-ui;line-height:1.1;max-width:calc(50vw - 18px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none!important;text-shadow:none!important;filter:none!important;backdrop-filter:none!important;transform:none!important;animation:none!important;transition:none!important}
  #atinaGlobalReportOverlay{position:fixed;z-index:12001;inset:0;background:#06101bd9;display:none;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));}
  #atinaGlobalReportOverlay.open{display:flex}
  #atinaGlobalReportDialog{width:min(100%,600px);max-height:calc(100dvh - 24px);overflow:auto;border:2px solid #d3ad68;border-radius:18px;background:#152b42;color:#f3f0e8;padding:16px;box-shadow:0 18px 48px #0009}
