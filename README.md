@@ -5,7 +5,7 @@ Jogo de desafios em português europeu (pt-PT), com 23 modalidades e 1.823 desaf
 ## Modos de jogo
 
 - **Individual** — uma pessoa, com pontuação e sequência geridas pelo servidor.
-- **Duelo** — dois jogadores no mesmo dispositivo, com alternância de vez.
+- **Duelo** — partida online contra outra pessoa ou contra um adversário automático, com perfil, personalidade, conhecimento e ritmo de resposta próprios.
 - **Mix** — desafios de várias modalidades.
 - **Party** — duas equipas no mesmo dispositivo, até 10 desafios e bónus de pontos a dobrar na última ronda.
 - **Multiplayer** — salas online com código, jogadores, equipas, propostas e votação.
