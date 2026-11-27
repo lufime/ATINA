@@ -6685,5 +6685,31 @@ body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],s
 }
 </style>
 
+
+<style id="atina-buttons-clean-text-soft-relief-20261127">
+/* Correção global: texto limpo e relevo discreto nos botões. */
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,.choice,.answer-option){
+  text-shadow:none!important;
+  box-shadow:0 1px 2px #0003,inset 0 1px #ffffff18!important;
+  border-bottom-width:2px!important;
+}
+@media(hover:hover) and (pointer:fine){
+  body :is(button,.btn,[role="button"],summary,.choice,.answer-option):not(:disabled):not([aria-disabled="true"]):hover{
+    transform:translateY(-1px)!important;
+    box-shadow:0 2px 4px #0004,inset 0 1px #ffffff20!important;
+  }
+}
+body :is(button,.btn,[role="button"],summary,.choice,.answer-option):not(:disabled):not([aria-disabled="true"]):active{
+  transform:translateY(1px)!important;
+  box-shadow:inset 0 1px 3px #0003!important;
+}
+body :is(button,.btn,[role="button"],summary,.choice,.answer-option):is(.secondary,.sound-toggle,.choice,.answer-option):not(:disabled):not([aria-disabled="true"]){
+  box-shadow:0 1px 2px #0003,inset 0 1px #ffffff18!important;
+}
+body :is(button,.btn,[role="button"],summary,.choice,.answer-option):is(.danger){
+  box-shadow:0 1px 2px #0003,inset 0 1px #ffffff12!important;
+}
+</style>
+
 </body>
 </html>
