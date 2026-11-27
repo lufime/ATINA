@@ -1540,6 +1540,14 @@ document.addEventListener('DOMContentLoaded',()=>{
 #atinaMainNav .home-nav-more-grid .home-nav-btn{width:100%!important;min-width:0!important;min-height:44px!important;white-space:normal!important;overflow-wrap:anywhere!important;box-sizing:border-box!important}
 @media(max-width:420px){#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{gap:7px!important;padding:8px!important}#atinaMainNav .home-nav-more-grid .home-nav-btn{min-height:46px!important;font-size:12px!important}}
 </style>
+
+<style id="atina-nav-more-dashboard-spacing">
+/* Reserva espaço real para o menu expandido, sem cobrir o primeiro cartão da página. */
+#atinaMainNav:has(.home-nav-more[open]){margin-bottom:30px!important;z-index:1000!important}
+#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{margin-bottom:4px!important}
+#home [data-home-page="dashboard"]{position:relative!important;isolation:auto!important}
+@media(max-width:700px){#atinaMainNav:has(.home-nav-more[open]){margin-bottom:36px!important}}
+</style>
 </head>
 <body><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
