@@ -1499,6 +1499,30 @@ label.section{line-height:1.35!important}
 </style>
 
 
+
+<style id="atina-nav-more-mobile-fix">
+/* Menu Mais: abertura previsível e sem ficar tapado pelos controlos fixos no telemóvel. */
+#atinaMainNav{position:relative!important;z-index:1000!important;overflow:visible!important;isolation:isolate}
+#atinaMainNav .home-nav-more{position:relative!important;z-index:1001!important;min-width:0!important}
+#atinaMainNav .home-nav-more>summary{position:relative!important;z-index:2!important;display:flex!important;min-height:42px!important;align-items:center!important;justify-content:center!important;gap:5px!important;cursor:pointer!important;pointer-events:auto!important;touch-action:manipulation!important;user-select:none!important;-webkit-tap-highlight-color:transparent}
+#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{display:grid!important;position:absolute!important;top:auto!important;bottom:calc(100% + 9px)!important;right:0!important;z-index:2000!important;width:min(310px,calc(100vw - 34px))!important;max-height:min(62vh,430px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+#atinaMainNav .home-nav-more-grid .home-nav-btn{min-height:44px!important;pointer-events:auto!important;touch-action:manipulation!important}
+@media(max-width:700px){#atinaMainNav{z-index:1000!important;margin-bottom:14px!important}#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{bottom:calc(100% + 7px)!important;right:0!important}}
+</style>
+<script id="atina-nav-more-mobile-fix-js">
+(()=>{
+ const menu=document.getElementById('atinaNavMore');
+ const summary=menu?.querySelector(':scope > summary');
+ if(!menu||!summary||menu.dataset.mobileFix==='1')return;
+ menu.dataset.mobileFix='1';
+ summary.addEventListener('click',event=>{
+  event.preventDefault();
+  menu.open=!menu.open;
+  summary.setAttribute('aria-expanded',menu.open?'true':'false');
+ });
+ menu.addEventListener('toggle',()=>summary.setAttribute('aria-expanded',menu.open?'true':'false'));
+})();
+</script>
 </head>
 <body><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
