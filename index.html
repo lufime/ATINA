@@ -2745,7 +2745,7 @@ function showHomePage(page,restore=false){
   el.setAttribute('aria-current',active?'page':'false');
  });
  const moreMenu=document.getElementById('atinaNavMore');
- if(moreMenu)moreMenu.open=['online','howto','profile','ranking','settings','friends','faq','knownissues'].includes(page);
+ if(moreMenu)moreMenu.open=false; // Recolher sempre após selecionar uma opção.
  try{localStorage.setItem('atinaHomePage',page);}catch(e){}
  try{sessionStorage.setItem('atinaHomePage',page);}catch(e){}
  if(location.hash!=='#'+page){
