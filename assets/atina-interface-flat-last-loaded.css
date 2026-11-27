@@ -553,3 +553,33 @@ html body #atinaSoloReportPanel :is(button,.btn,[role="button"],summary):is(:hov
   filter:none!important;
   transform:none!important;
 }
+
+
+/* AUDITORIA GLOBAL FINAL — neutralizar efeitos residuais em todas as páginas do jogo.
+   Preserva cores sólidas, dimensões, grelhas, posicionamento, conteúdo e eventos.
+   Não remove transforms estruturais usados para centrar/posicionar elementos. */
+html body :is(main.wrap,#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,#atinaSettingsCachePanel),
+html body :is(main.wrap,#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,#atinaSettingsCachePanel) *,
+html body :is(main.wrap,#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,#atinaSettingsCachePanel) *::before,
+html body :is(main.wrap,#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,#atinaSettingsCachePanel) *::after{
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  scroll-behavior:auto!important;
+}
+html body :is(main.wrap,#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,#atinaSettingsCachePanel) :is(button,.btn,.tile,.home-nav-btn,.home-nav-more>summary,[role="button"],summary):is(:hover,:active),
+html body :is(main.wrap,#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,#atinaSettingsCachePanel) :is(button,.btn,.tile,.home-nav-btn,.home-nav-more>summary,[role="button"],summary)::before,
+html body :is(main.wrap,#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,#atinaSettingsCachePanel) :is(button,.btn,.tile,.home-nav-btn,.home-nav-more>summary,[role="button"],summary)::after{
+  transform:none!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  animation:none!important;
+  transition:none!important;
+}
