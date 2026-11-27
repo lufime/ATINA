@@ -12,7 +12,7 @@ No ecrã inicial, abre **Jogar** e escolhe o modo. No Solo, o botão abre direta
 ## Que modos existem?
 - **Jogar sozinho (Solo):** desafios individuais com configuração antes de iniciar.
 - **Mix:** mistura desafios de várias modalidades.
-- **Duelo:** fluxo online; podes procurar outra pessoa, criar/entrar numa sala ou jogar contra um adversário automático com nome, profissão, personalidade, ritmo e nível de conhecimento próprios.
+- **Duelo:** fluxo online; podes procurar outra pessoa, criar/entrar numa sala ou iniciar uma partida de treino com um participante de perfil próprio.
 - **Modo Festa / Equipas:** fluxo online através de sala.
 - **Modalidades online:** cria uma sala ou entra com código, conforme as opções apresentadas no jogo.
 
@@ -60,5 +60,5 @@ No modo Solo, o relógio é pausado durante o reporte e o tempo restante é pres
 [Voltar ao ATINA](../index.html)
 
 
-## Como funciona o adversário automático?
-No modo Duelo, escolhe **Jogar contra adversário automático**. Cada adversário tem nome, profissão e personalidade próprios, além de um nível de conhecimento e ritmo de resposta variáveis. Durante a partida, pode revelar pistas e propor respostas. A validação e a pontuação continuam a ser calculadas pelo servidor. Os perfis automáticos não entram nas classificações públicas de jogadores reais.
+## Como funciona a partida de treino?
+No modo Duelo, escolhe **Jogar partida de treino**. O participante tem nome, profissão e personalidade próprios, além de um nível de conhecimento e ritmo de resposta variáveis. Durante a partida, pode revelar pistas e propor respostas. A validação e a pontuação continuam a ser calculadas pelo servidor. Os participantes de treino também integram a classificação global e a lista de jogadores online.
