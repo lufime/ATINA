@@ -378,3 +378,96 @@ html body :is(
   border:1px solid #426987!important;
   box-shadow:none!important;
 }
+
+
+/* AUDITORIA GLOBAL — remover os restantes efeitos dos controlos em TODAS as páginas.
+   Alta especificidade para vencer as regras antigas do tema que ainda tinham relevo. */
+html body #home :is(button,.btn,.tile,.home-nav-btn,.home-nav-more>summary,[role="button"],summary),
+html body #game :is(button,.btn,.tile,[role="button"],summary),
+html body #mimicaGame :is(button,.btn,.tile,[role="button"],summary),
+html body #result :is(button,.btn,.tile,[role="button"],summary),
+html body #rankingPage :is(button,.btn,.tile,[role="button"],summary),
+html body #networkLobby :is(button,.btn,.tile,[role="button"],summary),
+html body #networkHostTools :is(button,.btn,.tile,[role="button"],summary),
+html body #networkScoreboard :is(button,.btn,.tile,[role="button"],summary),
+html body #atinaFaqPage :is(button,.btn,.tile,[role="button"],summary),
+html body #atinaFriendsPage :is(button,.btn,.tile,[role="button"],summary),
+html body #atinaAccessPage :is(button,.btn,.tile,[role="button"],summary),
+html body #atinaHowToPage :is(button,.btn,.tile,[role="button"],summary),
+html body #surprisePanel :is(button,.btn,.tile,[role="button"],summary),
+html body #networkTimeoutPanel :is(button,.btn,.tile,[role="button"],summary),
+html body #atinaSoloReportPanel :is(button,.btn,.tile,[role="button"],summary),
+html body #teamVotePanel :is(button,.btn,.tile,[role="button"],summary){
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+  border-bottom-width:1px!important;
+}
+
+/* Cores planas e consistentes por tipo de ação. */
+html body #home :is(button,.btn,.tile,.home-nav-btn,[role="button"],summary):not(.secondary):not(.danger):not(.warning),
+html body #game :is(button,.btn,[role="button"],summary):not(.secondary):not(.danger):not(.warning),
+html body #mimicaGame :is(button,.btn,[role="button"],summary):not(.secondary):not(.danger):not(.warning),
+html body #result :is(button,.btn,[role="button"],summary):not(.secondary):not(.danger):not(.warning),
+html body #networkLobby :is(button,.btn,[role="button"],summary):not(.secondary):not(.danger):not(.warning){
+  background:#d3ad68!important;
+  background-image:none!important;
+  color:#17202b!important;
+  border:1px solid #b58d49!important;
+}
+html body #home :is(button,.btn,.tile,.home-nav-btn,[role="button"],summary).secondary,
+html body #game :is(button,.btn,[role="button"],summary).secondary,
+html body #mimicaGame :is(button,.btn,[role="button"],summary).secondary,
+html body #result :is(button,.btn,[role="button"],summary).secondary,
+html body #networkLobby :is(button,.btn,[role="button"],summary).secondary{
+  background:#1b4265!important;
+  background-image:none!important;
+  color:#f2f7fc!important;
+  border:1px solid #426987!important;
+}
+html body #home :is(button,.btn,[role="button"],summary).danger,
+html body #game :is(button,.btn,[role="button"],summary).danger,
+html body #mimicaGame :is(button,.btn,[role="button"],summary).danger,
+html body #result :is(button,.btn,[role="button"],summary).danger{
+  background:#623b45!important;
+  background-image:none!important;
+  color:#fff0ed!important;
+  border:1px solid #89545b!important;
+}
+
+/* Eliminar também os brilhos e relevos desenhados em pseudo-elementos. */
+html body #home :is(button,.btn,.tile,.home-nav-btn,[role="button"],summary)::before,
+html body #home :is(button,.btn,.tile,.home-nav-btn,[role="button"],summary)::after,
+html body #game :is(button,.btn,[role="button"],summary)::before,
+html body #game :is(button,.btn,[role="button"],summary)::after,
+html body #mimicaGame :is(button,.btn,[role="button"],summary)::before,
+html body #mimicaGame :is(button,.btn,[role="button"],summary)::after,
+html body #result :is(button,.btn,[role="button"],summary)::before,
+html body #result :is(button,.btn,[role="button"],summary)::after,
+html body #networkLobby :is(button,.btn,[role="button"],summary)::before,
+html body #networkLobby :is(button,.btn,[role="button"],summary)::after{
+  box-shadow:none!important;
+  filter:none!important;
+  background-image:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+
+/* Estados hover/pressed/focus nunca levantam, ampliam ou iluminam o botão. */
+html body #home :is(button,.btn,.tile,.home-nav-btn,[role="button"],summary):is(:hover,:active),
+html body #game :is(button,.btn,[role="button],summary):is(:hover,:active),
+html body #mimicaGame :is(button,.btn,[role="button"],summary):is(:hover,:active),
+html body #result :is(button,.btn,[role="button"],summary):is(:hover,:active),
+html body #networkLobby :is(button,.btn,[role="button"],summary):is(:hover,:active){
+  transform:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+  transition:none!important;
+}
