@@ -1264,13 +1264,33 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           report.screenshot_url?"Screenshot anexada (não incluí o link temporário).":"Sem screenshot anexada.",
           "Ajuda-me a analisar a causa provável e sugerir passos de diagnóstico/correção. Não assumas acesso ao código nem aos dados do jogo."
         ].filter(Boolean).join("\\n");
+        let screenshotFile=null;
+        if(report.screenshot_url){
+          try{
+            const imageResponse=await fetch(report.screenshot_url,{mode:"cors",credentials:"omit"});
+            if(!imageResponse.ok)throw new Error("A imagem não ficou disponível para partilha.");
+            const imageBlob=await imageResponse.blob();
+            if(!imageBlob.type.startsWith("image/"))throw new Error("O anexo não é uma imagem válida.");
+            const extension=imageBlob.type==="image/png"?"png":imageBlob.type==="image/webp"?"webp":"jpg";
+            screenshotFile=new File([imageBlob],"atina-report-screenshot."+extension,{type:imageBlob.type});
+          }catch(error){
+            messageStatus("Não foi possível preparar a imagem para partilha. Vou partilhar o texto do report.");
+          }
+        }
         if(typeof navigator.share==="function"){
-          try{await navigator.share({title:"Report ATINA",text:context});return;}
-          catch(error){if(error.name==="AbortError")return;}
+          try{
+            if(screenshotFile&&navigator.canShare&&navigator.canShare({files:[screenshotFile]})){
+              await navigator.share({title:"Report ATINA",text:context,files:[screenshotFile]});
+              return;
+            }
+            await navigator.share({title:"Report ATINA",text:context});
+            if(screenshotFile)messageStatus("O dispositivo não permite anexar a imagem neste menu de partilha. O texto foi partilhado; anexa a screenshot manualmente.");
+            return;
+          }catch(error){if(error.name==="AbortError")return;}
         }
         try{await navigator.clipboard.writeText(context);}catch(error){alert("Não foi possível copiar automaticamente o contexto. Seleciona e copia o texto do report.");return;}
         const opened=window.open("https://chatgpt.com/","_blank","noopener,noreferrer");
-        messageStatus(opened?"Contexto copiado. Cola-o na conversa do ChatGPT.":"Contexto copiado. Abre o ChatGPT e cola-o na conversa.");
+        messageStatus(screenshotFile?(opened?"Contexto copiado. A screenshot está disponível no report; anexa-a à conversa do ChatGPT.":"Contexto copiado. Abre o ChatGPT e anexa a screenshot do report."):(opened?"Contexto copiado. Cola-o na conversa do ChatGPT.":"Contexto copiado. Abre o ChatGPT e cola-o na conversa."));
       });
       card.appendChild(shareButton);
             {
