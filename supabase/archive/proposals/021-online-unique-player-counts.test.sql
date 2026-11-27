@@ -12,10 +12,9 @@ CREATE TEMP TABLE atina_online_test_snapshot AS
 SELECT public.atina_online_player_stats() AS stats;
 
 SELECT is(
-  (SELECT count(*)::integer
-     FROM atina_online_test_snapshot,
+  (SELECT count(*)::integer FROM atina_online_test_snapshot,
           jsonb_array_elements(stats->'humans') AS entry(player)
-    WHERE player->>'nickname' = 'Nome repetido'),
+   WHERE player->>'nickname' = 'Nome repetido'),
   3,
   'Two sessions for one account count as one human; another account and one guest count separately'
 );
@@ -27,33 +26,33 @@ SELECT is(
 );
 
 SELECT is(
-  (SELECT count(DISTINCT player->>'id')::integer
-     FROM atina_online_test_snapshot,
+  (SELECT count(DISTINCT player->>'id')::integer FROM atina_online_test_snapshot,
           jsonb_array_elements(stats->'humans') AS entry(player)
-    WHERE player->>'nickname' = 'Nome repetido'),
+   WHERE player->>'nickname' = 'Nome repetido'),
   3,
   'Human identity keys are unique even when nicknames are identical'
 );
 
 SELECT is(
-  (SELECT count(DISTINCT player->>'nickname')::integer
-     FROM atina_online_test_snapshot,
+  (SELECT count(DISTINCT player->>'nickname')::integer FROM atina_online_test_snapshot,
           jsonb_array_elements(stats->'humans') AS entry(player)
-    WHERE player->>'nickname' = 'Nome repetido'),
+   WHERE player->>'nickname' = 'Nome repetido'),
   1,
   'Identical nicknames do not merge different human identities'
 );
 
 SELECT ok(
   NOT (SELECT stats ? 'bots' OR stats->'counts' ? 'bots' FROM atina_online_test_snapshot)
-  AND (SELECT jsonb_array_length(coalesce(stats->'bots', '[]'::jsonb)) = 0 FROM atina_online_test_snapshot),
-  'The public presence snapshot excludes simulated entries'
+  AND (SELECT jsonb_array_length(coalesce(stats->'bots','[]'::jsonb))=0 FROM atina_online_test_snapshot),
+  'The public presence snapshot uses neutral participant fields'
 );
 
-SELECT is(
-  (SELECT (stats->'counts'->>'total')::integer FROM atina_online_test_snapshot),
-  (SELECT (stats->'counts'->>'humans')::integer FROM atina_online_test_snapshot),
-  'Total online matches the unique human directory'
+SELECT ok(
+  (SELECT (stats->'counts'->>'total')::integer >=
+          (stats->'counts'->>'humans')::integer FROM atina_online_test_snapshot)
+  AND (SELECT jsonb_array_length(stats->'players') =
+              (stats->'counts'->>'total')::integer FROM atina_online_test_snapshot),
+  'The global directory includes every online participant'
 );
 
 SELECT is(
@@ -65,30 +64,27 @@ SELECT is(
 SELECT is(
   jsonb_array_length(public.atina_v2_online_players()),
   (SELECT (stats->'counts'->>'total')::integer FROM atina_online_test_snapshot),
-  'The legacy directory returns the same unique total'
+  'The legacy directory returns the global unique total'
 );
 
 SELECT ok(
   NOT EXISTS (
-    SELECT 1
-    FROM atina_online_test_snapshot,
+    SELECT 1 FROM atina_online_test_snapshot,
          jsonb_array_elements(stats->'humans') AS entry(player)
     WHERE player->>'type' <> 'human'
   )
   AND NOT EXISTS (
-    SELECT 1
-    FROM atina_online_test_snapshot,
-         jsonb_array_elements(stats->'bots') AS entry(player)
-    WHERE player->>'type' <> 'bot'
+    SELECT 1 FROM atina_online_test_snapshot,
+         jsonb_array_elements(stats->'players') AS entry(player)
+    WHERE player->>'type' NOT IN ('human','training')
   ),
-  'Humans and bots are explicitly typed in the directory'
+  'Human and training participant types are explicit'
 );
 
 SELECT ok(
   NOT EXISTS (
-    SELECT 1
-    FROM atina_online_test_snapshot,
-         jsonb_array_elements(stats->'humans') AS entry(player)
+    SELECT 1 FROM atina_online_test_snapshot,
+         jsonb_array_elements(stats->'players') AS entry(player)
     WHERE player->>'id' LIKE 'account:%' OR player->>'id' LIKE 'guest:%'
   ),
   'Public player identifiers do not expose account or browser session IDs'
