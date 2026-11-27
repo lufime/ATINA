@@ -1523,6 +1523,23 @@ document.addEventListener('DOMContentLoaded',()=>{
  menu.addEventListener('toggle',()=>summary.setAttribute('aria-expanded',menu.open?'true':'false'));
 });
 </script>
+
+<style id="atina-nav-more-in-flow-fix">
+/* Menu Mais em fluxo normal: todas as opções ficam visíveis sem sobreposição nem corte. */
+#atinaMainNav{overflow:visible!important;min-height:0!important;height:auto!important;grid-auto-rows:minmax(0,auto)!important}
+#atinaMainNav .home-nav-more{position:static!important;min-width:0!important;z-index:2!important}
+#atinaMainNav .home-nav-more[open]{grid-column:1/-1!important;width:100%!important}
+#atinaMainNav .home-nav-more>summary{width:100%!important;min-height:42px!important;box-sizing:border-box!important;cursor:pointer!important;touch-action:manipulation!important}
+#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{
+ position:static!important;inset:auto!important;transform:none!important;
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ width:100%!important;max-width:none!important;max-height:none!important;
+ height:auto!important;overflow:visible!important;visibility:visible!important;opacity:1!important;
+ box-sizing:border-box!important;margin:8px 0 2px!important;padding:9px!important;
+}
+#atinaMainNav .home-nav-more-grid .home-nav-btn{width:100%!important;min-width:0!important;min-height:44px!important;white-space:normal!important;overflow-wrap:anywhere!important;box-sizing:border-box!important}
+@media(max-width:420px){#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{gap:7px!important;padding:8px!important}#atinaMainNav .home-nav-more-grid .home-nav-btn{min-height:46px!important;font-size:12px!important}}
+</style>
 </head>
 <body><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
