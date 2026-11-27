@@ -6206,12 +6206,12 @@ body,body *{
   --atina-motion-ease:cubic-bezier(.2,.75,.25,1);
 }
 :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
-[role="radio"],[role="checkbox],summary){
+[role="radio"],[role="checkbox"],summary){
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
 }
 :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
-[role="radio"],[role="checkbox],summary){
+[role="radio"],[role="checkbox"],summary){
   transition:transform var(--atina-motion-fast) var(--atina-motion-ease),
     filter var(--atina-motion-normal) var(--atina-motion-ease),
     background-color var(--atina-motion-normal) var(--atina-motion-ease),
@@ -6220,17 +6220,17 @@ body,body *{
 }
 @media(hover:hover) and (pointer:fine){
   :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
-  [role="radio"],[role="checkbox],summary):not(:disabled):not([aria-disabled="true"]):hover{
+  [role="radio"],[role="checkbox"],summary):not(:disabled):not([aria-disabled="true"]):hover{
     filter:brightness(1.07);
   }
 }
 :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
-[role="radio"],[role="checkbox],summary):not(:disabled):not([aria-disabled="true"]):active{
+[role="radio"],[role="checkbox"],summary):not(:disabled):not([aria-disabled="true"]):active{
   transform:scale(.975);
   filter:brightness(.96);
 }
 :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
-[role="radio"],[role="checkbox],summary):focus-visible{
+[role="radio"],[role="checkbox"],summary):focus-visible{
   outline:2px solid var(--atina-accent,#45c9c1)!important;
   outline-offset:3px!important;
 }
@@ -6257,7 +6257,7 @@ body,body *{
 }
 @media(prefers-reduced-motion:reduce){
   :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
-  [role="radio"],[role="checkbox],summary,input,select,textarea,.answer,
+  [role="radio"],[role="checkbox"],summary,input,select,textarea,.answer,
   .card,.home-welcome,.home-block,.home-page-panel,.daily-mission,
   .quick-match-panel,.online-panel,.online-ranking,
   #feedback,.feedback,.message,.game-message,.atina-message,.atina-alert,
@@ -6267,7 +6267,7 @@ body,body *{
     scroll-behavior:auto!important;
   }
   :where(button,.btn,[role="button"],.home-nav-btn,.tile,.choice,.answer-option,
-  [role="radio"],[role="checkbox],summary):active{transform:none!important}
+  [role="radio"],[role="checkbox"],summary):active{transform:none!important}
 }
 </style>
 
