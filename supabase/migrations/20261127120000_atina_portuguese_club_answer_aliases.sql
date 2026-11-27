@@ -3,9 +3,9 @@
 -- In particular, "Vitória" and "Guimarães" alone must NOT identify Vitória SC.
 with aliases(challenge_id, alias) as (
   values
-    (1411, 'FC Porto'), (1411, 'F.C. Porto'), (1411, 'FCP'), (1411, 'Porto FC'),
+    (1411, 'FC Porto'), (1411, 'F.C. Porto'), (1411, 'FCP'), (1411, 'Porto FC'), (1411, 'Porto'),
     (1412, 'Benfica'), (1412, 'SL Benfica'), (1412, 'S.L. Benfica'), (1412, 'Sport Lisboa Benfica'),
-    (1413, 'Sporting CP'), (1413, 'SCP'), (1413, 'Sporting Portugal'),
+    (1413, 'Sporting CP'), (1413, 'SCP'), (1413, 'Sporting Portugal'), (1413, 'Sporting'),
     (1414, 'SC Braga'), (1414, 'S.C. Braga'), (1414, 'Sporting de Braga'),
     (1415, 'Vitória de Guimarães'), (1415, 'Vitoria de Guimaraes'), (1415, 'Vitória SC'), (1415, 'Vitoria SC'), (1415, 'VSC'),
     (1416, 'Boavista FC'), (1416, 'BFC'),
@@ -51,16 +51,18 @@ begin
     end if;
   end if;
   if exists (select 1 from private.atina_challenges where challenge_id = 1411 and active)
-     and not private.atina_v2_challenge_answer_matches(1411, 'FCP') then
-    raise exception 'FC Porto: FCP must be accepted.';
+     and (not private.atina_v2_challenge_answer_matches(1411, 'FCP')
+       or not private.atina_v2_challenge_answer_matches(1411, 'Porto')) then
+    raise exception 'FC Porto: FCP and Porto must be accepted.';
   end if;
   if exists (select 1 from private.atina_challenges where challenge_id = 1412 and active)
      and not private.atina_v2_challenge_answer_matches(1412, 'SL Benfica') then
     raise exception 'Benfica: SL Benfica must be accepted.';
   end if;
   if exists (select 1 from private.atina_challenges where challenge_id = 1413 and active)
-     and not private.atina_v2_challenge_answer_matches(1413, 'Sporting CP') then
-    raise exception 'Sporting: Sporting CP must be accepted.';
+     and (not private.atina_v2_challenge_answer_matches(1413, 'Sporting CP')
+       or not private.atina_v2_challenge_answer_matches(1413, 'Sporting')) then
+    raise exception 'Sporting: Sporting CP and Sporting must be accepted.';
   end if;
   if exists (select 1 from private.atina_challenges where challenge_id = 1414 and active)
      and not private.atina_v2_challenge_answer_matches(1414, 'SC Braga') then
