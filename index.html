@@ -6909,5 +6909,41 @@ body :is(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-optio
 }
 </style>
 
+
+<style id="atina-final-basic-interface-override-20261127">
+/* Última camada: tem de ficar depois de todos os estilos inline anteriores. */
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel) :is(
+  .brand,.home-welcome,.home-block,.home-page-panel,.card,.panel,.section,
+  .daily-mission,.quick-match-panel,.online-panel,.online-ranking,
+  .home-page-nav,#atinaMainNav,.home-nav-more,.atina-fast-play,
+  .sound-control,.atina-xp-panel,.atina-level-gallery-panel,.atina-howto-card,
+  .play-block,.categories-block,.account-block,.settings-block,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,.clue,.tile-mask,
+  .visual,.timer-display,[class*="panel"],[class*="Panel"],[id$="Panel"]
+):not(button):not(.btn):not([role="button"]):not(summary){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  border-radius:0!important;
+}
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard) :is(
+  .brand,.home-welcome,.home-block,.home-page-panel,.card,.panel,.section,
+  .daily-mission,.quick-match-panel,.online-panel,.online-ranking,
+  .atina-xp-panel,.atina-level-gallery-panel,.atina-howto-card,
+  .play-block,.categories-block,.account-block,.settings-block,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,.clue,.tile-mask,
+  [class*="panel"],[class*="Panel"],[id$="Panel"]
+):not(button):not(.btn):not([role="button"]):not(summary):focus-within{
+  box-shadow:none!important;
+}
+</style>
+
 </body>
 </html>
