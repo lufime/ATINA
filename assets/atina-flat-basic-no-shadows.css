@@ -1,0 +1,28 @@
+/* ATINA — apresentação básica e plana em todas as áreas do jogo.
+   Remove relevo e sombras sem alterar cores, conteúdo, geometria ou funcionamento. */
+*,*::before,*::after{
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+:where(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+.tile,a.card,.card,.panel,.home-block,.home-welcome,.online-panel,.online-ranking,
+.daily-mission,.quick-match-panel,#game,#result,#rankingPage,#networkLobby,
+#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,#atinaAccessPage,#atinaHowToPage){
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+:where(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+.tile,a.card):hover,
+:where(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+.tile,a.card):active{
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+:where(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+.tile,a.card):focus-visible{
+  box-shadow:none!important;
+}
+/* Elimina também sombras SVG/CSS sem remover filtros de imagem ou desfocagem. */
+svg [filter],svg[filter]{filter:none!important}
