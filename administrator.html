@@ -1248,6 +1248,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       shareButton.addEventListener("click",async()=>{
         const context=[
           "Análise de report de erro do ATINA (contexto da administração).",
+          "Consulta os seguintes recursos antes de analisar e segue as regras do projeto ATINA:",
+          "Administração: https://lufime.github.io/ATINA/administrator.html?utm_source=chatgpt.com#logo",
+          "Jogo: https://lufime.github.io/ATINA/index.html#dashboard",
+          "Repositório e código: https://github.com/lufime/ATINA",
+          "Regras permanentes do projeto: https://github.com/lufime/ATINA/blob/main/.atina-interno/instrucoes-imagens.md",
           "Categoria: "+(reportCategoryLabels[report.category]||report.category||"Não indicada"),
           "Pseudónimo: "+(report.nickname||"Não indicado"),
           "Data: "+(report.created_at?new Date(report.created_at).toLocaleString("pt-PT"):"Não indicada"),
