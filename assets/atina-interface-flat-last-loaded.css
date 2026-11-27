@@ -256,3 +256,59 @@ html body #game :is(button,.btn,[role="button"]):active{
   filter:none!important;
   box-shadow:none!important;
 }
+
+
+/* FINAL OVERRIDE — maior especificidade que as regras antigas do tema. */
+html body #home .btn:not(.secondary):not(.danger),
+html body #home button.btn:not(.secondary):not(.danger),
+html body #home .actions button:not(.secondary):not(.danger),
+html body #home .home-tools button:not(.secondary):not(.danger),
+html body #home .atina-fast-play-grid button:not(.secondary):not(.danger),
+html body #home .home-nav-btn.active,
+html body #home .home-nav-more>summary,
+html body #game button:not(.secondary):not(.danger),
+html body #game .btn:not(.secondary):not(.danger),
+html body #result button:not(.secondary):not(.danger),
+html body #result .btn:not(.secondary):not(.danger),
+html body #mimicaGame button:not(.secondary):not(.danger),
+html body #mimicaGame .btn:not(.secondary):not(.danger),
+html body #networkLobby button:not(.secondary):not(.danger),
+html body #networkLobby .btn:not(.secondary):not(.danger),
+html body #networkHostTools button:not(.secondary):not(.danger),
+html body #networkScoreboard button:not(.secondary):not(.danger),
+html body button.btn:not(.secondary):not(.danger){
+  background-color:#d3ad68!important;
+  background-image:none!important;
+  background:#d3ad68!important;
+  border:1px solid #b58d49!important;
+  border-bottom:1px solid #b58d49!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+  transition:none!important;
+}
+
+/* Secundários azuis com a mesma prioridade de cascata. */
+html body #home .btn.secondary,
+html body #home button.secondary,
+html body #home .tile,
+html body #home .home-nav-btn:not(.active),
+html body #game .btn.secondary,
+html body #game button.secondary,
+html body #result .btn.secondary,
+html body #mimicaGame .btn.secondary,
+html body #networkLobby .btn.secondary,
+html body button.btn.secondary{
+  background-color:#1b4265!important;
+  background-image:none!important;
+  background:#1b4265!important;
+  color:#f2f7fc!important;
+  border:1px solid #426987!important;
+  border-bottom:1px solid #426987!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+  transition:none!important;
+}
