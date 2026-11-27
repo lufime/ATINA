@@ -6880,5 +6880,31 @@ body :is(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-optio
 }
 </style>
 
+
+<style id="atina-uniform-button-specificity-20261127">
+/* Garantir que as dimensões comuns prevalecem sobre regras antigas por página. */
+#home button,#home .btn,#home .home-nav-btn,#home .home-nav-more>summary,
+#game button,#game .btn,#game [role="button"],
+#result button,#result .btn,#mimicaGame button,#mimicaGame .btn,
+#networkLobby button,#networkLobby .btn,#networkHostTools button,#networkHostTools .btn,
+#networkScoreboard button,#networkScoreboard .btn{
+  height:48px!important;
+  min-height:48px!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  line-height:1.15!important;
+  border-radius:12px!important;
+  border-bottom-width:1px!important;
+  box-shadow:0 1px 3px #0003,inset 0 1px 0 #ffffff20!important;
+}
+#home .actions>.btn,#home .actions>button,#home .home-tools .btn,
+#game .actions>.btn,#game .actions>button{
+  width:100%;
+}
+</style>
+
 </body>
 </html>
