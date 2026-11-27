@@ -1,5 +1,5 @@
 /* ATINA — indicadores de presença na página inicial (v2) */
-#home #progress{display:none!important}
+.brand #progress{display:none!important}
 #atinaOnlineIndicators{
   display:flex!important;
   flex-wrap:wrap!important;
