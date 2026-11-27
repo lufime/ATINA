@@ -462,7 +462,7 @@ html body #networkLobby :is(button,.btn,[role="button"],summary)::after{
 
 /* Estados hover/pressed/focus nunca levantam, ampliam ou iluminam o botão. */
 html body #home :is(button,.btn,.tile,.home-nav-btn,[role="button"],summary):is(:hover,:active),
-html body #game :is(button,.btn,[role="button],summary):is(:hover,:active),
+html body #game :is(button,.btn,[role="button"],summary):is(:hover,:active),
 html body #mimicaGame :is(button,.btn,[role="button"],summary):is(:hover,:active),
 html body #result :is(button,.btn,[role="button"],summary):is(:hover,:active),
 html body #networkLobby :is(button,.btn,[role="button"],summary):is(:hover,:active){
