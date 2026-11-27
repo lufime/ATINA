@@ -1,0 +1,152 @@
+/* ATINA — revisão tipográfica transversal
+   Escala única para início, jogo, resultados, classificação, perfil, páginas informativas e modos online.
+   Camada exclusivamente visual: não altera conteúdo, dimensões funcionais, regras ou comportamento. */
+:root{
+  --atina-type-body:15px;
+  --atina-type-h1:clamp(27px,3vw,34px);
+  --atina-type-h2:clamp(23px,2.4vw,28px);
+  --atina-type-h3:clamp(19px,1.8vw,22px);
+  --atina-type-h4:17px;
+  --atina-type-section:14px;
+  --atina-type-text:15px;
+  --atina-type-secondary:13px;
+  --atina-type-small:12px;
+  --atina-type-button:14px;
+}
+body, #home, #game, #mimicaGame, #result, #rankingPage,
+#networkLobby, #networkScoreboard, #atinaFaqPage, #atinaFriendsPage,
+#atinaAccessPage, #atinaHowToPage, #atinaPregamePanel{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  font-size:var(--atina-type-body)!important;
+  line-height:1.5;
+  -webkit-text-size-adjust:100%;
+}
+#home :where(h1,h2,h3,h4,h5,h6),
+#game :where(h1,h2,h3,h4,h5,h6),
+#mimicaGame :where(h1,h2,h3,h4,h5,h6),
+#result :where(h1,h2,h3,h4,h5,h6),
+#rankingPage :where(h1,h2,h3,h4,h5,h6),
+#networkLobby :where(h1,h2,h3,h4,h5,h6),
+#networkScoreboard :where(h1,h2,h3,h4,h5,h6),
+#atinaFaqPage :where(h1,h2,h3,h4,h5,h6),
+#atinaFriendsPage :where(h1,h2,h3,h4,h5,h6),
+#atinaAccessPage :where(h1,h2,h3,h4,h5,h6),
+#atinaHowToPage :where(h1,h2,h3,h4,h5,h6){
+  font-family:inherit!important;font-weight:750!important;line-height:1.22!important;
+  letter-spacing:-.02em;
+}
+#home h1,#game h1,#mimicaGame h1,#result h1,#rankingPage h1{font-size:var(--atina-type-h1)!important}
+#home h2,#game h2,#mimicaGame h2,#result h2,#rankingPage h2,
+#networkLobby h2,#networkScoreboard h2,
+#atinaFaqPage h2,#atinaFriendsPage h2,#atinaAccessPage h2,#atinaHowToPage h2{
+  font-size:var(--atina-type-h2)!important;
+}
+#home h3,#game h3,#mimicaGame h3,#result h3,#rankingPage h3,
+#networkLobby h3,#networkScoreboard h3,
+#atinaFaqPage h3,#atinaFriendsPage h3,#atinaAccessPage h3,#atinaHowToPage h3{
+  font-size:var(--atina-type-h3)!important;
+}
+#home h4,#game h4,#mimicaGame h4,#result h4,#rankingPage h4,
+#networkLobby h4,#networkScoreboard h4,
+#atinaFaqPage h4,#atinaFriendsPage h4,#atinaAccessPage h4,#atinaHowToPage h4{
+  font-size:var(--atina-type-h4)!important;
+}
+#home :where(p,li,dd,dt,blockquote),
+#game :where(p,li,dd,dt,blockquote),
+#mimicaGame :where(p,li,dd,dt,blockquote),
+#result :where(p,li,dd,dt,blockquote),
+#rankingPage :where(p,li,dd,dt,blockquote),
+#networkLobby :where(p,li,dd,dt,blockquote),
+#networkScoreboard :where(p,li,dd,dt,blockquote),
+#atinaFaqPage :where(p,li,dd,dt,blockquote),
+#atinaFriendsPage :where(p,li,dd,dt,blockquote),
+#atinaAccessPage :where(p,li,dd,dt,blockquote),
+#atinaHowToPage :where(p,li,dd,dt,blockquote){
+  font-size:var(--atina-type-text)!important;line-height:1.55!important;
+}
+#home :where(.section,.home-welcome-kicker,.daily-kicker),
+#game :where(.section,.home-welcome-kicker,.daily-kicker),
+#result :where(.section,.home-welcome-kicker,.daily-kicker),
+#rankingPage :where(.section,.home-welcome-kicker,.daily-kicker){
+  font-size:var(--atina-type-section)!important;line-height:1.35!important;
+}
+#home :where(.muted,.small,small,.tag,.tile small,.pill,.footer),
+#game :where(.muted,.small,small,.pill,.footer),
+#mimicaGame :where(.muted,.small,small,.pill,.footer),
+#result :where(.muted,.small,small,.pill,.footer),
+#rankingPage :where(.muted,.small,small,.pill,.footer),
+#networkLobby :where(.muted,.small,small,.pill),
+#networkScoreboard :where(.muted,.small,small,.pill),
+#atinaFaqPage :where(.muted,.small,small),
+#atinaFriendsPage :where(.muted,.small,small),
+#atinaAccessPage :where(.muted,.small,small),
+#atinaHowToPage :where(.muted,.small,small){
+  font-size:var(--atina-type-secondary)!important;line-height:1.45!important;
+}
+/* Metadados e créditos nunca competem visualmente com a solução. */
+#game #solutionImage>p.muted.small,
+#game #solutionImage .muted.small,
+#game #solutionImage .small{
+  font-size:12px!important;font-weight:500!important;line-height:1.45!important;
+  letter-spacing:0!important;
+}
+#game #solutionImage p{max-width:100%;overflow-wrap:anywhere}
+#game #player{font-size:13px!important}
+#game #question{font-size:clamp(23px,3vw,29px)!important;line-height:1.22!important}
+#game .clue{font-size:14px!important;line-height:1.55!important}
+#game #answer{font-size:16px!important;line-height:1.4!important}
+#game #feedback{font-size:14px!important;line-height:1.5!important}
+#game .atina-live-stats span{font-size:12px!important}
+#game .atina-live-stats b{font-size:16px!important}
+#game #timerDisplay,#mimicaGame #mimeTimer{font-variant-numeric:tabular-nums}
+#game .btn,#mimicaGame .btn,#result .btn,#rankingPage .btn,
+#networkLobby .btn,#networkScoreboard .btn,
+#home .btn,#home button:not(.home-nav-btn){
+  font-size:var(--atina-type-button)!important;line-height:1.3!important;font-weight:750!important;
+}
+#home label,#game label,#mimicaGame label,#result label,
+#networkLobby label,#networkScoreboard label{font-size:13px!important;line-height:1.4!important}
+#home input,#home select,#home textarea,#game input,#game select,#game textarea,
+#networkLobby input,#networkLobby select,#networkLobby textarea{
+  font-size:16px!important;line-height:1.4!important;
+}
+#home .tile b{font-size:14px!important;line-height:1.3!important}
+#home .tile small{font-size:12px!important;line-height:1.4!important}
+#game #solutionImage :where(h2,h3){line-height:1.25!important}
+@media(max-width:600px){
+  :root{
+    --atina-type-body:14px;
+    --atina-type-h1:26px;
+    --atina-type-h2:22px;
+    --atina-type-h3:19px;
+    --atina-type-h4:16px;
+    --atina-type-section:13px;
+    --atina-type-text:14px;
+    --atina-type-secondary:12px;
+    --atina-type-small:11px;
+    --atina-type-button:13px;
+  }
+  #home :where(p,li),#game :where(p,li),#mimicaGame :where(p,li),
+  #result :where(p,li),#rankingPage :where(p,li),
+  #networkLobby :where(p,li),#networkScoreboard :where(p,li),
+  #atinaFaqPage :where(p,li),#atinaFriendsPage :where(p,li),
+  #atinaAccessPage :where(p,li),#atinaHowToPage :where(p,li){
+    font-size:14px!important;line-height:1.5!important;
+  }
+  #game #question{font-size:22px!important;line-height:1.25!important}
+  #game .clue{font-size:13px!important;line-height:1.5!important}
+  #game #answer{font-size:16px!important}
+  #game #feedback{font-size:13px!important}
+  #game #solutionImage>p.muted.small,#game #solutionImage .muted.small,
+  #game #solutionImage .small{font-size:11px!important;line-height:1.4!important}
+  #game .btn,#mimicaGame .btn,#result .btn,#rankingPage .btn,
+  #networkLobby .btn,#networkScoreboard .btn,#home .btn{
+    font-size:13px!important;line-height:1.25!important;
+  }
+  #home .home-nav-btn,#atinaMainNav .home-nav-btn,
+  #atinaMainNav .home-nav-more>summary{font-size:11px!important}
+}
+@media(max-width:380px){
+  #game .game-control-row>.btn,#game .actions>.btn{font-size:12px!important}
+  #home .tile b{font-size:13px!important}
+}
