@@ -191,3 +191,68 @@ html body :is(button,.btn,[role="button"],summary,.home-nav-btn,.tile){
   box-shadow:none!important;
   text-shadow:none!important;
 }
+
+
+/* ATINA ANDROID — última correção de especificidade para os botões dourados.
+   Substitui também regras antigas mais específicas de #home. */
+html body #home .actions .btn,
+html body #home .home-tools .btn,
+html body #home .atina-fast-play-grid .btn,
+html body #home .home-page-nav .home-nav-btn,
+html body #home .home-nav-btn,
+html body #home .home-nav-more>summary,
+html body #game .btn,
+html body #game button,
+html body #result .btn,
+html body #result button,
+html body #mimicaGame .btn,
+html body #mimicaGame button,
+html body #networkLobby .btn,
+html body #networkLobby button,
+html body #networkHostTools .btn,
+html body #networkHostTools button,
+html body #networkScoreboard .btn,
+html body #networkScoreboard button{
+  background:#d3ad68!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  border:1px solid #b58d49!important;
+  border-bottom:1px solid #b58d49!important;
+  transform:none!important;
+  filter:none!important;
+  transition:none!important;
+}
+
+/* Botões azuis secundários continuam azuis, mas completamente planos. */
+html body #home .actions .btn.secondary,
+html body #home .home-tools .btn.secondary,
+html body #home .atina-fast-play-grid .btn.secondary,
+html body #home .tile,
+html body #home .home-nav-btn:not(.active),
+html body #game .btn.secondary,
+html body #game button.secondary,
+html body #result .btn.secondary,
+html body #mimicaGame .btn.secondary,
+html body #networkLobby .btn.secondary{
+  background:#1b4265!important;
+  background-image:none!important;
+  color:#f2f7fc!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  border:1px solid #426987!important;
+  border-bottom:1px solid #426987!important;
+  transform:none!important;
+  filter:none!important;
+  transition:none!important;
+}
+
+/* Estados de interação não voltam a introduzir movimento ou brilho. */
+html body #home :is(button,.btn,[role="button"],summary,.tile):hover,
+html body #home :is(button,.btn,[role="button"],summary,.tile):active,
+html body #game :is(button,.btn,[role="button"]):hover,
+html body #game :is(button,.btn,[role="button"]):active{
+  transform:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
