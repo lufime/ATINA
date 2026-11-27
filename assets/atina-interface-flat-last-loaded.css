@@ -312,3 +312,69 @@ html body button.btn.secondary{
   filter:none!important;
   transition:none!important;
 }
+
+
+/* BOTÕES FLUTUANTES (ex.: Definições / Reportar erro no rodapé).
+   Retira o relevo sem alterar a posição fixa, tamanho ou ação dos controlos. */
+html body :is(
+  button,a,.btn,[role="button"],summary,
+  [class*="float" i],[id*="float" i],[class*="fab" i],[id*="fab" i],
+  [class*="fixed" i],[id*="fixed" i]
+),
+html body [style*="position:fixed"],
+html body [style*="position: fixed"]{
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+}
+
+/* Botões dentro de barras/áreas flutuantes, incluindo os dois atalhos inferiores. */
+html body :is(
+  [style*="position:fixed"],[style*="position: fixed"],
+  [class*="float" i],[id*="float" i],[class*="fab" i],[id*="fab" i],
+  [class*="fixed" i],[id*="fixed" i]
+) :is(button,a,.btn,[role="button"],summary),
+html body :is(button,a,.btn,[role="button"],summary)[style*="position:fixed"],
+html body :is(button,a,.btn,[role="button"],summary)[style*="position: fixed"]{
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  border-width:1px!important;
+  border-bottom-width:1px!important;
+}
+
+/* Os atalhos flutuantes usam cores sólidas coerentes com o resto da interface. */
+html body :is(
+  [style*="position:fixed"],[style*="position: fixed"],
+  [class*="float" i],[id*="float" i],[class*="fab" i],[id*="fab" i],
+  [class*="fixed" i],[id*="fixed" i]
+) :is(button,a,.btn,[role="button"],summary):not(.secondary):not(.danger){
+  background:#d3ad68!important;
+  background-image:none!important;
+  color:#17202b!important;
+  border:1px solid #b58d49!important;
+  box-shadow:none!important;
+}
+html body :is(
+  [style*="position:fixed"],[style*="position: fixed"],
+  [class*="float" i],[id*="float" i],[class*="fab" i],[id*="fab" i],
+  [class*="fixed" i],[id*="fixed" i]
+) :is(button,a,.btn,[role="button"],summary).secondary{
+  background:#1b4265!important;
+  background-image:none!important;
+  color:#f2f7fc!important;
+  border:1px solid #426987!important;
+  box-shadow:none!important;
+}
