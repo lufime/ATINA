@@ -1589,6 +1589,57 @@ button.btn:not(.full),.btn:not(.full){
  button.btn:not(.full),.btn:not(.full){padding-left:10px!important;padding-right:10px!important}
 }
 </style>
+<style id="atina-update-notice-prominent-20261127">
+/* Aviso de operação: destaque imediato, legível e sem depender de abrir o painel. */
+#atinaUpdateNotice:not(.hidden){
+ position:sticky!important;
+ top:max(6px,env(safe-area-inset-top))!important;
+ z-index:12000!important;
+ display:block!important;
+ width:100%!important;
+ margin:10px 0 14px!important;
+ padding:0!important;
+ border:3px solid #f4c34f!important;
+ border-radius:16px!important;
+ background:linear-gradient(135deg,#f8d878 0%,#e8b94c 100%)!important;
+ color:#17283b!important;
+ box-shadow:0 0 0 3px rgba(244,195,79,.22),0 10px 28px rgba(0,0,0,.48)!important;
+ text-shadow:none!important;
+}
+#atinaUpdateNotice #atinaUpdateNoticeDetails{padding:0!important}
+#atinaUpdateNotice summary{
+ display:flex!important;align-items:center!important;gap:10px!important;
+ min-height:54px!important;padding:13px 15px!important;
+ color:#14263a!important;cursor:pointer!important;list-style:none!important;
+ font-size:clamp(14px,3.5vw,17px)!important;line-height:1.3!important;
+}
+#atinaUpdateNotice summary::-webkit-details-marker{display:none!important}
+#atinaUpdateNotice summary strong{
+ color:#14263a!important;font-size:inherit!important;font-weight:950!important;
+ letter-spacing:.035em!important;
+}
+#atinaUpdateNotice summary>span:first-child{font-size:22px!important}
+#atinaUpdateNotice .atina-notice-hint{
+ margin-left:auto!important;color:#243c55!important;font-weight:850!important;
+ text-decoration:underline;text-underline-offset:3px;
+}
+#atinaUpdateNotice #atinaUpdateNoticeMessage{
+ padding:13px 16px 16px!important;border-top:2px solid rgba(20,38,58,.22)!important;
+ color:#17283b!important;font-size:clamp(14px,3.6vw,17px)!important;
+ line-height:1.5!important;font-weight:850!important;white-space:pre-wrap!important;
+}
+#atinaUpdateNotice #atinaUpdateNoticeMessage *{color:#17283b!important}
+#atinaUpdateNotice details[open] summary{border-bottom:0!important}
+@media(max-width:420px){
+ #atinaUpdateNotice:not(.hidden){margin:7px 0 10px!important;border-radius:14px!important}
+ #atinaUpdateNotice summary{min-height:50px!important;padding:11px 12px!important;gap:8px!important}
+ #atinaUpdateNotice #atinaUpdateNoticeMessage{padding:11px 13px 13px!important}
+}
+@media(prefers-reduced-motion:no-preference){
+ #atinaUpdateNotice:not(.hidden){animation:atinaNoticeAppear .28s ease-out both}
+}
+@keyframes atinaNoticeAppear{from{transform:translateY(-8px);opacity:.65}to{transform:translateY(0);opacity:1}}
+</style>
 </head>
 <body><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
