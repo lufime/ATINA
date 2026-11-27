@@ -67,3 +67,68 @@ html,html * ,html *::before,html *::after{
   text-shadow:none!important;
   scroll-behavior:auto!important;
 }
+
+
+/* ATINA — acabamento realmente plano em todas as páginas.
+   Cores sólidas azul/dourado; sem gradientes, relevo, sombras ou movimento.
+   Não altera dimensões, posicionamento, conteúdo nem handlers JavaScript. */
+html,html * ,html *::before,html *::after{
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  background-image:none!important;
+  scroll-behavior:auto!important;
+}
+
+/* Controlos principais: dourado sólido, sem relevo 3D. */
+html body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,.choice,.answer-option){
+  background-image:none!important;
+  background-color:#d3ad68!important;
+  color:#17202b!important;
+  border:1px solid #b58d49!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+/* Controlos secundários e opções de modalidade: azul sólido. */
+html body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,.choice,.answer-option):is(.secondary,.sound-toggle,.tile,.home-nav-btn:not(.active),[data-action="secondary"]){
+  background-image:none!important;
+  background-color:#1b4265!important;
+  color:#f2f7fc!important;
+  border:1px solid #426987!important;
+  box-shadow:none!important;
+}
+
+/* Ações destrutivas mantêm indicação vermelha, sem efeitos. */
+html body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary):is(.danger,[data-variant="danger"]){
+  background-image:none!important;
+  background-color:#623b45!important;
+  color:#fff0ed!important;
+  border:1px solid #89545b!important;
+  box-shadow:none!important;
+}
+
+/* Painéis e cartões mantêm o fundo escuro sólido, sem molduras decorativas. */
+html body :is(.brand,.home-welcome,.home-block,.home-page-panel,.card,.panel,
+.daily-mission,.quick-match-panel,.online-panel,.online-ranking,.categories-block,
+.account-block,.settings-block,.solution-panel,.result-panel,.menu-panel,
+.lobby-panel,[class*="panel"],[class*="Panel"],[id$="Panel"]){
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+
+/* Foco de teclado permanece claramente visível e acessível. */
+html body :is(button,.btn,[role="button"],summary,input,select,textarea):focus-visible{
+  outline:2px solid #ffe5a0!important;
+  outline-offset:3px!important;
+}
