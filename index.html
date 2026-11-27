@@ -4040,7 +4040,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    let publishedCredit=solutionCredit;
    const validAtinaCredit=credit=>!!credit
     &&String(credit.author||'').trim().toLowerCase()==='atina'
-    &&String(credit.attribution||'').trim().replace(/^©\\s*/,'').toLowerCase()==='atina'
+    &&String(credit.attribution||'').trim().replace(/^©\s*/,'').toLowerCase()==='atina'
     &&String(credit.source_url||'').trim()==='gerada-por-ia://chatgpt';
    if(publishedMatch&&!validAtinaCredit(publishedCredit)&&supabaseClient?.rpc){
     try{
