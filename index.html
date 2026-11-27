@@ -5719,5 +5719,22 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 }
 </style>
 
+
+<style id="atina-nav-more-viewport-alignment">
+/* Alinhar o painel ao lado direito da navegação, evitando corte no ecrã. */
+#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{
+  left:auto!important;right:0!important;transform:none!important;
+  width:min(300px,calc(100vw - 28px))!important;
+  max-width:calc(100vw - 28px)!important;
+}
+@media(max-width:420px){
+  #atinaMainNav .home-nav-more[open]>.home-nav-more-grid{
+    right:0!important;left:auto!important;
+    width:min(286px,calc(100vw - 28px))!important;
+    max-width:calc(100vw - 28px)!important;
+  }
+}
+</style>
+
 </body>
 </html>
