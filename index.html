@@ -5803,5 +5803,72 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 }
 </style>
 
+
+<style id="atina-global-palette-unification-20261127">
+/* ATINA — paleta global unificada em todas as páginas e modos. */
+:root{
+ --atina-bg:#081522;
+ --atina-surface:#10243a;
+ --atina-surface-raised:#17324b;
+ --atina-surface-soft:#142d46;
+ --atina-border:#31516b;
+ --atina-line:#34536f;
+ --atina-accent:#45c9c1;
+ --atina-accent-strong:#35b9b3;
+ --atina-gold:#e2bd78;
+ --atina-text:#f4f7fb;
+ --atina-muted:#b7c6d5;
+}
+body{
+ background:radial-gradient(ellipse at 50% -12%,#1b405c 0,#0b1b2b 48%,#071321 100%)!important;
+ color:var(--atina-text)!important;
+}
+.card,.home-welcome,.home-block,.categories-block,.settings-block,.account-block,
+.network-block,#networkLobby,#networkHostTools,#networkScoreboard,
+.home-page-panel>.card,.atina-howto-card,.daily-mission,
+#game>.card,#mimicaGame>.card,#result>.card{
+ background:linear-gradient(145deg,#17334c 0%,#10243a 100%)!important;
+ color:var(--atina-text)!important;
+ border:1px solid var(--atina-border)!important;
+ box-shadow:0 8px 22px #020b14aa,inset 0 1px #ffffff08!important;
+}
+#networkHostTools,.daily-mission,.home-welcome{
+ background:linear-gradient(145deg,#183a52 0%,#112940 100%)!important;
+ border-color:#397080!important;
+}
+#networkHostTools h3,.card h3,.home-welcome h2,.home-page-panel h2{
+ color:var(--atina-text)!important;
+}
+#networkHostTools p,.card p,.home-page-panel p{color:var(--atina-muted)}
+button.btn:not(.secondary):not(.danger):not(.warning),
+.btn:not(.secondary):not(.danger):not(.warning){
+ background:linear-gradient(135deg,#45c9c1 0%,#2caeaa 100%)!important;
+ color:#08202b!important;
+ border:1px solid #63d9d1!important;
+ box-shadow:0 4px 0 #176f70,0 7px 16px #0003!important;
+}
+button.btn.secondary,.btn.secondary,
+button.home-nav-btn,.home-nav-btn{
+ background:linear-gradient(145deg,#1a3a55 0%,#132b42 100%)!important;
+ color:var(--atina-text)!important;
+ border:1px solid #365773!important;
+}
+button.btn.danger,.btn.danger{background:linear-gradient(135deg,#7d3d48,#552b38)!important;color:#fff!important;border-color:#a85b64!important}
+input,select,textarea,.answer{
+ background:#0c1d30!important;color:var(--atina-text)!important;
+ border:1px solid #3b5872!important;
+}
+input::placeholder,textarea::placeholder{color:#91a7ba!important}
+:where(.card,.home-welcome,.home-block,.categories-block,.settings-block,.account-block,
+.network-block,#networkLobby,#networkHostTools,#networkScoreboard) .muted{
+ color:var(--atina-muted)!important;
+}
+:where(.card,.home-welcome,.home-block,.categories-block,.settings-block,.account-block,
+.network-block,#networkLobby,#networkHostTools,#networkScoreboard) a{color:#75d8d2}
+@media(prefers-reduced-motion:no-preference){
+ button.btn,.btn{transition:background .18s ease,border-color .18s ease,transform .12s ease}
+}
+</style>
+
 </body>
 </html>
