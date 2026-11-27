@@ -6081,5 +6081,58 @@ input::placeholder,textarea::placeholder{color:#91a7ba!important}
 <link rel="stylesheet" href="./assets/atina-mobile-overlap-fixes-2026.css?v=20261127-1">
 <link rel="stylesheet" href="./assets/atina-player-notice-contrast-2026.css?v=20261127-1">
 <link rel="stylesheet" href="./assets/atina-semantic-message-colors-2026.css?v=20261127-1">
+<style id="atina-result-mobile-overflow-fix">
+@media(max-width:760px){
+  body>.wrap{
+    width:calc(100% - 16px)!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    margin-inline:auto!important;
+  }
+  #result{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    overflow-x:clip!important;
+    padding:12px!important;
+  }
+  #result *{
+    box-sizing:border-box!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  #result #atinaResultProgressSummary,
+  #result .online-ranking,
+  #result #grandFinalPanel{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin-inline:0!important;
+    overflow-wrap:anywhere!important;
+  }
+  #result #atinaResultProgressSummary{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  #result #atinaResultProgressSummary>*,
+  #result .online-ranking>*{
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  #result #grandFinalPanel{
+    width:100%!important;
+    padding:14px 12px!important;
+  }
+  #result #resultHome{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    white-space:normal!important;
+  }
+}
+</style>
 </body>
 </html>
