@@ -6595,5 +6595,95 @@ body,body *{
  #atinaMainNav .home-nav-btn:active,#home .btn:active,#home .tile:active{transform:none!important}
 }
 </style>
+
+<style id="atina-all-game-buttons-gold-blue-20261127">
+/* Aplicar o relevo azul+dourado a todos os controlos interativos do jogo.
+   Mantém estados semânticos (perigo, correto/incorreto e desativado). */
+:root{
+  --atina-game-gold-top:#fff0b8;
+  --atina-game-gold-mid:#edc46b;
+  --atina-game-gold-bottom:#bf842f;
+  --atina-game-gold-edge:#81521e;
+  --atina-game-blue-top:#285b82;
+  --atina-game-blue-mid:#1b4265;
+  --atina-game-blue-bottom:#102b45;
+}
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+.choice,.answer-option):not(.danger):not([aria-disabled="true"]){
+  -webkit-tap-highlight-color:transparent;
+  border-radius:14px!important;
+  border-style:solid!important;
+  border-width:1px 1px 5px!important;
+  border-color:#ffedb0!important;
+  background:linear-gradient(180deg,var(--atina-game-gold-top) 0%,var(--atina-game-gold-mid) 43%,var(--atina-game-gold-bottom) 100%)!important;
+  color:#2c210f!important;
+  font-weight:800!important;
+  text-shadow:0 1px #fff3c7!important;
+  box-shadow:0 5px 0 var(--atina-game-gold-edge),0 9px 16px #0007,inset 0 1px #fffbdc!important;
+  transition:transform .16s cubic-bezier(.2,.75,.25,1),filter .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease!important;
+}
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+.choice,.answer-option):is(.secondary,.sound-toggle,.choice,.answer-option,[data-action="secondary"]):not(.danger):not([aria-disabled="true"]){
+  color:#f2f7fc!important;
+  border-color:#6285a2!important;
+  background:linear-gradient(180deg,var(--atina-game-blue-top) 0%,var(--atina-game-blue-mid) 52%,var(--atina-game-blue-bottom) 100%)!important;
+  text-shadow:0 1px 2px #0009!important;
+  box-shadow:0 5px 0 #071a2b,0 9px 16px #0007,inset 0 1px #ffffff35!important;
+}
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+.choice,.answer-option):is(.danger,[data-variant="danger"]){
+  border-color:#b8797d!important;
+  border-bottom:5px solid #29191e!important;
+  background:linear-gradient(180deg,#89545b 0%,#623b45 55%,#412832 100%)!important;
+  color:#fff0ed!important;
+  box-shadow:0 5px 0 #26191c,0 9px 16px #0007,inset 0 1px #ffffff25!important;
+}
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+.choice,.answer-option):disabled,
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+.choice,.answer-option)[aria-disabled="true"]{
+  cursor:not-allowed!important;
+  opacity:.58!important;
+  filter:saturate(.6)!important;
+  box-shadow:none!important;
+}
+@media(hover:hover) and (pointer:fine){
+  body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+  .choice,.answer-option):not(:disabled):not([aria-disabled="true"]):not(.danger):hover{
+    transform:translateY(-2px)!important;
+    filter:brightness(1.08)!important;
+    box-shadow:0 7px 0 #684319,0 13px 20px #0008,inset 0 1px #fffbdc!important;
+  }
+  body :is(button,.btn,[role="button"],summary,.choice,.answer-option):is(.secondary,.sound-toggle):not(:disabled):hover{
+    box-shadow:0 7px 0 #071a2b,0 13px 20px #0008,inset 0 1px #ffffff45!important;
+  }
+}
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+.choice,.answer-option):not(:disabled):not([aria-disabled="true"]):active{
+  transform:translateY(3px)!important;
+  filter:brightness(.97)!important;
+  box-shadow:0 1px 0 #684319,0 3px 7px #0007,inset 0 3px 7px #8b591e66!important;
+}
+body :is(button,.btn,[role="button"],summary,.choice,.answer-option):is(.secondary,.sound-toggle):not(:disabled):active{
+  box-shadow:0 1px 0 #071a2b,0 3px 7px #0007,inset 0 3px 7px #0005!important;
+}
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+.choice,.answer-option):focus-visible{
+  outline:3px solid #ffe5a0!important;
+  outline-offset:3px!important;
+}
+@media(max-width:480px){
+  body :is(button,.btn,[role="button"],summary,.choice,.answer-option):not(.danger){
+    min-height:46px;
+    border-radius:12px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,
+  .choice,.answer-option){transition:none!important}
+  body :is(button,.btn,[role="button"],summary,.choice,.answer-option):active{transform:none!important}
+}
+</style>
+
 </body>
 </html>
