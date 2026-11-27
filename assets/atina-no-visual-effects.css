@@ -1,0 +1,46 @@
+/* ATINA — neutralização global de efeitos visuais.
+   Apresentação básica: sem gradientes, brilhos, filtros, blur, animações ou transições.
+   Preserva conteúdo, cores sólidas, imagens reais, dimensões, foco acessível e funcionalidade. */
+*,*::before,*::after{
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  scroll-behavior:auto!important;
+}
+/* Remove camadas decorativas criadas por pseudo-elementos (brilhos, halos, overlays). */
+*::before,*::after{
+  background-image:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+/* Gradientes e texturas CSS são substituídos pelo fundo sólido já definido por cada componente. */
+body,body *:not(img):not(video):not(canvas):not(svg):not(path){
+  background-image:none!important;
+}
+/* Estados interativos sem elevação, brilho, zoom ou movimento. */
+:where(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+.tile,a.card):hover,
+:where(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+.tile,a.card):active,
+:where(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option,
+.tile,a.card):focus{
+  box-shadow:none!important;
+  filter:none!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+/* Mantém um indicador simples de foco para navegação por teclado. */
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid currentColor!important;
+  outline-offset:2px!important;
+  box-shadow:none!important;
+}
