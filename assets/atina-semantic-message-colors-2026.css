@@ -78,3 +78,9 @@
   font-weight:750!important;
   text-shadow:none!important;
 }
+
+
+/* Teste visual ATINA: remover apenas a faixa/sombra lateral do feedback negativo no jogo. */
+#game #feedback.is-wrong{
+  box-shadow:none!important;
+}
