@@ -1,0 +1,53 @@
+/* ATINA — camada terminal da interface plana.
+   Carregada depois dos estilos inline do documento para resolver a cascata.
+   Remove apenas a apresentação de cartões/painéis; preserva layout,
+   espaçamentos, conteúdo, estados, controlos e comportamento do jogo. */
+
+html body :is(
+  #home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+  #networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+  #atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+  #atinaSoloReportPanel,#teamVotePanel,main.wrap
+) :is(
+  .brand,.home-welcome,.home-block,.home-page-panel,.card,.panel,.section,
+  .daily-mission,.quick-match-panel,.online-panel,.online-ranking,
+  .home-page-nav,#atinaMainNav,.home-nav-more,.atina-fast-play,
+  .sound-control,.atina-xp-panel,.atina-level-gallery-panel,.atina-howto-card,
+  .play-block,.categories-block,.account-block,.settings-block,
+  .solution-panel,.result-panel,.menu-panel,.lobby-panel,.clue,
+  .visual,.timer-display,[class*="panel"],[class*="Panel"],[id$="Panel"]
+):not(button):not(.btn):not([role="button"]):not(summary):not(input):not(select):not(textarea){
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  outline-color:transparent!important;
+  border-radius:0!important;
+}
+
+/* As opções de jogo são botões, não cartões decorativos.
+   Mantêm a área de toque, tipografia, conteúdo e eventos. */
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,main.wrap)
+:is(button.tile,.tile[role="button]){
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  border-radius:0!important;
+  color:inherit!important;
+}
+
+/* Os controlos de ação continuam visualmente identificáveis e funcionais. */
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,main.wrap)
+:is(button,.btn,[role="button"],summary,input,select,textarea):not(.tile){
+  text-shadow:none!important;
+}
+
+/* Não remover os contornos de foco acessíveis. */
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,main.wrap)
+:is(button,.btn,[role="button"],summary,input,select,textarea):focus-visible{
+  outline:2px solid currentColor!important;
+  outline-offset:3px!important;
+}
