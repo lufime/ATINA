@@ -1611,16 +1611,23 @@ $('answer').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('answ
 function atinaOnlineCountBoot() {
   const header = document.querySelector('.brand');
   if (!header || document.getElementById('atinaOnlinePlayerCount')) return;
+  const indicators = document.createElement('div');
+  indicators.id = 'atinaOnlineIndicators';
+  indicators.className = 'atina-online-indicators';
+  indicators.setAttribute('role', 'group');
+  indicators.setAttribute('aria-label', 'Presença online');
   const counter = document.createElement('div');
   counter.id = 'atinaOnlinePlayerCount';
   counter.setAttribute('role', 'status');
   counter.setAttribute('aria-live', 'polite');
   counter.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 11px;border:1px solid #39896c;border-radius:999px;background:#123c35;color:#b6f3d0;font-size:12px;font-weight:800;line-height:1.35';
-  counter.textContent = '● A ligar presença…';
+  counter.textContent = 'A ligar presença…';
+  counter.classList.add('is-unknown');
   counter.title = 'Pessoas com o ATINA aberto neste momento; não significa que estejam numa sala de jogo.';
   const adminButton = document.getElementById('adminOnlineButton');
-  if (adminButton) header.insertBefore(counter, adminButton);
-  else header.appendChild(counter);
+  if (adminButton) header.insertBefore(indicators, adminButton);
+  else header.appendChild(indicators);
+  indicators.appendChild(counter);
 
   const presenceKey = 'atinaSitePresenceSessionV1';
   const getSessionId = () => {
@@ -1665,13 +1672,20 @@ function atinaOnlineCountBoot() {
       });
       const stats = await atinaServerRpc('atina_online_player_stats', {});
       const total = Math.max(0, Number(stats?.counts?.total) || 0);
-      counter.textContent = '● ' + total + ' jogadores online';
+      counter.textContent = total + ' jogadores online';
       counter.title = 'Total de jogadores online, sem duplicações.';
       counter.dataset.count = String(total);
+      counter.dataset.onlineState = total > 0 ? 'online' : 'offline';
+      counter.classList.toggle('is-online', total > 0);
+      counter.classList.toggle('is-offline', total === 0);
+      counter.classList.remove('is-unknown');
       delete counter.dataset.humans;
     } catch (error) {
       console.warn('ATINA: não foi possível atualizar a presença online.', error);
-      counter.textContent = '● Presença online indisponível';
+      counter.textContent = 'Presença online indisponível';
+      counter.dataset.onlineState = 'unknown';
+      counter.classList.remove('is-online', 'is-offline');
+      counter.classList.add('is-unknown');
       delete counter.dataset.count;
     } finally {
       inFlight = false;
