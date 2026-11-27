@@ -4024,28 +4024,34 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
  try{
   let item=atinaSolutionImageCache.get(cacheKey);
   if(item===undefined){
-   const aliases=await atinaSolutionImageAliases(cleanAnswer);
-   // Primeiro: imagens previamente verificadas e guardadas no próprio projeto.
-   const curatedItem=await atinaFindCuratedSolutionImage(cleanAnswer,aliases);
-   // Em jogo online, aceitar o URL enviado pelo servidor apenas quando coincide
-   // com a imagem curada e os respetivos créditos do catálogo.
+   // Se o servidor já forneceu uma imagem publicada, não procurar nem substituir
+   // por outra imagem. Validar o ficheiro e os créditos do desafio no Supabase.
+   const aliases=preGeneratedUrl?[]:await atinaSolutionImageAliases(cleanAnswer);
+   const curatedItem=preGeneratedUrl?null:await atinaFindCuratedSolutionImage(cleanAnswer,aliases);
    const generatedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/solutions/';
    const trustedGeneratedUrl=typeof preGeneratedUrl==='string'
     &&preGeneratedUrl.startsWith(generatedStoragePrefix)
-    &&/^\d+\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
+    &&/^\\d+\\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
    const publishedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/challenges/';
    const publishedPath=typeof preGeneratedUrl==='string'&&preGeneratedUrl.startsWith(publishedStoragePrefix)?preGeneratedUrl.slice(publishedStoragePrefix.length):'';
-   const trustedPublishedUrl=!!solutionCredit&&String(solutionCredit.source||'').toLowerCase()==='atina'
-    &&String(solutionCredit.challenge_id||'')===publishedPath.split('/')[0]
-    &&/^\d+\/[a-f0-9]{64}\.(?:jpg|jpeg|png|webp)$/i.test(publishedPath);
+   const publishedMatch=publishedPath.match(/^(\\d+)\\/([a-f0-9]{64})\\.(?:jpg|jpeg|png|webp)$/i);
+   let publishedCredit=solutionCredit;
+   const validAtinaCredit=credit=>!!credit
+    &&String(credit.author||'').trim().toLowerCase()==='atina'
+    &&String(credit.attribution||'').trim().toLowerCase()==='atina'
+    &&String(credit.source_url||'').trim()==='gerada-por-ia://chatgpt';
+   if(publishedMatch&&!validAtinaCredit(publishedCredit)&&supabaseClient?.rpc){
+    try{
+     const {data,error}=await supabaseClient.rpc('atina_image_credit',{p_challenge_id:Number(publishedMatch[1])});
+     if(!error)publishedCredit=data||null;
+    }catch(error){}
+   }
+   const trustedPublishedUrl=!!publishedMatch&&validAtinaCredit(publishedCredit);
    const publishedItem=trustedPublishedUrl?{
-    title:cleanAnswer,thumburl:preGeneratedUrl,mime:'image/jpeg',width:768,height:768,
-    sourceName:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'ATINA':' '+String(solutionCredit.source||'Fonte da imagem'),
-    sourceUrl:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'':solutionCredit.source_url||'',
-    author:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'ATINA':solutionCredit.author||'Autor não identificado',
-    license:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'© ATINA — Todos os direitos reservados':solutionCredit.license||'Licença não identificada',
-    licenseUrl:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'':solutionCredit.license_url||'',
-    attribution:/chatgpt|imagem própria|^atina/i.test(String(solutionCredit.source||''))?'© ATINA':solutionCredit.attribution||''
+    title:cleanAnswer,thumburl:preGeneratedUrl,mime:'image/webp',width:1920,height:1080,
+    sourceName:'ATINA',sourceUrl:'',author:'ATINA',
+    license:publishedCredit.license||'Imagem original gerada para o ATINA',
+    licenseUrl:publishedCredit.license_url||'',attribution:'ATINA'
    }:null;
    const generatedItem=trustedGeneratedUrl?{
     title:cleanAnswer,
@@ -4059,9 +4065,7 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
     license:'Imagem gerada por IA; modelo FLUX.1-schnell sob Apache-2.0',
     licenseUrl:'https://www.apache.org/licenses/LICENSE-2.0'
    }:null;
-   item=preGeneratedUrl
-    ?(curatedItem&&curatedItem.thumburl===preGeneratedUrl?curatedItem:(publishedItem||generatedItem))
-    :curatedItem;
+   item=preGeneratedUrl?(publishedItem||generatedItem):curatedItem;
    // ATINA: não pesquisar nem carregar imagens de fontes externas.
    // Só usar imagens locais curadas ou imagens ATINA alojadas no Supabase, verificadas acima.
    atinaSolutionImageCache.set(cacheKey,item||null);
