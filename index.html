@@ -3400,7 +3400,7 @@ $('voice').onclick=()=>{
 };
 $('listenAnswer').onclick=()=>{const answerText=networkRoom&&networkGameState?(networkGameState.answer||''):(games[queue[pos]]?.[3]||'');if(!answerText){$('feedback').textContent='A resposta ainda não está disponível para leitura.';return;}if(!atinaSpeechSupported()){$('feedback').textContent=atinaSpeechDeviceWarning()||'A leitura em voz alta não está disponível neste navegador.';return;}window.speechSynthesis.cancel();const ok=atinaSpeakClue('A resposta correta é: '+answerText,true);if(!ok)$('feedback').textContent='Não foi possível iniciar a leitura em voz alta.';};$('pass').onclick=pass;$('continue').onclick=next;$('answer').addEventListener('input',saveLocalProgress);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
 // Autenticação desativada: o ranking funciona apenas com pseudónimo.
- $('menuRankingMode').onchange=loadMenuRanking;$('rankingBack').onclick=()=>screen('home');
+ $('menuRankingMode')?.addEventListener('change',loadMenuRanking);$('rankingBack').onclick=()=>screen('home');
 $('loadRanking').onclick=()=>{screen('home');showHomePage('ranking');};$('resultHome').onclick=()=>{if(networkRoom&&networkGameState?.mode==='mimicas'){networkLeaveRoom();return;}screen('home');update();};renderCategories();void refreshActiveChallengeCategories();void refreshGeographicScopes();update();atinaRenderDailyMission();$('dailyMissionStart').onclick=()=>{const category=atinaDailyCategory();if(category){showHomePage('play');start('solo',category);}};
 // Recupera o ecrã e o separador que estavam abertos antes da atualização.
 restoreLastScreen();
