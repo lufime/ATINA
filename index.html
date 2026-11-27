@@ -6846,5 +6846,65 @@ body :is(button,.btn,[role="button"],summary,.choice,.answer-option):is(.danger)
 }
 </style>
 
+
+<style id="atina-uniform-button-geometry-20261127">
+/* Uniformização final dos botões: mesma altura, alinhamento e relevo em todas as áreas.
+   Mantém as cores e os estados semânticos; apenas normaliza a geometria e a sombra. */
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option){
+  box-sizing:border-box!important;
+  min-height:48px!important;
+  height:48px!important;
+  padding-block:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  line-height:1.15!important;
+  vertical-align:middle!important;
+  border-radius:12px!important;
+  border-bottom-width:1px!important;
+  box-shadow:0 1px 3px #0003,inset 0 1px 0 #ffffff20!important;
+  text-shadow:none!important;
+  font-family:inherit!important;
+  font-weight:700!important;
+}
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option):disabled,
+body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option)[aria-disabled="true"]{
+  box-shadow:none!important;
+}
+body :is(button,.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option):not(:disabled):not([aria-disabled="true"]):active{
+  transform:translateY(1px)!important;
+  box-shadow:inset 0 1px 2px #0003!important;
+}
+@media(prefers-reduced-motion:reduce){
+  body :is(button,input[type="button"],input[type="submit"],.btn,[role="button"],summary,.home-nav-btn,.choice,.answer-option){transition:none!important}
+}
+</style>
+
+
+<style id="atina-uniform-button-specificity-20261127">
+/* Garantir que as dimensões comuns prevalecem sobre regras antigas por página. */
+#home button,#home .btn,#home .home-nav-btn,#home .home-nav-more>summary,
+#game button,#game .btn,#game [role="button"],
+#result button,#result .btn,#mimicaGame button,#mimicaGame .btn,
+#networkLobby button,#networkLobby .btn,#networkHostTools button,#networkHostTools .btn,
+#networkScoreboard button,#networkScoreboard .btn{
+  height:48px!important;
+  min-height:48px!important;
+  padding-top:0!important;
+  padding-bottom:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  line-height:1.15!important;
+  border-radius:12px!important;
+  border-bottom-width:1px!important;
+  box-shadow:0 1px 3px #0003,inset 0 1px 0 #ffffff20!important;
+}
+#home .actions>.btn,#home .actions>button,#home .home-tools .btn,
+#game .actions>.btn,#game .actions>button{
+  width:100%;
+}
+</style>
+
 </body>
 </html>
