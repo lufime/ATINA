@@ -4033,10 +4033,10 @@ async function atinaShowSolutionImage(answer,category,targetId,hiddenTags=[],pre
    const generatedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/solutions/';
    const trustedGeneratedUrl=typeof preGeneratedUrl==='string'
     &&preGeneratedUrl.startsWith(generatedStoragePrefix)
-    &&/^\\d+\\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
+    &&/^\d+\.webp$/.test(preGeneratedUrl.slice(generatedStoragePrefix.length));
    const publishedStoragePrefix='https://qvvlqrgbtjujsejvenld.supabase.co/storage/v1/object/public/atina-challenge-images/challenges/';
    const publishedPath=typeof preGeneratedUrl==='string'&&preGeneratedUrl.startsWith(publishedStoragePrefix)?preGeneratedUrl.slice(publishedStoragePrefix.length):'';
-   const publishedMatch=publishedPath.match(/^(\\d+)\\/([a-f0-9]{64})\\.(?:jpg|jpeg|png|webp)$/i);
+   const publishedMatch=publishedPath.match(/^(\d+)\/([a-f0-9]{64})\.(?:jpg|jpeg|png|webp)$/i);
    let publishedCredit=solutionCredit;
    const validAtinaCredit=credit=>!!credit
     &&String(credit.author||'').trim().toLowerCase()==='atina'
