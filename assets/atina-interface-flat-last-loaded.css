@@ -471,3 +471,44 @@ html body #networkLobby :is(button,.btn,[role="button"],summary):is(:hover,:acti
   box-shadow:none!important;
   transition:none!important;
 }
+
+
+/* Navegação principal: Início, Jogar, Modos e Mais — estilo plano explícito. */
+html body #atinaMainNav .home-nav-btn,
+html body #atinaMainNav .home-nav-more>summary,
+html body .home-page-nav .home-nav-btn,
+html body .home-page-nav .home-nav-more>summary{
+  background-color:#1b4265!important;
+  background-image:none!important;
+  color:#f2f7fc!important;
+  border:1px solid #426987!important;
+  border-bottom:1px solid #426987!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+  outline-offset:2px!important;
+}
+html body #atinaMainNav .home-nav-btn.active,
+html body .home-page-nav .home-nav-btn.active{
+  background-color:#d3ad68!important;
+  background-image:none!important;
+  color:#17202b!important;
+  border:1px solid #b58d49!important;
+  box-shadow:none!important;
+  outline:none!important;
+}
+html body #atinaMainNav .home-nav-btn:hover,
+html body #atinaMainNav .home-nav-btn:active,
+html body #atinaMainNav .home-nav-more>summary:hover,
+html body #atinaMainNav .home-nav-more>summary:active,
+html body .home-page-nav .home-nav-btn:hover,
+html body .home-page-nav .home-nav-btn:active{
+  background-image:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  transform:none!important;
+}
