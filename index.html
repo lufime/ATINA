@@ -1548,6 +1548,14 @@ document.addEventListener('DOMContentLoaded',()=>{
 #home [data-home-page="dashboard"]{position:relative!important;isolation:auto!important}
 @media(max-width:700px){#atinaMainNav:has(.home-nav-more[open]){margin-bottom:36px!important}}
 </style>
+
+<style id="atina-nav-buttons-narrower">
+/* Navegação compacta: o botão Mais não ocupa a largura total do ecrã. */
+#atinaMainNav .home-nav-more>summary{width:min(100%,190px)!important;margin:0 auto!important;min-height:42px!important;padding:7px 12px!important}
+#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{width:min(100%,560px)!important;max-width:560px!important;margin:8px auto 4px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#atinaMainNav .home-nav-more-grid .home-nav-btn{min-height:42px!important;padding:7px 10px!important}
+@media(max-width:420px){#atinaMainNav .home-nav-more>summary{width:min(100%,170px)!important}#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{width:100%!important;max-width:100%!important}}
+</style>
 </head>
 <body><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
