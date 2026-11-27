@@ -5923,5 +5923,82 @@ input::placeholder,textarea::placeholder{color:#91a7ba!important}
 }
 </style>
 
+
+<style id="atina-game-message-boxes-20261127">
+/* ATINA — todas as mensagens do jogo em caixas semânticas e consistentes. */
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(#feedback,#atinaCloudStatus,#saveStatus,.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,[role="status"],[role="alert"],[data-tone]){
+ box-sizing:border-box!important;
+ display:block!important;
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ margin:10px 0!important;
+ padding:12px 14px!important;
+ border:2px solid #c79a27!important;
+ border-radius:12px!important;
+ background:linear-gradient(145deg,#493916,#30270f)!important;
+ color:#ffe082!important;
+ box-shadow:inset 0 0 0 1px #ffe08218,0 5px 16px #0004!important;
+ font-weight:800!important;
+ line-height:1.5!important;
+ white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;
+ text-shadow:none!important;
+}
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(#feedback,#atinaCloudStatus,#saveStatus,.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,[role="status"],[role="alert"],[data-tone])[data-tone="positive"],
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(#feedback,#atinaCloudStatus,#saveStatus,.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,[role="status"],[role="alert"],[data-tone]).is-correct,
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(.success,.positive,.is-success,[data-status="success"],[data-status="positive"]){
+ border-color:#27c66d!important;
+ background:linear-gradient(145deg,#123d2b,#0c2b20)!important;
+ color:#8af0ae!important;
+ box-shadow:inset 0 0 0 1px #8af0ae20,0 5px 16px #0004!important;
+}
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(#feedback,#atinaCloudStatus,#saveStatus,.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,[role="status"],[role="alert"],[data-tone])[data-tone="negative"],
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(#feedback,#atinaCloudStatus,#saveStatus,.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,[role="status"],[role="alert"],[data-tone]).is-wrong,
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(.error,.is-error,.negative,.danger,[data-status="error"],[data-status="negative"]){
+ border-color:#ed4b55!important;
+ background:linear-gradient(145deg,#501e27,#35151d)!important;
+ color:#ff9aa0!important;
+ box-shadow:inset 0 0 0 1px #ff9aa020,0 5px 16px #0004!important;
+}
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(#feedback,#atinaCloudStatus,#saveStatus,.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,[role="status"],[role="alert"],[data-tone])[data-tone="neutral"],
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(.is-info,.info,.neutral,.is-warning,[data-status="info"],[data-status="neutral"]){
+ border-color:#d5a92f!important;
+ background:linear-gradient(145deg,#493916,#30270f)!important;
+ color:#ffe082!important;
+}
+:where(#game,#mimicaGame,#result,#home,.network-block,#networkLobby,#networkHostTools,#networkScoreboard)
+:where(#feedback,#atinaCloudStatus,#saveStatus,.feedback,.message,.game-message,
+.atina-message,.atina-alert,.atina-warning,.alert,.warning,.notice,.toast,
+.status-message,[role="status"],[role="alert],[data-tone]) *{
+ max-width:100%!important;overflow-wrap:anywhere!important;
+}
+#atinaUpdateNotice:not(.hidden){
+ border:2px solid #d5a92f!important;
+ background:linear-gradient(145deg,#493916,#30270f)!important;
+ color:#ffe082!important;
+}
+</style>
 </body>
 </html>
