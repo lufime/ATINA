@@ -1556,6 +1556,37 @@ document.addEventListener('DOMContentLoaded',()=>{
 #atinaMainNav .home-nav-more-grid .home-nav-btn{min-height:42px!important;padding:7px 10px!important}
 @media(max-width:420px){#atinaMainNav .home-nav-more>summary{width:min(100%,170px)!important}#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{width:100%!important;max-width:100%!important}}
 </style>
+
+<style id="atina-unified-compact-buttons">
+/* Padrão comum de botões em todas as páginas e modos do ATINA. */
+:root{--atina-action-max-width:520px}
+button.btn,.btn,button.home-nav-btn,.home-nav-btn{
+ box-sizing:border-box!important;
+}
+.btn.full,button.btn.full{
+ width:100%!important;max-width:min(100%,var(--atina-action-max-width))!important;
+ margin-left:auto!important;margin-right:auto!important;
+}
+/* Botões de ação sem largura forçada: compactos, centrados e com toque confortável. */
+button.btn:not(.full),.btn:not(.full){
+ max-width:100%!important;
+ padding-left:clamp(10px,2.2vw,16px)!important;
+ padding-right:clamp(10px,2.2vw,16px)!important;
+}
+/* Nas grelhas, manter o alinhamento e impedir que um botão se estique além do limite. */
+.actions>.btn.full,.actions>button.btn.full,
+.row>.btn.full,.row>button.btn.full,
+#home .home-page-panel .btn.full{
+ justify-self:center!important;
+}
+#atinaMainNav .home-nav-more>summary{max-width:170px!important}
+#atinaMainNav .home-nav-more-grid .home-nav-btn{max-width:100%!important}
+@media(max-width:420px){
+ :root{--atina-action-max-width:100%}
+ .btn.full,button.btn.full{max-width:min(100%,460px)!important}
+ button.btn:not(.full),.btn:not(.full){padding-left:10px!important;padding-right:10px!important}
+}
+</style>
 </head>
 <body><main class="wrap">
 <div id="atinaUpdateNotice" class="hidden" role="status" aria-live="polite">
