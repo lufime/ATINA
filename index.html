@@ -1510,7 +1510,7 @@ label.section{line-height:1.35!important}
 @media(max-width:700px){#atinaMainNav{z-index:1000!important;margin-bottom:14px!important}#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{bottom:calc(100% + 7px)!important;right:0!important}}
 </style>
 <script id="atina-nav-more-mobile-fix-js">
-(()=>{
+document.addEventListener('DOMContentLoaded',()=>{
  const menu=document.getElementById('atinaNavMore');
  const summary=menu?.querySelector(':scope > summary');
  if(!menu||!summary||menu.dataset.mobileFix==='1')return;
@@ -1521,7 +1521,7 @@ label.section{line-height:1.35!important}
   summary.setAttribute('aria-expanded',menu.open?'true':'false');
  });
  menu.addEventListener('toggle',()=>summary.setAttribute('aria-expanded',menu.open?'true':'false'));
-})();
+});
 </script>
 </head>
 <body><main class="wrap">
