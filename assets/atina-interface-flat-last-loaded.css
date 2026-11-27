@@ -29,7 +29,7 @@ html body :is(
 /* As opções de jogo são botões, não cartões decorativos.
    Mantêm a área de toque, tipografia, conteúdo e eventos. */
 html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,main.wrap)
-:is(button.tile,.tile[role="button]){
+:is(button.tile,.tile[role="button"]{
   background:transparent!important;
   background-image:none!important;
   border:0!important;
