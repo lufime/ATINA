@@ -1,0 +1,8 @@
+/* ATINA — estilos base partilhados da administração */
+:root{color-scheme:dark;--bg:#0b1421;--panel:#14243a;--line:#36516e;--gold:#d3ad68;--text:#f3f0e8;--muted:#aab6c5}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#1b3049,#0b1421 65%);color:var(--text);font:16px system-ui,sans-serif;min-height:100vh;padding:20px 12px}
+main{max-width:760px;margin:auto}
+.panel{background:#122238;border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}
+h1{font-size:24px;margin:4px 0 8px}
+.admin-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
