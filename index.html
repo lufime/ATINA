@@ -30,7 +30,8 @@
 </script>
 <link rel="manifest" href="./manifest.webmanifest">
 <title>ATINA — Jogos de Adivinhas, Enigmas e Desafios</title>
-<style>
+<style id="atina-ui-layer-01">
+/* Bloco original: sem-id */
 :root{color-scheme:dark;--bg:#0b1421;--panel:#14243a;--panel2:#1b3049;--gold:#d3ad68;--text:#f3f0e8;--muted:#aab6c5;--line:#30445b;--red:#e58b83;--green:#83c6a4}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b3049 0,#0b1421 58%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
 button,input{font:inherit}button{cursor:pointer}.wrap{max-width:760px;margin:auto;padding:18px 15px 42px}.brand{padding:23px 20px;border:1px solid #43546a;border-radius:20px;background:linear-gradient(135deg,#14243a,#304b65);box-shadow:0 12px 35px #0005}.eyebrow{font-size:11px;letter-spacing:.2em;color:#d8c49c}.logo{font-size:36px;font-weight:850;letter-spacing:.16em;margin:8px 0 0}.tag{color:#d6deea;font-size:14px}.stats{display:flex;justify-content:space-between;gap:8px;margin-top:20px;font-size:13px}.section{margin:22px 0 10px;font-weight:700}.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile,.card{border:1px solid var(--line);background:#122238;border-radius:14px;color:var(--text)}.tile{padding:14px;text-align:left;min-height:82px}.tile b{display:block;font-size:14px;margin-top:6px}.tile small{color:var(--muted)}.tile:active,.btn:active{transform:scale(.985)}.btn{border:0;border-radius:12px;padding:13px 16px;font-weight:750;background:var(--gold);color:#17202b}.btn.secondary{background:#1a2d44;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#412b31;color:#ffd9d4;border:1px solid #805052}.full{width:100%}.card{padding:17px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.muted{color:var(--muted)}.small{font-size:12px}.clues{display:grid;gap:8px;margin:14px 0}.clue{padding:11px 12px;background:#1b3049;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;line-height:1.4}.clue.hidden-clue{color:#9ca9b8;font-style:italic;border-left-color:#526176}.answer{width:100%;padding:16px;border:1px solid #53657b;border-radius:12px;background:#0d1a2a;color:white;font-size:18px;margin:8px 0 10px;min-height:56px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
@@ -485,7 +486,8 @@ button:not(.tile):not(.sound-toggle):disabled{cursor:not-allowed;opacity:.58;fil
 }
 </style>
 <link rel="stylesheet" href="assets/atina-ui-system.css?v=1"> 
-<style>
+<style id="atina-ui-layer-02">
+/* Bloco original: sem-id */
 /* Pequenos reforços globais de acessibilidade e utilização em ecrãs tácteis. */
 button,input,select,textarea{touch-action:manipulation}
 button{min-height:44px}
@@ -563,9 +565,8 @@ button:disabled{cursor:not-allowed;opacity:.58;filter:saturate(.65)}
  #game .actions{gap:7px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-</style>
 
-<style>
+/* Bloco original: sem-id */
 /* ATINA UI refresh — hierarquia visual, leitura rápida e mobile */
 :root{--atina-panel:#10243a;--atina-panel-soft:#142d46;--atina-line:#34536f;--atina-gold:#f3ce82}
 .wrap{width:min(100%,820px);padding:clamp(12px,3vw,22px) 14px 38px}
@@ -606,8 +607,8 @@ button:active{filter:brightness(1.08)}
  #atinaUpdateNotice{font-size:14px}
 }
 @media(prefers-reduced-motion:reduce){button{transition:none}.home-page-panel{animation:none}}
-</style>
-<style>
+
+/* Bloco original: sem-id */
 /* Dashboard guide and decluttered profile location */
 .atina-howto{margin:14px 0 17px;padding:15px;border:1px solid #345675;border-radius:18px;background:linear-gradient(145deg,#132e49,#102237);box-shadow:0 8px 22px #0002}
 .atina-howto-title{display:flex;align-items:center;gap:11px;margin-bottom:13px}
@@ -627,8 +628,8 @@ button:active{filter:brightness(1.08)}
 .atina-scoring small{font-size:11px;line-height:1.45;color:#b8c8d8}
 #atinaCloudProgressPanel{margin:14px 0}
 @media(max-width:430px){.atina-howto{padding:13px}.atina-howto-steps{gap:5px}.atina-howto-steps>div{display:block;padding:9px 7px}.atina-howto-steps b{margin-bottom:6px}.atina-howto-steps strong{font-size:11px}.atina-howto-steps small{font-size:10px}}
-</style>
-<style>
+
+/* Bloco original: sem-id */
 /* Visibilidade estrita do painel de imagem: só na categoria dedicada */
 #visualWrap:not([data-challenge-category="imagem-misteriosa"]){display:none!important}
 #visualWrap[data-challenge-category="imagem-misteriosa"]{display:block!important}
@@ -656,8 +657,8 @@ button:active{filter:brightness(1.08)}
  .atina-quickstart-actions button{font-size:12px;min-height:46px}
  .atina-quickstart-info{font-size:10px;gap:6px 10px}
 }
-</style>
-<style>
+
+/* Bloco original: sem-id */
 /* Navegação simplificada: três destinos claros; categorias dentro de Jogar */
 .home-page-nav{grid-template-columns:repeat(3,minmax(0,1fr));max-width:620px;margin:14px auto 18px}
 .home-nav-btn{min-height:48px;font-size:clamp(13px,2.8vw,15px)}
@@ -667,7 +668,8 @@ button:active{filter:brightness(1.08)}
 #game>.row:first-child{display:flex;justify-content:space-between;align-items:center}
 #game #back{min-width:145px}
 @media(max-width:420px){.home-page-nav{gap:5px;padding:5px}.home-nav-btn{font-size:13px;padding:10px 4px}}
-</style><style>
+
+/* Bloco original: sem-id */
 .home-page-nav{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;padding:5px}
 .home-nav-btn{font-size:clamp(10px,2.2vw,13px);padding:9px 3px;min-height:46px;line-height:1.2}
 .home-nav-btn.active{background:linear-gradient(135deg,#214b70,#173754)}
@@ -677,7 +679,8 @@ button:active{filter:brightness(1.08)}
 [data-home-page="settings"] .answer{margin:7px 0 12px;min-height:48px}
 [data-home-page="settings"] .sound-toggle{width:100%}
 @media(max-width:390px){.home-page-nav{grid-template-columns:repeat(3,minmax(0,1fr))}.home-nav-btn{font-size:11px;padding:8px 2px}}
-</style><style>
+
+/* Bloco original: sem-id */
 [data-home-page="ranking"] .home-welcome,[data-home-page="settings"] .home-welcome{margin-bottom:12px}
 [data-home-page="ranking"] #atinaCloudProgressPanel{display:block!important}
 [data-home-page="ranking"] #atinaCloudProgressPanel .row{align-items:center;flex-wrap:wrap}
@@ -688,7 +691,11 @@ button:active{filter:brightness(1.08)}
 [data-home-page="settings"] .answer{width:100%;box-sizing:border-box}
 [data-home-page="settings"] .sound-toggle{width:100%;min-height:48px}
 @media(max-width:480px){[data-home-page="ranking"] .home-welcome,[data-home-page="settings"] .home-welcome{padding:16px}}
-</style><style>.atina-live-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}.atina-live-stats span{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;padding:9px 5px;border:1px solid #385775;border-radius:12px;background:#0a1d30;color:#cbd9e7;font-size:11px;text-align:center}.atina-live-stats b{color:#ffdc82;font-size:13px}#game .clue{line-height:1.5}#game .clue-revealed{animation:atinaClueIn .22s ease-out}@keyframes atinaClueIn{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}#game #feedback.is-correct{border:1px solid #4aaf80;background:#123d32}#game #feedback.is-wrong{border:1px solid #bd6a62;background:#432a31}#game #answer:focus{border-color:#f3ce82!important;box-shadow:0 0 0 3px #f3ce8233}@media(max-width:390px){.atina-live-stats{gap:5px}.atina-live-stats span{font-size:10px;padding:8px 2px}}</style><style>
+
+/* Bloco original: sem-id */
+.atina-live-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}.atina-live-stats span{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;padding:9px 5px;border:1px solid #385775;border-radius:12px;background:#0a1d30;color:#cbd9e7;font-size:11px;text-align:center}.atina-live-stats b{color:#ffdc82;font-size:13px}#game .clue{line-height:1.5}#game .clue-revealed{animation:atinaClueIn .22s ease-out}@keyframes atinaClueIn{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}#game #feedback.is-correct{border:1px solid #4aaf80;background:#123d32}#game #feedback.is-wrong{border:1px solid #bd6a62;background:#432a31}#game #answer:focus{border-color:#f3ce82!important;box-shadow:0 0 0 3px #f3ce8233}@media(max-width:390px){.atina-live-stats{gap:5px}.atina-live-stats span{font-size:10px;padding:8px 2px}}
+
+/* Bloco original: sem-id */
 /* Navegação compacta e prioridades visuais */
 .home-page-nav{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;max-width:900px}
 .home-nav-btn{min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:clamp(10px,1.8vw,13px);padding:9px 4px}
@@ -704,8 +711,8 @@ button:active{filter:brightness(1.08)}
  .home-page-nav{gap:4px;padding:4px}
  .home-nav-btn{font-size:10px;min-height:40px}
 }
-</style>
-<style id="atina-professional-ui">
+
+/* Bloco original: atina-professional-ui */
 /* ATINA · sistema visual profissional */
 :root{--atina-surface:#102238;--atina-surface-raised:#172d45;--atina-border:#314b65;--atina-gold:#e2bd78;--atina-text:#f5f7fa;--atina-muted:#b1bfce}
 body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#071321 100%);color:var(--atina-text);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -737,9 +744,8 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  .actions{gap:8px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-</style>
 
-<style id="atina-multipage-navigation">
+/* Bloco original: atina-multipage-navigation */
 /* Páginas separadas: modos de jogo e modalidades deixam de estar misturados. */
 .home-page-nav{grid-template-columns:repeat(7,minmax(0,1fr));max-width:1040px;gap:6px}
 .home-nav-btn{font-size:clamp(10px,1.45vw,13px);padding:9px 4px;white-space:normal}
@@ -748,9 +754,8 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 #home [data-home-page="categories"] .home-hint{max-width:62ch}
 @media(max-width:700px){.home-page-nav{grid-template-columns:repeat(3,minmax(0,1fr));max-width:520px}}
 @media(max-width:360px){.home-page-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
-</style>
 
-<style id="atina-low-scroll-layout">
+/* Bloco original: atina-low-scroll-layout */
 /* Reduzir scroll: cabeçalho compacto, navegação em duas linhas e cartões mais densos. */
 .wrap{width:min(100% - 20px,920px)!important;padding-top:10px!important}
 .brand{min-height:0!important;padding:12px 14px!important;margin-bottom:8px!important}
@@ -805,9 +810,8 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  #categories .tile{min-height:76px!important}
  #categories .tile small{font-size:9px!important}
 }
-</style>
 
-<style id="atina-logical-navigation">
+/* Bloco original: atina-logical-navigation */
 /* Navegação coerente: quatro destinos por linha em ecrãs pequenos. */
 #atinaMainNav{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:6px!important;max-width:1040px!important}
 #atinaMainNav .home-nav-btn{min-width:0!important;min-height:44px;padding:8px 5px!important;font-size:clamp(11px,1.35vw,13px)!important;line-height:1.2;white-space:normal;overflow-wrap:normal}
@@ -843,32 +847,30 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  #atinaMainNav{gap:4px!important}
  #atinaMainNav .home-nav-btn{font-size:10px!important;min-height:38px;padding:6px 2px!important}
 }
-</style>
 
-<style id="atina-strict-page-visibility">
+/* Bloco original: atina-strict-page-visibility */
 /* A página selecionada é a única área de conteúdo visível.
    Esta regra sobrepõe estilos antigos que forçavam o dashboard a display:grid. */
 #home [data-home-page].hidden{display:none!important}
 #home [data-home-page="dashboard"]:not(.hidden){display:grid!important}
-</style>
 
-<style id="atina-dashboard-exclusive">
+/* Bloco original: atina-dashboard-exclusive */
 /* A mensagem de boas-vindas e a missão diária pertencem apenas ao Início. */
 #home [data-home-page][hidden],
 #home [data-home-page].hidden{display:none!important;visibility:hidden!important}
 #home [data-home-page="dashboard"]:not([hidden]):not(.hidden){display:grid!important;visibility:visible!important}
-</style>
 
-<style id="atina-reminder-style">.atina-reminder-settings{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:0 auto 10px;border:1px solid var(--line);border-radius:14px;background:#14243acc}.atina-reminder-settings strong{font-size:14px}.atina-reminder-settings p{margin:3px 0 0;color:var(--muted);font-size:12px;line-height:1.35}.atina-reminder-settings .btn{flex:0 0 auto;min-height:38px;padding:8px 12px;font-size:12px}@media(max-width:520px){.atina-reminder-settings{align-items:stretch;flex-direction:column}.atina-reminder-settings .btn{width:100%}}</style>
+/* Bloco original: atina-reminder-style */
+.atina-reminder-settings{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:0 auto 10px;border:1px solid var(--line);border-radius:14px;background:#14243acc}.atina-reminder-settings strong{font-size:14px}.atina-reminder-settings p{margin:3px 0 0;color:var(--muted);font-size:12px;line-height:1.35}.atina-reminder-settings .btn{flex:0 0 auto;min-height:38px;padding:8px 12px;font-size:12px}@media(max-width:520px){.atina-reminder-settings{align-items:stretch;flex-direction:column}.atina-reminder-settings .btn{width:100%}}
 
-<style id="atina-hide-welcome-and-daily-mission">
+/* Bloco original: atina-hide-welcome-and-daily-mission */
 /* Remover da página inicial os cartões de boas-vindas e missão diária. */
 #home [data-home-page="dashboard"] .home-welcome,
 #home [data-home-page="dashboard"] .daily-mission{
  display:none!important;
 }
-</style>
-<style id="atina-dashboard-sections-not-sticky">
+
+/* Bloco original: atina-dashboard-sections-not-sticky */
 /* Estes dois cartões acompanham o fluxo normal da página; não ficam presos ao topo. */
 #home [data-home-page="dashboard"] .home-welcome,
 #home [data-home-page="dashboard"] .daily-mission{
@@ -877,8 +879,8 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
  top:auto!important;
  z-index:auto!important;
 }
-</style>
-<style id="atina-larger-revealed-answer">
+
+/* Bloco original: atina-larger-revealed-answer */
 /* Destacar a resposta certa sem a separar do texto nem aumentar a letra. */
 #game .feedback .solution-answer{
  display:inline!important;
@@ -899,7 +901,8 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-<style id="atina-knowledge-levels">
+<style id="atina-ui-layer-03">
+/* Bloco original: atina-knowledge-levels */
 .atina-level-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
 .atina-knowledge-medal{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;position:relative;border:2px solid #6d8295;background:radial-gradient(circle at 35% 25%,#315675,#10263c 70%);color:#dce9f3;box-shadow:inset 0 0 0 4px #ffffff0b,0 5px 14px #0004}
 .atina-knowledge-medal .mdi{font-size:34px;line-height:1}
@@ -909,14 +912,13 @@ body{background:radial-gradient(ellipse at 50% -12%,#1d4568 0,#0b1a2a 46%,#07132
 .atina-level-gallery-card{padding:10px 5px!important}
 .atina-level-gallery-card strong{font-size:11px!important}
 @media(min-width:620px){.atina-level-gallery-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
-<style id="atina-delete-button-profile-only">
+
+/* Bloco original: atina-delete-button-profile-only */
 /* Segurança visual: o botão de apagar conta nunca aparece no contentor de acesso/início. */
 #atinaAccessAccountMount #atinaAccountDelete{display:none!important}
 #atinaProfileAccountMount #atinaAccountDelete.hidden{display:none!important}
-</style>
-</style>
 
-<style id="atina-layout-consistency-20261116">
+/* Bloco original: atina-layout-consistency-20261116 */
 /* ATINA — organização final: navegação, botões, texto e espaçamento */
 :root{
   --atina-control-radius:12px;
@@ -1021,10 +1023,8 @@ label.section{line-height:1.35!important}
 @media(prefers-reduced-motion:reduce){
   #atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn,.btn{transition:none!important}
 }
-</style>
 
-
-<style id="atina-play-without-scroll-20261116">
+/* Bloco original: atina-play-without-scroll-20261116 */
 /* Jogar sem percorrer o ecrã: ações principais no primeiro ecrã. */
 #home [data-home-page="dashboard"]{display:flex!important;flex-direction:column!important;gap:9px!important}
 #home .home-welcome{
@@ -1106,7 +1106,8 @@ label.section{line-height:1.35!important}
 </script>
 
 
-<style id="atina-ranking-alignment-20261117">
+<style id="atina-ui-layer-04">
+/* Bloco original: atina-ranking-alignment-20261117 */
 /* Colunas dos rankings alinhadas e medalhas proporcionais ao ecrã móvel. */
 .atina-ranking-table{width:100%;table-layout:fixed;border-collapse:collapse}
 .atina-ranking-table th,.atina-ranking-table td{box-sizing:border-box;padding:9px 6px;vertical-align:middle}
@@ -1132,8 +1133,11 @@ label.section{line-height:1.35!important}
  .atina-xp-ranking-table th:nth-child(2),.atina-xp-ranking-table td:nth-child(2){width:30%}
  .atina-xp-ranking-table th:nth-child(4),.atina-xp-ranking-table td:nth-child(4){width:46%}
 }
-</style>
-<style> .atina-qi-ranking-table th:nth-child(1),.atina-qi-ranking-table td:nth-child(1){width:9%}.atina-qi-ranking-table th:nth-child(2),.atina-qi-ranking-table td:nth-child(2){width:34%;text-align:left;overflow-wrap:anywhere}.atina-qi-ranking-table th:nth-child(3),.atina-qi-ranking-table td:nth-child(3){width:15%;text-align:right;font-variant-numeric:tabular-nums}.atina-qi-ranking-table th:nth-child(4),.atina-qi-ranking-table td:nth-child(4){width:17%;text-align:right}.atina-qi-ranking-table th:nth-child(5),.atina-qi-ranking-table td:nth-child(5){width:25%;text-align:right}</style><style id="atina-room-layout-match-solo">
+
+/* Bloco original: sem-id */
+.atina-qi-ranking-table th:nth-child(1),.atina-qi-ranking-table td:nth-child(1){width:9%}.atina-qi-ranking-table th:nth-child(2),.atina-qi-ranking-table td:nth-child(2){width:34%;text-align:left;overflow-wrap:anywhere}.atina-qi-ranking-table th:nth-child(3),.atina-qi-ranking-table td:nth-child(3){width:15%;text-align:right;font-variant-numeric:tabular-nums}.atina-qi-ranking-table th:nth-child(4),.atina-qi-ranking-table td:nth-child(4){width:17%;text-align:right}.atina-qi-ranking-table th:nth-child(5),.atina-qi-ranking-table td:nth-child(5){width:25%;text-align:right}
+
+/* Bloco original: atina-room-layout-match-solo */
 /* A Sala conserva o mesmo ritmo visual do modo individual. */
 #networkTimeoutPanel{padding:12px 13px!important;margin:10px 0 14px!important;border-radius:16px!important}
 #networkTimeoutPanel>strong{font-size:15px}
@@ -1150,8 +1154,8 @@ label.section{line-height:1.35!important}
  #networkTimeoutActions{grid-template-columns:1fr}
  #networkScoreboard{padding:13px!important}
 }
-</style>
-<style id="atina-feedback-correct-parity">
+
+/* Bloco original: atina-feedback-correct-parity */
 /* Feedback de acerto com destaque consistente no Solo e na Sala. */
 #game #feedback.is-correct{
  display:block!important;box-sizing:border-box!important;width:100%!important;min-height:0!important;
@@ -1162,8 +1166,8 @@ label.section{line-height:1.35!important}
  font-size:clamp(23px,5vw,42px)!important;font-weight:850!important;line-height:1.25!important;
  overflow-wrap:anywhere!important;box-shadow:0 0 22px #55c18a22,inset 0 0 16px #55c18a0c!important;
 }
-</style>
-<style id="atina-home-visual-organization-v1">
+
+/* Bloco original: atina-home-visual-organization-v1 */
 /* Organização visual da página inicial: uniformidade sem alterar funcionalidades. */
 #home{gap:16px}
 #home .brand{margin-bottom:0}
@@ -1186,8 +1190,8 @@ label.section{line-height:1.35!important}
  #home .home-nav-btn{min-height:42px}
  #home .play-block,#home .categories-block{padding:12px}
 }
-</style>
-<style id="atina-home-finish-polish-v1">
+
+/* Bloco original: atina-home-finish-polish-v1 */
 /* Acabamento visual discreto: respiro, alinhamento e consistência */
 #home .brand .stats{column-gap:8px!important;row-gap:8px!important}
 #home .home-page-nav{column-gap:7px!important;row-gap:8px!important}
@@ -1201,9 +1205,11 @@ label.section{line-height:1.35!important}
  #atinaUpdateNotice{padding:10px 12px!important}
  .atina-notification-panel{padding:11px!important}
 }
-</style>
-<style id="atina-online-friends-right-v1">#home .brand .stats{width:100%!important;box-sizing:border-box!important;display:flex!important;justify-content:space-between!important;align-items:center!important;gap:6px!important;flex-wrap:nowrap!important}#home #atinaOnlineFriendsBadge{margin-left:auto!important;flex:0 0 auto!important}#home #atinaOnlinePlayerCount{flex:0 1 auto!important}@media(max-width:380px){#home .brand .stats{gap:4px!important}#home #atinaOnlineFriendsBadge{margin-left:auto!important}}</style>
-<style id="atina-profile-polish-v1">
+
+/* Bloco original: atina-online-friends-right-v1 */
+#home .brand .stats{width:100%!important;box-sizing:border-box!important;display:flex!important;justify-content:space-between!important;align-items:center!important;gap:6px!important;flex-wrap:nowrap!important}#home #atinaOnlineFriendsBadge{margin-left:auto!important;flex:0 0 auto!important}#home #atinaOnlinePlayerCount{flex:0 1 auto!important}@media(max-width:380px){#home .brand .stats{gap:4px!important}#home #atinaOnlineFriendsBadge{margin-left:auto!important}}
+
+/* Bloco original: atina-profile-polish-v1 */
 #home [data-home-page="profile"] #atinaCloudProgressPanel{overflow:hidden!important}
 #home [data-home-page="profile"] #atinaCloudProgressPanel>.row:first-child{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;flex-wrap:wrap!important;padding-bottom:10px!important;border-bottom:1px solid #3d5870!important}
 #home [data-home-page="profile"] #atinaCloudLevel{background:linear-gradient(135deg,#634d29,#9b783e)!important;color:#ffedc0!important;border:1px solid #c9a55c!important;font-weight:850!important;padding:6px 10px!important;border-radius:999px!important}
@@ -1214,8 +1220,8 @@ label.section{line-height:1.35!important}
 #home [data-home-page="profile"] .atina-level-gallery-card{transition:transform .16s ease,border-color .16s ease,background .16s ease}
 #home [data-home-page="profile"] .atina-level-gallery-card.is-unlocked{box-shadow:inset 0 0 0 1px #8d713f33}
 @media(max-width:480px){#home [data-home-page="profile"] #atinaCloudProgressPanel .row:has(#atinaCloudXp)>*{font-size:11px!important;padding:9px 3px!important}.atina-level-gallery-grid{gap:7px!important}.atina-level-gallery-card{padding:9px 4px!important}}
-</style>
-<style id="atina-mobile-home-refinement-v1">
+
+/* Bloco original: atina-mobile-home-refinement-v1 */
 @media(max-width:600px){
   body{overflow-x:hidden!important}
   .wrap,#home{min-width:0!important;max-width:100%!important}
@@ -1246,8 +1252,8 @@ label.section{line-height:1.35!important}
   #home .home-nav-btn,.home-page-nav .home-nav-btn{font-size:10px!important;padding:6px 2px!important}
   #home .tile{min-height:64px!important;padding:8px!important}
 }
-</style>
-<style id="atina-sticky-game-timer-v1">
+
+/* Bloco original: atina-sticky-game-timer-v1 */
 #game .card>.row:has(#timerDisplay){
   position:sticky!important;
   top:max(6px,env(safe-area-inset-top))!important;
@@ -1260,8 +1266,8 @@ label.section{line-height:1.35!important}
 #game .card>.row:has(#timerDisplay) #timerDisplay{
   margin:0!important;
 }
-</style>
-<style id="atina-sticky-game-clues-v1">
+
+/* Bloco original: atina-sticky-game-clues-v1 */
 #game .card>.row:has(#clueProgress){
   position:sticky!important;
   top:112px!important;
@@ -1288,8 +1294,8 @@ label.section{line-height:1.35!important}
   #game .card>.row:has(#clueProgress){top:108px!important}
   #game #clues{top:151px!important;max-height:40vh!important}
 }
-</style>
-<style id="atina-clues-collapse-v1">
+
+/* Bloco original: atina-clues-collapse-v1 */
 #game #clueProgress{margin-left:auto!important}
 #game #atinaCluesToggle{
   border:1px solid #4d6c88!important;background:#18334b!important;color:#e3f0ff!important;
@@ -1322,7 +1328,8 @@ label.section{line-height:1.35!important}
  observer.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
-<style id="atina-clues-flow-fix-v1">
+<style id="atina-ui-layer-05">
+/* Bloco original: atina-clues-flow-fix-v1 */
 /* Keep clues in normal page flow; only the timer remains sticky. */
 #game #clues,#game #clueProgress,#game .card>.row:has(#clueProgress){
  position:static!important;top:auto!important;z-index:auto!important;
@@ -1332,8 +1339,8 @@ label.section{line-height:1.35!important}
 #game #clues.atina-clues-collapsed{display:none!important}
 #game #clues.atina-clues-expanded{display:grid!important}
 #game #clueProgress{margin-left:auto!important}
-</style>
-<style id="atina-mobile-home-reorganization-20261120">
+
+/* Bloco original: atina-mobile-home-reorganization-20261120 */
 /* ATINA — compact mobile navigation and dashboard; existing sections/functions retained */
 @media(max-width:700px){
  #atinaMainNav.home-page-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;padding:5px!important;margin:8px 0 12px!important;top:3px!important}
@@ -1390,14 +1397,14 @@ label.section{line-height:1.35!important}
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)render(false);});
 })();
 </script>
-<style id="atina-timer-wrap-fix-v1">
+<style id="atina-ui-layer-06">
+/* Bloco original: atina-timer-wrap-fix-v1 */
 /* ATINA — mantém o texto de preparação inteiro em ecrãs estreitos */
 #timerDisplay{white-space:normal!important;overflow-wrap:normal!important;word-break:keep-all!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
 #timerDisplay .timer-prepare-label{display:block!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;max-width:100%!important;text-align:center!important}
 #timerDisplay .timer-prepare-count{display:block!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;max-width:100%!important;text-align:center!important}
-</style>
 
-<style id="atina-player-navigation-redesign-v1">
+/* Bloco original: atina-player-navigation-redesign-v1 */
 /* ATINA — cabeçalho do jogador e navegação compacta */
 #home .brand{
   display:flex!important;flex-direction:column!important;align-items:center!important;
@@ -1496,11 +1503,8 @@ label.section{line-height:1.35!important}
   #atinaMainNav>.home-nav-btn,#atinaMainNav .home-nav-more>summary{min-height:40px!important;gap:3px!important;padding:6px 2px!important;font-size:11px!important}
 }
 @media(prefers-reduced-motion:reduce){#atinaMainNav *{scroll-behavior:auto!important;transition:none!important}}
-</style>
 
-
-
-<style id="atina-nav-more-mobile-fix">
+/* Bloco original: atina-nav-more-mobile-fix */
 /* Menu Mais: abertura previsível e sem ficar tapado pelos controlos fixos no telemóvel. */
 #atinaMainNav{position:relative!important;z-index:1000!important;overflow:visible!important;isolation:isolate}
 #atinaMainNav .home-nav-more{position:relative!important;z-index:1001!important;min-width:0!important}
@@ -1524,7 +1528,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
-<style id="atina-nav-more-in-flow-fix">
+<style id="atina-ui-layer-07">
+/* Bloco original: atina-nav-more-in-flow-fix */
 /* Menu Mais em fluxo normal: todas as opções ficam visíveis sem sobreposição nem corte. */
 #atinaMainNav{overflow:visible!important;min-height:0!important;height:auto!important;grid-auto-rows:minmax(0,auto)!important}
 #atinaMainNav .home-nav-more{position:static!important;min-width:0!important;z-index:2!important}
@@ -1539,25 +1544,22 @@ document.addEventListener('DOMContentLoaded',()=>{
 }
 #atinaMainNav .home-nav-more-grid .home-nav-btn{width:100%!important;min-width:0!important;min-height:44px!important;white-space:normal!important;overflow-wrap:anywhere!important;box-sizing:border-box!important}
 @media(max-width:420px){#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{gap:7px!important;padding:8px!important}#atinaMainNav .home-nav-more-grid .home-nav-btn{min-height:46px!important;font-size:12px!important}}
-</style>
 
-<style id="atina-nav-more-dashboard-spacing">
+/* Bloco original: atina-nav-more-dashboard-spacing */
 /* Reserva espaço real para o menu expandido, sem cobrir o primeiro cartão da página. */
 #atinaMainNav:has(.home-nav-more[open]){margin-bottom:30px!important;z-index:1000!important}
 #atinaMainNav .home-nav-more[open]>.home-nav-more-grid{margin-bottom:4px!important}
 #home [data-home-page="dashboard"]{position:relative!important;isolation:auto!important}
 @media(max-width:700px){#atinaMainNav:has(.home-nav-more[open]){margin-bottom:36px!important}}
-</style>
 
-<style id="atina-nav-buttons-narrower">
+/* Bloco original: atina-nav-buttons-narrower */
 /* Navegação compacta: o botão Mais não ocupa a largura total do ecrã. */
 #atinaMainNav .home-nav-more>summary{width:min(100%,190px)!important;margin:0 auto!important;min-height:42px!important;padding:7px 12px!important}
 #atinaMainNav .home-nav-more[open]>.home-nav-more-grid{width:min(100%,560px)!important;max-width:560px!important;margin:8px auto 4px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
 #atinaMainNav .home-nav-more-grid .home-nav-btn{min-height:42px!important;padding:7px 10px!important}
 @media(max-width:420px){#atinaMainNav .home-nav-more>summary{width:min(100%,170px)!important}#atinaMainNav .home-nav-more[open]>.home-nav-more-grid{width:100%!important;max-width:100%!important}}
-</style>
 
-<style id="atina-unified-compact-buttons">
+/* Bloco original: atina-unified-compact-buttons */
 /* Padrão comum de botões em todas as páginas e modos do ATINA. */
 :root{--atina-action-max-width:520px}
 button.btn,.btn,button.home-nav-btn,.home-nav-btn{
@@ -4158,7 +4160,8 @@ document.addEventListener('click',function(event){
   }catch(err){console.error('Erro ao fechar a partida:',err);}
  },true);
 })();
-</script><style id="atina-professional-overhaul">
+</script><style id="atina-ui-layer-08">
+/* Bloco original: atina-professional-overhaul */
 /* ATINA PROFESSIONAL UI — final override */
 :root{--bg:#081522!important;--panel:#10243a!important;--panel2:#18334e!important;--gold:#efc77d!important;--text:#f4f7fb!important;--muted:#b5c4d3!important;--line:#304d68!important}
 html{scroll-behavior:smooth}
@@ -4208,9 +4211,8 @@ body{margin:0!important;background:#071321!important;background-image:radial-gra
 }
 @media(max-width:360px){.home-nav-btn{font-size:10px!important}.wrap{width:calc(100% - 16px)!important}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
-</style>
 
-<style id="atina-quiz-show-identity">
+/* Bloco original: atina-quiz-show-identity */
 /* ATINA — identidade visual de concurso televisivo */
 :root{
   --bg:#080a18!important;
@@ -4357,10 +4359,8 @@ body{
     to{text-shadow:0 0 26px #a78bfa99,0 0 42px #45e0e822,0 4px 0 #17132e}
   }
 }
-</style>
 
-
-<style id="atina-quiz-show-home">
+/* Bloco original: atina-quiz-show-home */
 /* Palco de abertura — hierarquia do ecrã inicial */
 #home [data-home-page="dashboard"]{display:grid!important;gap:18px!important}
 #home .home-welcome{
@@ -4442,13 +4442,8 @@ body{
  #home .home-welcome>.btn{transition:transform .18s ease,box-shadow .18s ease!important}
  #home .home-welcome>.btn:hover{transform:translateY(-2px)!important;box-shadow:0 12px 34px #f3b95755,0 0 0 1px #fff7!important}
 }
-</style>
 
-
-
-
-
-<style id="atina-clean-home-layout">
+/* Bloco original: atina-clean-home-layout */
 .wrap{width:min(100% - 28px,920px)!important;max-width:920px!important;margin-inline:auto!important}
 .brand{width:min(100%,760px);margin:0 auto 12px;padding:18px 22px!important;min-height:0!important;border-radius:18px!important}
 .brand .logo-image{max-height:72px!important;width:auto!important;max-width:min(100%,300px)!important}
@@ -4469,9 +4464,8 @@ body{
  #home .home-welcome{padding:15px!important}
  #home .home-welcome .btn{width:100%!important;max-width:100%}
 }
-</style>
 
-<style id="atina-unified-design-system">
+/* Bloco original: atina-unified-design-system */
 /* ATINA — reformulação visual global: hierarquia, consistência e leitura */
 :root{
  --atina-bg:#091522;--atina-panel:#11263a;--atina-panel-raised:#172f46;
@@ -5022,14 +5016,8 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 
 #atinaLevelGallery:not([data-ready]){visibility:hidden;min-height:150px}
 #atinaLevelGallery[data-ready]{visibility:visible}
-</style>
 
-
-
-
-
-
-<style id="atina-compact-layout-20261115">
+/* Bloco original: atina-compact-layout-20261115 */
 /* ATINA — hierarquia visual clara e menos espaço desperdiçado */
 :root{--atina-gap:10px}
 .wrap{max-width:980px!important;padding-top:10px!important;padding-bottom:22px!important}
@@ -5092,9 +5080,8 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
  #home .home-nav-btn,#atinaMainNav .home-nav-btn{font-size:11px!important}
  #game #timerDisplay{min-height:58px!important}
 }
-</style>
 
-<style id="atina-legal-popup-20261115">
+/* Bloco original: atina-legal-popup-20261115 */
 .atina-legal-launcher{margin:10px 0!important;padding:13px!important}.atina-legal-launcher p{margin:5px 0 9px!important}
 .atina-legal-modal{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:14px}.atina-legal-modal.hidden{display:none!important}
 .atina-legal-backdrop{position:absolute;inset:0;background:rgba(2,8,16,.82);backdrop-filter:blur(5px)}
@@ -5103,10 +5090,11 @@ button.btn,.home-nav-btn,#atinaMainNav .home-nav-btn,
 .atina-legal-content{overflow:auto;min-height:0;padding:2px 5px 4px 0;overscroll-behavior:contain}.atina-legal-content h4{margin:12px 0 4px;color:#f0cf87;font-size:14px}.atina-legal-content p{font-size:13px;line-height:1.5;margin:5px 0}
 .atina-legal-dialog .consent-row{display:flex;align-items:flex-start;gap:9px;padding:10px;border:1px solid #405a73;border-radius:10px;font-size:13px;line-height:1.4}.atina-legal-dialog .consent-row input{width:19px;height:19px;flex:0 0 19px;margin:1px 0 0}.atina-legal-dialog>.btn.full{flex:0 0 auto;min-height:45px}
 @media(max-width:480px){.atina-legal-modal{padding:8px}.atina-legal-dialog{max-height:92dvh;padding:12px!important}.atina-legal-dialog h3{font-size:16px}}
-</style>
 
-<style id="atina-legal-reading-layout">#atinaLegalReadingBody{display:block;flex:1 1 auto;min-height:0;max-height:calc(92dvh - 145px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}#atinaLegalReadingBody #atinaLegalText{height:auto;max-height:none;overflow:visible;min-height:0}#atinaLegalReadingModal .atina-legal-dialog{height:92dvh;max-height:92dvh}#atinaLegalReadingModal .atina-legal-dialog>.row,#atinaLegalReadingModal .atina-legal-dialog>.btn{flex:0 0 auto}</style>
-<style id="atina-entry-gate-20261115">
+/* Bloco original: atina-legal-reading-layout */
+#atinaLegalReadingBody{display:block;flex:1 1 auto;min-height:0;max-height:calc(92dvh - 145px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}#atinaLegalReadingBody #atinaLegalText{height:auto;max-height:none;overflow:visible;min-height:0}#atinaLegalReadingModal .atina-legal-dialog{height:92dvh;max-height:92dvh}#atinaLegalReadingModal .atina-legal-dialog>.row,#atinaLegalReadingModal .atina-legal-dialog>.btn{flex:0 0 auto}
+
+/* Bloco original: atina-entry-gate-20261115 */
 /* Entrada oficial: antes da autenticação só existe a página de boas-vindas e acesso. */
 body.atina-logged-out #atinaMainNav,
 body.atina-logged-out #atinaUpdateNotice{display:none!important}
@@ -5149,9 +5137,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  body.atina-logged-out #atinaCloudProgressPanel{padding:12px!important}
  .atina-legal-inline .atina-legal-content{max-height:30vh}
 }
-</style>
 
-<style id="atina-howto-page">
+/* Bloco original: atina-howto-page */
 #atinaHowToPage{max-width:850px;margin-inline:auto}
 #atinaHowToPage .atina-howto-card{margin:12px 0;padding:16px}
 #atinaHowToPage .atina-howto-card h3{margin:0 0 9px;color:#f2d18b}
@@ -5159,34 +5146,35 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 #atinaHowToPage .atina-howto-card ul,#atinaHowToPage .atina-howto-card ol{padding-left:22px;margin:7px 0}
 #atinaHowToPage .atina-howto-card li{margin:5px 0}
 @media(max-width:700px){#atinaHowToPage .atina-howto-card{padding:13px!important}}
-</style>
 
-<style id="atina-account-delete-style">
+/* Bloco original: atina-account-delete-style */
 #atinaAccountDelete{border:1px solid #a94c4c!important;background:#4b2028!important;color:#ffe5e5!important}
 #atinaAccountDelete:active{background:#682a32!important}
-</style>
 
-<style id="atina-legal-progress-20261115">
+/* Bloco original: atina-legal-progress-20261115 */
 .atina-legal-progress{flex:0 0 auto;padding:2px 0 0}.atina-legal-progress-track{height:9px;width:100%;overflow:hidden;border-radius:99px;background:#263d55;border:1px solid #49627b}.atina-legal-progress-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#c99b4e,#f3d18a);transition:width .12s ease}.atina-legal-progress p{margin:4px 0 0!important;color:#f0cf87;font-size:12px;font-weight:750}.atina-legal-dialog #atinaLegalReadingBody{scrollbar-gutter:stable;touch-action:pan-y}
-</style>
 
-<style id="atina-legal-scroll-fix-20261115">
+/* Bloco original: atina-legal-scroll-fix-20261115 */
 /* O próprio texto é o único elemento com scroll; assim o evento e a medição coincidem. */
 #atinaLegalReadingModal #atinaLegalReadingBody{display:flex!important;flex:1 1 0!important;min-height:0!important;height:0!important;max-height:none!important;overflow:hidden!important;padding:0!important}
 #atinaLegalReadingModal #atinaLegalText{display:block!important;flex:1 1 auto!important;min-height:0!important;height:100%!important;max-height:100%!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:2px 7px 12px 0!important}
-</style>
 
-<style id="atina-hide-lower-legal-section">#atinaAccessPage>.atina-legal-inline{display:none!important}</style>
-<style id="atina-profile-terms-link-only">#atinaProfileAccountMount .atina-login-legal .atina-legal-instruction,#atinaProfileAccountMount .atina-login-legal .consent-row{display:none!important}#atinaAccessAccountMount .atina-login-legal .atina-legal-instruction,#atinaAccessAccountMount .atina-login-legal .consent-row{display:block!important}</style>
-<style id="atina-login-legal-position">.atina-login-legal{margin:9px 0 12px;padding:9px 11px;border:1px solid #49627b;border-radius:9px;background:#14283b}.atina-login-legal .atina-legal-link-wrap{margin:0 0 6px!important}.atina-login-legal .atina-legal-link-wrap a{font-size:14px!important}.atina-login-legal .consent-row{margin:4px 0}.atina-login-legal p{margin:4px 0 0!important}</style>
-<style id="atina-legal-link-highlight">
+/* Bloco original: atina-hide-lower-legal-section */
+#atinaAccessPage>.atina-legal-inline{display:none!important}
+
+/* Bloco original: atina-profile-terms-link-only */
+#atinaProfileAccountMount .atina-login-legal .atina-legal-instruction,#atinaProfileAccountMount .atina-login-legal .consent-row{display:none!important}#atinaAccessAccountMount .atina-login-legal .atina-legal-instruction,#atinaAccessAccountMount .atina-login-legal .consent-row{display:block!important}
+
+/* Bloco original: atina-login-legal-position */
+.atina-login-legal{margin:9px 0 12px;padding:9px 11px;border:1px solid #49627b;border-radius:9px;background:#14283b}.atina-login-legal .atina-legal-link-wrap{margin:0 0 6px!important}.atina-login-legal .atina-legal-link-wrap a{font-size:14px!important}.atina-login-legal .consent-row{margin:4px 0}.atina-login-legal p{margin:4px 0 0!important}
+
+/* Bloco original: atina-legal-link-highlight */
 .atina-legal-link-wrap{margin:9px 0 10px!important}
 .atina-legal-link-wrap a#atinaLegalOpenLink{display:inline!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;color:#f2cf79!important;text-decoration:underline!important;text-underline-offset:3px!important;box-shadow:none!important;font-size:15px!important;font-weight:750!important;line-height:1.5!important;animation:none!important}
 .atina-legal-link-wrap a#atinaLegalOpenLink:hover{color:#ffe5a8!important}
 .atina-legal-link-wrap a#atinaLegalOpenLink:focus-visible{outline:2px solid #f2cf79!important;outline-offset:3px}
-</style>
 
-<style id="atina-beta-version-0-1-0">
+/* Bloco original: atina-beta-version-0-1-0 */
 .atina-beta-version{position:fixed!important;top:max(9px,env(safe-area-inset-top))!important;right:max(9px,env(safe-area-inset-right))!important;z-index:2147483647!important;display:flex!important;width:max-content!important;align-items:center;gap:7px;margin:0!important;padding:6px 9px;border:1px solid #d3ad68;border-radius:999px;background:rgba(9,22,37,.94);color:#f3f0e8;box-shadow:0 3px 14px #0007;backdrop-filter:blur(7px);font-size:10px;line-height:1;letter-spacing:.04em;pointer-events:none}
 .atina-beta-version .atina-beta-label{color:#f3cf83;font-weight:850;letter-spacing:.08em}
 .atina-beta-version strong{font-size:11px;font-variant-numeric:tabular-nums}
@@ -5236,17 +5224,17 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 }
 #feedback.is-info *,#atinaUpdateNotice *,.atina-message-neutral *,.atina-alert *,.atina-warning *,.alert *,.warning *,.notice *,[role="alert"] *{color:#ffd84d!important;font-weight:700!important}
 @media(prefers-reduced-motion:reduce){#feedback,.atina-alert,.atina-warning,.alert,.warning,.notice,[role="alert"]{transition:none!important;animation:none!important}}
-
 </style>
 
 <script src="./assets/network-room-runtime.js?v=20261116-13"></script>
 
-<style id="atina-home-nav-unfreeze-20261120">
+<style id="atina-ui-layer-09">
+/* Bloco original: atina-home-nav-unfreeze-20261120 */
 /* Fix: a navegação da página inicial não deve ficar sobre o conteúdo nem prender o scroll no mobile. */
 #atinaMainNav,.home-page-nav{position:relative!important;top:auto!important;z-index:5!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
 @media(max-width:700px){#atinaMainNav,.home-page-nav{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;}#atinaMainNav .home-nav-btn,.home-page-nav .home-nav-btn{min-height:42px!important;padding:7px 3px!important;font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;}}
-</style>
-<style id="atina-notifications-style">
+
+/* Bloco original: atina-notifications-style */
 .atina-notifications-bell{display:flex!important;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:10px 0;font-weight:900}
 .atina-notifications-badge{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:20px;background:#b93342;color:#fff;font-size:12px;font-weight:950}.atina-notifications-badge[hidden]{display:none!important}
 .atina-notification-panel{margin:10px 0 14px;padding:13px;border:1px solid #31577b;border-radius:16px;background:linear-gradient(155deg,#10263f,#0b1b2d);box-shadow:0 12px 26px #0005}
@@ -5275,8 +5263,9 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 .atina-notification-item.neutral{border-left-color:#e5bd60}
 .atina-notification-empty{text-align:center;color:#afbed0;padding:15px 8px;background:#10233a;border:1px dashed #395878;border-radius:11px}
 .atina-notification-panel>#atinaNotificationsClose{margin-top:4px}
-</style>
-<style id="atina-social-style">.atina-social-panel{margin:10px 0!important}.atina-social-panel h3{margin:2px 0 9px}.atina-social-columns{display:grid;grid-template-columns:1fr;gap:8px}.atina-social-columns section{background:#0c1d2e;border:1px solid #365471;border-radius:12px;padding:10px}.atina-social-columns ul{padding-left:20px;margin:8px 0}.atina-social-columns li{margin:6px 0;overflow-wrap:anywhere}.atina-social-columns li button{margin:5px 4px 0 0;padding:7px 12px}.atina-social-notice{font-weight:900;border:2px solid;border-radius:10px;padding:9px;margin:8px 0}.atina-social-notice.positive{color:#78f0a4;border-color:#1d9952;background:#123524}.atina-social-notice.negative{color:#ff8181;border-color:#b73a3a;background:#3a171b}.atina-social-notice.neutral{color:#ffe082;border-color:#a77b20;background:#352b15}@media(min-width:700px){.atina-social-columns{grid-template-columns:repeat(3,1fr)}}@media(max-width:600px){.wrap{padding:9px 8px 24px}.brand{padding:13px 12px;border-radius:16px}.section{margin:13px 0 8px}.tile{padding:10px;min-height:65px}.card{padding:12px}.atina-social-panel{padding:10px!important;margin:7px 0!important}.atina-social-panel h3{font-size:17px}.atina-social-panel .answer{min-height:44px;padding:11px;font-size:15px;margin:5px 0 7px}.atina-social-panel .btn{padding:10px 12px;min-height:42px}.atina-social-columns{gap:5px}.atina-social-columns details,.atina-social-game{background:#0c1d2e;border:1px solid #365471;border-radius:10px;padding:8px 10px}.atina-social-columns details summary,.atina-social-game summary{font-weight:800;cursor:pointer;list-style:none}.atina-social-columns details summary::-webkit-details-marker,.atina-social-game summary::-webkit-details-marker{display:none}.atina-social-columns details summary:after,.atina-social-game summary:after{content:"＋";float:right;color:var(--gold)}.atina-social-columns details[open] summary:after,.atina-social-game[open] summary:after{content:"－"}.atina-social-columns details ul,.atina-social-game ul{margin:6px 0;padding-left:18px}.atina-social-columns li,.atina-social-game li{margin:4px 0!important}.atina-social-panel hr{margin:9px 0;border-color:#30445b}.atina-social-panel .section{margin:9px 0 5px}.atina-social-game{margin-top:8px}.atina-social-game p{margin:6px 0}.atina-notification-panel{padding:9px!important;margin:6px 0 9px!important}.atina-notification-item{padding:8px!important}.atina-notification-item p{font-size:12px;margin:3px 0}.atina-notification-actions button{min-height:36px;padding:7px 5px}.home-page-nav{gap:5px!important}.home-nav-btn{padding:8px 3px!important}}@media(max-width:600px){#home{gap:10px!important}#home .home-welcome{padding:12px!important;margin-bottom:8px!important;border-radius:14px}#home .home-welcome p{margin-bottom:9px!important;line-height:1.4}#home .home-welcome h2{margin:5px 0!important}#home .stats{gap:5px!important;font-size:12px!important;margin-top:10px!important}#home .modes{gap:6px!important}#home .tile{min-height:58px!important;padding:9px!important;border-radius:11px!important}#home .tile b{font-size:13px!important;margin-top:4px!important}#home .tile small{font-size:11px!important}.daily-mission,.atina-xp-panel{padding:11px!important;margin:9px 0!important;border-radius:13px!important}.daily-mission h3{font-size:16px!important}.daily-mission p{font-size:12px!important;margin:5px 0 8px!important}.daily-stats{gap:5px!important;margin:8px 0!important}.daily-stat{min-width:80px;padding:7px!important}.daily-stat b{font-size:16px!important}.home-page-nav{margin:5px 0!important}.home-nav-btn{min-height:38px!important;font-size:11px!important}.btn{min-height:42px;padding:10px 12px!important;border-radius:10px!important;font-size:14px!important}.answer{min-height:46px!important;padding:11px!important;font-size:16px!important}.section{font-size:14px!important}#game>.card{padding:12px!important;border-radius:15px!important}#question{margin-bottom:10px!important}#timerDisplay{min-height:70px!important}#game .visual{height:150px!important;margin:8px 0!important}.clues{gap:5px!important;margin:8px 0!important}.clue{padding:8px 9px!important;font-size:13px!important}.feedback{margin:6px 0!important;min-height:30px!important;font-size:13px!important}.actions,.game-control-row{gap:6px!important;margin:7px 0!important}.game-control-row .btn{min-height:43px!important;padding:8px 5px!important}#rankingList li{padding:5px 0!important}.online-panel .answer{margin:5px 0!important}#home .card{padding:11px!important}}.atina-count{display:inline-flex!important;min-width:20px;height:20px;align-items:center;justify-content:center;margin-left:6px;padding:0 6px;border-radius:12px;background:#d3ad68!important;color:#14243a!important;font-size:11px;font-weight:900;vertical-align:middle;line-height:1}@media(max-width:600px){.atina-count{min-width:18px;height:18px;font-size:10px}}.atina-summary-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%}.atina-summary-row .atina-count{margin-left:auto!important;flex-shrink:0!important}@media(max-width:600px){.atina-summary-row{width:100%}}.atina-friend-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:5px 0!important;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:#0c1d2e}.atina-friend-name{font-weight:700;flex:1 1 100%}.atina-friend-status{font-size:11px;font-weight:800}.atina-friend-status.online{color:#83c6a4}.atina-friend-status.offline{color:#aab6c5}.atina-friend-status.unknown{color:#d3ad68}.atina-friend-row button{min-height:32px!important;padding:5px 9px!important;font-size:12px!important}@media(min-width:500px){.atina-friend-name{flex:1 1 auto}}.atina-social-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.atina-online-friends-badge{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border-radius:999px;border:1px solid #39896c;background:#123c35;color:#b6f3d0;font-size:clamp(11px,2.5vw,13px);font-weight:800;line-height:1.35;white-space:nowrap;flex-shrink:0;margin-left:auto;cursor:pointer}.atina-online-friends-badge.has-online{background:#123b2b;color:#86d6a6;border:1px solid #248a58}@media(max-width:600px){.atina-online-friends-badge{font-size:clamp(11px,2.5vw,13px);padding:7px 11px;margin-left:auto}}/* Restore logo card and notice flow */
+
+/* Bloco original: atina-social-style */
+.atina-social-panel{margin:10px 0!important}.atina-social-panel h3{margin:2px 0 9px}.atina-social-columns{display:grid;grid-template-columns:1fr;gap:8px}.atina-social-columns section{background:#0c1d2e;border:1px solid #365471;border-radius:12px;padding:10px}.atina-social-columns ul{padding-left:20px;margin:8px 0}.atina-social-columns li{margin:6px 0;overflow-wrap:anywhere}.atina-social-columns li button{margin:5px 4px 0 0;padding:7px 12px}.atina-social-notice{font-weight:900;border:2px solid;border-radius:10px;padding:9px;margin:8px 0}.atina-social-notice.positive{color:#78f0a4;border-color:#1d9952;background:#123524}.atina-social-notice.negative{color:#ff8181;border-color:#b73a3a;background:#3a171b}.atina-social-notice.neutral{color:#ffe082;border-color:#a77b20;background:#352b15}@media(min-width:700px){.atina-social-columns{grid-template-columns:repeat(3,1fr)}}@media(max-width:600px){.wrap{padding:9px 8px 24px}.brand{padding:13px 12px;border-radius:16px}.section{margin:13px 0 8px}.tile{padding:10px;min-height:65px}.card{padding:12px}.atina-social-panel{padding:10px!important;margin:7px 0!important}.atina-social-panel h3{font-size:17px}.atina-social-panel .answer{min-height:44px;padding:11px;font-size:15px;margin:5px 0 7px}.atina-social-panel .btn{padding:10px 12px;min-height:42px}.atina-social-columns{gap:5px}.atina-social-columns details,.atina-social-game{background:#0c1d2e;border:1px solid #365471;border-radius:10px;padding:8px 10px}.atina-social-columns details summary,.atina-social-game summary{font-weight:800;cursor:pointer;list-style:none}.atina-social-columns details summary::-webkit-details-marker,.atina-social-game summary::-webkit-details-marker{display:none}.atina-social-columns details summary:after,.atina-social-game summary:after{content:"＋";float:right;color:var(--gold)}.atina-social-columns details[open] summary:after,.atina-social-game[open] summary:after{content:"－"}.atina-social-columns details ul,.atina-social-game ul{margin:6px 0;padding-left:18px}.atina-social-columns li,.atina-social-game li{margin:4px 0!important}.atina-social-panel hr{margin:9px 0;border-color:#30445b}.atina-social-panel .section{margin:9px 0 5px}.atina-social-game{margin-top:8px}.atina-social-game p{margin:6px 0}.atina-notification-panel{padding:9px!important;margin:6px 0 9px!important}.atina-notification-item{padding:8px!important}.atina-notification-item p{font-size:12px;margin:3px 0}.atina-notification-actions button{min-height:36px;padding:7px 5px}.home-page-nav{gap:5px!important}.home-nav-btn{padding:8px 3px!important}}@media(max-width:600px){#home{gap:10px!important}#home .home-welcome{padding:12px!important;margin-bottom:8px!important;border-radius:14px}#home .home-welcome p{margin-bottom:9px!important;line-height:1.4}#home .home-welcome h2{margin:5px 0!important}#home .stats{gap:5px!important;font-size:12px!important;margin-top:10px!important}#home .modes{gap:6px!important}#home .tile{min-height:58px!important;padding:9px!important;border-radius:11px!important}#home .tile b{font-size:13px!important;margin-top:4px!important}#home .tile small{font-size:11px!important}.daily-mission,.atina-xp-panel{padding:11px!important;margin:9px 0!important;border-radius:13px!important}.daily-mission h3{font-size:16px!important}.daily-mission p{font-size:12px!important;margin:5px 0 8px!important}.daily-stats{gap:5px!important;margin:8px 0!important}.daily-stat{min-width:80px;padding:7px!important}.daily-stat b{font-size:16px!important}.home-page-nav{margin:5px 0!important}.home-nav-btn{min-height:38px!important;font-size:11px!important}.btn{min-height:42px;padding:10px 12px!important;border-radius:10px!important;font-size:14px!important}.answer{min-height:46px!important;padding:11px!important;font-size:16px!important}.section{font-size:14px!important}#game>.card{padding:12px!important;border-radius:15px!important}#question{margin-bottom:10px!important}#timerDisplay{min-height:70px!important}#game .visual{height:150px!important;margin:8px 0!important}.clues{gap:5px!important;margin:8px 0!important}.clue{padding:8px 9px!important;font-size:13px!important}.feedback{margin:6px 0!important;min-height:30px!important;font-size:13px!important}.actions,.game-control-row{gap:6px!important;margin:7px 0!important}.game-control-row .btn{min-height:43px!important;padding:8px 5px!important}#rankingList li{padding:5px 0!important}.online-panel .answer{margin:5px 0!important}#home .card{padding:11px!important}}.atina-count{display:inline-flex!important;min-width:20px;height:20px;align-items:center;justify-content:center;margin-left:6px;padding:0 6px;border-radius:12px;background:#d3ad68!important;color:#14243a!important;font-size:11px;font-weight:900;vertical-align:middle;line-height:1}@media(max-width:600px){.atina-count{min-width:18px;height:18px;font-size:10px}}.atina-summary-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%}.atina-summary-row .atina-count{margin-left:auto!important;flex-shrink:0!important}@media(max-width:600px){.atina-summary-row{width:100%}}.atina-friend-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:5px 0!important;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:#0c1d2e}.atina-friend-name{font-weight:700;flex:1 1 100%}.atina-friend-status{font-size:11px;font-weight:800}.atina-friend-status.online{color:#83c6a4}.atina-friend-status.offline{color:#aab6c5}.atina-friend-status.unknown{color:#d3ad68}.atina-friend-row button{min-height:32px!important;padding:5px 9px!important;font-size:12px!important}@media(min-width:500px){.atina-friend-name{flex:1 1 auto}}.atina-social-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.atina-online-friends-badge{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border-radius:999px;border:1px solid #39896c;background:#123c35;color:#b6f3d0;font-size:clamp(11px,2.5vw,13px);font-weight:800;line-height:1.35;white-space:nowrap;flex-shrink:0;margin-left:auto;cursor:pointer}.atina-online-friends-badge.has-online{background:#123b2b;color:#86d6a6;border:1px solid #248a58}@media(max-width:600px){.atina-online-friends-badge{font-size:clamp(11px,2.5vw,13px);padding:7px 11px;margin-left:auto}}/* Restore logo card and notice flow */
 .logo-image{position:relative!important;top:auto!important;right:auto!important;left:auto!important;z-index:auto!important;margin:0!important;width:min(100%,430px)!important;max-height:118px!important;pointer-events:auto!important}
 #atinaUpdateNotice{position:relative!important;z-index:1!important;margin-top:12px!important}
 
@@ -5331,7 +5320,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 <script src="./assets/atina-notifications.js?v=20261120-1" defer></script>
 <script src="./assets/atina-push.js?v=20261120-1" defer></script>
 <script src="./assets/atina-social.js?v=20261120-19" defer></script>
-<style id="atina-pregame-configuration-v1">
+<style id="atina-ui-layer-10">
+/* Bloco original: atina-pregame-configuration-v1 */
 #atinaPregameOverlay{position:fixed;inset:0;z-index:99999;display:none;overflow:auto;background:#07101ddd;padding:14px;align-items:center;justify-content:center}
 #atinaPregameOverlay.open{display:flex}
 #atinaPregamePanel{width:min(100%,540px);margin:auto;background:#111d2c;border:1px solid #34506b;border-radius:22px;padding:clamp(16px,4vw,24px);box-shadow:0 24px 80px #0008;color:#eef5ff}
@@ -5394,7 +5384,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  overlay.addEventListener('click',e=>{if(e.target===overlay)closeConfig();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeConfig();});
 })();
 </script>
-<style id="atina-mobile-ui-consolidated-20261120">
+<style id="atina-ui-layer-11">
+/* Bloco original: atina-mobile-ui-consolidated-20261120 */
 /* ATINA — consolidação de estilos mobile. Ajustes visuais apenas; lógica intacta. */
 @media(max-width:700px){
  .brand{padding:10px 11px!important;min-height:0!important;margin-bottom:7px!important;border-radius:14px!important;text-align:center!important}
@@ -5548,6 +5539,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
  #mimicaGame .actions{gap:6px!important;margin:8px 0!important}
  #mimicaGame .actions .btn{min-height:48px!important;padding:9px 7px!important;font-size:13px!important}
 
+}
+
 /* ATINA: quebra e parágrafos em todos os textos/informações do jogo */
 #game :where(p,li,blockquote,article,section,aside,small,label),
 #game [class*="message" i],#game [class*="info" i],#game [class*="notice" i],#game [class*="text" i],#game [class*="description" i],#game [class*="content" i]{box-sizing:border-box;min-width:0;max-width:100%;height:auto;white-space:normal;overflow-wrap:anywhere;word-break:normal}
@@ -5557,7 +5550,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 </style>
 
 <script src="./assets/atina-settings-cache.js?v=20261126-1"></script>
-<style id="atina-mobile-polish-20261123">
+<style id="atina-ui-layer-12">
+/* Bloco original: atina-mobile-polish-20261123 */
 /* Mobile refinement: safe viewport, readable inputs, comfortable touch, no horizontal overflow. Desktop unaffected. */
 @media (max-width:700px){
  html{scroll-padding-top:12px}
@@ -5583,8 +5577,8 @@ body.atina-logged-out .atina-legal-inline{margin:0!important;padding:15px!import
 @media(prefers-reduced-motion:reduce){
  html{scroll-behavior:auto!important}
 }
-</style>
-<style id="atina-mobile-home-compact-v1">
+
+/* Bloco original: atina-mobile-home-compact-v1 */
 /* Página inicial: menos altura sem esconder informação ou funcionalidades */
 @media(max-width:600px){
  #home{gap:9px!important}
