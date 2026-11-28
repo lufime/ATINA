@@ -6945,6 +6945,36 @@ html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
 }
 </style>
 
-<link rel="stylesheet" href="./assets/atina-interface-flat-last-loaded.css?v=20261128-monochrome-2">
+<link rel="stylesheet" href="./assets/atina-interface-flat-last-loaded.css?v=20261128-monochrome-3">
+<script id="atina-enforce-monochrome-visuals">
+/* Remove estilos visuais inline que prevalecem sobre a folha neutra.
+   Só altera apresentação; não toca em dimensões, conteúdo ou eventos. */
+(function(){
+  const visualProps = [
+    "color","background","background-color","background-image",
+    "border","border-color","border-style","outline","outline-color",
+    "box-shadow","text-shadow"
+  ];
+  function neutralize(root){
+    const nodes = [];
+    if (root && root.nodeType === 1) nodes.push(root);
+    if (root && root.querySelectorAll) nodes.push(...root.querySelectorAll("*"));
+    for (const el of nodes) {
+      if (!el.style) continue;
+      for (const prop of visualProps) el.style.removeProperty(prop);
+    }
+  }
+  neutralize(document.documentElement);
+  const observer = new MutationObserver(records => {
+    for (const record of records) {
+      if (record.type === "attributes") neutralize(record.target);
+      for (const node of record.addedNodes || []) neutralize(node);
+    }
+  });
+  observer.observe(document.documentElement, {
+    subtree:true, childList:true, attributes:true, attributeFilter:["style"]
+  });
+})();
+</script>
 </body>
 </html>
