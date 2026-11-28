@@ -554,3 +554,123 @@ html{scroll-behavior:smooth}
     transition-duration:.01ms!important;
   }
 }
+
+
+/* ATINA — configuração da partida em janela modal */
+#atinaPregameOverlay:not(.open){
+  display:none!important;
+}
+#atinaPregameOverlay.open{
+  position:fixed!important;
+  inset:0!important;
+  z-index:100000!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow-y:auto!important;
+  padding:clamp(12px,3vw,28px)!important;
+  background:rgba(3,9,17,.82)!important;
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+}
+#atinaPregamePanel{
+  box-sizing:border-box!important;
+  width:min(100%,520px)!important;
+  max-height:calc(100dvh - 32px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  margin:auto!important;
+  padding:clamp(18px,4vw,28px)!important;
+  border:1px solid rgba(114,213,232,.28)!important;
+  border-radius:22px!important;
+  background:linear-gradient(155deg,#1b3048,#101e30)!important;
+  color:#f5f7fa!important;
+  box-shadow:0 24px 80px rgba(0,0,0,.55)!important;
+}
+#atinaPregameTitle{
+  margin:0 0 8px!important;
+  text-align:center!important;
+  font-size:clamp(22px,5vw,29px)!important;
+  line-height:1.2!important;
+}
+#atinaPregamePanel>label{
+  display:block;
+  margin:14px 0 6px;
+  color:#dce7f0;
+  font-weight:750;
+}
+#atinaPregamePanel select,
+#atinaPregamePanel input{
+  box-sizing:border-box;
+  width:100%;
+  min-height:48px;
+  border-radius:11px;
+}
+#atinaPregameModes{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px!important;
+}
+#atinaPregameModes button{
+  min-height:46px;
+}
+#atinaPregameCountControl{
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) 48px;
+  gap:8px;
+  align-items:center;
+}
+#atinaPregameCountControl button{
+  min-height:48px;
+  border:0;
+  border-radius:11px;
+  background:#2b435d;
+  color:#fff;
+  font-size:23px;
+  font-weight:800;
+}
+#atinaPregameCount{
+  text-align:center;
+  font-size:18px;
+  font-weight:800;
+}
+#atinaPregameSummary{
+  margin:15px 0 8px;
+  padding:12px;
+  border:1px solid rgba(114,213,232,.2);
+  border-radius:12px;
+  background:rgba(7,18,32,.55);
+  color:#d8edf4;
+  text-align:center;
+  line-height:1.45;
+}
+#atinaPregameButtons{
+  display:grid;
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);
+  gap:9px;
+  margin-top:12px;
+}
+#atinaPregameButtons button{
+  min-height:49px;
+  border-radius:12px;
+  font-weight:800;
+}
+#atinaPregameStart:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+@media(max-width:480px){
+  #atinaPregameOverlay.open{
+    align-items:flex-end!important;
+    padding:10px!important;
+  }
+  #atinaPregamePanel{
+    width:100%!important;
+    max-height:calc(100dvh - 20px)!important;
+    padding:18px 16px!important;
+    border-radius:20px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #atinaPregameOverlay.open{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
