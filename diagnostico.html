@@ -25,7 +25,7 @@ small{color:#b9c8d9}
 <p>Esta verificação não inicia o jogo nem altera dados.</p>
 <button id="run" type="button">Executar diagnóstico de ficheiros</button>
 <h2>2. Testar o arranque real</h2>
-<p>Carrega no botão abaixo. O jogo abre neste mesmo separador com a monitorização temporária ativada. Aguarda 30 a 60 segundos no ecrã inicial. Não inicies uma partida. Se o jogo bloquear, regressa a esta página com o botão Voltar do navegador.</p>
+<p>Carrega no botão abaixo. O jogo abre num novo separador e esta página mantém-se aberta. Aguarda 30 a 60 segundos no ecrã inicial. Não inicies uma partida. Se o jogo bloquear, regressa a este separador para ler os erros.</p>
 <button id="start-runtime" type="button">Iniciar teste monitorizado do jogo</button>
 <button id="read-runtime" class="secondary" type="button">Ler erros do teste de arranque</button>
 <p><small>A monitorização regista erros JavaScript, rejeições de Promises e falhas de carregamento. Guarda até 30 ocorrências apenas na sessão deste separador. Não envia o relatório para nenhum serviço e não escreve no Supabase.</small></p>
@@ -80,12 +80,14 @@ run.addEventListener('click',async function(){
  copy.disabled=!report;run.disabled=false;
 });
 startRuntime.addEventListener('click',function(){
- try{sessionStorage.removeItem(STORAGE_KEY);}catch(e){status.textContent='Não foi possível preparar a sessão de diagnóstico: '+(e.message||e);return;}
- location.href='./index.html?atina_runtime_diag=1#dashboard';
+ try{localStorage.removeItem(STORAGE_KEY);sessionStorage.removeItem(STORAGE_KEY);}catch(e){status.textContent='Não foi possível preparar a sessão de diagnóstico: '+(e.message||e);return;}
+ const gameUrl=new URL('./index.html?atina_runtime_diag=1#dashboard',location.href).href;
+ const link=document.createElement('a');link.href=gameUrl;link.target='_blank';link.rel='noopener';link.style.display='none';document.body.appendChild(link);link.click();link.remove();
+ status.textContent='O jogo foi aberto num novo separador. Mantém esta página aberta; depois regressa aqui para ler os erros.';
 });
 readRuntime.addEventListener('click',function(){
  let entries=[];
- try{entries=JSON.parse(sessionStorage.getItem(STORAGE_KEY)||'[]');}catch(e){entries=[];}
+ try{entries=JSON.parse(localStorage.getItem(STORAGE_KEY)||sessionStorage.getItem(STORAGE_KEY)||'[]');}catch(e){entries=[];}
  if(!Array.isArray(entries)||!entries.length){report+='\nATINA — diagnóstico de execução\nNão existem ocorrências guardadas nesta sessão. Confirma que abriste o jogo pelo botão monitorizado e regressaste com o botão Voltar do navegador.\n';}
  else{
   report+='\nATINA — diagnóstico de execução\nOcorrências: '+entries.length+'\n';
