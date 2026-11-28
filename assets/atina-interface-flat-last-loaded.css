@@ -675,3 +675,71 @@ html body :is(.home-nav-btn.active){
   background-image:none!important;
   color:#17202b!important;
 }
+
+
+/* ATINA — BASE MINIMA REAL: sem relevo, sem cartões arredondados ou decoração.
+   Mantém cores, tipografia, espaçamentos, dimensões, grelhas e comportamento. */
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel),
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel) *,
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel) *::before,
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel) *::after {
+  background-image:none!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+  transition:none!important;
+  border-radius:0!important;
+}
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel) :is(button,input[type="button"],input[type="submit"],
+input[type="reset"],.btn,.tile,[role="button"],summary,.home-nav-btn,
+.choice,.answer-option,[role="radio"],[role="checkbox"]),
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel) :is(button,input[type="button"],input[type="submit"],
+input[type="reset"],.btn,.tile,[role="button"],summary,.home-nav-btn,
+.choice,.answer-option,[role="radio"],[role="checkbox"]):is(:hover,:active) {
+  transform:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  background-image:none!important;
+  transition:none!important;
+}
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel) :is(button,.btn,.tile,[role="button"],summary)::before,
+html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
+#networkHostTools,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
+#atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
+#atinaSoloReportPanel,#teamVotePanel,#atinaGlobalReportRoot,
+#atinaSettingsCachePanel) :is(button,.btn,.tile,[role="button"],summary)::after {
+  content:none!important;
+  display:none!important;
+}
