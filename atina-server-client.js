@@ -534,7 +534,7 @@ async function atinaProgressLoadLeaderboard() {
       const xp = document.createElement('td');
       const level = document.createElement('td');
       rank.textContent = String(index + 1);
-      nickname.textContent = row.nickname;
+      nickname.textContent = atinaLeaderboardDisplayName(row.nickname);
       xp.textContent = Number(row.xp || 0).toLocaleString('pt-PT');
       const levelNumber = Math.max(1, Number(row.level) || 1);
       const levelBadge = document.createElement('span');
