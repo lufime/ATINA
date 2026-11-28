@@ -279,8 +279,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   <h3>6. Telemóvel e computador</h3>
   <p>Em telemóvel, usa a navegação e os botões do ecrã, que estão dimensionados para interação tátil. Em computador, utiliza o rato ou o teclado. Mantém o zoom do navegador numa escala confortável.</p>
  </section>
- <section class="card atina-howto-card">
-  <h3>7. Jogar numa Smart TV</h3>
+  <section class="card atina-howto-card atina-tv-modes">
+  <h3>📺 Três formas de jogar ATINA na televisão</h3>
+  <p>Escolhe a forma que corresponde ao equipamento que tens disponível. As três opções usam o mesmo jogo; o <strong>Modo TV</strong> adapta a interface para um ecrã grande.</p>
+  <div class="atina-tv-modes-grid">
+   <article class="atina-tv-mode-option"><div class="atina-tv-mode-icon" aria-hidden="true">📺</div><h4>1. Smart TV</h4><p>Abre o navegador da televisão, entra no ATINA e joga diretamente com o comando ou um teclado compatível.</p><a class="btn secondary full" href="#atinaTvSmart">Ver instruções</a></article>
+   <article class="atina-tv-mode-option"><div class="atina-tv-mode-icon" aria-hidden="true">📱</div><h4>2. Telemóvel para TV</h4><p>Transmite ou espelha o ecrã do telemóvel para a televisão. Mantém o telemóvel contigo para controlar o jogo.</p><a class="btn secondary full" href="#atinaTvCast">Ver instruções</a></article>
+   <article class="atina-tv-mode-option"><div class="atina-tv-mode-icon" aria-hidden="true">💻</div><h4>3. Computador por HDMI</h4><p>Liga o computador à televisão por HDMI e usa o computador para controlar o ATINA num ecrã maior.</p><a class="btn secondary full" href="#atinaTvHdmi">Ver instruções</a></article>
+  </div>
+ </section>
+<section class="card atina-howto-card">
+  <h3 id="atinaTvSmart">7. Jogar numa Smart TV</h3>
   <ol>
    <li>Abre o navegador da televisão e entra em <strong>https://lufime.github.io/ATINA/</strong>.</li>
    <li>Abre o menu do ATINA e seleciona <strong>📺 Modo TV</strong> para aumentar textos, botões e áreas de jogo.</li>
@@ -290,7 +299,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   <p>O comportamento das teclas pode variar conforme o navegador e o comando da televisão.</p>
  </section>
  <section class="card atina-howto-card">
-  <h3>8. Transmitir ou espelhar a partir do telemóvel</h3>
+  <h3 id="atinaTvCast">8. Transmitir ou espelhar a partir do telemóvel</h3>
   <ol>
    <li>Abre o ATINA no telemóvel e inicia o jogo.</li>
    <li>Usa a opção de transmissão/espelhamento do próprio telemóvel ou do sistema (por exemplo, AirPlay ou Google Cast, se forem suportados pelos teus dispositivos).</li>
@@ -300,7 +309,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   <p>A disponibilidade de AirPlay, Google Cast e transmissão de separadores depende do telemóvel, da televisão, da rede e do navegador. O espelhamento pode mostrar na TV exatamente o mesmo ecrã do telemóvel.</p>
  </section>
  <section class="card atina-howto-card">
-  <h3>9. Ligar um computador à TV por HDMI</h3>
+  <h3 id="atinaTvHdmi">9. Ligar um computador à TV por HDMI</h3>
   <ol>
    <li>Liga o computador à televisão com um cabo HDMI e escolhe a entrada HDMI correta na TV.</li>
    <li>Abre o ATINA no navegador do computador.</li>
@@ -2875,7 +2884,7 @@ document.addEventListener('click',function(event){
 
 
 
-<link rel="stylesheet" href="./assets/atina-interface-flat-last-loaded.css?v=20261128-minimal-1">
+<link rel="stylesheet" href="./assets/atina-interface-flat-last-loaded.css?v=20261128-tv-modes-2">
 
 <script id="atina-tv-mode-controller">
 (function(){
