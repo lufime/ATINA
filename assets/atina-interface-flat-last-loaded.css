@@ -355,3 +355,321 @@ img, video, canvas, svg { max-width: 100%; }
 @media (min-width: 761px) and (max-width: 1050px) {
   .atina-tv-modes-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
+
+
+/* ATINA — acabamento da experiência do jogador · 2026 */
+:root {
+  --atina-motion-standard: cubic-bezier(.2,.75,.25,1);
+  --atina-focus-ring: 0 0 0 3px rgba(114,213,232,.2);
+}
+
+/* Entrada, escolha e progressão */
+.home-welcome {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(22px,4vw,38px);
+  border: 1px solid rgba(114,213,232,.22);
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 92% 8%,rgba(114,213,232,.14),transparent 38%),
+    linear-gradient(128deg,rgba(27,53,82,.98),rgba(13,26,45,.98));
+  box-shadow: 0 18px 44px rgba(0,0,0,.24);
+}
+.home-welcome::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -64px;
+  bottom: -118px;
+  width: 240px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(244,198,106,.13);
+  border-radius: 50%;
+  box-shadow: 0 0 0 24px rgba(244,198,106,.025),0 0 0 48px rgba(244,198,106,.02);
+  pointer-events: none;
+}
+.home-welcome h2 {
+  max-width: 19ch;
+  margin: 8px 0 12px;
+  font-size: clamp(27px,4.2vw,42px);
+  line-height: 1.08;
+  letter-spacing: -.04em;
+  text-wrap: balance;
+}
+.home-welcome p { max-width: 62ch; line-height: 1.65; }
+.home-welcome > .btn { width: auto; min-width: min(100%,220px); margin-top: 8px; }
+.home-block.play-block,.home-block.categories-block {
+  padding: clamp(17px,2.8vw,26px);
+}
+.home-block > .section {
+  margin: 0 0 14px;
+  font-size: 11px;
+  letter-spacing: .16em;
+}
+.home-block.play-block .actions {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 11px;
+}
+.home-block.play-block .actions > .btn {
+  min-height: 60px;
+  justify-content: flex-start;
+  padding: 14px 17px;
+  text-align: left;
+}
+.home-block.categories-block .modes {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 11px;
+}
+.home-block.categories-block .tile {
+  position: relative;
+  display: flex;
+  min-height: 142px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 9px;
+  overflow: hidden;
+  padding: 16px !important;
+  border-color: rgba(157,183,218,.16) !important;
+  border-radius: 17px !important;
+  background: linear-gradient(145deg,rgba(34,55,83,.96),rgba(15,28,47,.98)) !important;
+  text-align: left;
+  transition: transform .2s var(--atina-motion-standard),border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.home-block.categories-block .tile > span:first-child {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border: 1px solid rgba(114,213,232,.15);
+  border-radius: 12px;
+  background: rgba(114,213,232,.09);
+  font-size: 21px !important;
+}
+.home-block.categories-block .tile b { font-size: 14px; line-height: 1.3; }
+.home-block.categories-block .tile small { font-size: 11px; line-height: 1.4; }
+
+/* Missão diária e progresso: leitura imediata sem competir com o jogo */
+.daily-mission {
+  overflow: hidden;
+  padding: clamp(17px,3vw,25px);
+  border: 1px solid rgba(244,198,106,.2) !important;
+  border-radius: 21px !important;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(244,198,106,.09),transparent 42%),
+    linear-gradient(145deg,#192f49,#102137) !important;
+}
+.daily-mission h3 { margin: 5px 0 8px; font-size: clamp(18px,2.4vw,23px); line-height: 1.2; }
+.daily-kicker { color: var(--atina-gold); font-size: 10px; font-weight: 900; letter-spacing: .16em; }
+.daily-progress {
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(157,183,218,.13);
+  border-radius: 999px;
+  background: rgba(5,13,25,.7);
+}
+.daily-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#5fcacb,#9ce5c0);
+  box-shadow: 0 0 16px rgba(95,202,203,.24);
+  transition: width .45s var(--atina-motion-standard);
+}
+.daily-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 7px 14px; margin-top: 8px; color: var(--atina-muted); font-size: 12px; }
+.daily-stats { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; margin: 14px 0; }
+.daily-stat {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--atina-line);
+  border-radius: 13px;
+  background: rgba(7,15,27,.38);
+}
+.daily-stat b { color: var(--atina-gold); font-size: 19px; font-variant-numeric: tabular-nums; }
+.daily-stat small { color: var(--atina-muted); font-size: 11px; line-height: 1.35; }
+.atina-xp-panel {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid rgba(114,213,232,.18);
+  border-radius: 15px;
+  background: rgba(7,18,32,.48);
+}
+
+/* Ecrã de partida: foco na pergunta, tempo e resposta */
+#game { width: min(100%,980px); }
+#game > .card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(17px,3vw,32px);
+  border: 1px solid rgba(114,213,232,.2) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(45,105,139,.13),transparent 45%),
+    linear-gradient(155deg,rgba(22,37,60,.99),rgba(10,21,37,.99)) !important;
+  box-shadow: 0 22px 58px rgba(0,0,0,.3) !important;
+}
+#game .atina-timer-stack {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 12px 18px;
+}
+#game .atina-clock-face {
+  min-width: 0;
+  grid-template-columns: 66px minmax(0,1fr);
+  gap: 8px 13px;
+}
+#game .atina-game-logo { width: 66px; max-height: 58px; }
+#game .atina-live-stats { gap: 7px; min-width: 0; }
+#game .atina-live-stats span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-color: rgba(157,183,218,.13);
+  background: rgba(5,15,28,.5);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+#game .atina-live-stats b { color: var(--atina-gold); }
+#game #timerDisplay {
+  min-width: 116px !important;
+  min-height: 68px !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.045em;
+  box-shadow: inset 0 1px rgba(255,255,255,.08),0 8px 22px rgba(0,0,0,.18);
+}
+#game #question {
+  max-width: 26ch;
+  margin: 13px auto 19px !important;
+  font-size: clamp(27px,4vw,43px) !important;
+  line-height: 1.13 !important;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+#game #clues { gap: 9px; }
+#game #clues > * {
+  padding: 13px 15px;
+  border: 1px solid rgba(157,183,218,.15);
+  border-left: 3px solid rgba(114,213,232,.72);
+  border-radius: 13px;
+  background: linear-gradient(110deg,rgba(25,52,77,.88),rgba(14,31,49,.92));
+  line-height: 1.55;
+}
+#game #clues > *.hidden-clue {
+  border-left-color: rgba(157,183,218,.34);
+  border-left-style: dashed;
+  background: rgba(7,16,29,.52);
+}
+#game #answer {
+  min-height: 58px;
+  border-color: rgba(114,213,232,.32) !important;
+  border-radius: 14px !important;
+  background: rgba(5,17,30,.82) !important;
+  font-size: 18px;
+  transition: border-color .18s ease,box-shadow .18s ease;
+}
+#game #answer:focus {
+  border-color: var(--atina-cyan) !important;
+  box-shadow: var(--atina-focus-ring),inset 0 2px 7px rgba(0,0,0,.18) !important;
+}
+#game .game-control-row,#game .actions { gap: 9px; }
+#game .game-control-row > .btn,#game .actions > .btn {
+  min-height: 49px;
+  border-radius: 13px !important;
+}
+#game #submit,#game #continue {
+  box-shadow: 0 8px 20px rgba(244,198,106,.16),inset 0 1px rgba(255,255,255,.18) !important;
+}
+#game #feedback {
+  min-height: 0;
+  margin: 12px 0;
+  padding: 12px 14px !important;
+  border: 1px solid var(--atina-line) !important;
+  border-left: 4px solid var(--atina-cyan) !important;
+  border-radius: 13px !important;
+  background: rgba(114,213,232,.08) !important;
+  line-height: 1.5;
+  font-weight: 800;
+}
+#game #feedback[data-tone="positive"],.feedback[data-tone="positive"],[role="status"][data-tone="positive"],[role="alert"][data-tone="positive"] {
+  border-color: rgba(118,214,162,.35) !important;
+  border-left-color: var(--atina-green) !important;
+  background: rgba(42,128,89,.16) !important;
+  color: #a9f0c8 !important;
+}
+#game #feedback[data-tone="negative"],.feedback[data-tone="negative"],[role="status"][data-tone="negative"],[role="alert"][data-tone="negative"] {
+  border-color: rgba(255,141,145,.35) !important;
+  border-left-color: var(--atina-red) !important;
+  background: rgba(145,52,65,.17) !important;
+  color: #ffc0c2 !important;
+}
+#game #feedback[data-tone="neutral"],.feedback[data-tone="neutral"],[role="status"][data-tone="neutral"],[role="alert"][data-tone="neutral"] {
+  border-color: rgba(244,198,106,.35) !important;
+  border-left-color: var(--atina-gold) !important;
+  background: rgba(145,103,37,.16) !important;
+  color: #ffe0a0 !important;
+}
+
+/* Resultados, salas e listas com a mesma hierarquia visual */
+#result,#rankingPage,#networkLobby,#networkScoreboard {
+  border-radius: 21px !important;
+  box-shadow: 0 18px 46px rgba(0,0,0,.25) !important;
+}
+#result h2,#rankingPage h2,#networkLobby h2,#networkScoreboard h2 {
+  margin-top: 0;
+  font-size: clamp(22px,3vw,30px);
+  letter-spacing: -.025em;
+}
+#result .btn,#rankingPage .btn,#networkLobby .btn,#networkScoreboard .btn { min-height: 48px; }
+#networkLobby .row,#networkScoreboard .row { min-width: 0; }
+
+/* Interações subtis, sem movimentos forçados em ecrãs tácteis */
+@media (hover:hover) and (pointer:fine) {
+  .home-block.categories-block .tile:hover {
+    transform: translateY(-3px);
+    border-color: rgba(114,213,232,.42) !important;
+    box-shadow: 0 13px 28px rgba(0,0,0,.24) !important;
+  }
+  .home-block.play-block .actions > .btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+  }
+}
+@media (max-width:900px) {
+  .home-block.categories-block .modes { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media (max-width:700px) {
+  .home-welcome { padding: 22px 18px; border-radius: 19px; }
+  .home-welcome h2 { max-width: 17ch; font-size: clamp(25px,7vw,34px); }
+  .home-block.play-block .actions { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .home-block.play-block .actions > .btn { min-height: 56px; padding: 12px 11px; font-size: 13px; }
+  .home-block.categories-block .modes { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .home-block.categories-block .tile { min-height: 126px; padding: 12px !important; }
+  .daily-mission { padding: 16px; border-radius: 17px !important; }
+  #game .atina-timer-stack { grid-template-columns: 1fr; justify-items: stretch; gap: 10px; }
+  #game .atina-clock-face { grid-template-columns: 54px minmax(0,1fr); gap: 7px 10px; }
+  #game .atina-game-logo { width: 54px; }
+  #game .atina-live-stats span { min-height: 30px; padding: 5px 8px; font-size: 10px; }
+  #game #timerDisplay { justify-self: center; min-width: 136px !important; min-height: 60px !important; font-size: 36px !important; }
+  #game #question { margin: 10px auto 15px !important; font-size: clamp(24px,6.5vw,31px) !important; }
+  #game #answer { min-height: 56px; font-size: 17px; }
+  #game .game-control-row,#game .actions { gap: 7px; }
+}
+@media (max-width:420px) {
+  .home-block.play-block .actions { grid-template-columns: 1fr; }
+  .home-block.play-block .actions > .btn { justify-content: center; text-align: center; }
+  .home-block.categories-block .tile { min-height: 118px; }
+  .home-block.categories-block .tile small { font-size: 10px; }
+  .daily-stats { gap: 7px; }
+  .daily-stat { padding: 10px; }
+  #game > .card { padding: 13px !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .daily-progress > span { transition: none !important; }
+  .home-block.categories-block .tile,.home-block.play-block .actions > .btn { transition: none !important; }
+}
