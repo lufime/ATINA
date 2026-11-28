@@ -1244,8 +1244,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       shareButton.type="button";
       shareButton.className="secondary";
       shareButton.textContent="Partilhar com ChatGPT";
-      shareButton.setAttribute("aria-label","Partilhar contexto deste report com ChatGPT");
+      shareButton.setAttribute("aria-label","Partilhar report, imagem e contexto com ChatGPT");
       shareButton.addEventListener("click",async()=>{
+        const adminUrl="https://lufime.github.io/ATINA/administrator.html?utm_source=chatgpt.com#home";
+        const gameUrl="https://lufime.github.io/ATINA/#dashboard";
+        const githubUrl="https://github.com/lufime/ATINA";
+        const screenshotUrl=report.screenshot_url||"";
         const context=[
           "Análise de report de erro do ATINA (contexto da administração).",
           "Categoria: "+(reportCategoryLabels[report.category]||report.category||"Não indicada"),
@@ -1256,16 +1260,38 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           report.game_area?"Área: "+report.game_area:"",
           "Descrição do report:",
           report.description||"(sem descrição)",
-          report.screenshot_url?"Screenshot anexada (não incluí o link temporário).":"Sem screenshot anexada.",
-          "Ajuda-me a analisar a causa provável e sugerir passos de diagnóstico/correção. Não assumas acesso ao código nem aos dados do jogo."
-        ].filter(Boolean).join("\\n");
-        if(typeof navigator.share==="function"){
-          try{await navigator.share({title:"Report ATINA",text:context});return;}
-          catch(error){if(error.name==="AbortError")return;}
+          screenshotUrl?"Imagem do erro: a imagem segue anexada quando o dispositivo suporta partilha de ficheiros. Link de acesso: "+screenshotUrl:"Imagem do erro: não foi anexada nenhuma screenshot ao report.",
+          "Página de administração: "+adminUrl,
+          "Jogo ATINA: "+gameUrl,
+          "Repositório GitHub: "+githubUrl,
+          "Analisa a causa provável e sugere passos de diagnóstico/correção. Usa os links acima como referências do projeto."
+        ].filter(Boolean).join("\n");
+        let screenshotFile=null;
+        if(screenshotUrl){
+          try{
+            const imageResponse=await fetch(screenshotUrl,{mode:"cors",credentials:"omit",cache:"no-store"});
+            if(!imageResponse.ok)throw new Error("HTTP "+imageResponse.status);
+            const blob=await imageResponse.blob();
+            if(!blob.type.startsWith("image/"))throw new Error("O ficheiro obtido não é uma imagem.");
+            const extension=blob.type==="image/png"?"png":blob.type==="image/webp"?"webp":blob.type==="image/gif"?"gif":"jpg";
+            screenshotFile=new File([blob],"ATINA-erro-"+String(report.report_id||"report")+"."+extension,{type:blob.type,lastModified:Date.now()});
+          }catch(error){
+            console.warn("Não foi possível preparar a screenshot para partilha; o link da imagem permanece no texto.",error);
+          }
         }
-        try{await navigator.clipboard.writeText(context);}catch(error){alert("Não foi possível copiar automaticamente o contexto. Seleciona e copia o texto do report.");return;}
+        if(typeof navigator.share==="function"){
+          try{
+            if(screenshotFile&&typeof navigator.canShare==="function"&&navigator.canShare({files:[screenshotFile]})){
+              await navigator.share({title:"Report de erro ATINA",text:context,files:[screenshotFile]});
+            }else{
+              await navigator.share({title:"Report de erro ATINA",text:context});
+            }
+            return;
+          }catch(error){if(error.name==="AbortError")return;console.warn("Partilha nativa indisponível; a preparar alternativa.",error);}
+        }
+        try{await navigator.clipboard.writeText(context);}catch(error){alert("Não foi possível copiar automaticamente o contexto. O texto inclui os links e o endereço da imagem; copia-o manualmente.");return;}
         const opened=window.open("https://chatgpt.com/","_blank","noopener,noreferrer");
-        messageStatus(opened?"Contexto copiado. Cola-o na conversa do ChatGPT.":"Contexto copiado. Abre o ChatGPT e cola-o na conversa.");
+        messageStatus(screenshotFile?"Contexto copiado. A imagem está preparada, mas este navegador não permite anexá-la automaticamente nesta partilha. Cola o texto no ChatGPT e anexa o ficheiro ATINA-erro-"+String(report.report_id||"report")+".":"Contexto copiado. O link da imagem e os três links do projeto estão incluídos. Cola o texto no ChatGPT."+ (opened?"":" Abre o ChatGPT para continuar."));
       });
       card.appendChild(shareButton);
             {
