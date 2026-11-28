@@ -1374,13 +1374,30 @@ networkReceiveState = function(st) {
   if (networkGameState && Number(st.revision || 0) <= Number(networkLastRevision || 0)) return;
   const previous = networkGameState;
   const changed = !previous || previous.pos !== st.pos || previous.challenge_id !== st.challenge_id || previous.round !== st.round || previous.mode !== st.mode;
-  if (changed) { atinaNetworkChallengeKey = [st.mode,st.pos,st.challenge_id,st.round].join(':'); atinaNetworkFeedback = ''; $('answer').value = ''; }
+  if (changed) {
+    atinaNetworkChallengeKey = [st.mode, st.pos, st.challenge_id, st.round].join(':');
+    atinaNetworkFeedback = '';
+    $('answer').value = '';
+  }
   networkGameState = st;
   networkLastRevision = Number(st.revision || 0);
   networkGameActive = st.mode !== 'completed';
   if (changed) networkAnsweredThisChallenge = false;
   networkGameHost = !!networkLobbyData?.is_host;
-  ;
+  if (st.mode === 'completed') {
+    networkGameActive = false;
+    if (networkClockHandle !== null) {
+      clearInterval(networkClockHandle);
+      networkClockHandle = null;
+    }
+    $('resultText').textContent = 'Partida multiplayer concluída. Consulta a classificação da sala.';
+    screen('result');
+  } else {
+    if ($('game').classList.contains('hidden')) screen('game');
+    networkRenderGameState();
+    ensureNetworkClock();
+  }
+};
 networkStartGame = async function() {
   if (!networkRoom || !networkLobbyData?.is_host) return;
   try {
