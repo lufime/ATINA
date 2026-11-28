@@ -84,16 +84,13 @@ select,textarea){
 }
 /* Mensagens: vermelho negativo, verde positivo e amarelo neutro. */
 :where([data-tone="positive"],.atina-message-positive,.success,.is-success,.positive){
-  background:#123b2a!important;color:#c5ffda!important;border:0!important;
-  border-left:4px solid var(--atina-ui-green)!important;border-radius:10px!important;
+  background:#123b2a!important;color:#c5ffda!important;border:0!important;border-radius:10px!important;
 }
-:where([data-tone="negative"],.atina-message-negative,.error,.is-error,.is-wrong,.negative,.danger){
-  background:#451c25!important;color:#ffd0d3!important;border:0!important;
-  border-left:4px solid var(--atina-ui-red)!important;border-radius:10px!important;
+:where([data-tone="negative"],.atina-message-negative,.error,.is-error,.is-wrong,.negative){
+  background:#451c25!important;color:#ffd0d3!important;border:0!important;border-radius:10px!important;
 }
-:where([data-tone="neutral"],.atina-message-neutral,.info,.is-info,.warning,.is-warning){
-  background:#443718!important;color:#ffedb4!important;border:0!important;
-  border-left:4px solid var(--atina-ui-yellow)!important;border-radius:10px!important;
+:where([data-tone="neutral"],.atina-message-neutral,.info,.is-info,.is-warning){
+  background:#443718!important;color:#ffedb4!important;border:0!important;border-radius:10px!important;
 }
 /* Layout adaptável sem alterar a estrutura ou o comportamento dos ecrãs. */
 :where(.actions,.button-row,.controls,.toolbar,.challenge-actions){
