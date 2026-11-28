@@ -774,3 +774,44 @@ html body svg * {
   color:inherit!important;
   filter:none!important;
 }
+
+/* ATINA — monocromático integral: texto, ícones, imagens, botões e campos.
+   Sem fundos, contornos ou cores de estado; sem alterar dimensões ou ações. */
+html body,
+html body * ,
+html body *::before,
+html body *::after {
+  color:#111!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  outline-color:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  accent-color:#111!important;
+  caret-color:#111!important;
+}
+html body * {
+  filter:grayscale(1)!important;
+  -webkit-filter:grayscale(1)!important;
+}
+html body svg,
+html body svg * {
+  fill:currentColor!important;
+  stroke:currentColor!important;
+}
+html body :is(button,input,textarea,select,[role="button"],[role="checkbox"],[role="radio"]) {
+  color:#111!important;
+  background:transparent!important;
+  border-color:transparent!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+html body :is(input,textarea,select):focus,
+html body :is(button,[role="button"]):focus,
+html body :is(input,textarea,select):focus-visible,
+html body :is(button,[role="button"]):focus-visible {
+  outline:0!important;
+  box-shadow:none!important;
+  border-color:transparent!important;
+}
