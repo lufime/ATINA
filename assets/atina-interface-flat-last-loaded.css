@@ -684,3 +684,17 @@ img, video, canvas, svg { max-width: 100%; }
   #game .atina-clock-face { grid-template-rows: auto auto auto; }
   #game .atina-clock-face > #timerDisplay { justify-self: start; }
 }
+
+/* Mensagens curtas em toda a experiência: caixa legível e tom semântico */
+.feedback:not(:empty) {
+  display: block;
+  margin: 10px 0;
+  padding: 11px 13px;
+  border: 1px solid rgba(244,198,106,.3) !important;
+  border-left: 4px solid var(--atina-gold) !important;
+  border-radius: 12px !important;
+  background: rgba(145,103,37,.13) !important;
+  color: #ffe0a0 !important;
+  font-weight: 750;
+  line-height: 1.45;
+}
