@@ -673,3 +673,14 @@ img, video, canvas, svg { max-width: 100%; }
   .daily-progress > span { transition: none !important; }
   .home-block.categories-block .tile,.home-block.play-block .actions > .btn { transition: none !important; }
 }
+
+/* Disposição explícita do painel de tempo para evitar saltos entre larguras */
+#game .atina-clock-face { grid-template-rows: auto auto auto; }
+#game .atina-clock-face > .atina-game-logo { grid-column: 1; grid-row: 1 / span 3; }
+#game .atina-clock-face > .atina-live-stats { grid-column: 2; grid-row: 1; }
+#game .atina-clock-face > strong { grid-column: 2; grid-row: 2; color: var(--atina-muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+#game .atina-clock-face > #timerDisplay { grid-column: 2; grid-row: 3; justify-self: start; }
+@media (max-width:700px) {
+  #game .atina-clock-face { grid-template-rows: auto auto auto; }
+  #game .atina-clock-face > #timerDisplay { justify-self: start; }
+}
