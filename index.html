@@ -17,9 +17,9 @@
    try{var u=new URL(String(value),location.href);return u.origin+u.pathname;}
    catch(_){return clean(value,240).split(/[?#]/)[0];}
   }
-  function read(){try{var parsed=JSON.parse(sessionStorage.getItem(KEY)||'null');return Array.isArray(parsed)?parsed:[];}catch(_){return [];}}
+  function read(){try{var parsed=JSON.parse(localStorage.getItem(KEY)||'null');return Array.isArray(parsed)?parsed:[];}catch(_){return [];}}
   function record(entry){
-   try{var entries=read();entries.push(Object.assign({time:new Date().toISOString()},entry));sessionStorage.setItem(KEY,JSON.stringify(entries.slice(-MAX)));}catch(_){}
+   try{var entries=read();entries.push(Object.assign({time:new Date().toISOString()},entry));localStorage.setItem(KEY,JSON.stringify(entries.slice(-MAX)));}catch(_){}
   }
   record({type:'diagnostic-start',message:'Monitorização de arranque iniciada',page:cleanUrl(location.href),userAgent:clean(navigator.userAgent,260)});
   window.addEventListener('error',function(event){
