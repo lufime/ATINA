@@ -95,15 +95,14 @@ const networkRpcs = [
   'atina_v2_reveal_room_clue', 'atina_v2_submit_room_answer',
   'atina_v2_pass_room_challenge', 'atina_v2_next_room_challenge',
   'atina_v2_submit_team_proposal', 'atina_v2_vote_team_proposal',
-  'atina_v2_publish_game_state', 'atina_v2_resolve_mime_round',
-  'atina_v2_finish_mime_room', 'atina_v2_request_timeout'
+  'atina_v2_publish_game_state', 'atina_v2_request_timeout'
 ];
 for (const rpc of networkRpcs) {
   if (!multiplayerCompatibility.toLowerCase().includes('function public.' + rpc + '(')) errors.push('RPC multiplayer v2 em falta: ' + rpc + '.');
   if (!html.includes("'" + rpc + "'") && !client.includes("'" + rpc + "'")) errors.push('Frontend não chama ' + rpc + '.');
 }
 if (multiplayerCompatibility.includes('private.atina_v2_challenges')) errors.push('A migração v2 deve reutilizar private.atina_challenges.');
-if (/create\s+or\s+replace\s+function\s+public\.atina_(?!v2_)(?:create_room|join_room|leave_room|room_state|set_room_ready|set_room_team|start_room|start_room_challenges|reveal_room_clue|submit_room_answer|pass_room_challenge|next_room_challenge|submit_team_proposal|vote_team_proposal|start_mime_round|get_mime_secret|publish_game_state|resolve_mime_round|finish_mime_room|request_timeout)\b/i.test(multiplayerCompatibility)) {
+if (/create\s+or\s+replace\s+function\s+public\.atina_(?!v2_)(?:create_room|join_room|leave_room|room_state|set_room_ready|set_room_team|start_room|start_room_challenges|reveal_room_clue|submit_room_answer|pass_room_challenge|next_room_challenge|submit_team_proposal|vote_team_proposal|publish_game_state|request_timeout)\b/i.test(multiplayerCompatibility)) {
   errors.push('A migração v2 redefine uma RPC legada em vez de usar o namespace v2.');
 }
 
