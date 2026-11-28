@@ -5872,5 +5872,53 @@ input::placeholder,textarea::placeholder{color:#91a7ba!important}
 }
 </style>
 
+
+
+<style id="atina-remove-game-side-stripes-20261127">
+/* Remover os dois traços verticais laterais no ecrã de jogo, sem alterar cartões ou conteúdo. */
+html,body,.wrap,#game{
+  border-left:0!important;
+  border-right:0!important;
+}
+body::before,body::after,.wrap::before,.wrap::after,#game::before,#game::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+#game>.card{
+  border-left-color:var(--atina-border,#304d68)!important;
+  border-right-color:var(--atina-border,#304d68)!important;
+}
+</style>
+
+<style id="atina-remove-global-left-edge-stripe-20261127">
+/* Neutraliza a faixa vertical exterior em todas as páginas, preservando os contornos dos cartões. */
+html,body{
+  border-left:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  background-color:#071321!important;
+}
+html::before,html::after,body::before,body::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  box-shadow:none!important;
+  border:0!important;
+}
+</style>
+
+<style id="atina-remove-tile-side-accent">
+/* Remover o traço decorativo lateral dos cartões; manter os cartões e as respetivas bordas. */
+.tile::before{content:none!important;display:none!important}
+</style>
+
+<style id="atina-remove-remaining-game-left-stripe">
+/* Remove apenas a linha vertical na margem esquerda do cartão principal do jogo. */
+#game{border-left:0!important;outline:0!important}
+#game>.card{border-left:0!important;border-left-color:transparent!important;box-shadow:0 8px 22px #020b14aa,inset 0 1px #ffffff08!important}
+</style>
+
 </body>
 </html>
