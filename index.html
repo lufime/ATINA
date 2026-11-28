@@ -1,6 +1,43 @@
 <!doctype html>
 <html lang="pt-PT">
 <head>
+<script id="atina-runtime-diagnostic-recorder">
+(function(){
+ 'use strict';
+ try{
+  if(new URLSearchParams(location.search).get('atina_runtime_diag')!=='1')return;
+  var KEY='atinaRuntimeDiagnosticV1',MAX=30;
+  function clean(value,limit){
+   var s=String(value==null?'':value).replace(/[\r\n]+/g,' ').trim();
+   s=s.replace(/(bearer\s+)[a-z0-9._~+\/-]+/ig,'$1[redigido]')
+      .replace(/((?:token|apikey|api_key|secret|password|authorization)=)[^&\s]+/ig,'$1[redigido]');
+   return s.slice(0,limit||900);
+  }
+  function cleanUrl(value){
+   try{var u=new URL(String(value),location.href);return u.origin+u.pathname;}
+   catch(_){return clean(value,240).split(/[?#]/)[0];}
+  }
+  function read(){try{var parsed=JSON.parse(localStorage.getItem(KEY)||'null');return Array.isArray(parsed)?parsed:[];}catch(_){return [];}}
+  function record(entry){
+   try{var entries=read();entries.push(Object.assign({time:new Date().toISOString()},entry));localStorage.setItem(KEY,JSON.stringify(entries.slice(-MAX)));}catch(_){}
+  }
+  record({type:'diagnostic-start',message:'Monitorização de arranque iniciada',page:cleanUrl(location.href),userAgent:clean(navigator.userAgent,260)});
+  window.addEventListener('error',function(event){
+   var target=event.target;
+   if(target&&target!==window){record({type:'resource-error',element:clean(target.tagName||'resource',30),resource:cleanUrl(target.src||target.href||''),message:'Falha ao carregar recurso'});return;}
+   var err=event.error;
+   record({type:'javascript-error',message:clean(event.message||err&&err.message||'Erro JavaScript sem mensagem'),file:cleanUrl(event.filename||''),line:Number(event.lineno)||0,column:Number(event.colno)||0,stack:clean(err&&err.stack||'',1400)});
+  },true);
+  window.addEventListener('unhandledrejection',function(event){
+   var reason=event.reason,detail='';
+   if(reason&&typeof reason==='object')detail=[reason.name,reason.message,reason.stack].filter(Boolean).join(' — ');
+   else detail=reason;
+   record({type:'unhandled-rejection',message:clean(detail||'Promise rejeitada sem detalhe'),page:cleanUrl(location.href)});
+  });
+ }catch(_){}
+})();
+</script>
+
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#14243a">
 <meta name="description" content="Joga ATINA: desafios de adivinhas, enigmas e perguntas com pistas. Pensa, descobre a resposta, soma pontos e desafia os teus amigos.">
