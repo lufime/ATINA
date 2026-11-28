@@ -7,7 +7,6 @@ const pagesConfig = readFileSync('_config.yml', 'utf8');
 const localCompatibility = readFileSync('supabase/migrations/20261101081358_atina_ranking_v2_local_sessions.sql', 'utf8');
 const challengeCountMigration = readFileSync('supabase/migrations/20261122144100_atina_v2_challenge_count.sql', 'utf8');
 const multiplayerCompatibility = readFileSync('supabase/migrations/20261101081410_atina_ranking_v2_multiplayer_mimicas.sql', 'utf8');
-const localMimeCompatibility = readFileSync('supabase/migrations/20261101150000_atina_v2_local_mime_cards.sql', 'utf8');
 const errors = [];
 
 const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
@@ -65,13 +64,6 @@ if (markerIndex < 0) {
   }
 }
 
-if (!/const mimeCards=\[\s*\]/.test(html)) errors.push('O catálogo secreto de Mímicas não está vazio no cliente.');
-if (!html.includes("supabaseClient.rpc('atina_v2_local_mime_card'")) errors.push('O modo local não carrega cartas Mímicas individuais do servidor.');
-if (!html.includes('function networkRenderMimeScores(){')) errors.push('A renderização da pontuação de Mímicas multiplayer está em falta.');
-if (!client.includes('O botão local de Mímicas é gerido pelo próprio modo local')) errors.push('O cliente server-authoritative voltou a substituir o botão de Mímicas local.');
-if (!localMimeCompatibility.toLowerCase().includes('function public.atina_v2_local_mime_card(')) errors.push('RPC de cartas Mímicas locais em falta.');
-if (!html.includes('async function networkMimeResolveRound(correct,reason)')) errors.push('A resolução de rondas Mímicas multiplayer não está implementada no cliente.');
-if (!/await networkRefreshRoom\(\);\s*\/\/ Acertar, passar[\s\S]*?await networkMimeNext\(\);/.test(html)) errors.push('A passagem automática da vez Mímicas online não está ligada após o resultado da ronda.');
 if (!html.includes('function answerMatches(){return false;}')) errors.push('O validador legado de respostas continua ativo.');
 if (!html.includes('function submit(){throw new Error')) errors.push('O envio local legado ainda permite validação no cliente.');
 if (!/async function networkSubmitAnswer\(\)[\s\S]*?networkCall\('atina_v2_submit_team_proposal'/.test(html)) errors.push('O envio multiplayer não encaminha propostas para validação/votação no servidor.');
@@ -80,7 +72,6 @@ if (!/^\s+- supabase$/m.test(pagesConfig) || !/^\s+- scripts$/m.test(pagesConfig
 if (!client.includes("'atina_v2_local_submit_answer'")) errors.push('A RPC local de validação do servidor não está ligada.');
 if (!client.includes("'atina_v2_submit_room_answer'")) errors.push('A RPC multiplayer de validação do servidor não está ligada.');
 if (!client.includes("'atina_v2_submit_team_proposal'")) errors.push('A proposta de equipa segura não está ligada.');
-if (!client.includes("'atina_v2_resolve_mime_round'")) errors.push('A resolução de Mímicas no servidor não está ligada.');
 
 
 if (!client.includes('p_challenge_count: challengeCount')) errors.push('O cliente não envia a quantidade configurada para a RPC local.');
@@ -104,19 +95,14 @@ const networkRpcs = [
   'atina_v2_reveal_room_clue', 'atina_v2_submit_room_answer',
   'atina_v2_pass_room_challenge', 'atina_v2_next_room_challenge',
   'atina_v2_submit_team_proposal', 'atina_v2_vote_team_proposal',
-  'atina_v2_start_mime_round', 'atina_v2_get_mime_secret',
-  'atina_v2_publish_game_state', 'atina_v2_resolve_mime_round',
-  'atina_v2_finish_mime_room', 'atina_v2_request_timeout'
+  'atina_v2_publish_game_state', 'atina_v2_request_timeout'
 ];
 for (const rpc of networkRpcs) {
   if (!multiplayerCompatibility.toLowerCase().includes('function public.' + rpc + '(')) errors.push('RPC multiplayer v2 em falta: ' + rpc + '.');
   if (!html.includes("'" + rpc + "'") && !client.includes("'" + rpc + "'")) errors.push('Frontend não chama ' + rpc + '.');
 }
-if (!multiplayerCompatibility.includes('private.atina_mime_cards')) errors.push('A camada v2 não reutiliza o catálogo existente de Mímicas.');
-if (/insert\s+into\s+private\.atina_mime_cards/i.test(multiplayerCompatibility)) errors.push('A migração v2 tenta voltar a inserir cartas de Mímicas.');
-if (multiplayerCompatibility.includes('private.atina_v2_mime_cards')) errors.push('A migração v2 referencia uma tabela de cartas inexistente.');
 if (multiplayerCompatibility.includes('private.atina_v2_challenges')) errors.push('A migração v2 deve reutilizar private.atina_challenges.');
-if (/create\s+or\s+replace\s+function\s+public\.atina_(?!v2_)(?:create_room|join_room|leave_room|room_state|set_room_ready|set_room_team|start_room|start_room_challenges|reveal_room_clue|submit_room_answer|pass_room_challenge|next_room_challenge|submit_team_proposal|vote_team_proposal|start_mime_round|get_mime_secret|publish_game_state|resolve_mime_round|finish_mime_room|request_timeout)\b/i.test(multiplayerCompatibility)) {
+if (/create\s+or\s+replace\s+function\s+public\.atina_(?!v2_)(?:create_room|join_room|leave_room|room_state|set_room_ready|set_room_team|start_room|start_room_challenges|reveal_room_clue|submit_room_answer|pass_room_challenge|next_room_challenge|submit_team_proposal|vote_team_proposal|publish_game_state|request_timeout)\b/i.test(multiplayerCompatibility)) {
   errors.push('A migração v2 redefine uma RPC legada em vez de usar o namespace v2.');
 }
 
@@ -124,4 +110,4 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('Cliente seguro válido: JavaScript sintaticamente correto; slots históricos sanitizados; Mímicas locais e multiplayer ligadas a RPCs; submissões encaminhadas para o servidor.');
+console.log('Cliente seguro válido: JavaScript sintaticamente correto; slots históricos sanitizados; submissões e turnos encaminhados para o servidor.');

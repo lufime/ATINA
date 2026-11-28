@@ -200,8 +200,9 @@ try {
     return typeof atinaActiveCategoryCounts !== 'undefined' && atinaActiveCategoryCounts instanceof Map;
   }, null, {timeout:10000}).catch(() => {});
   const categories = await page.locator('#categories [data-category]').evaluateAll(nodes =>
-    nodes.map(node => node.getAttribute('data-category')).filter(name => name && name !== 'Mímicas'));
+    nodes.map(node => node.getAttribute('data-category')).filter(Boolean));
   assert.ok(categories.length > 0, 'Deve existir pelo menos uma modalidade com desafios ativos.');
+  assert.ok(!categories.includes('Mímicas'), 'O modo removido não deve aparecer nas modalidades.');
 assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mostrar categorias sem desafios no banco local (causa do contador 0).');
 
   // Regressão: dificuldade sem desafios não deve recorrer a desafios de outra dificuldade.
@@ -319,11 +320,7 @@ assert.ok(categories.every(name => gameCategories.has(name)), 'Solo não deve mo
   await page.locator('#party').click();
   await confirmPregame();
   await page.locator('#networkModeHint').getByText(/Modo Equipas/).waitFor();
-  // Mímicas encaminha para o fluxo de sala online.
-  await page.evaluate(() => showHomePage('categories'));
-  await page.locator('#categories [data-category="Mímicas"]').click();
-  await confirmPregame();
-  await page.locator('#networkModeHint').getByText(/Mímicas selecionado/).waitFor();
+
 
   // Navegação principal, definições e páginas de perfil/classificação sem erros JS.
   for (const target of ['howto','profile','ranking','settings','online','dashboard']) {
