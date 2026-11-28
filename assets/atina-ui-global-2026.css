@@ -1,0 +1,110 @@
+/* ATINA — configuração visual global
+   Identidade plana e consistente para jogo e administração.
+   Apenas apresentação: sem alterações a regras, eventos, dados ou integrações. */
+:root{
+  color-scheme:dark;
+  --atina-ui-bg:#101820;
+  --atina-ui-surface:#192633;
+  --atina-ui-surface-raised:#223342;
+  --atina-ui-field:#111d28;
+  --atina-ui-text:#f5f7fa;
+  --atina-ui-muted:#c0ccd6;
+  --atina-ui-gold:#f0c36b;
+  --atina-ui-green:#36c779;
+  --atina-ui-red:#ed5360;
+  --atina-ui-yellow:#e6b93f;
+  --atina-ui-radius:14px;
+}
+html{background:var(--atina-ui-bg);color-scheme:dark}
+body{background:var(--atina-ui-bg)!important;color:var(--atina-ui-text)}
+:where(h1,h2,h3,h4,strong){color:var(--atina-ui-text)}
+:where(p,li,label,.hint,.muted,.small){color:var(--atina-ui-muted)}
+/* Superfícies limpas, sem linhas decorativas, sombras ou efeitos laterais. */
+:where(.card,.panel,.home-block,.home-welcome,.tile,.online-panel,
+.online-ranking,.daily-mission,.quick-match-panel,#game,#result,
+#rankingPage,#networkLobby,#networkScoreboard,#dashboardPanel){
+  background:var(--atina-ui-surface)!important;
+  border:0!important;
+  border-radius:var(--atina-ui-radius)!important;
+  box-shadow:none!important;
+}
+:where(.home-welcome,.home-block,.card,.panel){padding:clamp(14px,2.4vw,22px)}
+:where(.tile,.mode-card,.challenge-item,.stat){
+  background:var(--atina-ui-surface-raised)!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+:where(.home-page-nav,#atinaMainNav,.admin-nav){
+  background:var(--atina-ui-surface)!important;
+  border:0!important;
+  border-radius:var(--atina-ui-radius)!important;
+  box-shadow:none!important;
+}
+:where(.home-nav-btn,.admin-nav a,.submenu a){
+  border:0!important;
+  border-radius:10px!important;
+}
+:where(.home-nav-btn.active,.admin-nav a[aria-current="page"]){
+  background:#35495a!important;
+  color:var(--atina-ui-gold)!important;
+}
+/* Controlos consistentes e fáceis de tocar. */
+:where(button,.btn,[role="button"],input[type="button"],input[type="submit"],select){
+  min-height:44px;
+  border-radius:11px;
+  font:inherit;
+}
+:where(button,.btn,[role="button"],input[type="button"],input[type="submit"]){
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+:where(button:not(.secondary):not(.danger):not(.home-nav-btn),
+.btn:not(.secondary):not(.danger)){
+  background:var(--atina-ui-gold);
+  color:#17212b;
+  font-weight:800;
+}
+:where(button.secondary,.btn.secondary,.home-nav-btn,.admin-nav a){
+  background:var(--atina-ui-surface-raised);
+  color:var(--atina-ui-text);
+}
+:where(input:not([type=checkbox]):not([type=radio]):not([type=file]),
+select,textarea){
+  min-height:44px;
+  background:var(--atina-ui-field)!important;
+  color:var(--atina-ui-text)!important;
+  border:1px solid #405363!important;
+  border-radius:10px!important;
+  font:inherit;
+}
+:where(input,select,textarea):focus-visible,
+:where(button,a,[role="button"]):focus-visible{
+  outline:2px solid var(--atina-ui-gold)!important;
+  outline-offset:2px;
+}
+/* Mensagens: vermelho negativo, verde positivo e amarelo neutro. */
+:where([data-tone="positive"],.atina-message-positive,.success,.is-success,.positive){
+  background:#123b2a!important;color:#c5ffda!important;border:0!important;
+  border-left:4px solid var(--atina-ui-green)!important;border-radius:10px!important;
+}
+:where([data-tone="negative"],.atina-message-negative,.error,.is-error,.is-wrong,.negative,.danger){
+  background:#451c25!important;color:#ffd0d3!important;border:0!important;
+  border-left:4px solid var(--atina-ui-red)!important;border-radius:10px!important;
+}
+:where([data-tone="neutral"],.atina-message-neutral,.info,.is-info,.warning,.is-warning){
+  background:#443718!important;color:#ffedb4!important;border:0!important;
+  border-left:4px solid var(--atina-ui-yellow)!important;border-radius:10px!important;
+}
+/* Layout adaptável sem alterar a estrutura ou o comportamento dos ecrãs. */
+:where(.actions,.button-row,.controls,.toolbar,.challenge-actions){
+  min-width:0;flex-wrap:wrap;gap:9px;
+}
+@media(max-width:600px){
+  body>.wrap,body .wrap{width:calc(100% - 20px);max-width:100%}
+  :where(.card,.panel,.home-block,.home-welcome,.home-page-panel){padding:14px!important}
+  :where(button,.btn,[role="button"],input[type="button"],input[type="submit"]){min-height:44px}
+  :where(.home-page-nav,#atinaMainNav){box-shadow:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
