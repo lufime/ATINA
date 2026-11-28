@@ -743,3 +743,34 @@ html body :is(#home,#game,#mimicaGame,#result,#rankingPage,#networkLobby,
   content:none!important;
   display:none!important;
 }
+
+
+/* ATINA — MODO NEUTRO: sem cores decorativas, fundos ou contornos.
+   Preserva geometria, espaçamento, visibilidade, imagens e funcionamento. */
+html body,
+html body * ,
+html body *::before,
+html body *::after {
+  color:inherit!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  outline-color:transparent!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+html body {
+  color:#111!important;
+  background:transparent!important;
+}
+html body :is(input,textarea,select,button,[role="button"]) {
+  color:inherit!important;
+  background:transparent!important;
+  border-color:transparent!important;
+  outline-color:transparent!important;
+}
+html body svg,
+html body svg * {
+  color:inherit!important;
+  filter:none!important;
+}
