@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   <button type="button" class="home-nav-btn active" data-home-target="dashboard">⌂ <span>Início</span></button>
   <button type="button" class="home-nav-btn" data-home-target="play">▶ <span>Jogar</span></button>
   <button type="button" class="home-nav-btn" data-home-target="categories">✦ <span>Modos</span></button>
+  <button type="button" class="home-nav-btn atina-tv-toggle" id="atinaTvModeToggle" aria-pressed="false">📺 <span>Modo TV</span></button>
   <details class="home-nav-more" id="atinaNavMore">
     <summary aria-label="Abrir mais opções de navegação"><span aria-hidden="true">☰</span> <span>Mais</span></summary>
     <div class="home-nav-more-grid">
@@ -2836,5 +2837,29 @@ document.addEventListener('click',function(event){
 
 <link rel="stylesheet" href="./assets/atina-interface-flat-last-loaded.css?v=20261128-minimal-1">
 
+<script id="atina-tv-mode-controller">
+(function(){
+ const key='atina-tv-mode';
+ function init(){
+  const button=document.getElementById('atinaTvModeToggle');
+  if(!button||button.dataset.ready==='1')return;
+  button.dataset.ready='1';
+  const apply=enabled=>{
+   document.body.classList.toggle('atina-tv-mode',enabled);
+   button.setAttribute('aria-pressed',enabled?'true':'false');
+   button.querySelector('span').textContent=enabled?'Sair do modo TV':'Modo TV';
+   try{localStorage.setItem(key,enabled?'1':'0')}catch(e){}
+  };
+  let enabled=false;try{enabled=localStorage.getItem(key)==='1'}catch(e){}
+  apply(enabled);
+  button.addEventListener('click',()=>apply(!document.body.classList.contains('atina-tv-mode')));
+  document.addEventListener('keydown',event=>{
+   if(event.key==='Escape'&&document.body.classList.contains('atina-tv-mode'))apply(false);
+   if((event.key==='t'||event.key==='T')&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||''))apply(!document.body.classList.contains('atina-tv-mode'));
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
 </body>
 </html>
