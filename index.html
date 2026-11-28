@@ -5954,5 +5954,23 @@ body {
 }
 </style>
 
+<script id="atina-qi-ranking-clean-bot-prefix">
+/* Mantém os bots no ranking QI*, removendo apenas o emoji decorativo do nome. */
+(function(){
+ const clean=()=>{
+  document.querySelectorAll('#atinaQiLeaderboard tr td:nth-child(2)').forEach(cell=>{
+   cell.childNodes.forEach(node=>{
+    if(node.nodeType===Node.TEXT_NODE)node.textContent=node.textContent.replace(/^\\s*🤖\\s*/u,'');
+   });
+   if(cell.firstChild&&cell.firstChild.nodeType===Node.TEXT_NODE){
+    cell.firstChild.textContent=cell.firstChild.textContent.replace(/^\\s*🤖\\s*/u,'');
+   }
+  });
+ };
+ clean();
+ const target=document.getElementById('atinaQiLeaderboard');
+ if(target)new MutationObserver(clean).observe(target,{childList:true,subtree:true,characterData:true});
+})();
+</script>
 </body>
 </html>
