@@ -2984,11 +2984,11 @@ let screenshotPayload=null;
   }catch(error){$("atinaSoloReportStatus").textContent=error.message||"Captura cancelada ou falhou.";}finally{stream?.getTracks().forEach(track=>track.stop());captureButton.disabled=false;}
  });
  const shareButton=$('atinaSoloReportShareChatGPT');
- shareButton?.addEventListener('click',async()=>{
+ const shareErrorWithImage=async()=>{
   const status=$('atinaSoloReportStatus'),description=$('atinaSoloReportDescription')?.value.trim()||'Sem descrição adicional.';
-  if(!screenshotPayload){status.textContent='Adiciona uma screenshot ou captura o ecrã antes de partilhar.';return;}
+  if(!screenshotPayload){status.textContent='Primeiro captura o ecrã do jogo ou anexa uma imagem. Depois carrega novamente para partilhar os dois juntos.';return;}
   if(!navigator.share||typeof File==='undefined'||typeof navigator.canShare!=='function'){
-   status.textContent='Este navegador não permite partilhar a imagem diretamente. Usa a opção de screenshot e anexa-a manualmente no ChatGPT.';
+   status.textContent='Este navegador não permite partilhar ficheiros diretamente. Anexa a screenshot manualmente no ChatGPT.';
    return;
   }
   try{
@@ -2996,16 +2996,27 @@ let screenshotPayload=null;
    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
    const mime=screenshotPayload.content_type||'image/jpeg',extension=mime==='image/png'?'png':mime==='image/webp'?'webp':'jpg';
    const file=new File([bytes],`atina-erro.${extension}`,{type:mime});
-   const text='Ajuda-me a analisar este erro no jogo ATINA. Categoria: '+$('atinaSoloReportCategory').value+'. Descrição: '+description+'\nURL: '+window.location.href;
+   const text='Analisa este erro no jogo ATINA e ajuda-me a corrigi-lo. Categoria: '+$('atinaSoloReportCategory').value+'. Descrição: '+description+'\nURL: '+window.location.href;
    const payload={files:[file],title:'Erro no ATINA',text};
    if(!navigator.canShare(payload))throw new Error('O dispositivo não suporta a partilha de imagens.');
    await navigator.share(payload);
-   status.textContent='Partilha aberta. Escolhe ChatGPT para enviar a descrição e a imagem.';
+   status.textContent='Partilha aberta. Escolhe ChatGPT para enviar a descrição e a imagem na mesma mensagem.';
   }catch(error){
    if(error?.name==='AbortError')return;
    status.textContent=error.message||'Não foi possível partilhar a imagem neste dispositivo.';
   }
- });
+ };
+ shareButton?.addEventListener('click',shareErrorWithImage);
+ // Depois de anexar ou capturar uma imagem, deixar explícito que o próximo toque
+ // envia o erro e o ficheiro em conjunto através do menu de partilha.
+ const shareOriginalLabel=shareButton?.textContent||'Partilhar erro com ChatGPT (inclui imagem)';
+ const updateShareLabel=()=>{
+  if(shareButton)shareButton.textContent=screenshotPayload?'Enviar erro + imagem para ChatGPT':shareOriginalLabel;
+ };
+ updateShareLabel();
+ input?.addEventListener('change',()=>setTimeout(updateShareLabel,0));
+ remove?.addEventListener('click',()=>setTimeout(updateShareLabel,0));
+ captureButton?.addEventListener('click',()=>setTimeout(updateShareLabel,0));
  remove?.addEventListener('click',clearScreenshot);})();
 (function setupSoloReportSubmission(){
  const form=$('atinaSoloReportForm'),nickname=$('atinaSoloReportNickname'),status=$('atinaSoloReportStatus'),submit=$('atinaSoloReportSubmit');
