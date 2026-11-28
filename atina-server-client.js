@@ -1380,21 +1380,7 @@ networkReceiveState = function(st) {
   networkGameActive = st.mode !== 'completed';
   if (changed) networkAnsweredThisChallenge = false;
   networkGameHost = !!networkLobbyData?.is_host;
-  if (st.mode === 'mimicas') {
-    if (st.finished && networkClockHandle !== null) { clearInterval(networkClockHandle); networkClockHandle = null; }
-    networkRenderMimeState();
-    if (!st.finished) ensureNetworkClock();
-  if (st.mode === 'completed') {
-    networkGameActive = false;
-    if (networkClockHandle !== null) { clearInterval(networkClockHandle); networkClockHandle = null; }
-    $('resultText').textContent = 'Partida multiplayer concluída. Consulta a classificação da sala.';
-    screen('result');
-  } else {
-    if ($('game').classList.contains('hidden')) screen('game');
-    networkRenderGameState();
-    ensureNetworkClock();
-  }
-};
+  ;
 networkStartGame = async function() {
   if (!networkRoom || !networkLobbyData?.is_host) return;
   try {
@@ -1580,7 +1566,6 @@ $('joinNetworkRoom').onclick = networkJoinRoom;
 $('leaveNetworkRoom').onclick = networkLeaveRoom;
 $('networkReady').onclick = () => networkSetReady(!networkLobbyData?.ready);
 $('networkAutoTeams').onclick = networkAutoTeams;
-$('networkStartMimicas').onclick = networkStartMimicas;
 $('submit').onclick = submit;
 $('nextClue').onclick = reveal;
 $('pass').onclick = pass;
