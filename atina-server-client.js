@@ -1652,18 +1652,32 @@ function atinaOnlineCountBoot() {
 
   const sessionId = getSessionId();
   let inFlight = false;
+  const presenceRpc = async (name, args) => {
+    if (!supabaseClient) throw new Error('Ligação online indisponível.');
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 7000);
+    try {
+      const request = supabaseClient.rpc(name, args);
+      if (typeof request.abortSignal === 'function') request.abortSignal(controller.signal);
+      const { data, error } = await request;
+      if (error) throw error;
+      return data;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  };
   const refresh = async () => {
     if (inFlight) return;
     inFlight = true;
     try {
       const nickname = (localStorage.getItem('atinaProgressNicknameV1') || '').trim().slice(0, 40) || 'Visitante';
       const accountToken = typeof atinaAccountSessionToken === 'function' ? atinaAccountSessionToken() : null;
-      await atinaServerRpc('atina_site_presence_heartbeat', {
+      await presenceRpc('atina_site_presence_heartbeat', {
         p_session_id: sessionId,
         p_nickname: nickname,
         p_session_token: accountToken || null
       });
-      const stats = await atinaServerRpc('atina_online_player_stats', {});
+      const stats = await presenceRpc('atina_online_player_stats', {});
       const total = Math.max(0, Number(stats?.counts?.total) || 0);
       counter.textContent = '● ' + total + ' jogadores online';
       counter.title = 'Total de jogadores online, sem duplicações.';
