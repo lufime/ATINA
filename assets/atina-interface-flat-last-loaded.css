@@ -906,3 +906,10 @@ html{scroll-behavior:smooth}
 #game .atina-live-stats .atina-round-progress-stat{
   display:none!important;
 }
+
+
+/* Ocultar os indicadores globais do cabeçalho durante a partida.
+   Continuam visíveis no ecrã inicial e os dados mantêm-se intactos. */
+body.atina-screen-game>header .stats{
+  display:none!important;
+}
