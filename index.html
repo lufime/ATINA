@@ -3010,7 +3010,7 @@ let screenshotPayload=null;
    const response=await fetch(ATINA_GAME_SUPABASE_URL+'/functions/v1/atina-error-reports-submit',{method:'POST',headers:{apikey:ATINA_GAME_SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({nickname:getNickname(),category:$('atinaSoloReportCategory').value.toLocaleLowerCase('pt-PT').replace('pontuação/xp','points_xp').replace('técnico','technical').replace('visual','visual').replace('jogo','game').replace('outro','other'),description,screenshot:screenshotPayload})});
    const data=await response.json().catch(()=>({}));
    if(!response.ok||!data.success)throw new Error(data.error||'Não foi possível enviar o report.');
-   $('atinaSoloReportDescription').value='';status.textContent='Report enviado com sucesso. O relógio foi retomado automaticamente.';atinaSoloReportResume();remove?.click();
+   $('atinaSoloReportDescription').value='';status.textContent='Report enviado com sucesso. O relógio foi retomado automaticamente.';atinaSoloReportResume();screenshotPayload=null;const screenshotInput=$('atinaSoloReportScreenshot');if(screenshotInput)screenshotInput.value='';$('atinaSoloReportScreenshotPreview')?.classList.add('hidden');$('atinaSoloReportScreenshotImage')?.removeAttribute('src');
   }catch(error){status.textContent=error.message||'Falha no envio. A descrição foi mantida para tentares novamente.';}
   finally{submit.disabled=false;}
  });
@@ -3431,7 +3431,7 @@ $('loadRanking').onclick=()=>{screen('home');showHomePage('ranking');};$('result
 // Recupera o ecrã e o separador que estavam abertos antes da atualização.
 restoreLastScreen();
 /* Sincroniza o relógio quando a página volta a estar visível */
-function refreshVisibleClock(){if(document.hidden){if(raceStartedAt)raceStop();if(mimeRaceStartedAt)mimeRaceStop();return;}if(networkGameActive){networkDrawClock();ensureNetworkClock();}else if(!$('game').classList.contains('hidden')&&!locked&&revealed>0){raceStart();if(timerDeadline){timerTick();if(timerInterval===null&&timedMode)timerInterval=setInterval(timerTick,200);}}if(!$('mimicaGame').classList.contains('hidden')&&mimeRunning&&!mimeRaceFinished)mimeRaceStart();}
+function refreshVisibleClock(){if(document.hidden){if(raceStartedAt)raceStop();if(mimeRaceStartedAt)mimeRaceStop();return;}if(networkGameActive){networkDrawClock();ensureNetworkClock();}else if(!$('game').classList.contains('hidden')&&!locked&&revealed>0&&!atinaSoloReportPaused){raceStart();if(timerDeadline){timerTick();if(timerInterval===null&&timedMode)timerInterval=setInterval(timerTick,200);}}if(!$('mimicaGame').classList.contains('hidden')&&mimeRunning&&!mimeRaceFinished)mimeRaceStart();}
 document.addEventListener('visibilitychange',refreshVisibleClock);
 window.addEventListener('pageshow',refreshVisibleClock);
 window.addEventListener('focus',refreshVisibleClock);
