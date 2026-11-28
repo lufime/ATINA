@@ -898,3 +898,11 @@ html{scroll-behavior:smooth}
   }
   #game #timerDisplay .timer-prepare-count{font-size:23px!important}
 }
+
+
+/* Ocultar os indicadores de pontos e desafios concluídos no HUD.
+   Os elementos permanecem no DOM para preservar as atualizações internas. */
+#game .atina-live-stats .atina-round-score-stat,
+#game .atina-live-stats .atina-round-progress-stat{
+  display:none!important;
+}
