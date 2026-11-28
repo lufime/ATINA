@@ -304,6 +304,10 @@ async function atinaProgressClaim(state) {
   }
 }
 
+function atinaLeaderboardDisplayName(value) {
+  return String(value || '').replace(/^(?:\s*🤖\s*)+/u, '').trim();
+}
+
 async function atinaProgressLoadPointsLeaderboard() {
   const list = $('atinaPointsLeaderboard');
   if (!list) return;
@@ -328,7 +332,7 @@ async function atinaProgressLoadPointsLeaderboard() {
       const nickname = document.createElement('td');
       const points = document.createElement('td');
       rank.textContent = String(index + 1);
-      nickname.textContent = row.nickname;
+      nickname.textContent = atinaLeaderboardDisplayName(row.nickname);
       points.textContent = Number(row.points || 0).toLocaleString('pt-PT');
       item.append(rank, nickname, points);
       list.appendChild(item);
@@ -530,7 +534,7 @@ async function atinaProgressLoadLeaderboard() {
       const xp = document.createElement('td');
       const level = document.createElement('td');
       rank.textContent = String(index + 1);
-      nickname.textContent = row.nickname;
+      nickname.textContent = atinaLeaderboardDisplayName(row.nickname);
       xp.textContent = Number(row.xp || 0).toLocaleString('pt-PT');
       const levelNumber = Math.max(1, Number(row.level) || 1);
       const levelBadge = document.createElement('span');
@@ -573,7 +577,7 @@ async function atinaProgressLoadQiLeaderboard() {
       const item = document.createElement('tr');
       [
         String(index + 1),
-        String(row.nickname || 'Jogador'),
+        atinaLeaderboardDisplayName(row.nickname || 'Jogador') || 'Jogador',
         Number(row.qi_score || 0).toLocaleString('pt-PT'),
         Number(row.challenges || 0).toLocaleString('pt-PT'),
         Number(row.accuracy || 0).toLocaleString('pt-PT', {maximumFractionDigits:1}) + '%'
