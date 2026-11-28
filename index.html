@@ -1488,24 +1488,15 @@ function screen(id){
   el.style.setProperty('display',visible?'block':'none','important');
  });
  const nav=$('atinaMainNav');if(nav){nav.classList.toggle('hidden',id!=='home');nav.style.setProperty('display',id==='home'?'':'none','important');}if(id==='result')loadOnlineRanking();
- // O HUD flutuante só é ativado no ecrã dos desafios.
- // O HUD pode já ter sido movido para o body. Procurar nos dois locais
- // impede que fique visível quando se regressa ao Início ou a outro ecrã.
- const gameHud=document.querySelector('body > .atina-timer-stack')||document.querySelector('#game .atina-timer-stack');
- const gameSection=$('game');
- if(gameHud&&gameSection){
-  if(id==='game'){
-   if(gameHud.parentElement!==document.body)document.body.appendChild(gameHud);
-   gameHud.hidden=false;
-   gameHud.removeAttribute('aria-hidden');
-   gameHud.style.setProperty('display','flex','important');
-   gameSection.classList.add('atina-hud-active');
-  }else{
-   gameHud.style.setProperty('display','none','important');
-   gameHud.hidden=true;
-   gameHud.setAttribute('aria-hidden','true');
-   gameSection.classList.remove('atina-hud-active');
-  }
+ // O HUD permanece dentro do ecrã de jogo, imediatamente antes
+ // da pergunta. O próprio #game controla a sua visibilidade.
+ // Não mover este bloco para o body: isso coloca relógio e pontuação
+ // no fim do documento em vez de os manter junto ao desafio.
+ const gameHud=$('#game .atina-timer-stack');
+ if(gameHud){
+  gameHud.hidden=false;
+  gameHud.removeAttribute('aria-hidden');
+  gameHud.style.removeProperty('display');
  }
  try{localStorage.setItem(ATINA_SCREEN_KEY,id);}catch(e){}
  // Guardar também o ecrã no URL; assim o estado não depende apenas de localStorage.
@@ -2646,7 +2637,7 @@ document.addEventListener('click',function(event){
 
 
 
-<link rel="stylesheet" href="./assets/atina-interface-flat-last-loaded.css?v=20261128-pregame-modal-1">
+<link rel="stylesheet" href="./assets/atina-interface-flat-last-loaded.css?v=20261128-game-hud-2">
 
 <script id="atina-tv-mode-controller">
 (function(){
