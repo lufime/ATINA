@@ -2688,22 +2688,32 @@ async function atinaLoadOnlinePlayers(){
   const {data,error}=await supabaseClient.rpc('atina_online_player_stats');
   if(error)throw error;
   const stats=data&&typeof data==='object'?data:{};
-  const humans=Array.isArray(stats.players)?stats.players:(Array.isArray(stats.humans)?stats.humans:[]);
+  const players=Array.isArray(stats.players)?stats.players:[];
+  const humans=Array.isArray(stats.humans)?stats.humans:players.filter(player=>player?.type==='human');
+  const bots=Array.isArray(stats.bots)?stats.bots:players.filter(player=>player?.type==='training'||player?.type==='bot');
   const counts=stats.counts||{};
-  const total=Math.max(0,Number(counts.total)||humans.length);
+  const humanCount=Math.max(0,Number(counts.humans)||humans.length);
+  const botCount=Math.max(0,Number(counts.bots)||bots.length);
+  const total=Math.max(0,Number(counts.total)||players.length||humanCount+botCount);
+  const visiblePlayers=players.length?players:[...humans,...bots];
   if(list){
    list.replaceChildren();
-   humans.slice(0,15).forEach(player=>{
+   visiblePlayers.slice(0,15).forEach(player=>{
     const item=document.createElement('li');
-    item.textContent=atinaDisplayPlayerName(player);
+    const nickname=atinaDisplayPlayerName(player);
+    const isBot=player?.type==='bot'||player?.type==='training';
+    item.textContent=isBot?'🤖 '+nickname+' · BOT':nickname+' · humano';
+    item.dataset.playerType=isBot?'bot':'human';
     list.appendChild(item);
    });
   }
-  const summary=total+' jogadores online';
+  const summary=humanCount+' humanos · '+botCount+' bots · '+total+' online';
   if(topCount){
    topCount.textContent='● '+summary;
-   topCount.title='Total de jogadores online, sem duplicações.';
+   topCount.title='Contagem única de jogadores humanos e bots ativos.';
    topCount.dataset.count=String(total);
+   topCount.dataset.humans=String(humanCount);
+   topCount.dataset.bots=String(botCount);
   }
   if(status){
    if(total===0)status.textContent='Não há jogadores online neste momento.';
