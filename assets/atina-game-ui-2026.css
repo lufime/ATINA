@@ -62,7 +62,7 @@ body.atina-screen-game>.wrap{width:min(calc(100% - 24px),900px);max-width:900px;
 }
 .home-nav-more-grid{padding:8px!important;border:1px solid var(--atina-game-border-strong)!important;border-radius:14px!important;background:#0c2034!important;box-shadow:var(--atina-game-shadow)!important}
 /* Todas as áreas e painéis */
-#home,.home-page-panel,#game,#mimicaGame,#result,#rankingPage,
+#home,.home-page-panel,#game,#result,#rankingPage,
 #networkLobby,#networkScoreboard,#atinaFaqPage,#atinaFriendsPage,
 #atinaAccessPage,#atinaHowToPage,#surprisePanel,#networkTimeoutPanel,
 #atinaSoloReportPanel,#teamVotePanel{min-width:0}
@@ -98,7 +98,7 @@ button,.btn,input[type=button],input[type=submit],input[type=reset]{
   min-height:44px;border-radius:11px!important;
 }
 #home .btn,#game .btn,#result .btn,#rankingPage .btn,
-#networkLobby .btn,#networkScoreboard .btn,#mimicaGame .btn{
+#networkLobby .btn,#networkScoreboard .btn{
   min-height:46px;padding:10px 14px!important;font-size:14px!important;
   border:1px solid transparent!important;border-radius:11px!important;
   box-shadow:0 5px 14px rgba(0,0,0,.16)!important;
@@ -179,7 +179,7 @@ body.atina-screen-game #game #feedback,
   #atinaAccessPage,#atinaHowToPage{padding:14px!important}
   #home .tile,.tile{padding:12px!important}
   #home .btn,#game .btn,#result .btn,#rankingPage .btn,
-  #networkLobby .btn,#networkScoreboard .btn,#mimicaGame .btn{
+  #networkLobby .btn,#networkScoreboard .btn{
     min-height:44px!important;padding:9px 10px!important;font-size:13px!important;
   }
   #solutionImage p,#solutionImage li{font-size:15px!important}
@@ -621,7 +621,7 @@ body.atina-screen-game #game>.card{
 #game #solutionImage p,#game #solutionImage li{
   font-size:clamp(16px,2vw,19px)!important;line-height:1.55!important;
 }
-#result,#rankingPage,#networkLobby,#networkScoreboard,#mimicaGame>.card{
+#result,#rankingPage,#networkLobby,#networkScoreboard{
   padding:clamp(15px,2.5vw,24px)!important;border-radius:20px!important;
 }
 #atinaPregamePanel{
