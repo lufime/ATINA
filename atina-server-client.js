@@ -305,7 +305,7 @@ async function atinaProgressClaim(state) {
 }
 
 function atinaLeaderboardDisplayName(value) {
-  return String(value || '').replace(/^(?:\\s*🤖\\s*)+/u, '').trim();
+  return String(value || '').replace(/^(?:\s*🤖\s*)+/u, '').trim();
 }
 
 async function atinaProgressLoadPointsLeaderboard() {
