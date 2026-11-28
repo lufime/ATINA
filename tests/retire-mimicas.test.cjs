@@ -15,8 +15,8 @@ test('Mímicas is absent from player-facing mode selectors', () => {
 });
 
 test('server rejects new Mímicas games in legacy and V2 rooms', () => {
-  assert.match(migration, /atina_disable_new_mimicas_legacy/);
-  assert.match(migration, /atina_disable_new_mimicas_v2/);
+  assert.match(migration, /atina_disable_new_mimicas_legacy_insert/);
+  assert.match(migration, /atina_disable_new_mimicas_v2_insert/);
   assert.match(migration, /feature_not_supported/);
   assert.match(migration, /OLD\.game_state->>'mode'/);
 });
