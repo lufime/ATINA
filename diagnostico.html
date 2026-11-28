@@ -25,10 +25,10 @@ small{color:#b9c8d9}
 <p>Esta verificação não inicia o jogo nem altera dados.</p>
 <button id="run" type="button">Executar diagnóstico de ficheiros</button>
 <h2>2. Testar o arranque real</h2>
-<p>Carrega no botão abaixo. O jogo abre num novo separador e esta página mantém-se aberta. Aguarda 30 a 60 segundos no ecrã inicial. Não inicies uma partida. Se o jogo bloquear, regressa a este separador para ler os erros.</p>
+<p>Carrega no botão abaixo. O jogo abre num novo separador e esta página mantém-se aberta. Inicia o jogo e reproduz o bloqueio, se acontecer. Depois regressa aqui e executa novamente o diagnóstico de ficheiros: o relatório inclui automaticamente os registos de execução. Também podes usar o botão de atualização da execução.</p>
 <button id="start-runtime" type="button">Iniciar teste monitorizado do jogo</button>
-<button id="read-runtime" class="secondary" type="button">Ler erros do teste de arranque</button>
-<p><small>A monitorização regista erros JavaScript, rejeições de Promises e falhas de carregamento. Guarda até 30 ocorrências apenas na sessão deste separador. Não envia o relatório para nenhum serviço e não escreve no Supabase.</small></p>
+<button id="read-runtime" class="secondary" type="button">Atualizar diagnóstico de execução</button>
+<p><small>A monitorização regista erros JavaScript, rejeições de Promises e falhas de carregamento. Guarda até 30 ocorrências no armazenamento local do navegador, partilhado entre separadores desta página. O relatório não é enviado para nenhum serviço e não escreve no Supabase.</small></p>
 <button id="copy" class="secondary" type="button" disabled>Copiar relatório completo</button>
 <div id="status" role="status" aria-live="polite">Pronto para analisar.</div>
 <h2>Relatório</h2>
@@ -75,6 +75,7 @@ run.addEventListener('click',async function(){
   }
   add('');add('Resumo: '+ok+' scripts clássicos com sintaxe válida; '+fail+' falhas; '+skipped+' ignorados.');
   add('Nota: HTTP 200 confirma apenas que o ficheiro foi obtido, não que executa corretamente.');
+  appendRuntimeReport();
   status.textContent=fail?'Análise concluída: foram encontradas '+fail+' falhas.':'Análise concluída: não foram encontradas falhas nestas verificações.';
  }catch(e){add('FALHA GERAL — '+(e&&e.message||String(e)));status.textContent='Não foi possível concluir o diagnóstico.';}
  copy.disabled=!report;run.disabled=false;
@@ -85,15 +86,22 @@ startRuntime.addEventListener('click',function(){
  const link=document.createElement('a');link.href=gameUrl;link.target='_blank';link.rel='noopener';link.style.display='none';document.body.appendChild(link);link.click();link.remove();
  status.textContent='O jogo foi aberto num novo separador. Mantém esta página aberta; depois regressa aqui para ler os erros.';
 });
-readRuntime.addEventListener('click',function(){
+function appendRuntimeReport(){
+ report=report.replace(/\nATINA — diagnóstico de execução[\s\S]*$/,'');
  let entries=[];
  try{entries=JSON.parse(localStorage.getItem(STORAGE_KEY)||sessionStorage.getItem(STORAGE_KEY)||'[]');}catch(e){entries=[];}
- if(!Array.isArray(entries)||!entries.length){report+='\nATINA — diagnóstico de execução\nNão existem ocorrências guardadas nesta sessão. Confirma que abriste o jogo pelo botão monitorizado e regressaste com o botão Voltar do navegador.\n';}
- else{
+ if(!Array.isArray(entries)||!entries.length){
+  report+='\nATINA — diagnóstico de execução\nAinda não existem ocorrências guardadas. Inicia o teste monitorizado, reproduz o problema no separador do jogo e atualiza este relatório.\n';
+ }else{
   report+='\nATINA — diagnóstico de execução\nOcorrências: '+entries.length+'\n';
   entries.forEach((entry,i)=>{report+='\n['+(i+1)+'] '+(entry.time||'')+' — '+(entry.type||'evento')+'\n';Object.keys(entry).forEach(key=>{if(key!=='time'&&key!=='type')report+='  '+key+': '+entry[key]+'\n';});});
  }
- out.textContent=report;copy.disabled=!report;status.textContent=entries.length?'Relatório de execução carregado. Copia e envia-o nesta conversa.':'Não foram encontrados registos de execução.';
+ out.textContent=report;copy.disabled=!report;
+ return entries.length;
+}
+readRuntime.addEventListener('click',function(){
+ const count=appendRuntimeReport();
+ status.textContent=count?'Relatório de execução atualizado. Copia e envia-o nesta conversa.':'Ainda não há registos de execução.';
 });
 copy.addEventListener('click',async function(){
  try{await navigator.clipboard.writeText(report);status.textContent='Relatório copiado. Cola-o nesta conversa.';}
