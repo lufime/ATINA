@@ -766,3 +766,135 @@ html{scroll-behavior:smooth}
   #game .atina-live-stats span{font-size:9px;padding:4px 5px}
   #game .atina-clock-face>#timerDisplay{min-width:78px!important;font-size:27px!important}
 }
+
+
+/* ATINA — HUD compacto e legível em ecrãs móveis */
+@media(max-width:600px){
+  #game .atina-clock-face{
+    display:grid!important;
+    width:100%!important;
+    grid-template-columns:42px minmax(0,1fr) 88px!important;
+    grid-template-rows:auto auto!important;
+    grid-template-areas:
+      "stats stats stats"
+      "logo label timer"!important;
+    align-items:center!important;
+    justify-items:stretch!important;
+    gap:8px 7px!important;
+    text-align:left!important;
+  }
+  #game .atina-live-stats{
+    grid-area:stats!important;
+    display:flex!important;
+    width:100%!important;
+    min-width:0!important;
+    flex-wrap:wrap!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:5px!important;
+  }
+  #game .atina-live-stats span{
+    display:inline-flex!important;
+    min-width:0!important;
+    min-height:26px!important;
+    padding:4px 7px!important;
+    font-size:10px!important;
+    line-height:1.2!important;
+    white-space:normal!important;
+    text-align:center!important;
+  }
+  #game .atina-game-logo{
+    grid-area:logo!important;
+    width:40px!important;
+    max-width:40px!important;
+    max-height:40px!important;
+    justify-self:center!important;
+    align-self:center!important;
+  }
+  #game .atina-clock-face>strong{
+    grid-area:label!important;
+    align-self:center!important;
+    justify-self:end!important;
+    font-size:10px!important;
+    letter-spacing:.04em!important;
+    white-space:nowrap!important;
+  }
+  #game .atina-clock-face>#timerDisplay{
+    grid-area:timer!important;
+    display:inline-flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:1px!important;
+    width:88px!important;
+    min-width:88px!important;
+    max-width:88px!important;
+    min-height:50px!important;
+    padding:4px 5px!important;
+    line-height:1.05!important;
+    white-space:normal!important;
+    text-align:center!important;
+    font-size:26px!important;
+  }
+  #game #timerDisplay .timer-prepare-label{
+    display:block!important;
+    font-size:9px!important;
+    line-height:1.1!important;
+    letter-spacing:.04em!important;
+    font-weight:850!important;
+  }
+  #game #timerDisplay .timer-prepare-count{
+    display:block!important;
+    font-size:25px!important;
+    line-height:1!important;
+    font-weight:950!important;
+    white-space:nowrap!important;
+  }
+  #game .card>.row:has(>#clueProgress){
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:wrap!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:7px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #game #clueProgress{
+    flex:0 1 auto!important;
+    min-width:0!important;
+    margin-left:auto!important;
+    white-space:nowrap!important;
+    overflow-wrap:normal!important;
+    font-size:11px!important;
+  }
+  #game #atinaCluesToggle{
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-height:34px!important;
+    padding:6px 9px!important;
+    white-space:nowrap!important;
+  }
+}
+@media(max-width:380px){
+  #game .atina-clock-face{
+    grid-template-columns:36px minmax(0,1fr) 82px!important;
+    gap:7px 5px!important;
+  }
+  #game .atina-game-logo{
+    width:34px!important;
+    max-width:34px!important;
+    max-height:34px!important;
+  }
+  #game .atina-live-stats span{
+    padding:4px 5px!important;
+    font-size:9px!important;
+  }
+  #game .atina-clock-face>#timerDisplay{
+    width:82px!important;
+    min-width:82px!important;
+    max-width:82px!important;
+    font-size:24px!important;
+  }
+  #game #timerDisplay .timer-prepare-count{font-size:23px!important}
+}
