@@ -1,36 +1,20 @@
-/* ATINA — folha única de neutralização visual.
-   Sem cores de preenchimento, bordas, contornos, sombras ou efeitos.
-   Preserva layout, medidas, tipografia, conteúdo e comportamento. */
-html, body {
-  background: #111 !important;
-  color: #eee !important;
+/* ATINA — estilo mínimo. Sem camadas visuais antigas. */
+:root { color-scheme: dark; }
+html { min-height: 100%; background: #111; }
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: #111;
+  color: #eee;
+  font: inherit;
 }
-html body *,
-html body *::before,
-html body *::after {
-  background-color: transparent !important;
-  background-image: none !important;
-  border-color: transparent !important;
-  outline-color: transparent !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  filter: grayscale(1) !important;
-  -webkit-filter: grayscale(1) !important;
-  transition: none !important;
-  animation: none !important;
+[hidden] { display: none !important; }
+button, input, textarea, select {
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  font: inherit;
 }
-html body * {
-  color: #eee !important;
-}
-html body :is(button,input,textarea,select,[role="button"],[role="checkbox"],[role="radio"]) {
-  background: transparent !important;
-  color: #eee !important;
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-html body svg,
-html body svg * {
-  fill: currentColor !important;
-  stroke: currentColor !important;
-}
+button { cursor: pointer; }
+img, video, canvas, svg { max-width: 100%; }
