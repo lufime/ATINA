@@ -1,20 +1,42 @@
-/* ATINA — estilo mínimo. Sem camadas visuais antigas. */
+/* ATINA — neutralização visual global; preserva estrutura e comportamento. */
 :root { color-scheme: dark; }
-html { min-height: 100%; background: #111; }
-body {
-  min-height: 100vh;
+html, body {
+  min-height: 100%;
   margin: 0;
-  background: #111;
-  color: #eee;
-  font: inherit;
+  background: #111 !important;
+  color: #eee !important;
+}
+html body,
+html body * ,
+html body *::before,
+html body *::after {
+  color: #eee !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+html body {
+  background: #111 !important;
+}
+html body :is(button, input, textarea, select, [role="button"], [role="checkbox"], [role="radio"]) {
+  color: #eee !important;
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+html body svg,
+html body svg * {
+  fill: currentColor !important;
+  stroke: currentColor !important;
 }
 [hidden] { display: none !important; }
-button, input, textarea, select {
-  color: inherit;
-  background: transparent;
-  border: 1px solid transparent;
-  box-shadow: none;
-  font: inherit;
-}
 button { cursor: pointer; }
 img, video, canvas, svg { max-width: 100%; }
