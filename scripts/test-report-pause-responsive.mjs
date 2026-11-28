@@ -34,7 +34,7 @@ try {
     await page.route('https://commons.wikimedia.org/**', route => route.fulfill({status:200,contentType:'application/json',body:'{"query":{"pages":{}}}'}));
     await page.goto(`http://127.0.0.1:${server.address().port}/`,{waitUntil:'load'});
     await page.evaluate(() => {
-      const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];
+      const ids=['home','game','result','rankingPage','networkLobby'];
       ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.classList.add('hidden');el.hidden=true;el.setAttribute('aria-hidden','true');el.style.setProperty('display','none','important');});
       const game=document.querySelector('#game');
       if(game){game.classList.remove('hidden');game.hidden=false;game.setAttribute('aria-hidden','false');game.style.setProperty('display','block','important');}
@@ -61,7 +61,7 @@ try {
     assert.equal(reportDebug.paused,true,'Solo timer should pause when the global report modal opens: '+JSON.stringify(reportDebug));
     await page.locator('#atinaGlobalReportClose').click();
     assert.equal(await page.evaluate(()=>atinaSoloReportPaused),false,'Solo timer should resume when the global report is closed');
-    for (const target of ['home','mimicaGame','result','rankingPage','networkLobby']) {
+    for (const target of ['home','result','rankingPage','networkLobby']) {
       await page.evaluate(id => {
         const ids=['home','game','mimicaGame','result','rankingPage','networkLobby'];
         ids.forEach(name=>{const el=document.getElementById(name);if(!el)return;el.classList.add('hidden');el.hidden=true;el.setAttribute('aria-hidden','true');el.style.setProperty('display','none','important');});
