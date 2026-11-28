@@ -1,0 +1,28 @@
+name: Testar remoção de Mímicas
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'supabase/migrations/20261128150000_retire_mimicas_mode.sql'
+      - 'tests/retire-mimicas.test.cjs'
+      - '.github/workflows/test-retire-mimicas.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  retire-mimicas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validar sintaxe do teste
+        run: node --check tests/retire-mimicas.test.cjs
+      - name: Executar testes de remoção de Mímicas
+        run: node --test tests/retire-mimicas.test.cjs
