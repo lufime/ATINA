@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14243a">
+<title>Diagnóstico ATINA</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#101d2d;color:#f4f6fa}
+body{margin:0;padding:18px;max-width:760px;margin-inline:auto}
+main{background:#1a2d43;border:1px solid #40556d;border-radius:16px;padding:18px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:20px 0 8px}p{line-height:1.5;color:#d5dfeb}
+button{width:100%;min-height:48px;border:0;border-radius:12px;padding:12px;margin:8px 0;background:#e3bd72;color:#172335;font-weight:800;font-size:16px}
+button.secondary{background:#314a64;color:#fff}button:disabled{opacity:.55}
+#status{padding:12px;border-radius:10px;background:#102238;white-space:pre-wrap;overflow-wrap:anywhere;min-height:48px}
+#results{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.5 ui-monospace,monospace;background:#0c1725;border:1px solid #40556d;border-radius:10px;padding:12px;max-height:55vh;overflow:auto}
+small{color:#b9c8d9}
+</style>
+</head>
+<body>
+<main>
+<h1>Diagnóstico ATINA</h1>
+<p>Esta página verifica os ficheiros JavaScript e permite também registar erros de execução durante o arranque real do jogo. A recolha de execução só é ativada quando escolhes iniciar o teste monitorizado.</p>
+<h2>1. Verificar ficheiros</h2>
+<p>Esta verificação não inicia o jogo nem altera dados.</p>
+<button id="run" type="button">Executar diagnóstico de ficheiros</button>
+<h2>2. Testar o arranque real</h2>
+<p>Carrega no botão abaixo. O jogo abre num novo separador e esta página mantém-se aberta. Inicia o jogo e reproduz o bloqueio, se acontecer. Depois regressa aqui e executa novamente o diagnóstico de ficheiros: o relatório inclui automaticamente os registos de execução. Também podes usar o botão de atualização da execução.</p>
+<button id="start-runtime" type="button">Iniciar teste monitorizado do jogo</button>
+<button id="read-runtime" class="secondary" type="button">Atualizar diagnóstico de execução</button>
+<p><small>A monitorização regista erros JavaScript, rejeições de Promises e falhas de carregamento. Guarda até 30 ocorrências no armazenamento local do navegador, partilhado entre separadores desta página. O relatório não é enviado para nenhum serviço e não escreve no Supabase.</small></p>
+<button id="copy" class="secondary" type="button" disabled>Copiar relatório completo</button>
+<div id="status" role="status" aria-live="polite">Pronto para analisar.</div>
+<h2>Relatório</h2>
+<pre id="results">Ainda sem resultados.</pre>
+<small>Nota: HTTP 200 confirma apenas que o ficheiro foi obtido, não que executa corretamente.</small>
+</main>
+<script>
+(function(){
+'use strict';
+const run=document.getElementById('run'),copy=document.getElementById('copy'),status=document.getElementById('status'),out=document.getElementById('results');
+const startRuntime=document.getElementById('start-runtime'),readRuntime=document.getElementById('read-runtime');
+const STORAGE_KEY='atinaRuntimeDiagnosticV1';
+let report='';
+function add(s){report+=s+'\n';out.textContent=report;}
+function syntaxCheck(source,label){
+ try{new Function(source);add('OK — sintaxe: '+label);return true;}
+ catch(e){add('ERRO — sintaxe: '+label+' — '+(e&&e.message||String(e)));return false;}
+}
+run.addEventListener('click',async function(){
+ run.disabled=true;copy.disabled=true;report='';status.textContent='A analisar os ficheiros do jogo…';out.textContent='';
+ add('ATINA — diagnóstico de ficheiros');add('Data: '+new Date().toLocaleString('pt-PT'));add('Página: '+location.href);add('');
+ try{
+  const response=await fetch('./index.html',{cache:'no-store'});
+  if(!response.ok)throw new Error('Não foi possível obter index.html (HTTP '+response.status+').');
+  const html=await response.text();add('OK — index.html carregado ('+html.length+' caracteres).');
+  const doc=new DOMParser().parseFromString(html,'text/html'),scripts=Array.from(doc.querySelectorAll('script'));
+  let ok=0,fail=0,skipped=0;add('Scripts encontrados: '+scripts.length);
+  for(let i=0;i<scripts.length;i++){
+   const s=scripts[i],type=(s.getAttribute('type')||'').trim().toLowerCase(),label='script '+(i+1)+(s.src?' — '+s.getAttribute('src'):' inline');
+   if(s.src){
+    const url=new URL(s.getAttribute('src'),location.href);
+    try{
+     const res=await fetch(url.href,{cache:'no-store'});
+     if(!res.ok){fail++;add('ERRO — recurso '+label+' — HTTP '+res.status);continue;}
+     const source=await res.text();add('OK — recurso '+label+' — HTTP '+res.status);
+     if(type===''||type==='text/javascript'||type==='application/javascript'){if(syntaxCheck(source,label))ok++;else fail++;}
+     else{skipped++;add('IGNORADO — tipo de script não clássico ('+type+').');}
+    }catch(e){fail++;add('ERRO — recurso '+label+' — '+(e&&e.message||String(e)));}
+   }else if(type===''||type==='text/javascript'||type==='application/javascript'){
+    if(!s.textContent.trim()){skipped++;add('IGNORADO — '+label+' vazio.');}
+    else if(syntaxCheck(s.textContent,label))ok++;else fail++;
+   }else if(type==='application/ld+json'||type==='application/json'){skipped++;add('IGNORADO — dados JSON em '+label+'.');}
+   else{skipped++;add('IGNORADO — tipo '+(type||'(não indicado)')+' em '+label+'.');}
+  }
+  add('');add('Resumo: '+ok+' scripts clássicos com sintaxe válida; '+fail+' falhas; '+skipped+' ignorados.');
+  add('Nota: HTTP 200 confirma apenas que o ficheiro foi obtido, não que executa corretamente.');
+  appendRuntimeReport();
+  status.textContent=fail?'Análise concluída: foram encontradas '+fail+' falhas.':'Análise concluída: não foram encontradas falhas nestas verificações.';
+ }catch(e){add('FALHA GERAL — '+(e&&e.message||String(e)));status.textContent='Não foi possível concluir o diagnóstico.';}
+ copy.disabled=!report;run.disabled=false;
+});
+startRuntime.addEventListener('click',function(){
+ try{localStorage.removeItem(STORAGE_KEY);sessionStorage.removeItem(STORAGE_KEY);}catch(e){status.textContent='Não foi possível preparar a sessão de diagnóstico: '+(e.message||e);return;}
+ const gameUrl=new URL('./index.html?atina_runtime_diag=1#dashboard',location.href).href;
+ const link=document.createElement('a');link.href=gameUrl;link.target='_blank';link.rel='noopener';link.style.display='none';document.body.appendChild(link);link.click();link.remove();
+ status.textContent='O jogo foi aberto num novo separador. Mantém esta página aberta; depois regressa aqui para ler os erros.';
+});
+function appendRuntimeReport(){
+ report=report.replace(/\nATINA — diagnóstico de execução[\s\S]*$/,'');
+ let entries=[];
+ try{entries=JSON.parse(localStorage.getItem(STORAGE_KEY)||sessionStorage.getItem(STORAGE_KEY)||'[]');}catch(e){entries=[];}
+ if(!Array.isArray(entries)||!entries.length){
+  report+='\nATINA — diagnóstico de execução\nAinda não existem ocorrências guardadas. Inicia o teste monitorizado, reproduz o problema no separador do jogo e atualiza este relatório.\n';
+ }else{
+  report+='\nATINA — diagnóstico de execução\nOcorrências: '+entries.length+'\n';
+  entries.forEach((entry,i)=>{report+='\n['+(i+1)+'] '+(entry.time||'')+' — '+(entry.type||'evento')+'\n';Object.keys(entry).forEach(key=>{if(key!=='time'&&key!=='type')report+='  '+key+': '+entry[key]+'\n';});});
+ }
+ out.textContent=report;copy.disabled=!report;
+ return entries.length;
+}
+readRuntime.addEventListener('click',function(){
+ const count=appendRuntimeReport();
+ status.textContent=count?'Relatório de execução atualizado. Copia e envia-o nesta conversa.':'Ainda não há registos de execução.';
+});
+copy.addEventListener('click',async function(){
+ try{await navigator.clipboard.writeText(report);status.textContent='Relatório copiado. Cola-o nesta conversa.';}
+ catch(e){out.focus();status.textContent='Não foi possível copiar automaticamente. Mantém o dedo no relatório, seleciona o texto e escolhe Copiar.';}
+});
+})();
+</script>
+</body>
+</html>
