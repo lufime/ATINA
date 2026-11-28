@@ -1279,13 +1279,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             console.warn("Não foi possível preparar a screenshot para partilha; o link da imagem permanece no texto.",error);
           }
         }
-        if(typeof navigator.share==="function"){
+        if(typeof navigator.share==="function"&&(!screenshotFile||(typeof navigator.canShare==="function"&&navigator.canShare({files:[screenshotFile]})))){
           try{
-            if(screenshotFile&&typeof navigator.canShare==="function"&&navigator.canShare({files:[screenshotFile]})){
-              await navigator.share({title:"Report de erro ATINA",text:context,files:[screenshotFile]});
-            }else{
-              await navigator.share({title:"Report de erro ATINA",text:context});
-            }
+            await navigator.share({title:"Report de erro ATINA",text:context,...(screenshotFile?{files:[screenshotFile]}:{})});
             return;
           }catch(error){if(error.name==="AbortError")return;console.warn("Partilha nativa indisponível; a preparar alternativa.",error);}
         }
