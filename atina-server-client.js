@@ -189,7 +189,9 @@ async function atinaProfileChallengeProgressRefresh() {
 }
 function atinaProgressRender(profile) {
   const signedInName = $('atinaSignedInUserName');
-  if (signedInName) signedInName.textContent = profile?.nickname ? 'Ligado como ' + profile.nickname : 'A jogar como convidado';
+  const nickname = String(profile?.nickname || '').trim();
+  const isPlaceholderNickname = /^dummy$/i.test(nickname);
+  if (signedInName) signedInName.textContent = nickname && !isPlaceholderNickname ? 'Ligado como ' + nickname : 'A jogar como convidado';
   atinaRenderLevelGallery(profile || {level:1,xp:0});
   if (!profile) return;
   void atinaProgressLoadMyQi(profile);
@@ -1264,7 +1266,9 @@ update = function() {
   $('totalScore').textContent = (mode === 'duel' || mode === 'party')
     ? 'Jogador/Equipa 1: ' + scores[0] + ' · Jogador/Equipa 2: ' + scores[1]
     : '⭐ ' + scores[0] + ' pontos';
-  $('progress').textContent = answeredCount + ' / ' + queue.length + ' desafios concluídos';
+  $('progress').textContent = queue.length > 0
+    ? answeredCount + ' / ' + queue.length + ' desafios concluídos'
+    : 'Pronto para jogar';
   const liveScore = $('atinaRoundScore');
   const liveStreak = $('atinaRoundStreak');
   const liveRound = $('atinaRoundNumber');

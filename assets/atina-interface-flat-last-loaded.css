@@ -908,8 +908,8 @@ html{scroll-behavior:smooth}
 }
 
 
-/* Ocultar os indicadores globais do cabeçalho durante a partida.
-   Continuam visíveis no ecrã inicial e os dados mantêm-se intactos. */
-body.atina-screen-game>header .stats{
+/* Remover os indicadores globais de pontos e desafios concluídos do cabeçalho.
+   Os elementos e os dados permanecem intactos para não afetar a lógica do jogo. */
+header.brand>.stats{
   display:none!important;
 }
