@@ -316,3 +316,42 @@ img, video, canvas, svg { max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+
+/* Three clear TV play paths in the player guide */
+.atina-tv-modes { margin-top: 16px; }
+.atina-tv-modes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.atina-tv-mode-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(104, 190, 218, .24);
+  border-radius: 16px;
+  background: linear-gradient(155deg, rgba(24, 51, 76, .92), rgba(12, 29, 47, .96));
+}
+.atina-tv-mode-icon { font-size: 30px; line-height: 1.2; }
+.atina-tv-mode-option h4 { margin: 0; color: #f3f7fb; font-size: 17px; }
+.atina-tv-mode-option p { flex: 1; margin: 0; color: #bdcbd8; line-height: 1.5; }
+.atina-tv-mode-option .btn { margin-top: 6px; text-align: center; text-decoration: none; }
+#atinaTvSmart, #atinaTvCast, #atinaTvHdmi { scroll-margin-top: 24px; }
+.atina-tv-mode .atina-tv-modes-grid { gap: 18px; }
+.atina-tv-mode .atina-tv-mode-option { padding: 22px; }
+.atina-tv-mode .atina-tv-mode-option h4 { font-size: 21px; }
+.atina-tv-mode .atina-tv-mode-option p { font-size: 17px; }
+@media (max-width: 760px) {
+  .atina-tv-modes-grid { grid-template-columns: 1fr; }
+  .atina-tv-mode-option { display: grid; grid-template-columns: 42px minmax(0,1fr); align-items: center; }
+  .atina-tv-mode-icon { grid-row: span 2; }
+  .atina-tv-mode-option p, .atina-tv-mode-option .btn { grid-column: 1 / -1; }
+}
+@media (min-width: 761px) and (max-width: 1050px) {
+  .atina-tv-modes-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
