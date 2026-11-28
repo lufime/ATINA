@@ -2973,7 +2973,7 @@ let screenshotPayload=null;
   reader.readAsDataURL(file);
  });
  const captureButton=$("atinaSoloReportCapture");
- captureButton?.addEventListener("click",async()=>{
+ const captureScreenshot=async()=>{
   if(!navigator.mediaDevices?.getDisplayMedia){$("atinaSoloReportStatus").textContent="Captura de ecrã não suportada neste navegador.";return;}
   captureButton.disabled=true;$("atinaSoloReportStatus").textContent="Escolhe o separador do jogo na janela de partilha…";let stream=null;
   try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:1},audio:false});const track=stream.getVideoTracks()[0];if(!track)throw new Error("Não foi possível capturar o ecrã.");
@@ -2981,12 +2981,14 @@ let screenshotPayload=null;
    const width=video.videoWidth||1280,height=video.videoHeight||720,scale=Math.min(1,1280/width,720/height),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(width*scale));canvas.height=Math.max(1,Math.round(height*scale));
    canvas.getContext("2d")?.drawImage(video,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",0.82));if(!blob)throw new Error("Não foi possível gerar a imagem.");if(blob.size>ATINA_REPORT_SCREENSHOT_MAX_BYTES)throw new Error("A captura excede o limite de 3 MB.");
    const reader=new FileReader();await new Promise((resolve,reject)=>{reader.onload=resolve;reader.onerror=reject;reader.readAsDataURL(blob);});const dataUrl=typeof reader.result==="string"?reader.result:"";const comma=dataUrl.indexOf(",");if(comma<0)throw new Error("Captura inválida.");screenshotPayload={content_type:"image/jpeg",base64:dataUrl.slice(comma+1)};image.src=dataUrl;preview.classList.remove("hidden");$("atinaSoloReportStatus").textContent="Screenshot capturada e anexada.";video.pause();video.srcObject=null;
-  }catch(error){$("atinaSoloReportStatus").textContent=error.message||"Captura cancelada ou falhou.";}finally{stream?.getTracks().forEach(track=>track.stop());captureButton.disabled=false;}
- });
+  }catch(error){$("atinaSoloReportStatus").textContent=error.message||"Captura cancelada ou falhou.";return false;}finally{stream?.getTracks().forEach(track=>track.stop());captureButton.disabled=false;}
+  return true;
+ };
+ captureButton?.addEventListener("click",captureScreenshot);
  const shareButton=$('atinaSoloReportShareChatGPT');
  const shareErrorWithImage=async()=>{
   const status=$('atinaSoloReportStatus'),description=$('atinaSoloReportDescription')?.value.trim()||'Sem descrição adicional.';
-  if(!screenshotPayload){status.textContent='Primeiro captura o ecrã do jogo ou anexa uma imagem. Depois carrega novamente para partilhar os dois juntos.';return;}
+  if(!screenshotPayload){status.textContent='A abrir a captura de ecrã. Autoriza a captura e, quando a imagem aparecer, carrega novamente em Enviar erro + imagem para abrir a partilha.';await captureScreenshot();updateShareLabel();return;}
   if(!navigator.share||typeof File==='undefined'||typeof navigator.canShare!=='function'){
    status.textContent='Este navegador não permite partilhar ficheiros diretamente. Anexa a screenshot manualmente no ChatGPT.';
    return;
@@ -3009,7 +3011,7 @@ let screenshotPayload=null;
  shareButton?.addEventListener('click',shareErrorWithImage);
  // Depois de anexar ou capturar uma imagem, deixar explícito que o próximo toque
  // envia o erro e o ficheiro em conjunto através do menu de partilha.
- const shareOriginalLabel=shareButton?.textContent||'Partilhar erro com ChatGPT (inclui imagem)';
+ const shareOriginalLabel='Capturar e enviar erro + imagem para ChatGPT';
  const updateShareLabel=()=>{
   if(shareButton)shareButton.textContent=screenshotPayload?'Enviar erro + imagem para ChatGPT':shareOriginalLabel;
  };
