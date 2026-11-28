@@ -15,7 +15,7 @@ Estas regras aplicam-se a todos os trabalhos, funcionalidades, conteúdos, image
 
 - **Supabase de produção:** o projeto Supabase `atina-development`, ref `qvvlqrgbtjujsejvenld`, é o ambiente de produção. Tratar todos os dados e operações nesse projeto como produção real.
 - **Não utilizar Render:** não aceder, configurar, consultar, implementar, publicar ou executar operações no Render para este projeto.
-- **Bots como jogadores de pleno direito:** os bots fazem parte da experiência ATINA quando ativos. Podem participar nos modos e partidas disponíveis, aparecer na presença online e nos rankings, acumular Pontos, XP e indicadores de desempenho segundo as mesmas regras de jogo aplicáveis aos jogadores humanos. Identificá-los claramente na interface (por exemplo, com o rótulo «BOT»), sem os ocultar nem lhes atribuir direitos inferiores. Não fabricar resultados: as classificações devem refletir eventos e métricas efetivamente registados.
+- **Sem referências a bots no jogo:** não introduzir referências, menções, rótulos, personagens, mensagens ou elementos relacionados com bots em qualquer parte da experiência do jogo. Esta regra abrange interface, textos, desafios, imagens, notificações, ajuda e documentação apresentada aos jogadores. Se existir uma necessidade técnica interna de mencionar esse conceito fora da experiência do jogador, mantê-la estritamente interna e evitar que chegue ao jogo.
 - **Proteção da produção:** consultas de leitura não autorizam escritas. Não executar alterações em dados, schema, permissões, configurações, publicações ou operações em massa sem autorização explícita para a ação concreta.
 - **Validação antes de concluir:** confirmar o resultado no sistema de destino e distinguir claramente o que foi preparado, alterado, integrado e publicado. Nunca declarar sucesso sem confirmação verificável.
 
@@ -67,7 +67,7 @@ Estas regras aplicam-se a todos os trabalhos, funcionalidades, conteúdos, image
 - Não assumir que uma tarefa está concluída apenas porque o código foi alterado; executar as verificações adequadas e confirmar o resultado.
 - Não inventar dados, identificadores, resultados de testes, estados, funcionalidades, aprovações ou conclusões.
 - Quando houver incerteza, preservar o estado atual e explicar exatamente o que não foi possível confirmar.
-- Quando os bots estiverem ativos, apresentá-los de forma clara e consistente na presença online, salas, partidas e classificações. Garantir igualdade de regras e direitos com os jogadores humanos, mantendo a identificação «BOT» quando necessário para transparência.
+- Não introduzir referências a bots na interface, textos, conteúdos, documentação pública ou experiência de jogo. A terminologia apresentada aos jogadores deve ser coerente, neutra e adequada ao jogo.
 
 ## 7. GitHub, branches, commits e pull requests
 - Utilizar o repositório oficial `lufime/ATINA` como referência para o código e a documentação.

@@ -1,42 +1,6 @@
 <!doctype html>
 <html lang="pt-PT">
 <head>
-<script id="atina-runtime-diagnostic-recorder">
-(function(){
- 'use strict';
- try{
-  if(new URLSearchParams(location.search).get('atina_runtime_diag')!=='1')return;
-  var KEY='atinaRuntimeDiagnosticV1',MAX=30;
-  function clean(value,limit){
-   var s=String(value==null?'':value).replace(/[\r\n]+/g,' ').trim();
-   s=s.replace(/(bearer\s+)[a-z0-9._~+\/-]+/ig,'$1[redigido]')
-      .replace(/((?:token|apikey|api_key|secret|password|authorization)=)[^&\s]+/ig,'$1[redigido]');
-   return s.slice(0,limit||900);
-  }
-  function cleanUrl(value){
-   try{var u=new URL(String(value),location.href);return u.origin+u.pathname;}
-   catch(_){return clean(value,240).split(/[?#]/)[0];}
-  }
-  function read(){try{var parsed=JSON.parse(localStorage.getItem(KEY)||'null');return Array.isArray(parsed)?parsed:[];}catch(_){return [];}}
-  function record(entry){
-   try{var entries=read();entries.push(Object.assign({time:new Date().toISOString()},entry));localStorage.setItem(KEY,JSON.stringify(entries.slice(-MAX)));}catch(_){}
-  }
-  record({type:'diagnostic-start',message:'Monitorização de arranque iniciada',page:cleanUrl(location.href),userAgent:clean(navigator.userAgent,260)});
-  window.addEventListener('error',function(event){
-   var target=event.target;
-   if(target&&target!==window){record({type:'resource-error',element:clean(target.tagName||'resource',30),resource:cleanUrl(target.src||target.href||''),message:'Falha ao carregar recurso'});return;}
-   var err=event.error;
-   record({type:'javascript-error',message:clean(event.message||err&&err.message||'Erro JavaScript sem mensagem'),file:cleanUrl(event.filename||''),line:Number(event.lineno)||0,column:Number(event.colno)||0,stack:clean(err&&err.stack||'',1400)});
-  },true);
-  window.addEventListener('unhandledrejection',function(event){
-   var reason=event.reason,detail='';
-   if(reason&&typeof reason==='object')detail=[reason.name,reason.message,reason.stack].filter(Boolean).join(' — ');
-   else detail=reason;
-   record({type:'unhandled-rejection',message:clean(detail||'Promise rejeitada sem detalhe'),page:cleanUrl(location.href)});
-  });
- }catch(_){}
-})();
-</script>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#14243a">
 <meta name="description" content="Joga ATINA: desafios de adivinhas, enigmas e perguntas com pistas. Pensa, descobre a resposta, soma pontos e desafia os teus amigos.">
@@ -2724,32 +2688,22 @@ async function atinaLoadOnlinePlayers(){
   const {data,error}=await supabaseClient.rpc('atina_online_player_stats');
   if(error)throw error;
   const stats=data&&typeof data==='object'?data:{};
-  const players=Array.isArray(stats.players)?stats.players:[];
-  const humans=Array.isArray(stats.humans)?stats.humans:players.filter(player=>player?.type==='human');
-  const bots=Array.isArray(stats.bots)?stats.bots:players.filter(player=>player?.type==='training'||player?.type==='bot');
+  const humans=Array.isArray(stats.players)?stats.players:(Array.isArray(stats.humans)?stats.humans:[]);
   const counts=stats.counts||{};
-  const humanCount=Math.max(0,Number(counts.humans)||humans.length);
-  const botCount=Math.max(0,Number(counts.bots)||bots.length);
-  const total=Math.max(0,Number(counts.total)||players.length||humanCount+botCount);
-  const visiblePlayers=players.length?players:[...humans,...bots];
+  const total=Math.max(0,Number(counts.total)||humans.length);
   if(list){
    list.replaceChildren();
-   visiblePlayers.slice(0,15).forEach(player=>{
+   humans.slice(0,15).forEach(player=>{
     const item=document.createElement('li');
-    const nickname=atinaDisplayPlayerName(player);
-    const isBot=player?.type==='bot'||player?.type==='training';
-    item.textContent=isBot?'🤖 '+nickname+' · BOT':nickname+' · humano';
-    item.dataset.playerType=isBot?'bot':'human';
+    item.textContent=atinaDisplayPlayerName(player);
     list.appendChild(item);
    });
   }
-  const summary=humanCount+' humanos · '+botCount+' bots · '+total+' online';
+  const summary=total+' jogadores online';
   if(topCount){
    topCount.textContent='● '+summary;
-   topCount.title='Contagem única de jogadores humanos e bots ativos.';
+   topCount.title='Total de jogadores online, sem duplicações.';
    topCount.dataset.count=String(total);
-   topCount.dataset.humans=String(humanCount);
-   topCount.dataset.bots=String(botCount);
   }
   if(status){
    if(total===0)status.textContent='Não há jogadores online neste momento.';
@@ -5918,95 +5872,5 @@ input::placeholder,textarea::placeholder{color:#91a7ba!important}
 }
 </style>
 
-
-
-<style id="atina-remove-game-side-stripes-20261127">
-/* Remover os dois traços verticais laterais no ecrã de jogo, sem alterar cartões ou conteúdo. */
-html,body,.wrap,#game{
-  border-left:0!important;
-  border-right:0!important;
-}
-body::before,body::after,.wrap::before,.wrap::after,#game::before,#game::after{
-  content:none!important;
-  display:none!important;
-  background:none!important;
-  box-shadow:none!important;
-}
-#game>.card{
-  border-left-color:var(--atina-border,#304d68)!important;
-  border-right-color:var(--atina-border,#304d68)!important;
-}
-</style>
-
-<style id="atina-remove-global-left-edge-stripe-20261127">
-/* Neutraliza a faixa vertical exterior em todas as páginas, preservando os contornos dos cartões. */
-html,body{
-  border-left:0!important;
-  outline:0!important;
-  box-shadow:none!important;
-  background-color:#071321!important;
-}
-html::before,html::after,body::before,body::after{
-  content:none!important;
-  display:none!important;
-  background:none!important;
-  box-shadow:none!important;
-  border:0!important;
-}
-</style>
-
-<style id="atina-remove-tile-side-accent">
-/* Remover o traço decorativo lateral dos cartões; manter os cartões e as respetivas bordas. */
-.tile::before{content:none!important;display:none!important}
-</style>
-
-<style id="atina-remove-remaining-game-left-stripe">
-/* Remove apenas a linha vertical na margem esquerda do cartão principal do jogo. */
-#game{border-left:0!important;outline:0!important}
-#game>.card{border-left:0!important;border-left-color:transparent!important;box-shadow:0 8px 22px #020b14aa,inset 0 1px #ffffff08!important}
-</style>
-
-
-<style id="atina-remove-last-red-edge-rail-20261128">
-/* Corrige a faixa coral residual na margem esquerda, sem alterar os cartões internos. */
-html, body {
-  border-inline-start: 0 !important;
-  border-left: 0 !important;
-  outline: 0 !important;
-}
-html {
-  background-color: #071321 !important;
-  background-image: none !important;
-}
-body {
-  background-color: #071321 !important;
-  background-image: radial-gradient(ellipse at 50% -10%, #173b60 0, #081727 52%, #06111e 100%) !important;
-}
-.wrap {
-  border-inline-start: 0 !important;
-  border-left: 0 !important;
-  background-image: none !important;
-  box-shadow: none !important;
-}
-</style>
-
-<script id="atina-qi-ranking-clean-bot-prefix">
-/* Mantém os bots no ranking QI*, removendo apenas o emoji decorativo do nome. */
-(function(){
- const clean=()=>{
-  document.querySelectorAll('#atinaQiLeaderboard tr td:nth-child(2)').forEach(cell=>{
-   cell.childNodes.forEach(node=>{
-    if(node.nodeType===Node.TEXT_NODE)node.textContent=node.textContent.replace(/^\\s*🤖\\s*/u,'');
-   });
-   if(cell.firstChild&&cell.firstChild.nodeType===Node.TEXT_NODE){
-    cell.firstChild.textContent=cell.firstChild.textContent.replace(/^\\s*🤖\\s*/u,'');
-   }
-  });
- };
- clean();
- const target=document.getElementById('atinaQiLeaderboard');
- if(target)new MutationObserver(clean).observe(target,{childList:true,subtree:true,characterData:true});
-})();
-</script>
 </body>
 </html>
