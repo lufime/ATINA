@@ -674,3 +674,95 @@ html{scroll-behavior:smooth}
 @media(prefers-reduced-motion:reduce){
   #atinaPregameOverlay.open{-webkit-backdrop-filter:none;backdrop-filter:none}
 }
+
+
+/* ATINA — HUD da partida sempre junto ao desafio */
+#game .atina-timer-stack{
+  display:flex!important;
+  width:100%;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin:0 0 14px!important;
+  padding:0 0 12px;
+  border-bottom:1px solid rgba(157,183,218,.14);
+}
+#game .atina-clock-face{
+  display:grid!important;
+  width:100%;
+  min-width:0;
+  grid-template-columns:72px minmax(0,1fr) auto;
+  grid-template-rows:auto auto;
+  align-items:center;
+  gap:7px 12px!important;
+}
+#game .atina-game-logo{
+  grid-column:1;
+  grid-row:1 / span 2;
+  width:68px!important;
+  max-height:58px!important;
+}
+#game .atina-live-stats{
+  grid-column:2 / 4;
+  grid-row:1;
+  min-width:0;
+  display:flex!important;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px!important;
+}
+#game .atina-live-stats span{
+  min-height:29px;
+  padding:5px 9px;
+  font-size:11px;
+  white-space:nowrap;
+}
+#game .atina-clock-face>strong{
+  grid-column:2;
+  grid-row:2;
+  align-self:center;
+  color:var(--atina-muted);
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+#game .atina-clock-face>#timerDisplay{
+  grid-column:3;
+  grid-row:2;
+  justify-self:end;
+  min-width:112px!important;
+  min-height:54px!important;
+  font-size:clamp(30px,4vw,40px)!important;
+}
+#game.atina-hud-active .atina-timer-stack{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+}
+@media(max-width:600px){
+  #game .atina-timer-stack{gap:8px!important;margin-bottom:11px!important;padding-bottom:10px}
+  #game .atina-clock-face{
+    grid-template-columns:48px minmax(0,1fr) auto;
+    gap:6px 8px!important;
+  }
+  #game .atina-game-logo{width:46px!important;max-height:44px!important}
+  #game .atina-live-stats{gap:5px!important}
+  #game .atina-live-stats span{
+    min-height:27px;
+    padding:4px 7px;
+    font-size:10px;
+  }
+  #game .atina-clock-face>strong{font-size:10px;letter-spacing:.04em}
+  #game .atina-clock-face>#timerDisplay{
+    min-width:88px!important;
+    min-height:48px!important;
+    padding:5px 8px!important;
+    font-size:30px!important;
+  }
+}
+@media(max-width:380px){
+  #game .atina-clock-face{grid-template-columns:40px minmax(0,1fr) auto;gap:5px 6px!important}
+  #game .atina-game-logo{width:38px!important;max-height:38px!important}
+  #game .atina-live-stats span{font-size:9px;padding:4px 5px}
+  #game .atina-clock-face>#timerDisplay{min-width:78px!important;font-size:27px!important}
+}
