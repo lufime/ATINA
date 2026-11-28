@@ -1,42 +1,318 @@
-/* ATINA — neutralização visual global; preserva estrutura e comportamento. */
-:root { color-scheme: dark; }
-html, body {
-  min-height: 100%;
+/* ATINA — sistema visual premium, adaptável a telemóvel, desktop e TV. */
+:root {
+  color-scheme: dark;
+  --atina-bg: #080d18;
+  --atina-bg-soft: #101a2b;
+  --atina-panel: rgba(20, 31, 51, .92);
+  --atina-panel-2: rgba(27, 42, 66, .92);
+  --atina-line: rgba(167, 190, 225, .17);
+  --atina-text: #f4f7ff;
+  --atina-muted: #a8b5ca;
+  --atina-gold: #f4c66a;
+  --atina-cyan: #72d5e8;
+  --atina-green: #76d6a2;
+  --atina-red: #ff8d91;
+  --atina-radius: 20px;
+  --atina-shadow: 0 16px 42px rgba(0,0,0,.28);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { min-height: 100%; background: var(--atina-bg); }
+body {
+  min-height: 100vh;
   margin: 0;
-  background: #111 !important;
-  color: #eee !important;
+  color: var(--atina-text);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(55,105,157,.22), transparent 38rem),
+    radial-gradient(ellipse at 95% 15%, rgba(28,119,132,.12), transparent 34rem),
+    var(--atina-bg);
+  font-family: inherit;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
-html body,
-html body * ,
-html body *::before,
-html body *::after {
-  color: #eee !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border-color: transparent !important;
-  outline-color: transparent !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  filter: none !important;
-  -webkit-filter: none !important;
-  animation: none !important;
-  transition: none !important;
-}
-html body {
-  background: #111 !important;
-}
-html body :is(button, input, textarea, select, [role="button"], [role="checkbox"], [role="radio"]) {
-  color: #eee !important;
-  background: transparent !important;
-  border: 0 !important;
-  outline: 0 !important;
-  box-shadow: none !important;
-}
-html body svg,
-html body svg * {
-  fill: currentColor !important;
-  stroke: currentColor !important;
-}
-[hidden] { display: none !important; }
+button, input, textarea, select { font: inherit; }
 button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .48; }
+:focus-visible { outline: 3px solid var(--atina-cyan) !important; outline-offset: 3px !important; }
+a { color: var(--atina-cyan); }
 img, video, canvas, svg { max-width: 100%; }
+.wrap {
+  width: min(100% - 32px, 1120px);
+  margin-inline: auto;
+  padding: 26px 0 64px;
+}
+.brand {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(24px, 5vw, 46px) 22px 24px;
+  text-align: center;
+  border: 1px solid var(--atina-line);
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(28,45,72,.96), rgba(13,25,43,.96));
+  box-shadow: var(--atina-shadow);
+}
+.brand::before {
+  content: "";
+  position: absolute;
+  width: 260px; height: 260px;
+  left: -100px; top: -160px;
+  border-radius: 50%;
+  background: rgba(114,213,232,.10);
+  filter: blur(2px);
+  pointer-events: none;
+}
+.eyebrow, .home-welcome-kicker {
+  color: var(--atina-cyan);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.logo-image { display: block; width: min(210px, 55vw); max-height: 112px; object-fit: contain; margin: 8px auto; }
+.tag { color: var(--atina-muted); font-size: 15px; }
+.atina-home-version { margin-top: 8px; color: #8495ae; font-size: 11px; }
+#atinaSignedInUser {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px auto 0 !important;
+  padding: 8px 13px !important;
+  border: 1px solid var(--atina-line) !important;
+  border-radius: 999px !important;
+  background: rgba(8,15,28,.55) !important;
+  color: var(--atina-text) !important;
+  font-size: 13px !important;
+}
+.stats { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.stats span, .atina-live-stats span {
+  padding: 7px 12px;
+  border: 1px solid var(--atina-line);
+  border-radius: 999px;
+  background: rgba(7,14,27,.55);
+  color: #dbe5f6;
+  font-size: 12px;
+  font-weight: 750;
+}
+.home-page-nav {
+  position: sticky;
+  z-index: 20;
+  top: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px auto 24px;
+  padding: 8px;
+  border: 1px solid var(--atina-line);
+  border-radius: 18px;
+  background: rgba(10,17,30,.88);
+  box-shadow: 0 10px 30px rgba(0,0,0,.24);
+  backdrop-filter: blur(18px);
+}
+.home-nav-btn, .home-nav-more > summary {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #c2cee0;
+  font-weight: 750;
+  font-size: 13px;
+  list-style: none;
+}
+.home-nav-btn:hover, .home-nav-more > summary:hover { background: rgba(114,213,232,.09); color: white; }
+.home-nav-btn.active, .home-nav-btn[aria-pressed="true"] {
+  border-color: rgba(114,213,232,.25);
+  background: rgba(114,213,232,.13);
+  color: var(--atina-cyan);
+}
+.home-nav-more { position: relative; }
+.home-nav-more > summary::-webkit-details-marker { display: none; }
+.home-nav-more-grid {
+  position: absolute;
+  top: calc(100% + 10px); right: 0;
+  display: grid;
+  grid-template-columns: repeat(2,minmax(130px,1fr));
+  gap: 5px;
+  min-width: 290px;
+  padding: 10px;
+  border: 1px solid var(--atina-line);
+  border-radius: 16px;
+  background: #111d30;
+  box-shadow: var(--atina-shadow);
+}
+.home-page-panel { animation: atina-enter .24s ease both; }
+@keyframes atina-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.home-welcome { margin: 8px 0 20px; }
+.home-welcome h2 { margin: 5px 0; font-size: clamp(25px,4vw,38px); letter-spacing: -.035em; }
+.home-welcome p { max-width: 720px; color: var(--atina-muted); }
+.home-block, .card, .atina-entry-intro, .home-page-panel > .card, .home-page-panel > section.card {
+  border: 1px solid var(--atina-line) !important;
+  border-radius: var(--atina-radius) !important;
+  background: var(--atina-panel) !important;
+  box-shadow: var(--atina-shadow) !important;
+}
+.home-block { margin: 14px 0; padding: clamp(18px,3vw,26px); }
+.section { color: var(--atina-cyan); font-size: 12px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.actions > .btn { flex: 1 1 190px; }
+.btn, button.btn, .home-page-panel button:not(.home-nav-btn) {
+  min-height: 46px;
+  padding: 11px 17px;
+  border: 1px solid rgba(114,213,232,.22) !important;
+  border-radius: 13px !important;
+  background: linear-gradient(135deg,#1d7188,#225a78) !important;
+  color: #f5fbff !important;
+  font-weight: 800;
+  box-shadow: 0 7px 18px rgba(0,0,0,.2) !important;
+  transition: transform .16s ease, filter .16s ease, border-color .16s ease;
+}
+.btn:hover, button.btn:hover, .home-page-panel button:not(.home-nav-btn):hover { transform: translateY(-1px); filter: brightness(1.12); }
+.btn.secondary, button.btn.secondary { background: linear-gradient(135deg,#25344d,#1a2940) !important; border-color: var(--atina-line) !important; color: #e2ebfa !important; }
+.btn.danger, button.btn.danger { background: linear-gradient(135deg,#803e4c,#632d3b) !important; border-color: rgba(255,141,145,.3) !important; }
+.btn.full { width: 100%; }
+.modes { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 12px; }
+.tile {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+  min-height: 128px; padding: 18px !important;
+  border: 1px solid var(--atina-line) !important;
+  border-radius: 17px !important;
+  background: linear-gradient(145deg,rgba(34,52,79,.94),rgba(17,29,48,.94)) !important;
+  color: var(--atina-text) !important;
+  text-align: left;
+}
+.tile b { font-size: 16px; }
+.tile small, .muted, .small { color: var(--atina-muted) !important; }
+.tile:hover { border-color: rgba(114,213,232,.5) !important; transform: translateY(-2px); }
+.answer, input, textarea, select {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid rgba(157,183,218,.25) !important;
+  border-radius: 12px !important;
+  background: #0c1728 !important;
+  color: var(--atina-text) !important;
+}
+.answer::placeholder, input::placeholder, textarea::placeholder { color: #8393aa; }
+.pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 30px; padding: 5px 11px;
+  border: 1px solid var(--atina-line) !important;
+  border-radius: 999px !important;
+  background: rgba(114,213,232,.09) !important;
+  color: #c9f2fa !important;
+  font-size: 12px; font-weight: 800;
+}
+.row { gap: 10px; }
+#game { max-width: 980px; margin: 0 auto; }
+#game > .card {
+  padding: clamp(16px,3vw,30px);
+  border-radius: 24px !important;
+  background: linear-gradient(155deg,rgba(22,35,57,.98),rgba(12,22,38,.98)) !important;
+}
+.atina-timer-stack { align-items: center; justify-content: space-between; gap: 18px; }
+.atina-clock-face { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px 16px; }
+.atina-game-logo { grid-row: span 2; width: 86px; max-height: 66px; object-fit: contain; }
+.atina-live-stats { display: flex; flex-wrap: wrap; gap: 7px; }
+.timer-display {
+  min-width: 112px !important;
+  min-height: 64px !important;
+  border: 1px solid rgba(244,198,106,.35) !important;
+  border-radius: 16px !important;
+  background: rgba(244,198,106,.10) !important;
+  color: var(--atina-gold) !important;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(32px,5vw,46px) !important;
+  font-weight: 900;
+}
+#question { margin: 10px 0 18px !important; font-size: clamp(26px,3.5vw,40px) !important; line-height: 1.2; letter-spacing: -.025em; }
+#player { color: var(--atina-cyan) !important; }
+#clues { display: grid; gap: 8px; }
+#clues > * { padding: 12px 14px; border: 1px solid var(--atina-line); border-radius: 12px; background: rgba(7,15,27,.55); }
+.game-control-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.game-control-row > * { flex: 1 1 180px; }
+#submit { background: linear-gradient(135deg,#b77d2c,#93601f) !important; border-color: rgba(244,198,106,.38) !important; color: #fff9ed !important; }
+#feedback[data-tone="positive"] { color: var(--atina-green) !important; }
+#feedback[data-tone="negative"] { color: var(--atina-red) !important; }
+#feedback[data-tone="neutral"] { color: var(--atina-cyan) !important; }
+.visual { overflow: hidden; border-radius: 18px; border: 1px solid var(--atina-line); }
+.footer { color: var(--atina-muted); text-align: center; }
+.hidden, [hidden] { display: none !important; }
+.atina-tv-toggle { border-color: rgba(244,198,106,.28) !important; color: var(--atina-gold) !important; }
+.atina-tv-mode .wrap { width: min(100% - 6vw, 1600px); padding-top: 3vh; }
+.atina-tv-mode .brand { padding: 18px; }
+.atina-tv-mode .brand .logo-image { width: 150px; max-height: 75px; }
+.atina-tv-mode .home-page-nav { position: static; margin: 14px auto 28px; gap: 12px; }
+.atina-tv-mode .home-nav-btn, .atina-tv-mode .home-nav-more > summary { min-height: 58px; padding: 13px 22px; font-size: 19px; }
+.atina-tv-mode .home-welcome h2 { font-size: clamp(38px,3.2vw,58px); }
+.atina-tv-mode .section { font-size: 16px; }
+.atina-tv-mode .btn, .atina-tv-mode button.btn, .atina-tv-mode .tile { min-height: 68px; font-size: 20px; padding: 16px 22px !important; }
+.atina-tv-mode .tile b { font-size: 24px; }
+.atina-tv-mode .tile small, .atina-tv-mode p, .atina-tv-mode label { font-size: 17px; }
+.atina-tv-mode #game { max-width: 1450px; }
+.atina-tv-mode #game > .card { padding: clamp(28px,4vw,60px); }
+.atina-tv-mode #question { font-size: clamp(42px,4vw,68px) !important; }
+.atina-tv-mode #player { font-size: 26px !important; }
+.atina-tv-mode .timer-display { min-width: 170px !important; min-height: 88px !important; font-size: 58px !important; }
+.atina-tv-mode .answer { min-height: 70px; font-size: 24px; }
+.atina-tv-mode .pill { min-height: 40px; font-size: 16px; }
+.atina-tv-mode #clues > * { padding: 18px 22px; font-size: 21px; }
+.atina-tv-mode .atina-live-stats span { font-size: 16px; padding: 10px 16px; }
+@media (min-width: 1100px) {
+  .home-block.play-block .actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .home-block.categories-block .modes { grid-template-columns: repeat(4,minmax(0,1fr)); }
+}
+@media (max-width: 700px) {
+  .wrap { width: min(100% - 20px, 560px); padding-top: 10px; }
+  .brand { border-radius: 20px; padding: 22px 14px; }
+  .home-page-nav { position: sticky; top: 4px; width: 100%; justify-content: space-around; gap: 3px; padding: 5px; border-radius: 14px; }
+  .home-nav-btn, .home-nav-more > summary { min-height: 42px; padding: 8px 9px; font-size: 12px; gap: 5px; }
+  .home-nav-btn span, .home-nav-more > summary span:last-child { display: inline; }
+  .home-nav-more-grid { position: fixed; top: auto; right: 10px; left: 10px; min-width: 0; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .home-block { padding: 16px; }
+  .modes { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .tile { min-height: 116px; padding: 13px !important; }
+  .tile b { font-size: 14px; }
+  .tile small { font-size: 11px; }
+  .atina-clock-face { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+  .atina-game-logo { grid-row: auto; width: 72px; }
+  .atina-live-stats { justify-content: center; }
+  .game-control-row > * { flex-basis: 100%; }
+  .actions > .btn { flex-basis: 100%; }
+  .atina-tv-mode .wrap { width: min(100% - 18px, 680px); padding-top: 10px; }
+  .atina-tv-mode .home-nav-btn, .atina-tv-mode .home-nav-more > summary { font-size: 14px; min-height: 48px; padding: 9px; }
+  .atina-tv-mode .tile b { font-size: 17px; }
+  .atina-tv-mode #question { font-size: clamp(30px,7vw,44px) !important; }
+}
+@media (min-width: 1000px) and (orientation: landscape) {
+  .atina-tv-mode #game > .card { display: grid; grid-template-columns: minmax(0,1fr) minmax(260px,.42fr); column-gap: 30px; align-items: start; }
+  .atina-tv-mode #game > .card > .row:first-child,
+  .atina-tv-mode #game > .card > .atina-timer-stack,
+  .atina-tv-mode #game > .card > .row:nth-of-type(2),
+  .atina-tv-mode #game > .card > #player,
+  .atina-tv-mode #game > .card > #question,
+  .atina-tv-mode #game > .card > #surprisePanel,
+  .atina-tv-mode #game > .card > #visualWrap,
+  .atina-tv-mode #game > .card > #networkTimeoutPanel,
+  .atina-tv-mode #game > .card > #atinaSoloReportPanel,
+  .atina-tv-mode #game > .card > #clueProgress,
+  .atina-tv-mode #game > .card > #clues { grid-column: 1; }
+  .atina-tv-mode #game > .card > .clue-controls,
+  .atina-tv-mode #game > .card > #answer,
+  .atina-tv-mode #game > .card > .answer-controls,
+  .atina-tv-mode #game > .card > #feedback,
+  .atina-tv-mode #game > .card > #solutionImage,
+  .atina-tv-mode #game > .card > #teamVotePanel,
+  .atina-tv-mode #game > .card > #listenAnswer,
+  .atina-tv-mode #game > .card > .actions { grid-column: 2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
